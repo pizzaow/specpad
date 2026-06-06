@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "1.0",
+  "type": "srs",
+  "name": "AcmeApp",
+  "title": "Requirements",
+  "items": [
+    { "id": "r_001" }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "1.0",
+  "type": "vtp",
+  "name": "AcmeApp",
+  "title": "Verification Tests",
+  "items": [
+    { "id": "t_a12b", "code": "TEST-1", "text": "Navigate to login, enter valid credentials, submit.", "verifies": ["r_7f3a9c"], "expected": "User is authenticated and lands on the dashboard.", "result": "passed" },
+    { "id": "t_c34d", "code": "TEST-2", "text": "Click log out.", "verifies": ["r_88b210"], "expected": "User session ends and the login screen is shown.", "result": "not_tested" }
+  ]
+}

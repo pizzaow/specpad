@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0",
+  "type": "srs",
+  "name": "specpad",
+  "title": "Requirements",
+  "items": [
+    { "id": "h_d0c0", "heading": true, "text": "Documents and schema" },
+    { "id": "r_a101", "code": "DOC-1", "text": "The system shall store project documentation as JSON files under docs/specpad/: one project index, one SRS (requirements), and one VTP (verification tests).", "tags": ["schema"] },
+    { "id": "r_a102", "code": "DOC-2", "text": "Every document file shall carry a schemaVersion of \"1.0\" and a type of \"project\", \"srs\", or \"vtp\".", "tags": ["schema"] },
+    { "id": "r_a103", "code": "DOC-3", "text": "Every document shall include a short system name and a human-readable title." },
+    { "id": "r_a104", "code": "DOC-4", "text": "Every SRS and VTP item shall have a required, stable id and required text; all other fields are optional." },
+    { "id": "r_a105", "code": "DOC-5", "text": "A VTP item's result, when present, shall be one of \"\", \"not_tested\", \"passed\", or \"failed\"." },
+
+    { "id": "h_d0c1", "heading": true, "text": "Stable identity and references" },
+    { "id": "r_a201", "code": "ID-1", "text": "Every item shall have a stable identifier that is generated once and never changes.", "tags": ["id"] },
+    { "id": "r_a202", "code": "ID-2", "text": "Item identifiers shall use a typed prefix (\"r_\" for requirements, \"t_\" for tests, \"h_\" for headings) followed by a random suffix." },
+    { "id": "r_a203", "code": "ID-3", "text": "All cross-references (a test's verifies list) shall target item ids, never human-readable code labels." },
+    { "id": "r_a204", "code": "ID-4", "text": "Renaming an item's human label (code) shall never alter its id or break an existing reference." },
+
+    { "id": "h_d0c2", "heading": true, "text": "No derived or historical data" },
+    { "id": "r_a301", "code": "DATA-1", "text": "Derived values such as per-requirement test counts shall be computed on read and never stored in the files.", "tags": ["governance"] },
+    { "id": "r_a302", "code": "DATA-2", "text": "The files shall not store edit history (author, timestamps, change lists); git is the history layer." },
+
+    { "id": "h_d0c3", "heading": true, "text": "Validation and governance" },
+    { "id": "r_a401", "code": "VAL-1", "text": "A shared validation module shall structurally validate each document against the v1 JSON Schema for its type.", "tags": ["validation"] },
+    { "id": "r_a402", "code": "VAL-2", "text": "Structural validation shall enforce required fields, value types, and the result enum, but not policy rules." },
+    { "id": "r_a403", "code": "GOV-1", "text": "Governance shall enforce traceability: every non-heading requirement is verified by at least one test.", "tags": ["governance"] },
+    { "id": "r_a404", "code": "GOV-2", "text": "Governance shall enforce referential integrity: every verifies entry resolves to an existing requirement id." },
+    { "id": "r_a405", "code": "GOV-3", "text": "Governance shall enforce expected-result presence: every non-heading test has a non-empty expected value." },
+    { "id": "r_a406", "code": "GOV-4", "text": "Heading items shall be exempt from the traceability and expected-result governance checks." },
+    { "id": "r_a407", "code": "GOV-5", "text": "The editor and the skill shall enforce the same governance rules from a single source of truth." },
+
+    { "id": "h_d0c4", "heading": true, "text": "Editor" },
+    { "id": "r_a501", "code": "ED-1", "text": "The editor shall read and write the JSON files locally via the File System Access API, with an upload/download fallback for unsupported browsers.", "tags": ["editor"] },
+    { "id": "r_a502", "code": "ED-2", "text": "The editor shall display each requirement's verifying-test count, computed on read from the VTP verifies references." },
+    { "id": "r_a503", "code": "ED-3", "text": "The editor shall record test results and notes on VTP items." },
+    { "id": "r_a504", "code": "ED-4", "text": "The editor shall surface structural errors and governance warnings to the user live." },
+    { "id": "r_a505", "code": "ED-5", "text": "The editor shall flag a test whose verifies reference does not resolve to a requirement." },
+    { "id": "r_a506", "code": "ED-6", "text": "The editor shall open the document indicated by the launcher's deep-link parameters and preserve item ids across a load/edit/save round-trip." },
+
+    { "id": "h_d0c5", "heading": true, "text": "Skill and launcher" },
+    { "id": "r_a601", "code": "SKILL-1", "text": "The skill shall scaffold docs/specpad/ and create or edit documents programmatically, generating stable ids.", "tags": ["skill"] },
+    { "id": "r_a602", "code": "SKILL-2", "text": "The skill shall validate structure and governance before reporting a task complete." },
+    { "id": "r_a603", "code": "SKILL-3", "text": "The skill shall generate a launcher (index.html) that redirects to the version-pinned hosted editor at specpad.com/v01/." }
+  ]
+}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SpecPad — opening editor…</title>
+    <script>
+      // Redirect this local file to the version-pinned hosted editor.
+      // A double-clicked file:// page cannot grant File System Access; the
+      // hosted https page can. schemaVersion "1.0" -> editor build /v01/.
+      (function () {
+        var PROJECT = 'specpad';
+        var params = new URLSearchParams(window.location.search);
+        var open = params.get('open') || 'srs';
+        window.location.href =
+          'https://specpad.com/v01/?name=' + encodeURIComponent(PROJECT) + '&open=' + encodeURIComponent(open);
+      })();
+    </script>
+  </head>
+  <body>
+    <p>Opening SpecPad… if nothing happens,
+      <a href="https://specpad.com/v01/">click here</a>.</p>
+  </body>
+</html>
