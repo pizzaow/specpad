@@ -11,8 +11,19 @@
         var PROJECT = 'specpad';
         var params = new URLSearchParams(window.location.search);
         var open = params.get('open') || 'srs';
-        window.location.href =
-          'https://specpad.com/v01/?name=' + encodeURIComponent(PROJECT) + '&open=' + encodeURIComponent(open);
+        // This launcher lives inside the project folder, so it knows that folder's
+        // local path. Passing it lets the editor re-correlate a remembered folder
+        // grant (and guide the first pick). It rides in the URL *fragment* (after
+        // #), which the browser never sends to the server, so the path stays local.
+        var dir = '';
+        try {
+          dir = decodeURIComponent(window.location.pathname).replace(/\/[^/]*$/, '');
+        } catch (e) { dir = ''; }
+        var frag =
+          'name=' + encodeURIComponent(PROJECT) +
+          '&open=' + encodeURIComponent(open) +
+          (dir ? '&dir=' + encodeURIComponent(dir) : '');
+        window.location.href = 'https://specpad.com/v01/#' + frag;
       })();
     </script>
   </head>
