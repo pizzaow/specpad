@@ -56,7 +56,9 @@ npm run lint
 Prefer test-driven development, especially for the shared contract module. Run `npm test` and
 `npx tsc --noEmit` before claiming work complete.
 
-## Remaining work
+## Deployment
 
-Cloud deployment is not done: S3 + CloudFront on `specpad.com` (Route 53 hosted zone, bucket with
-OAC, ACM cert in us-east-1, A/ALIAS record). See design spec §5.4.
+The editor is live at `https://specpad.com/v01/` — private S3 bucket behind CloudFront (OAC),
+ACM cert in us-east-1, Route 53 hosted zone (nameservers migrated from Google). Provisioned by
+the idempotent `infra/deploy.sh`; resource ids and the redeploy steps are in `infra/README.md`.
+The `schemaVersion` maps to the path (`"1.0"` → `/v01/`); old version paths stay live forever.
