@@ -38,8 +38,9 @@ fallback.
 
 ## Status
 
-Editor, contract, and skill are complete on the **v1 schema**. Cloud deployment (S3 + CloudFront on
-`specpad.com`) is the remaining piece.
+Editor, contract, and skill are complete on the **v1 schema**, and the editor is deployed live at
+<https://specpad.com/v01/> (S3 + CloudFront + Route 53). See `infra/` for the deployment script and
+runbook.
 
 ## License
 
