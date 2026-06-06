@@ -56,7 +56,7 @@ async function listDocumentsInDirectory(): Promise<DocumentListItem[]> {
 export async function openProjectDirectory(): Promise<{ name: string; documents: DocumentListItem[] }> {
   if (!window.showDirectoryPicker) throw new Error('File System Access API not supported');
   try {
-    projectDirHandle = await window.showDirectoryPicker({ mode: 'readwrite', startIn: 'documents' });
+    projectDirHandle = await window.showDirectoryPicker({ mode: 'readwrite', startIn: 'documents', id: 'specpad' });
     const documents = await listDocumentsInDirectory();
     const projFile = documents.find((d) => d.type === 'proj');
     if (projFile) {
@@ -81,12 +81,14 @@ export async function openProjectFile(): Promise<{ name: string; documents: Docu
     const [fileHandle] = await window.showOpenFilePicker({
       types: [{ description: 'Project Files', accept: { 'application/json': ['.proj.json'] } }],
       multiple: false,
+      startIn: 'documents',
+      id: 'specpad',
     });
     const file = await fileHandle.getFile();
     const match = file.name.match(/^(.+?)\.proj\.json$/);
     if (!match) throw new Error('Expected a [name].proj.json file');
     projectName = match[1];
-    projectDirHandle = await window.showDirectoryPicker({ mode: 'readwrite', startIn: 'documents' });
+    projectDirHandle = await window.showDirectoryPicker({ mode: 'readwrite', startIn: 'documents', id: 'specpad' });
     const documents = await listDocumentsInDirectory();
     return { name: projectName, documents };
   } catch (err: any) {
@@ -98,6 +100,37 @@ export async function openProjectFile(): Promise<{ name: string; documents: Docu
 export async function listDocuments(): Promise<DocumentListItem[]> {
   if (!projectDirHandle) return [];
   return listDocumentsInDirectory();
+}
+
+/** Reopen a project from a previously-granted directory handle (no picker). */
+export async function openProjectFromHandle(
+  handle: FileSystemDirectoryHandle
+): Promise<{ name: string; documents: DocumentListItem[] }> {
+  projectDirHandle = handle;
+  const documents = await listDocumentsInDirectory();
+  const projFile = documents.find((d) => d.type === 'proj');
+  projectName = projFile ? projFile.name : handle.name;
+  return { name: projectName, documents };
+}
+
+/** The currently-open directory handle, for persisting to the recent-projects store. */
+export function getDirHandle(): FileSystemDirectoryHandle | null {
+  return projectDirHandle;
+}
+
+/**
+ * Check (and optionally request) read/write permission on a stored handle.
+ * Request must be triggered from a user gesture; query is always silent.
+ */
+export async function verifyPermission(
+  handle: FileSystemDirectoryHandle,
+  request: boolean
+): Promise<boolean> {
+  const h = handle as any;
+  const opts = { mode: 'readwrite' };
+  if ((await h.queryPermission(opts)) === 'granted') return true;
+  if (request && (await h.requestPermission(opts)) === 'granted') return true;
+  return false;
 }
 
 async function readJson(filename: string): Promise<SpecPadDoc> {
