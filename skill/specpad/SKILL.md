@@ -9,6 +9,17 @@ Create and maintain SpecPad documents: a project index, an SRS (requirements), a
 VTP (verification tests), stored as JSON under `docs/specpad/` and edited either by you
 or by humans in the hosted editor. One shared contract governs both.
 
+## Position in workflow
+
+brainstorming (design decisions) → **specpad** (structured requirements and verification
+tests as SRS/VTP JSON) → writing-plans (implementation plan).
+
+Use after a design is settled and before implementation planning — when a feature needs
+trackable, testable requirements — and whenever you update requirements for an existing
+feature. The brainstorming skill writes a prose design doc and then hands off to
+writing-plans; insert SpecPad in between when you want the requirements captured as
+governed, test-traceable documents rather than prose.
+
 ## Files and naming
 
 - `docs/specpad/<name>.proj.json` — project index
