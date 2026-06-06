@@ -1,6 +1,6 @@
 ---
 name: specpad
-description: Use when creating or maintaining structured software documentation — requirements (SRS), verification tests (VTP), and a project index — as governed JSON in the repo's docs/specpad/ folder. Triggers on "add a requirement", "write tests for", "set up specpad", "check traceability".
+description: Use when formalizing or maintaining software requirements and their verification tests as governed JSON (an SRS, a VTP, and a project index) in the repo's docs/specpad/ folder — the structured, editor-backed replacement for markdown specs. Triggers on "write a spec", "formalize requirements", "create requirements", "add a requirement", "write tests for", "set up specpad", "check traceability".
 ---
 
 # SpecPad
