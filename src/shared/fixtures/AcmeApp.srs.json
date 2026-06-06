@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0",
+  "type": "srs",
+  "name": "AcmeApp",
+  "title": "Requirements",
+  "items": [
+    { "id": "h_001", "heading": true, "text": "Functional Requirements" },
+    { "id": "r_7f3a9c", "code": "FUNC-1", "text": "The system shall authenticate users with a username and password.", "tags": ["auth"] },
+    { "id": "r_88b210", "code": "FUNC-2", "text": "The system shall allow users to log out." }
+  ]
+}

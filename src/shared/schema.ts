@@ -1,0 +1,145 @@
+// v1 SpecPad contract: TypeScript types + JSON Schema documents.
+// JSON Schema enforces STRUCTURE ONLY. Policy lives in governance.ts.
+
+export const SCHEMA_VERSION = '1.0' as const;
+export type SchemaVersion = typeof SCHEMA_VERSION;
+export type DocType = 'project' | 'srs' | 'vtp';
+export type TestResult = '' | 'not_tested' | 'passed' | 'failed';
+
+export interface ProjectDocRef {
+  type: 'srs' | 'vtp';
+  path: string;
+  title: string;
+}
+
+export interface ProjectDoc {
+  schemaVersion: SchemaVersion;
+  type: 'project';
+  name: string;
+  title: string;
+  description?: string;
+  documents: ProjectDocRef[];
+}
+
+export interface SrsItem {
+  id: string;
+  code?: string;
+  text: string;
+  heading?: boolean;
+  tags?: string[];
+  hazards?: string[];
+}
+
+export interface SrsDoc {
+  schemaVersion: SchemaVersion;
+  type: 'srs';
+  name: string;
+  title: string;
+  items: SrsItem[];
+}
+
+export interface VtpItem {
+  id: string;
+  code?: string;
+  text: string;
+  heading?: boolean;
+  verifies?: string[];
+  expected?: string;
+  result?: TestResult;
+  notes?: string;
+  tags?: string[];
+}
+
+export interface VtpDoc {
+  schemaVersion: SchemaVersion;
+  type: 'vtp';
+  name: string;
+  title: string;
+  items: VtpItem[];
+}
+
+export type SpecPadDoc = ProjectDoc | SrsDoc | VtpDoc;
+
+const stringArray = { type: 'array', items: { type: 'string' } } as const;
+
+export const projectSchema = {
+  $id: 'specpad/v1/project',
+  type: 'object',
+  required: ['schemaVersion', 'type', 'name', 'title', 'documents'],
+  properties: {
+    schemaVersion: { const: '1.0' },
+    type: { const: 'project' },
+    name: { type: 'string' },
+    title: { type: 'string' },
+    description: { type: 'string' },
+    documents: {
+      type: 'array',
+      items: {
+        type: 'object',
+        required: ['type', 'path', 'title'],
+        properties: {
+          type: { enum: ['srs', 'vtp'] },
+          path: { type: 'string' },
+          title: { type: 'string' },
+        },
+      },
+    },
+  },
+} as const;
+
+export const srsSchema = {
+  $id: 'specpad/v1/srs',
+  type: 'object',
+  required: ['schemaVersion', 'type', 'name', 'title', 'items'],
+  properties: {
+    schemaVersion: { const: '1.0' },
+    type: { const: 'srs' },
+    name: { type: 'string' },
+    title: { type: 'string' },
+    items: {
+      type: 'array',
+      items: {
+        type: 'object',
+        required: ['id', 'text'],
+        properties: {
+          id: { type: 'string', minLength: 1 },
+          code: { type: 'string' },
+          text: { type: 'string' },
+          heading: { type: 'boolean' },
+          tags: stringArray,
+          hazards: stringArray,
+        },
+      },
+    },
+  },
+} as const;
+
+export const vtpSchema = {
+  $id: 'specpad/v1/vtp',
+  type: 'object',
+  required: ['schemaVersion', 'type', 'name', 'title', 'items'],
+  properties: {
+    schemaVersion: { const: '1.0' },
+    type: { const: 'vtp' },
+    name: { type: 'string' },
+    title: { type: 'string' },
+    items: {
+      type: 'array',
+      items: {
+        type: 'object',
+        required: ['id', 'text'],
+        properties: {
+          id: { type: 'string', minLength: 1 },
+          code: { type: 'string' },
+          text: { type: 'string' },
+          heading: { type: 'boolean' },
+          verifies: stringArray,
+          expected: { type: 'string' },
+          result: { enum: ['', 'not_tested', 'passed', 'failed'] },
+          notes: { type: 'string' },
+          tags: stringArray,
+        },
+      },
+    },
+  },
+} as const;

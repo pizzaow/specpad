@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0",
+  "type": "project",
+  "name": "PROJECT_NAME",
+  "title": "PROJECT_NAME System",
+  "description": "",
+  "documents": [
+    { "type": "srs", "path": "PROJECT_NAME.srs.json", "title": "Requirements" },
+    { "type": "vtp", "path": "PROJECT_NAME.vtp.json", "title": "Verification Tests" }
+  ]
+}

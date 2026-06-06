@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0",
+  "type": "project",
+  "name": "AcmeApp",
+  "title": "AcmeApp System",
+  "description": "",
+  "documents": [
+    { "type": "srs", "path": "AcmeApp.srs.json", "title": "Requirements" },
+    { "type": "vtp", "path": "AcmeApp.vtp.json", "title": "Verification Tests" }
+  ]
+}
