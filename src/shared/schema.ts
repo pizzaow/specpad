@@ -143,3 +143,121 @@ export const vtpSchema = {
     },
   },
 } as const;
+
+// ---- Sidecar documents (change-tracking cache; see specpad-change-tracking-design.md) ----
+// NOT part of the core proj/srs/vtp contract. Regenerable cache/config files.
+// JSON Schema validates STRUCTURE ONLY, exactly like the core docs.
+
+export type SidecarType = 'releases' | 'job' | 'attribution';
+
+export interface ReleaseEntry {
+  version: string;
+  ref: string;
+  date: string;
+  snapshot: string | null; // path under docs/specpad/, or null if not yet cached
+}
+
+export interface ReleasesDoc {
+  schemaVersion: SchemaVersion;
+  type: 'releases';
+  name: string;
+  tagPattern: string;
+  baseline: string | null; // version whose snapshot the baseline reflects
+  releases: ReleaseEntry[];
+}
+
+export interface JobDoc {
+  schemaVersion: SchemaVersion;
+  type: 'job';
+  job: string;
+  title?: string;
+}
+
+export interface AuthorRef {
+  name: string;
+  email: string;
+}
+
+export interface AttributionEntry {
+  addedIn: string;
+  addedBy: AuthorRef;
+  lastChangedIn: string;
+  lastChangedBy: AuthorRef;
+}
+
+export interface AttributionDoc {
+  schemaVersion: SchemaVersion;
+  type: 'attribution';
+  items: Record<string, AttributionEntry>;
+}
+
+export type SidecarDoc = ReleasesDoc | JobDoc | AttributionDoc;
+
+const nullableString = { type: ['string', 'null'] } as const;
+
+export const releasesSchema = {
+  $id: 'specpad/v1/releases',
+  type: 'object',
+  required: ['schemaVersion', 'type', 'name', 'tagPattern', 'baseline', 'releases'],
+  properties: {
+    schemaVersion: { const: '1.0' },
+    type: { const: 'releases' },
+    name: { type: 'string' },
+    tagPattern: { type: 'string' },
+    baseline: nullableString,
+    releases: {
+      type: 'array',
+      items: {
+        type: 'object',
+        required: ['version', 'ref', 'date', 'snapshot'],
+        properties: {
+          version: { type: 'string' },
+          ref: { type: 'string' },
+          date: { type: 'string' },
+          snapshot: nullableString,
+        },
+      },
+    },
+  },
+} as const;
+
+export const jobSchema = {
+  $id: 'specpad/v1/job',
+  type: 'object',
+  required: ['schemaVersion', 'type', 'job'],
+  properties: {
+    schemaVersion: { const: '1.0' },
+    type: { const: 'job' },
+    job: { type: 'string' },
+    title: { type: 'string' },
+  },
+} as const;
+
+const authorRefSchema = {
+  type: 'object',
+  required: ['name', 'email'],
+  properties: { name: { type: 'string' }, email: { type: 'string' } },
+} as const;
+
+export const attributionSchema = {
+  $id: 'specpad/v1/attribution',
+  type: 'object',
+  required: ['schemaVersion', 'type', 'items'],
+  properties: {
+    schemaVersion: { const: '1.0' },
+    type: { const: 'attribution' },
+    items: {
+      type: 'object',
+      additionalProperties: {
+        type: 'object',
+        required: ['addedIn', 'addedBy', 'lastChangedIn', 'lastChangedBy'],
+        properties: {
+          addedIn: { type: 'string' },
+          addedBy: authorRefSchema,
+          lastChangedIn: { type: 'string' },
+          lastChangedBy: authorRefSchema,
+        },
+      },
+    },
+  },
+} as const;
