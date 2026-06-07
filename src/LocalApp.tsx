@@ -5,7 +5,7 @@
  * persisted directory handles so return visits reopen without re-picking.
  */
 import React, { useEffect, useState } from 'react';
-import type { ProjectDoc, SrsDoc, VtpDoc } from './shared';
+import type { ProjectDoc, SrsDoc, VtpDoc, ReleasesDoc, JobDoc } from './shared';
 import {
   DocumentListItem,
   isFileSystemAccessSupported,
@@ -24,7 +24,16 @@ import {
   openFileFallback,
   saveFileFallback,
   serializeDocument,
+  loadReleases,
+  loadJob,
+  saveJob,
+  loadSnapshot,
 } from './localFileApi';
+import { buildRedline, computeAttribution } from './changeTracking';
+import type { SnapshotInput } from './changeTracking';
+import { cachedReleases } from './changeTrackingView';
+import VersionTimeline from './components/VersionTimeline';
+import JobControl from './components/JobControl';
 import * as recentStore from './handleStore';
 import type { RecentProject } from './handleStore';
 import { parseLaunchParams } from './launchParams';
@@ -49,8 +58,61 @@ const LocalApp: React.FC = () => {
   const [isDirectoryOpen, setIsDirectoryOpen] = useState(false);
   const [recent, setRecent] = useState<RecentProject[]>([]);
   const [launch] = useState(parseLaunchParams);
+  const [releases, setReleases] = useState<ReleasesDoc | null>(null);
+  const [job, setJob] = useState<JobDoc | null>(null);
+  const [srsBaseline, setSrsBaseline] = useState<SrsDoc | null>(null);
+  const [vtpBaseline, setVtpBaseline] = useState<VtpDoc | null>(null);
+  const [srsSnapshots, setSrsSnapshots] = useState<SnapshotInput[]>([]);
+  const [vtpSnapshots, setVtpSnapshots] = useState<SnapshotInput[]>([]);
 
   const supportsFileSystemAccess = isFileSystemAccessSupported();
+
+  const srsRedline = React.useMemo(
+    () => (srsDoc ? buildRedline(srsBaseline, srsDoc) : undefined),
+    [srsBaseline, srsDoc],
+  );
+  const vtpRedline = React.useMemo(
+    () => (vtpDoc ? buildRedline(vtpBaseline, vtpDoc) : undefined),
+    [vtpBaseline, vtpDoc],
+  );
+  const srsAttribution = React.useMemo(() => computeAttribution(srsSnapshots), [srsSnapshots]);
+  const vtpAttribution = React.useMemo(() => computeAttribution(vtpSnapshots), [vtpSnapshots]);
+
+  const handleSetJob = async (jobId: string, title: string) => {
+    const name = selectedDocName || projectName;
+    const doc: JobDoc = { schemaVersion: '1.0', type: 'job', job: jobId, ...(title ? { title } : {}) };
+    try {
+      await saveJob(name, doc);
+      setJob(doc);
+      setError(null);
+    } catch (err: any) {
+      setError(`Failed to set job: ${err.message}`);
+    }
+  };
+
+  // Load the change-tracking cache for a project: manifest, job marker, and the
+  // cached snapshots (oldest→newest) used for redline (baseline) and attribution.
+  const loadChangeTracking = async (name: string) => {
+    const rel = await loadReleases(name);
+    setReleases(rel);
+    setJob(await loadJob(name));
+    const cached = cachedReleases(rel);
+    const srsSnaps: SnapshotInput[] = [];
+    const vtpSnaps: SnapshotInput[] = [];
+    let srsBase: SrsDoc | null = null;
+    let vtpBase: VtpDoc | null = null;
+    for (const c of cached) {
+      const s = (await loadSnapshot(c.location, 'srs', name)) as SrsDoc | null;
+      const v = (await loadSnapshot(c.location, 'vtp', name)) as VtpDoc | null;
+      if (s) srsSnaps.push({ version: c.version, author: c.author, doc: s });
+      if (v) vtpSnaps.push({ version: c.version, author: c.author, doc: v });
+      if (c.location === 'baseline') { srsBase = s; vtpBase = v; }
+    }
+    setSrsSnapshots(srsSnaps);
+    setVtpSnapshots(vtpSnaps);
+    setSrsBaseline(srsBase);
+    setVtpBaseline(vtpBase);
+  };
 
   const loadNamedDocs = async (name: string) => {
     const proj = documents.find((d) => d.name === name && d.type === 'proj');
@@ -60,6 +122,7 @@ const LocalApp: React.FC = () => {
     setSrsDoc(srs ? await loadDocument('srs', name) : null);
     setVtpDoc(vtp ? await loadDocument('vtp', name) : null);
     setSelectedDocName(name);
+    await loadChangeTracking(name);
   };
 
   // Variant used right after open(), before `documents` state has settled.
@@ -71,6 +134,7 @@ const LocalApp: React.FC = () => {
     setSrsDoc(srs ? await loadDocument('srs', name) : null);
     setVtpDoc(vtp ? await loadDocument('vtp', name) : null);
     setSelectedDocName(name);
+    await loadChangeTracking(name);
   };
 
   // Apply a freshly-opened project: set state, auto-load a single/requested doc,
@@ -89,6 +153,12 @@ const LocalApp: React.FC = () => {
       setSrsDoc(null);
       setVtpDoc(null);
       setProjectDoc(null);
+      setReleases(null);
+      setJob(null);
+      setSrsBaseline(null);
+      setVtpBaseline(null);
+      setSrsSnapshots([]);
+      setVtpSnapshots([]);
     }
     if (recentStore.isSupported()) {
       const dh = getDirHandle();
@@ -288,11 +358,25 @@ const LocalApp: React.FC = () => {
         <ValidationPanel srsDoc={srsDoc} vtpDoc={vtpDoc} projectDoc={projectDoc} />
       )}
 
+      {isDirectoryOpen && selectedDocName && (
+        <div className="change-tracking">
+          <JobControl key={selectedDocName} job={job} onSet={handleSetJob} />
+          {releases ? (
+            <VersionTimeline releases={releases} />
+          ) : (
+            <div className="alert alert-info">
+              Change history unavailable — run <code>specpad refresh</code> to generate the version
+              snapshots. You can still edit and save normally.
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="content">
         {/* key={selectedDocName} remounts the table when the open document changes,
             so each table re-seeds its working copy instead of editing the prior doc. */}
-        {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onSave={handleSave} />}
-        {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onSave={handleSave} />}
+        {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onSave={handleSave} redline={srsRedline} attribution={srsSnapshots.length ? srsAttribution : undefined} />}
+        {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onSave={handleSave} redline={vtpRedline} attribution={vtpSnapshots.length ? vtpAttribution : undefined} />}
         {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} onSave={handleSave} />}
 
         {!isDirectoryOpen && !loading && (
