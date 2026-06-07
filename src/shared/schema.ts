@@ -147,13 +147,20 @@ export const vtpSchema = {
 // ---- Sidecar documents (change-tracking cache; see specpad-change-tracking-design.md) ----
 // NOT part of the core proj/srs/vtp contract. Regenerable cache/config files.
 // JSON Schema validates STRUCTURE ONLY, exactly like the core docs.
+// The skill writes these; it never computes diffs. The editor diffs the snapshots.
 
-export type SidecarType = 'releases' | 'job' | 'attribution';
+export type SidecarType = 'releases' | 'job';
+
+export interface AuthorRef {
+  name: string;
+  email: string;
+}
 
 export interface ReleaseEntry {
   version: string;
   ref: string;
   date: string;
+  author: AuthorRef; // the author of the tagged commit (release-granularity attribution)
   snapshot: string | null; // path under docs/specpad/, or null if not yet cached
 }
 
@@ -173,27 +180,15 @@ export interface JobDoc {
   title?: string;
 }
 
-export interface AuthorRef {
-  name: string;
-  email: string;
-}
-
-export interface AttributionEntry {
-  addedIn: string;
-  addedBy: AuthorRef;
-  lastChangedIn: string;
-  lastChangedBy: AuthorRef;
-}
-
-export interface AttributionDoc {
-  schemaVersion: SchemaVersion;
-  type: 'attribution';
-  items: Record<string, AttributionEntry>;
-}
-
-export type SidecarDoc = ReleasesDoc | JobDoc | AttributionDoc;
+export type SidecarDoc = ReleasesDoc | JobDoc;
 
 const nullableString = { type: ['string', 'null'] } as const;
+
+const authorRefSchema = {
+  type: 'object',
+  required: ['name', 'email'],
+  properties: { name: { type: 'string' }, email: { type: 'string' } },
+} as const;
 
 export const releasesSchema = {
   $id: 'specpad/v1/releases',
@@ -209,11 +204,12 @@ export const releasesSchema = {
       type: 'array',
       items: {
         type: 'object',
-        required: ['version', 'ref', 'date', 'snapshot'],
+        required: ['version', 'ref', 'date', 'author', 'snapshot'],
         properties: {
           version: { type: 'string' },
           ref: { type: 'string' },
           date: { type: 'string' },
+          author: authorRefSchema,
           snapshot: nullableString,
         },
       },
@@ -230,34 +226,5 @@ export const jobSchema = {
     type: { const: 'job' },
     job: { type: 'string' },
     title: { type: 'string' },
-  },
-} as const;
-
-const authorRefSchema = {
-  type: 'object',
-  required: ['name', 'email'],
-  properties: { name: { type: 'string' }, email: { type: 'string' } },
-} as const;
-
-export const attributionSchema = {
-  $id: 'specpad/v1/attribution',
-  type: 'object',
-  required: ['schemaVersion', 'type', 'items'],
-  properties: {
-    schemaVersion: { const: '1.0' },
-    type: { const: 'attribution' },
-    items: {
-      type: 'object',
-      additionalProperties: {
-        type: 'object',
-        required: ['addedIn', 'addedBy', 'lastChangedIn', 'lastChangedBy'],
-        properties: {
-          addedIn: { type: 'string' },
-          addedBy: authorRefSchema,
-          lastChangedIn: { type: 'string' },
-          lastChangedBy: authorRefSchema,
-        },
-      },
-    },
   },
 } as const;

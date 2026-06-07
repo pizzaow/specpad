@@ -32,8 +32,10 @@ Every file carries `"schemaVersion": "1.0"`.
 ## Scaffolding a new project
 
 1. Create `docs/specpad/` if missing.
-2. Copy the four templates from this skill's `templates/` folder, replacing every
-   `PROJECT_NAME` token with the system's short name.
+2. Copy the templates from this skill's `templates/` folder, replacing every `PROJECT_NAME` token
+   with the system's short name: `starter.proj.json`, `starter.srs.json`, `starter.vtp.json`, and
+   `starter.releases.json` (the empty change-tracking manifest). `.specpad/` is created later, on the
+   first `refresh`.
 3. Validate (see "Validate before finishing").
 
 ## The v1 shape
@@ -59,6 +61,62 @@ VTP item — REQUIRED `id`, `text`. Optional `code`, `verifies`, `expected`, `re
 
 - Do NOT add `numTests`, result roll-ups, `modifiedUser`, `modifiedDate`, or change
   counters. Git owns history; roll-ups are computed on read.
+
+## Change tracking (git plumbing only — never diff)
+
+Change tracking is **derived from git and rendered by the editor**. Your only job is to keep a small,
+committed, regenerable cache up to date. **You never compute diffs or attribution** — the editor computes
+all redlines, version diffs, and attribution from the raw snapshots you write using the shared
+`diffDocs`. This is what guarantees the skill and editor can never disagree.
+
+### Cache files (under `docs/specpad/`, all committed — never gitignore them)
+- `<name>.releases.json` — the **manifest**: the release register the editor reads for its version
+  timeline and baseline. Type `releases`. User-editable.
+- `<name>.job.json` — optional **current-job marker** (`{ "type": "job", "job": "PROJ-123",
+  "title": "..." }`). Set by the user (often in the editor); you fold it into commit trailers.
+- `.specpad/baseline/` — raw snapshot of the spec files at the latest release (always present once
+  refreshed).
+- `.specpad/snapshots/<version>/` — raw snapshots of older releases, pulled on demand and then kept.
+
+`.specpad/` is a normal committed directory (deliberately not named `.cache/`, which many global
+gitignores exclude). It holds **only verbatim copies** of past spec files — never diffs.
+
+### `refresh` — keep the manifest and baseline current (idempotent)
+Run at release time or on request:
+1. Determine the tag pattern: use `tagPattern` from `<name>.releases.json` if present, else default
+   `v*`. List matching tags newest-last: `git tag --list '<pattern>' --sort=creatordate`.
+2. For every matching tag not already in `releases.json`, append an entry
+   `{ version, ref, date, author, snapshot }`:
+   - `version`: the tag name as-is (e.g. `"v1.0"`).
+   - `ref`: the resolved commit SHA — `git rev-parse <tag>^{commit}` (dereferences annotated tags to their target commit).
+   - `date`: `git log -1 --format=%cs <tag>` (commit date, `YYYY-MM-DD`).
+   - `author`: the author of the tagged commit — `git log -1 --format='%an	%ae' <tag>` →
+     `{ "name": ..., "email": ... }`. (This is **release-granularity** "who", not per-item.)
+   - `snapshot`: `null` for now (filled in only when cached).
+3. Regenerate `.specpad/baseline/` from the newest matching tag: for each spec file
+   `git show <tag>:docs/specpad/<file>` and write it under `docs/specpad/.specpad/baseline/` mirroring the
+   top-level file names. Set that release's `snapshot` to `".specpad/baseline"` and set the top-level
+   `baseline` to that version.
+4. Re-validate every JSON file you wrote.
+
+If there are **no matching tags**, write a manifest with `baseline: null` and `releases: []` (copy
+`templates/starter.releases.json`); the editor degrades gracefully.
+
+### `pull <version>` — cache an older snapshot on demand
+`git show <ref>:docs/specpad/<file>` for each spec file into `.specpad/snapshots/<version>/`
+(mirroring top-level names), then set that release entry's `snapshot` to that path. Do **not** diff.
+
+### Commit workflow (jobs)
+Each commit should carry its spec/test edits and a job. When you commit on the user's behalf:
+- If `<name>.job.json` exists, add a `Job: <job>` trailer to the commit message.
+- Pre-commit check (name-level, **not** a semantic diff): if code files are staged, confirm the
+  related `docs/specpad/*.json` are staged too when requirements/tests changed — use
+  `git diff --cached --name-only`. Warn if spec/test updates look missing.
+
+### On-demand reports (advisory prose, never cached)
+When asked "what changed for the next release", "trace job PROJ-123", or "who last changed r_x":
+walk git directly (`git log`, `git describe --tags`, `git log --grep='Job: PROJ-123'`) and summarize in prose.
+These are advisory; they are not written to the cache and nothing depends on them.
 
 ## Governance — enforce before finishing
 
