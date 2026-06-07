@@ -107,8 +107,12 @@ docs/specpad/.specpad/
   "schemaVersion": "1.0",
   "type": "attribution",
   "items": {
-    "r_7f3a9c": { "addedIn": "v24.0", "addedBy": "Geoff Pollard",
-                  "lastChangedIn": "v26.1", "lastChangedBy": "Sam Lee" }
+    "r_7f3a9c": {
+      "addedIn": "v24.0",
+      "addedBy": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "lastChangedIn": "v26.1",
+      "lastChangedBy": { "name": "Sam Lee", "email": "sam@example.com" }
+    }
   }
 }
 ```
@@ -162,7 +166,9 @@ Properties:
 - **Keyed on stable `id`**, never on `code` or array position — a renamed `code` or reordered list is
   not a spurious change. This is the whole reason the v1 contract mandates immutable ids.
 - **Pure and deterministic** — no git, no clock, no I/O. Trivially unit-testable.
-- `changedFields` enables precise UI highlighting (e.g. only the `expected` cell pulses).
+- `changedFields` enables precise UI highlighting (e.g. only the `expected` cell pulses). For array
+  fields (`verifies`, `tags`, `hazards`) the granularity is **whole-field** — the field name appears
+  in `changedFields` if the array differs at all; element-level array diffing is out of scope for v1.
 - Heading items diff like any other item (by id).
 
 ## 6. The skill: the `refresh` operation (the "magic")
@@ -246,11 +252,11 @@ Issues) slots in behind `resolveJob` with zero rework to the storage or diff lay
 - Any change-tracking **fields back on spec items** — the spec schema stays unchanged.
 - A backend / server — everything remains static editor + skill + git.
 
-## 12. Open decisions to confirm during implementation
+## 12. Resolved implementation decisions
 
-1. Exact `changedFields` granularity for array fields (`verifies`, `tags`) — whole-field vs
-   element-level. (Proposed: whole-field for v1.)
-2. Whether `attribution.json` records both author *name* and email, or name only. (Proposed: name +
-   email, display name.)
-3. Snapshot file layout for multi-doc projects with custom file names — mirror top-level names under
-   each snapshot dir (Proposed) vs flatten.
+1. **`changedFields` granularity for array fields** (`verifies`, `tags`, `hazards`): **whole-field** —
+   the field is flagged changed if the array differs at all; no element-level array diffing in v1.
+2. **`attribution.json` author identity:** record **both name and email** as `{name, email}`; the UI
+   decides which to display.
+3. **Snapshot layout for multi-doc / custom file names:** **mirror the top-level file names** under
+   each snapshot directory (`.specpad/baseline/<name>.srs.json`, etc.) rather than flattening.
