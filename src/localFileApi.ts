@@ -4,7 +4,7 @@
  * Chrome/Edge: full support. Firefox/Safari: fallback upload/download.
  */
 
-import type { ProjectDoc, SrsDoc, VtpDoc, SpecPadDoc } from './shared';
+import type { ProjectDoc, SrsDoc, VtpDoc, SpecPadDoc, ReleasesDoc, JobDoc } from './shared';
 import { createSrsDoc, createVtpDoc } from './shared';
 
 declare global {
@@ -215,4 +215,81 @@ export function saveFileFallback(content: string, filename: string): void {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+// ---- Change-tracking cache loaders (manifest, job marker, snapshots) ----
+// All return null when the file/dir is absent so the editor can show a degraded
+// (no-history) state instead of erroring. The skill writes these; we only read
+// (and write the job marker the user sets).
+
+export type SnapshotLocation = 'baseline' | { version: string };
+
+/** Pure: the .specpad path segments for a snapshot location. */
+export function snapshotDirSegments(location: SnapshotLocation): string[] {
+  return location === 'baseline'
+    ? ['.specpad', 'baseline']
+    : ['.specpad', 'snapshots', location.version];
+}
+
+/** Walk into a nested subdirectory of the open project; null if any segment is missing. */
+async function getSubDirectory(segments: string[]): Promise<FileSystemDirectoryHandle | null> {
+  if (!projectDirHandle) return null;
+  let dir: any = projectDirHandle;
+  for (const seg of segments) {
+    try {
+      dir = await dir.getDirectoryHandle(seg);
+    } catch {
+      return null;
+    }
+  }
+  return dir as FileSystemDirectoryHandle;
+}
+
+async function readJsonFrom(
+  dir: FileSystemDirectoryHandle,
+  filename: string,
+): Promise<SpecPadDoc | null> {
+  try {
+    const fh = await dir.getFileHandle(filename);
+    return parseDocument(await (await fh.getFile()).text());
+  } catch {
+    return null;
+  }
+}
+
+/** Load the release manifest `<name>.releases.json`, or null if absent. */
+export async function loadReleases(name: string): Promise<ReleasesDoc | null> {
+  if (!projectDirHandle) return null;
+  return (await readJsonFrom(projectDirHandle, `${name}.releases.json`)) as ReleasesDoc | null;
+}
+
+/** Load the current-job marker `<name>.job.json`, or null if absent. */
+export async function loadJob(name: string): Promise<JobDoc | null> {
+  if (!projectDirHandle) return null;
+  return (await readJsonFrom(projectDirHandle, `${name}.job.json`)) as JobDoc | null;
+}
+
+/** Write the current-job marker `<name>.job.json`. */
+export async function saveJob(name: string, doc: JobDoc): Promise<void> {
+  if (!projectDirHandle) throw new Error('No directory selected');
+  const fileHandle = await projectDirHandle.getFileHandle(`${name}.job.json`, { create: true });
+  const writable = await fileHandle.createWritable();
+  try {
+    await writable.write(serializeDocument(doc as unknown as SpecPadDoc));
+    await writable.close();
+  } catch (err) {
+    await writable.abort();
+    throw err;
+  }
+}
+
+/** Load a cached snapshot doc (`.specpad/baseline/...` or `.specpad/snapshots/<version>/...`). */
+export async function loadSnapshot(
+  location: SnapshotLocation,
+  type: 'srs' | 'vtp' | 'proj',
+  name: string,
+): Promise<SpecPadDoc | null> {
+  const dir = await getSubDirectory(snapshotDirSegments(location));
+  if (!dir) return null;
+  return readJsonFrom(dir, `${name}.${type}.json`);
 }
