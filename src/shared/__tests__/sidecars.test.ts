@@ -39,7 +39,8 @@ describe('sidecar schemas', () => {
   });
 
   it('rejects a releases doc missing tagPattern', () => {
-    const { tagPattern: _tagPattern, ...bad } = releases;
+    const bad: Record<string, unknown> = { ...releases };
+    delete bad.tagPattern;
     expect(validate(bad).length).toBeGreaterThan(0);
   });
 
@@ -60,6 +61,20 @@ describe('sidecar schemas', () => {
     const bad = {
       ...attribution,
       items: { r_1: { addedIn: 'v1', addedBy: 'Geoff', lastChangedIn: 'v1', lastChangedBy: 'Geoff' } },
+    };
+    expect(validate(bad).length).toBeGreaterThan(0);
+  });
+
+  it('rejects an attribution entry missing addedIn', () => {
+    const bad = {
+      ...attribution,
+      items: {
+        r_1: {
+          addedBy: { name: 'A', email: 'a@b.com' },
+          lastChangedIn: 'v1',
+          lastChangedBy: { name: 'A', email: 'a@b.com' },
+        },
+      },
     };
     expect(validate(bad).length).toBeGreaterThan(0);
   });
