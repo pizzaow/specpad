@@ -87,12 +87,14 @@ Run at release time or on request:
    `v*`. List matching tags newest-last: `git tag --list '<pattern>' --sort=creatordate`.
 2. For every matching tag not already in `releases.json`, append an entry
    `{ version, ref, date, author, snapshot }`:
+   - `version`: the tag name as-is (e.g. `"v1.0"`).
+   - `ref`: the resolved commit SHA — `git rev-parse <tag>^{commit}` (dereferences annotated tags to their target commit).
    - `date`: `git log -1 --format=%cs <tag>` (commit date, `YYYY-MM-DD`).
-   - `author`: the release's tagger/committer — `git log -1 --format='%an	%ae' <tag>` →
+   - `author`: the author of the tagged commit — `git log -1 --format='%an	%ae' <tag>` →
      `{ "name": ..., "email": ... }`. (This is **release-granularity** "who", not per-item.)
    - `snapshot`: `null` for now (filled in only when cached).
 3. Regenerate `.specpad/baseline/` from the newest matching tag: for each spec file
-   `git show <tag>:docs/specpad/<file>` and write it under `.specpad/baseline/` mirroring the
+   `git show <tag>:docs/specpad/<file>` and write it under `docs/specpad/.specpad/baseline/` mirroring the
    top-level file names. Set that release's `snapshot` to `".specpad/baseline"` and set the top-level
    `baseline` to that version.
 4. Re-validate every JSON file you wrote.
@@ -113,7 +115,7 @@ Each commit should carry its spec/test edits and a job. When you commit on the u
 
 ### On-demand reports (advisory prose, never cached)
 When asked "what changed for the next release", "trace job PROJ-123", or "who last changed r_x":
-walk git directly (`git log`, `git describe --tags`, `--grep='Job: PROJ-123'`) and summarize in prose.
+walk git directly (`git log`, `git describe --tags`, `git log --grep='Job: PROJ-123'`) and summarize in prose.
 These are advisory; they are not written to the cache and nothing depends on them.
 
 ## Governance — enforce before finishing

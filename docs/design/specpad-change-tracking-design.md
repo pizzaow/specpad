@@ -82,7 +82,7 @@ timeline** and the baseline selection.
 }
 ```
 `snapshot: null` means "listed in history but not yet cached" — pulled lazily on demand (see §4, #3).
-`author` is the release's tagger/committer (**release granularity**). It is the source of the "by whom"
+`author` is the author of the tagged commit (**release granularity**). It is the source of the "by whom"
 shown in attribution; the editor derives the *version* part of attribution by diffing snapshots, then
 looks up that release's `author` here. There is **no per-item author cache**.
 
@@ -174,7 +174,7 @@ behind-the-scenes prep:
 
 1. Detect the tag pattern (default `v*`; respect a user override in `releases.json`).
 2. Append any new matching tags to `releases.json` with their commit date **and `author`**
-   (the tag's tagger, or the tagged commit's committer).
+   (the author of the tagged commit).
 3. Regenerate `.specpad/baseline/` from the newest release (`git show <ref>:<path>` for each doc).
 
 There is **no attribution regeneration step** — the editor derives version-level attribution from the
@@ -257,7 +257,7 @@ Issues) slots in behind `resolveJob` with zero rework to the storage or diff lay
 
 - Eager snapshots of **all** releases (we cache latest + lazy-pull older).
 - Always-fresh **per-commit** history in the UI (release granularity in UI; commit-level on demand).
-- **Per-item author** attribution. We use per-release `author` (the release's tagger/committer); true
+- **Per-item author** attribution. We use per-release `author` (the author of the tagged commit); true
   "who edited this specific requirement" is an on-demand skill report, never cached.
 - Live tracker (Jira) **API integration** — only the `resolveJob` extension point is designed, not
   built.
@@ -269,7 +269,7 @@ Issues) slots in behind `resolveJob` with zero rework to the storage or diff lay
 1. **`changedFields` granularity for array fields** (`verifies`, `tags`, `hazards`): **whole-field** —
    the field is flagged changed if the array differs at all; no element-level array diffing in v1.
 2. **Author attribution is per-release.** Each manifest release entry carries `author: {name, email}`
-   (the release's tagger/committer). There is **no per-item author cache**; the editor pairs the
+   (the author of the tagged commit). There is **no per-item author cache**; the editor pairs the
    snapshot-derived version with that release's author. Per-item/commit-level author is an on-demand
    skill report.
 3. **Snapshot layout for multi-doc / custom file names:** **mirror the top-level file names** under
