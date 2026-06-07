@@ -31,6 +31,13 @@ describe('buildRedline', () => {
     expect(r.byId.has('r_2')).toBe(false);
     expect(r.removed.map((c) => c.id)).toEqual(['r_2']);
   });
+
+  it('flags an array-field membership change in changedFields', () => {
+    const baseline = srs([{ id: 'r_1', text: 'A', tags: ['x', 'y'] }]);
+    const working = srs([{ id: 'r_1', text: 'A', tags: ['x', 'z'] }]);
+    const r = buildRedline(baseline, working);
+    expect(r.byId.get('r_1')).toEqual({ status: 'modified', changedFields: ['tags'] });
+  });
 });
 
 describe('computeAttribution', () => {
@@ -66,5 +73,23 @@ describe('computeAttribution', () => {
       { version: 'v2.0', author: sam, doc: srs([]) },
     ]);
     expect(m.has('r_1')).toBe(false);
+  });
+
+  it('re-attributes an item that was removed then re-added', () => {
+    const m = computeAttribution([
+      { version: 'v1.0', author: geoff, doc: srs([{ id: 'r_1', text: 'A' }]) },
+      { version: 'v2.0', author: sam, doc: srs([]) },
+      { version: 'v3.0', author: geoff, doc: srs([{ id: 'r_1', text: 'A' }]) },
+    ]);
+    expect(m.get('r_1')).toEqual({ addedIn: 'v3.0', addedBoundary: false, lastChangedIn: 'v3.0', author: geoff });
+  });
+
+  it('advances lastChangedIn/author across multiple modifications but pins addedIn', () => {
+    const m = computeAttribution([
+      { version: 'v1.0', author: geoff, doc: srs([{ id: 'r_1', text: 'A' }]) },
+      { version: 'v2.0', author: sam, doc: srs([{ id: 'r_1', text: 'A2' }]) },
+      { version: 'v3.0', author: geoff, doc: srs([{ id: 'r_1', text: 'A3' }]) },
+    ]);
+    expect(m.get('r_1')).toEqual({ addedIn: 'v1.0', addedBoundary: true, lastChangedIn: 'v3.0', author: geoff });
   });
 });
