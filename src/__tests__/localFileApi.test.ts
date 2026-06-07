@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseDocument, serializeDocument } from '../localFileApi';
+import { parseDocument, serializeDocument, snapshotDirSegments } from '../localFileApi';
 import type { SrsDoc } from '../shared';
 
 describe('localFileApi serialization', () => {
@@ -19,5 +19,15 @@ describe('localFileApi serialization', () => {
 
   it('parseDocument rejects malformed JSON', () => {
     expect(() => parseDocument('{not json')).toThrow();
+  });
+});
+
+describe('snapshotDirSegments', () => {
+  it('points "baseline" at .specpad/baseline', () => {
+    expect(snapshotDirSegments('baseline')).toEqual(['.specpad', 'baseline']);
+  });
+
+  it('points a version at .specpad/snapshots/<version>', () => {
+    expect(snapshotDirSegments({ version: 'v26.1' })).toEqual(['.specpad', 'snapshots', 'v26.1']);
   });
 });
