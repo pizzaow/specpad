@@ -6,16 +6,20 @@
 import React, { useMemo, useState } from 'react';
 import type { SrsDoc, SrsItem, VtpDoc } from '../shared';
 import { createSrsItem } from '../shared';
+import type { RedlineView, AttributionView } from '../changeTracking';
+import { rowStatusClass, isCellChanged, attributionLabel } from '../changeTrackingView';
 
 interface SRSTableProps {
   doc: SrsDoc;
   vtpDoc: VtpDoc | null;
   onSave: (doc: SrsDoc) => void;
+  redline?: RedlineView;
+  attribution?: Map<string, AttributionView>;
 }
 
 type EditTarget = { index: number; field: 'code' | 'text' | 'tags' | 'hazards' } | null;
 
-const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onSave }) => {
+const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onSave, redline, attribution }) => {
   const [data, setData] = useState<SrsDoc>(doc);
   const [editing, setEditing] = useState<EditTarget>(null);
   const [editValue, setEditValue] = useState('');
@@ -119,17 +123,19 @@ const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onSave }) => {
             <th style={{ width: 140 }}>Tags</th>
             <th style={{ width: 140 }}>Hazards</th>
             <th style={{ width: 60 }}>Tests</th>
+            {attribution && <th style={{ width: 150 }}>History</th>}
             <th style={{ width: 90 }}>Actions</th>
           </tr>
         </thead>
         <tbody>
           {data.items.map((item, index) => (
-            <tr key={item.id} className={item.heading ? 'info' : ''}>
-              <td>{item.heading ? <em>heading</em> : renderCell(index, 'code')}</td>
-              <td style={item.heading ? { fontWeight: 'bold' } : undefined}>{renderCell(index, 'text')}</td>
-              <td>{item.heading ? '' : renderCell(index, 'tags')}</td>
-              <td>{item.heading ? '' : renderCell(index, 'hazards')}</td>
+            <tr key={item.id} className={rowStatusClass(item.heading, redline?.byId.get(item.id))}>
+              <td className={isCellChanged(redline?.byId.get(item.id), 'code') ? 'ct-changed' : undefined}>{item.heading ? <em>heading</em> : renderCell(index, 'code')}</td>
+              <td style={item.heading ? { fontWeight: 'bold' } : undefined} className={isCellChanged(redline?.byId.get(item.id), 'text') ? 'ct-changed' : undefined}>{renderCell(index, 'text')}</td>
+              <td className={isCellChanged(redline?.byId.get(item.id), 'tags') ? 'ct-changed' : undefined}>{item.heading ? '' : renderCell(index, 'tags')}</td>
+              <td className={isCellChanged(redline?.byId.get(item.id), 'hazards') ? 'ct-changed' : undefined}>{item.heading ? '' : renderCell(index, 'hazards')}</td>
               <td>{item.heading ? '' : testCounts.get(item.id) ?? 0}</td>
+              {attribution && <td className="ct-attribution">{item.heading ? '' : attributionLabel(attribution.get(item.id))}</td>}
               <td>
                 <div className="btn-group-vertical btn-group-xs">
                   <button className="btn btn-default btn-xs" title="Add row below" onClick={() => addRow(index)}>+</button>
@@ -142,6 +148,19 @@ const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onSave }) => {
           ))}
         </tbody>
       </table>
+      {redline && redline.removed.length > 0 && (
+        <div className="panel panel-default ct-removed">
+          <div className="panel-heading"><strong>Removed since baseline ({redline.removed.length})</strong></div>
+          <ul className="list-group">
+            {redline.removed.map((c) => (
+              <li key={c.id} className="list-group-item">
+                {c.before?.code ? <strong>{c.before.code}: </strong> : null}
+                {c.before?.text}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
