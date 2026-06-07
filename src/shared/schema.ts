@@ -160,7 +160,7 @@ export interface ReleaseEntry {
   version: string;
   ref: string;
   date: string;
-  author: AuthorRef; // the release's tagger/committer (release-granularity attribution)
+  author: AuthorRef; // the author of the tagged commit (release-granularity attribution)
   snapshot: string | null; // path under docs/specpad/, or null if not yet cached
 }
 
