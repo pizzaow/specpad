@@ -6,18 +6,22 @@
 import React, { useMemo, useState } from 'react';
 import type { SrsDoc, VtpDoc, VtpItem, TestResult } from '../shared';
 import { createVtpItem } from '../shared';
+import type { RedlineView, AttributionView } from '../changeTracking';
+import { rowStatusClass, isCellChanged, attributionLabel } from '../changeTrackingView';
 
 interface VTPTableProps {
   doc: VtpDoc;
   srsDoc: SrsDoc | null;
   onSave: (doc: VtpDoc) => void;
+  redline?: RedlineView;
+  attribution?: Map<string, AttributionView>;
 }
 
 type EditTarget = { index: number; field: 'code' | 'text' | 'verifies' | 'expected' | 'notes' } | null;
 
 const RESULTS: TestResult[] = ['', 'not_tested', 'passed', 'failed'];
 
-const VTPTable: React.FC<VTPTableProps> = ({ doc, srsDoc, onSave }) => {
+const VTPTable: React.FC<VTPTableProps> = ({ doc, srsDoc, onSave, redline, attribution }) => {
   const [data, setData] = useState<VtpDoc>(doc);
   const [editing, setEditing] = useState<EditTarget>(null);
   const [editValue, setEditValue] = useState('');
@@ -135,21 +139,23 @@ const VTPTable: React.FC<VTPTableProps> = ({ doc, srsDoc, onSave }) => {
             <th style={{ width: 160 }}>Verifies</th>
             <th style={{ width: 200 }}>Expected</th>
             <th style={{ width: 110 }}>Result</th>
+            {attribution && <th style={{ width: 150 }}>History</th>}
             <th style={{ width: 90 }}>Actions</th>
           </tr>
         </thead>
         <tbody>
           {data.items.map((item, index) => (
-            <tr key={item.id} className={srsDoc && rowHasBadRef(item) ? 'danger' : ''}>
-              <td>{renderCell(index, 'code')}</td>
-              <td>{renderCell(index, 'text')}</td>
-              <td>{renderCell(index, 'verifies')}</td>
-              <td>{renderCell(index, 'expected')}</td>
+            <tr key={item.id} className={srsDoc && rowHasBadRef(item) ? 'danger' : rowStatusClass(item.heading, redline?.byId.get(item.id))}>
+              <td className={isCellChanged(redline?.byId.get(item.id), 'code') ? 'ct-changed' : undefined}>{renderCell(index, 'code')}</td>
+              <td className={isCellChanged(redline?.byId.get(item.id), 'text') ? 'ct-changed' : undefined}>{renderCell(index, 'text')}</td>
+              <td className={isCellChanged(redline?.byId.get(item.id), 'verifies') ? 'ct-changed' : undefined}>{renderCell(index, 'verifies')}</td>
+              <td className={isCellChanged(redline?.byId.get(item.id), 'expected') ? 'ct-changed' : undefined}>{renderCell(index, 'expected')}</td>
               <td>
                 <select className="form-control" value={item.result ?? ''} onChange={(e) => setResult(index, e.target.value as TestResult)}>
                   {RESULTS.map((r) => <option key={r} value={r}>{r === '' ? '—' : r}</option>)}
                 </select>
               </td>
+              {attribution && <td className="ct-attribution">{item.heading ? '' : attributionLabel(attribution.get(item.id))}</td>}
               <td>
                 <div className="btn-group-vertical btn-group-xs">
                   <button className="btn btn-default btn-xs" title="Add row below" onClick={() => addRow(index)}>+</button>
@@ -162,6 +168,19 @@ const VTPTable: React.FC<VTPTableProps> = ({ doc, srsDoc, onSave }) => {
           ))}
         </tbody>
       </table>
+      {redline && redline.removed.length > 0 && (
+        <div className="panel panel-default ct-removed">
+          <div className="panel-heading"><strong>Removed since baseline ({redline.removed.length})</strong></div>
+          <ul className="list-group">
+            {redline.removed.map((c) => (
+              <li key={c.id} className="list-group-item">
+                {c.before?.code ? <strong>{c.before.code}: </strong> : null}
+                {c.before?.text}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       {!srsDoc && (
         <div className="alert alert-warning">
           <strong>Note:</strong> No SRS document loaded. `verifies` references cannot be resolved.
