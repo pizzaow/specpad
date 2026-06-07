@@ -4,7 +4,7 @@
  * Chrome/Edge: full support. Firefox/Safari: fallback upload/download.
  */
 
-import type { ProjectDoc, SrsDoc, VtpDoc, SpecPadDoc, ReleasesDoc, JobDoc } from './shared';
+import type { ProjectDoc, SrsDoc, VtpDoc, SpecPadDoc, ReleasesDoc, JobDoc, SidecarDoc } from './shared';
 import { createSrsDoc, createVtpDoc } from './shared';
 
 declare global {
@@ -30,7 +30,7 @@ export function isFileSystemAccessSupported(): boolean {
 }
 
 /** Pure helpers — unit-tested without the File System Access API. */
-export function serializeDocument(doc: SpecPadDoc): string {
+export function serializeDocument(doc: SpecPadDoc | SidecarDoc): string {
   return JSON.stringify(doc, null, 2) + '\n';
 }
 
@@ -252,8 +252,9 @@ async function readJsonFrom(
   try {
     const fh = await dir.getFileHandle(filename);
     return parseDocument(await (await fh.getFile()).text());
-  } catch {
-    return null;
+  } catch (err: any) {
+    if (err?.name === 'NotFoundError') return null;
+    throw err;
   }
 }
 
@@ -275,7 +276,7 @@ export async function saveJob(name: string, doc: JobDoc): Promise<void> {
   const fileHandle = await projectDirHandle.getFileHandle(`${name}.job.json`, { create: true });
   const writable = await fileHandle.createWritable();
   try {
-    await writable.write(serializeDocument(doc as unknown as SpecPadDoc));
+    await writable.write(serializeDocument(doc));
     await writable.close();
   } catch (err) {
     await writable.abort();

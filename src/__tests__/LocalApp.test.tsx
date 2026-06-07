@@ -34,6 +34,10 @@ vi.mock('../localFileApi', () => ({
   openFileFallback: vi.fn(),
   saveFileFallback: vi.fn(),
   serializeDocument: vi.fn(),
+  loadReleases: vi.fn(async () => null),
+  loadJob: vi.fn(async () => null),
+  saveJob: vi.fn(async () => undefined),
+  loadSnapshot: vi.fn(async () => null),
 }));
 
 import LocalApp from '../LocalApp';
