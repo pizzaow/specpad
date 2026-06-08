@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildRedline, computeAttribution } from '../changeTracking';
+import { buildRedline, computeAttribution, buildRedlineRows } from '../changeTracking';
 import type { SrsDoc, SrsItem, AuthorRef } from '../shared';
 
 function srs(items: SrsItem[]): SrsDoc {
@@ -91,5 +91,40 @@ describe('computeAttribution', () => {
       { version: 'v3.0', author: geoff, doc: srs([{ id: 'r_1', text: 'A3' }]) },
     ]);
     expect(m.get('r_1')).toEqual({ addedIn: 'v1.0', addedBoundary: true, lastChangedIn: 'v3.0', author: geoff });
+  });
+});
+
+describe('buildRedlineRows', () => {
+  const base = (items: SrsItem[]): SrsDoc => ({ schemaVersion: '1.0', type: 'srs', name: 'A', title: 'T', items });
+
+  it('marks all rows unchanged when there is no baseline', () => {
+    const rows = buildRedlineRows(null, base([{ id: 'r_1', text: 'A' }]));
+    expect(rows.map((r) => r.status)).toEqual(['unchanged']);
+  });
+
+  it('tags added and modified rows in working order', () => {
+    const baseline = base([{ id: 'r_1', text: 'A' }]);
+    const working = base([{ id: 'r_1', text: 'A2' }, { id: 'r_2', text: 'B' }]);
+    const rows = buildRedlineRows(baseline, working);
+    expect(rows.map((r) => [r.item.id, r.status])).toEqual([['r_1', 'modified'], ['r_2', 'added']]);
+    expect(rows[0].changedFields).toEqual(['text']);
+  });
+
+  it('interleaves a removed row at its baseline position', () => {
+    const baseline = base([{ id: 'r_1', text: 'A' }, { id: 'r_2', text: 'B' }, { id: 'r_3', text: 'C' }]);
+    const working = base([{ id: 'r_1', text: 'A' }, { id: 'r_3', text: 'C' }]); // r_2 removed
+    const rows = buildRedlineRows(baseline, working);
+    expect(rows.map((r) => [r.item.id, r.status])).toEqual([
+      ['r_1', 'unchanged'],
+      ['r_2', 'removed'],
+      ['r_3', 'unchanged'],
+    ]);
+  });
+
+  it('places a removed first item before everything', () => {
+    const baseline = base([{ id: 'r_1', text: 'A' }, { id: 'r_2', text: 'B' }]);
+    const working = base([{ id: 'r_2', text: 'B' }]); // r_1 removed
+    const rows = buildRedlineRows(baseline, working);
+    expect(rows.map((r) => [r.item.id, r.status])).toEqual([['r_1', 'removed'], ['r_2', 'unchanged']]);
   });
 });
