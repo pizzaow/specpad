@@ -26,6 +26,7 @@ export interface SrsItem {
   code?: string;
   text: string;
   heading?: boolean;
+  level?: number;
   tags?: string[];
   hazards?: string[];
 }
@@ -43,6 +44,7 @@ export interface VtpItem {
   code?: string;
   text: string;
   heading?: boolean;
+  level?: number;
   verifies?: string[];
   expected?: string;
   result?: TestResult;
@@ -106,6 +108,7 @@ export const srsSchema = {
           code: { type: 'string' },
           text: { type: 'string' },
           heading: { type: 'boolean' },
+          level: { type: 'integer', minimum: 0 },
           tags: stringArray,
           hazards: stringArray,
         },
@@ -133,6 +136,7 @@ export const vtpSchema = {
           code: { type: 'string' },
           text: { type: 'string' },
           heading: { type: 'boolean' },
+          level: { type: 'integer', minimum: 0 },
           verifies: stringArray,
           expected: { type: 'string' },
           result: { enum: ['', 'not_tested', 'passed', 'failed'] },
