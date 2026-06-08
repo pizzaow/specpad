@@ -41,6 +41,18 @@
     { "id": "h_d0c5", "heading": true, "text": "Skill and launcher" },
     { "id": "r_a601", "code": "SKILL-1", "text": "The skill shall scaffold docs/specpad/ and create or edit documents programmatically, generating stable ids.", "tags": ["skill"] },
     { "id": "r_a602", "code": "SKILL-2", "text": "The skill shall validate structure and governance before reporting a task complete." },
-    { "id": "r_a603", "code": "SKILL-3", "text": "The skill shall generate a launcher (index.html) that redirects to the version-pinned hosted editor at specpad.com/v01/." }
+    { "id": "r_a603", "code": "SKILL-3", "text": "The skill shall generate a launcher (index.html) that redirects to the version-pinned hosted editor at specpad.com/v01/." },
+
+    { "id": "h_ce100", "heading": true, "text": "Change tracking" },
+    { "id": "r_ce101", "code": "CT-1", "text": "The editor shall show which requirements and tests have changed since the latest release by diffing the working documents against the cached baseline snapshot.", "tags": ["change-tracking"] },
+    { "id": "r_ce102", "code": "CT-2", "text": "Differences shall be computed by stable id, so renaming a code label or reordering items is not reported as a change.", "tags": ["change-tracking"] },
+    { "id": "r_ce103", "code": "CT-3", "text": "The editor shall compute all change views; the skill shall not compute diffs, so both halves share one diff implementation and cannot disagree.", "tags": ["change-tracking"] },
+    { "id": "r_ce104", "code": "CT-4", "text": "The skill shall maintain a committed, regenerable cache of raw document snapshots plus a release manifest under docs/specpad/; no computed diffs shall be stored.", "tags": ["change-tracking"] },
+    { "id": "r_ce105", "code": "CT-5", "text": "The release manifest shall record, for each release, its version, git ref, date, and the author of the tagged commit.", "tags": ["change-tracking"] },
+    { "id": "r_ce106", "code": "CT-6", "text": "The editor shall derive per-item attribution (the version an item was added in and last changed in) from the cached snapshots and show the responsible release author.", "tags": ["change-tracking"] },
+    { "id": "r_ce107", "code": "CT-7", "text": "The editor shall present the release history from the manifest, indicating the current baseline.", "tags": ["change-tracking"] },
+    { "id": "r_ce108", "code": "CT-8", "text": "Spec changes shall be associated with a development job via a current-job marker and a commit trailer, never by a field stored on individual items.", "tags": ["change-tracking"] },
+    { "id": "r_ce109", "code": "CT-9", "text": "When the change-tracking cache is absent, the editor shall remain fully editable and indicate that history is unavailable.", "tags": ["change-tracking"] },
+    { "id": "r_ce110", "code": "CT-10", "text": "The skill shall always cache the latest release snapshot and pull older release snapshots only on demand.", "tags": ["change-tracking"] }
   ]
 }
