@@ -16,57 +16,54 @@ const vtp: VtpDoc = {
 
 describe('SRSTable structure', () => {
   it('renders requirement text and code, no Hazards column', () => {
-    render(<SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} />);
+    render(<SRSTable doc={srs} vtpDoc={vtp} onChange={vi.fn()} />);
     expect(screen.getByText('Shall authenticate.')).toBeInTheDocument();
     expect(screen.getByText('FUNC-1')).toBeInTheDocument();
     expect(screen.queryByText('Hazards')).toBeNull();
   });
 
   it('shows a derived dotted code for headings (not the word "heading")', () => {
-    render(<SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} />);
+    render(<SRSTable doc={srs} vtpDoc={vtp} onChange={vi.fn()} />);
     expect(screen.getByText('Func')).toBeInTheDocument();
     expect(screen.queryByText('heading')).toBeNull();
   });
 
   it('uses a per-row hamburger menu instead of action buttons', () => {
-    render(<SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} />);
+    render(<SRSTable doc={srs} vtpDoc={vtp} onChange={vi.fn()} />);
     expect(screen.queryByTitle('Add row below')).toBeNull(); // old buttons gone
     expect(screen.getAllByLabelText('Row actions').length).toBe(2); // one per row
   });
 
   it('test count column shows the verifying-test count', () => {
-    render(<SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} />);
+    render(<SRSTable doc={srs} vtpDoc={vtp} onChange={vi.fn()} />);
     expect(screen.getByText('1')).toBeInTheDocument();
   });
 });
 
 describe('SRSTable hierarchy + menu actions', () => {
   it('adds a child below at level+1 via the menu', () => {
-    const onSave = vi.fn();
-    render(<SRSTable doc={srs} vtpDoc={vtp} onSave={onSave} />);
-    // open the heading row's menu (first), add child
+    const onChange = vi.fn();
+    render(<SRSTable doc={srs} vtpDoc={vtp} onChange={onChange} />);
     fireEvent.click(screen.getAllByLabelText('Row actions')[0]);
     fireEvent.click(screen.getByText('Child'));
-    fireEvent.click(screen.getByText('Save'));
-    const saved = onSave.mock.calls[0][0] as SrsDoc;
-    expect(saved.items.length).toBe(3);
-    expect(saved.items[1].level).toBe(1); // child of a level-0 heading
+    const next = onChange.mock.calls.at(-1)![0] as SrsDoc;
+    expect(next.items.length).toBe(3);
+    expect(next.items[1].level).toBe(1);
   });
 
   it('deletes a requirement after confirmation', () => {
-    const onSave = vi.fn();
+    const onChange = vi.fn();
     vi.spyOn(window, 'confirm').mockReturnValue(true);
-    render(<SRSTable doc={srs} vtpDoc={vtp} onSave={onSave} />);
-    fireEvent.click(screen.getAllByLabelText('Row actions')[1]); // r_001
+    render(<SRSTable doc={srs} vtpDoc={vtp} onChange={onChange} />);
+    fireEvent.click(screen.getAllByLabelText('Row actions')[1]);
     fireEvent.click(screen.getByText('Delete'));
-    fireEvent.click(screen.getByText('Save'));
-    const saved = onSave.mock.calls[0][0] as SrsDoc;
-    expect(saved.items.find((i) => i.id === 'r_001')).toBeUndefined();
+    const next = onChange.mock.calls.at(-1)![0] as SrsDoc;
+    expect(next.items.find((i) => i.id === 'r_001')).toBeUndefined();
     vi.restoreAllMocks();
   });
 
   it('outdent is disabled for a level-0 row', () => {
-    render(<SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} />);
+    render(<SRSTable doc={srs} vtpDoc={vtp} onChange={vi.fn()} />);
     fireEvent.click(screen.getAllByLabelText('Row actions')[0]); // heading, level 0
     const outdent = screen.getByText('Outdent').closest('li');
     expect(outdent?.className).toContain('disabled');
@@ -75,14 +72,14 @@ describe('SRSTable hierarchy + menu actions', () => {
 
 describe('SRSTable show-tests + info', () => {
   it('expands the verifying tests inline for a requirement', () => {
-    render(<SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} />);
+    render(<SRSTable doc={srs} vtpDoc={vtp} onChange={vi.fn()} />);
     fireEvent.click(screen.getByLabelText('Show tests for r_001'));
     expect(screen.getByText('Login test')).toBeInTheDocument();
     expect(screen.getByText(/TEST-1/)).toBeInTheDocument();
   });
 
   it('opens the info modal from the menu', () => {
-    render(<SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} />);
+    render(<SRSTable doc={srs} vtpDoc={vtp} onChange={vi.fn()} />);
     fireEvent.click(screen.getAllByLabelText('Row actions')[1]);
     fireEvent.click(screen.getByText('View information'));
     const dialog = screen.getByRole('dialog');
@@ -100,7 +97,7 @@ describe('SRSTable redline (Word-style)', () => {
         { id: 'r_old', code: 'OLD-1', text: 'Old requirement', level: 1 },
       ],
     };
-    const { container } = render(<SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} baseline={baseline} />);
+    const { container } = render(<SRSTable doc={srs} vtpDoc={vtp} onChange={vi.fn()} baseline={baseline} />);
     // r_001 modified vs baseline -> warning row
     expect(container.querySelector('tr.warning')).not.toBeNull();
     // r_old removed -> inline struck-through row (not a panel)
@@ -111,7 +108,7 @@ describe('SRSTable redline (Word-style)', () => {
   });
 
   it('treats everything as unchanged when there is no baseline', () => {
-    const { container } = render(<SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} />);
+    const { container } = render(<SRSTable doc={srs} vtpDoc={vtp} onChange={vi.fn()} />);
     expect(container.querySelector('tr.warning')).toBeNull();
     expect(container.querySelector('tr.ct-removed-row')).toBeNull();
   });
