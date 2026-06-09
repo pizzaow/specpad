@@ -230,7 +230,6 @@ const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onSave, baseline, attr
                       onAddHeading={() => addHeading(index)}
                       onIndent={() => indent(index)}
                       onOutdent={() => outdent(index)}
-                      onMove={() => undefined}
                       onDelete={() => deleteRow(index)}
                       onViewInfo={() => setInfoIndex(index)}
                       canOutdent={(item.level ?? 0) > 0}

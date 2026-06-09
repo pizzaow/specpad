@@ -5,7 +5,7 @@ import RowMenu from '../RowMenu';
 function handlers() {
   return {
     onAddAbove: vi.fn(), onAddBelow: vi.fn(), onAddChild: vi.fn(), onAddHeading: vi.fn(),
-    onIndent: vi.fn(), onOutdent: vi.fn(), onMove: vi.fn(), onDelete: vi.fn(), onViewInfo: vi.fn(),
+    onIndent: vi.fn(), onOutdent: vi.fn(), onDelete: vi.fn(), onViewInfo: vi.fn(),
   };
 }
 
@@ -18,6 +18,7 @@ describe('RowMenu', () => {
     expect(screen.getByText('Add heading')).toBeInTheDocument();
     expect(screen.getByText('View information')).toBeInTheDocument();
     expect(screen.getByText('Delete')).toBeInTheDocument();
+    expect(screen.queryByText('Move')).toBeNull();
   });
 
   it('fires the matching callback and closes on selection', () => {
