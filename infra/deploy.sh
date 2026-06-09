@@ -13,8 +13,9 @@
 # Idempotent: every resource is checked before creation, so re-running after a
 # timeout (NS propagation, cert validation, CloudFront deploy) just resumes.
 #
-# Usage:  infra/deploy.sh            # full run, waits on slow steps
+# Usage:  infra/deploy.sh            # full provision, waits on slow steps
 #         infra/deploy.sh --no-wait  # create everything but skip the long waiters
+#         infra/deploy.sh --ship     # routine content deploy: build + upload + invalidate
 #
 set -euo pipefail
 
@@ -32,6 +33,28 @@ WAIT=1
 [ "${1:-}" = "--no-wait" ] && WAIT=0
 
 log() { printf '\n=== %s ===\n' "$*"; }
+
+# ---------------------------------------------------------------------------
+# Routine content deploy: build + upload + invalidate, no provisioning. This is
+# the everyday "ship a new build of the same schema version" path — invalidation
+# is always included so a deploy can never leave the edge serving a stale bundle.
+if [ "${1:-}" = "--ship" ]; then
+  DIST_ID=$(aws cloudfront list-distributions \
+    --query "DistributionList.Items[?Aliases.Items && contains(Aliases.Items, '$DOMAIN')].Id | [0]" --output text)
+  if [ "$DIST_ID" = "None" ] || [ -z "$DIST_ID" ]; then
+    echo "No distribution for $DOMAIN yet — run a full 'infra/deploy.sh' first." >&2
+    exit 1
+  fi
+  log "Ship 1/3: build"
+  ( cd "$ROOT_DIR" && npm run build )
+  log "Ship 2/3: upload to s3://$BUCKET/$PREFIX/"
+  aws s3 sync "$ROOT_DIR/dist/" "s3://$BUCKET/$PREFIX/" --delete
+  log "Ship 3/3: invalidate CloudFront ($DIST_ID)"
+  INVALIDATION_ID=$(aws cloudfront create-invalidation --distribution-id "$DIST_ID" \
+    --paths "/$PREFIX/*" --query 'Invalidation.Id' --output text)
+  log "DONE — shipped to https://$DOMAIN/$PREFIX/  (invalidation $INVALIDATION_ID)"
+  exit 0
+fi
 
 # ---------------------------------------------------------------------------
 log "1. Route 53 hosted zone for $DOMAIN"
@@ -138,7 +161,7 @@ fi
 # ---------------------------------------------------------------------------
 log "8. CloudFront distribution"
 DIST_ID=$(aws cloudfront list-distributions \
-  --query "DistributionList.Items[?contains(Aliases.Items, '$DOMAIN')].Id | [0]" --output text 2>/dev/null || echo "None")
+  --query "DistributionList.Items[?Aliases.Items && contains(Aliases.Items, '$DOMAIN')].Id | [0]" --output text 2>/dev/null || echo "None")
 if [ "$DIST_ID" = "None" ] || [ -z "$DIST_ID" ]; then
   echo "ensuring certificate is ISSUED before creating the distribution…"
   echo "(blocks on Route 53 nameserver propagation; safe to re-run if it times out)"

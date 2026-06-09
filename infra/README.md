@@ -29,7 +29,14 @@ Safe to re-run after a timeout (nameserver propagation or cert validation) — i
 ## Ship a new build (content-only update)
 
 The schema version maps to the path (`"1.0"` → `/v01/`). To publish a new build of the
-**same** schema version:
+**same** schema version, run the routine deploy — it builds, uploads, and **always
+invalidates** the cache so the edge can't serve a stale bundle:
+
+```bash
+infra/deploy.sh --ship
+```
+
+Equivalent to what `--ship` runs under the hood:
 
 ```bash
 npm run build
