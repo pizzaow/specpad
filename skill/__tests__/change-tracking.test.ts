@@ -36,3 +36,11 @@ describe('starter releases template', () => {
     expect(validate(doc)).toEqual([]);
   });
 });
+
+describe('skill documents requirement hierarchy', () => {
+  it('documents the level field and dotted heading codes', () => {
+    expect(skill).toMatch(/level/);
+    expect(skill).toMatch(/hierarch/i);
+    expect(skill).toContain('Data.Range');
+  });
+});

@@ -47,6 +47,22 @@ SRS item — REQUIRED `id`, `text`. Optional `code`, `tags`, `hazards`, `heading
 VTP item — REQUIRED `id`, `text`. Optional `code`, `verifies`, `expected`, `result`,
 `notes`, `tags`, `heading`. `result` is one of "" | "not_tested" | "passed" | "failed".
 
+## Hierarchy (sections and sub-requirements)
+
+Items are a flat, ordered array, but each SRS/VTP item may carry an optional **`level`** (an integer
+indent depth; absent means 0). Use `level` to nest: a sub-heading or a child requirement sits one
+level deeper than its parent.
+
+- **Headings form sections.** A heading's `code` is a short segment (e.g. `Data`, `Range`). Its
+  displayed code is the dotted path of ancestor heading segments plus its own — a heading `Range` at
+  level 1 under a heading `Data` at level 0 displays as `Data.Range`. Requirements keep their own
+  free-form `code` (e.g. `DOC-1`).
+- **When to use it:** when a spec naturally has sections and sub-requirements, author it
+  hierarchically — headings for sections with short `code` segments, and `level` to nest
+  requirements and sub-headings — rather than a single flat list. Keep nesting shallow and
+  meaningful; do not over-nest.
+- `level` is additive and optional; files without it are still valid (everything is flat at level 0).
+
 ## Stable ids (critical)
 
 - Every item has a stable `id`, generated once and **immutable**.

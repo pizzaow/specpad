@@ -24,16 +24,20 @@ export function createVtpDoc(name: string, title: string): VtpDoc {
   return { schemaVersion: SCHEMA_VERSION, type: 'vtp', name, title, items: [] };
 }
 
-export function createSrsItem(existingIds: Iterable<string>): SrsItem {
-  return { id: generateId(ID_PREFIX.requirement, existingIds), text: '' };
+export function createSrsItem(existingIds: Iterable<string>, level = 0): SrsItem {
+  const item: SrsItem = { id: generateId(ID_PREFIX.requirement, existingIds), text: '' };
+  if (level > 0) item.level = level;
+  return item;
 }
 
-export function createVtpItem(existingIds: Iterable<string>): VtpItem {
-  return {
+export function createVtpItem(existingIds: Iterable<string>, level = 0): VtpItem {
+  const item: VtpItem = {
     id: generateId(ID_PREFIX.test, existingIds),
     text: '',
     verifies: [],
     expected: '',
     result: '',
   };
+  if (level > 0) item.level = level;
+  return item;
 }

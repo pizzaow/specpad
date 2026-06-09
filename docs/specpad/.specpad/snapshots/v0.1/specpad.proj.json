@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0",
+  "type": "project",
+  "name": "specpad",
+  "title": "SpecPad System",
+  "description": "SpecPad's own requirements and verification tests, authored with the SpecPad skill (dogfooding). The prose design lives in docs/design/.",
+  "documents": [
+    { "type": "srs", "path": "specpad.srs.json", "title": "Requirements" },
+    { "type": "vtp", "path": "specpad.vtp.json", "title": "Verification Tests" }
+  ]
+}
