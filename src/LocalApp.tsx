@@ -33,7 +33,7 @@ import { buildRedline, computeAttribution } from './changeTracking';
 import type { SnapshotInput } from './changeTracking';
 import { cachedReleases } from './changeTrackingView';
 import VersionTimeline from './components/VersionTimeline';
-import JobControl from './components/JobControl';
+import MenuBar from './components/MenuBar';
 import * as recentStore from './handleStore';
 import type { RecentProject } from './handleStore';
 import { parseLaunchParams } from './launchParams';
@@ -298,6 +298,20 @@ const LocalApp: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); if (dirty) void save(); }
+    };
+    const onBeforeUnload = (e: BeforeUnloadEvent) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } };
+    window.addEventListener('keydown', onKey);
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('beforeunload', onBeforeUnload);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dirty]);
+
   const handleOpenFallback = async () => {
     try {
       const file = await openFileFallback('.json');
@@ -316,14 +330,27 @@ const LocalApp: React.FC = () => {
 
   return (
     <div className="container-fluid">
-      <header className="page-header">
-        <h1>SpecPad{projectName && <span className="text-muted"> — {projectName}</span>}</h1>
-        {!supportsFileSystemAccess && (
-          <div className="alert alert-warning" style={{ marginTop: 10 }}>
-            Your browser doesn't support the File System Access API. Use Chrome or Edge for full editing.
-          </div>
-        )}
-      </header>
+      <MenuBar
+        projectName={projectName}
+        projectNames={uniqueDocNames}
+        onSelectProject={handleSelectDocument}
+        isDirectoryOpen={isDirectoryOpen}
+        supportsFileSystemAccess={supportsFileSystemAccess}
+        dirty={dirty}
+        onSave={save}
+        onNewDocument={handleNewDocument}
+        onOpenDirectory={() => handleOpenProject(false)}
+        onOpenProjectFile={() => handleOpenProject(true)}
+        onOpenFallback={handleOpenFallback}
+        job={job}
+        onSetJob={handleSetJob}
+      />
+
+      {!supportsFileSystemAccess && (
+        <div className="alert alert-warning">
+          Your browser doesn't support the File System Access API. Use Chrome or Edge for full editing.
+        </div>
+      )}
 
       {error && (
         <div className="alert alert-danger" role="alert">
@@ -334,40 +361,15 @@ const LocalApp: React.FC = () => {
         </div>
       )}
 
-      <div className="toolbar" style={{ marginBottom: 20 }}>
-        <div className="btn-group" role="group">
-          {!isDirectoryOpen ? (
-            supportsFileSystemAccess ? (
-              <>
-                <button className="btn btn-primary" disabled={loading} onClick={() => handleOpenProject(true)}>Open Project File (.proj.json)</button>
-                <button className="btn btn-primary" style={{ marginLeft: 5 }} disabled={loading} onClick={() => handleOpenProject(false)}>Open Project Directory</button>
-              </>
-            ) : (
-              <button className="btn btn-primary" disabled={loading} onClick={handleOpenFallback}>Open Document File</button>
-            )
-          ) : (
-            <>
-              <button className="btn btn-success" disabled={!dirty} onClick={save}>Save{dirty ? ' ●' : ''}</button>
-              <button className="btn btn-success" disabled={!supportsFileSystemAccess} onClick={handleNewDocument}>New Document</button>
-              <button className="btn btn-default" style={{ marginLeft: 5 }} onClick={() => handleOpenProject(false)}>Change Directory</button>
-              {uniqueDocNames.length > 0 && (
-                <select className="form-control" style={{ display: 'inline-block', width: 'auto', marginLeft: 10 }}
-                  value={selectedDocName} disabled={loading} onChange={(e) => handleSelectDocument(e.target.value)}>
-                  <option value="">-- Select Document --</option>
-                  {uniqueDocNames.map((name) => <option key={name} value={name}>{name}</option>)}
-                </select>
-              )}
-              {(srsDoc || vtpDoc) && (
-                <div className="btn-group" style={{ marginLeft: 20 }}>
-                  <button className={`btn ${currentView === 'srs' ? 'btn-info' : 'btn-default'}`} disabled={!srsDoc} onClick={() => setCurrentView('srs')}>SRS</button>
-                  <button className={`btn ${currentView === 'vtp' ? 'btn-info' : 'btn-default'}`} disabled={!vtpDoc} onClick={() => setCurrentView('vtp')}>VTP</button>
-                  <button className={`btn ${currentView === 'testing' ? 'btn-info' : 'btn-default'}`} disabled={!vtpDoc} onClick={() => setCurrentView('testing')}>Testing</button>
-                </div>
-              )}
-            </>
-          )}
+      {(srsDoc || vtpDoc) && (
+        <div className="toolbar" style={{ marginBottom: 16 }}>
+          <div className="btn-group" role="group">
+            <button className={`btn ${currentView === 'srs' ? 'btn-info' : 'btn-default'}`} disabled={!srsDoc} onClick={() => setCurrentView('srs')}>SRS</button>
+            <button className={`btn ${currentView === 'vtp' ? 'btn-info' : 'btn-default'}`} disabled={!vtpDoc} onClick={() => setCurrentView('vtp')}>VTP</button>
+            <button className={`btn ${currentView === 'testing' ? 'btn-info' : 'btn-default'}`} disabled={!vtpDoc} onClick={() => setCurrentView('testing')}>Testing</button>
+          </div>
         </div>
-      </div>
+      )}
 
       {loading && <div className="alert alert-info">Loading...</div>}
 
@@ -377,7 +379,6 @@ const LocalApp: React.FC = () => {
 
       {isDirectoryOpen && selectedDocName && (
         <div className="change-tracking">
-          <JobControl key={selectedDocName} job={job} onSet={handleSetJob} />
           {releases ? (
             <VersionTimeline releases={releases} />
           ) : (

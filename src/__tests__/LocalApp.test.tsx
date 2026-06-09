@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import type { SrsDoc } from '../shared';
 
 // Two single-doc projects sharing one directory; switching between them in the
-// dropdown must re-seed the table (regression guard for the key={selectedDocName}
+// brand dropdown must re-seed the table (regression guard for the key={selectedDocName}
 // remount in LocalApp — without it, the table keeps editing the prior document).
 const docA: SrsDoc = {
   schemaVersion: '1.0', type: 'srs', name: 'AppA', title: 'Requirements',
@@ -38,6 +38,9 @@ vi.mock('../localFileApi', () => ({
   loadJob: vi.fn(async () => null),
   saveJob: vi.fn(async () => undefined),
   loadSnapshot: vi.fn(async () => null),
+  getDirHandle: vi.fn(() => null),
+  verifyPermission: vi.fn(async () => false),
+  openProjectFromHandle: vi.fn(),
 }));
 
 import LocalApp from '../LocalApp';
@@ -48,14 +51,22 @@ describe('LocalApp document switching', () => {
   it('re-seeds the table when the selected document changes', async () => {
     render(<LocalApp />);
 
-    fireEvent.click(screen.getByText('Open Project Directory'));
+    // Open via File menu → Open project directory…
+    fireEvent.click(screen.getByText('File ▾'));
+    fireEvent.click(screen.getByText('Open project directory…'));
 
-    // After open, a document picker with both names appears (no auto-load for 2 docs).
-    const picker = await screen.findByRole('combobox');
-    fireEvent.change(picker, { target: { value: 'AppB' } });
+    // Two projects — no auto-load. Brand dropdown appears with projectName 'AppA'.
+    // The brand button renders <span>AppA</span> ▾; click the span to open switcher.
+    const brandTrigger = await screen.findByText('AppA');
+    fireEvent.click(brandTrigger);
+
+    // Dropdown shows both project names; pick AppB.
+    fireEvent.click(await screen.findByText('AppB'));
     expect(await screen.findByText('Requirement B')).toBeInTheDocument();
 
-    fireEvent.change(screen.getByRole('combobox'), { target: { value: 'AppA' } });
+    // Switch back: brand still shows AppA (directory name unchanged).
+    fireEvent.click(screen.getByText('AppA'));
+    fireEvent.click(await screen.findByText('AppA', { selector: 'li' }));
     expect(await screen.findByText('Requirement A')).toBeInTheDocument();
     await waitFor(() => expect(screen.queryByText('Requirement B')).toBeNull());
   });
