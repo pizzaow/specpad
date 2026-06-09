@@ -49,6 +49,7 @@ describe('LocalApp document switching', () => {
   beforeEach(() => vi.clearAllMocks());
 
   it('re-seeds the table when the selected document changes', async () => {
+    const confirmSpy = vi.spyOn(window, 'confirm');
     render(<LocalApp />);
 
     // Open via File menu → Open project directory…
@@ -69,5 +70,9 @@ describe('LocalApp document switching', () => {
     fireEvent.click(await screen.findByText('AppA', { selector: 'li' }));
     expect(await screen.findByText('Requirement A')).toBeInTheDocument();
     await waitFor(() => expect(screen.queryByText('Requirement B')).toBeNull());
+
+    // Switching between documents with no unsaved edits must never prompt.
+    expect(confirmSpy).not.toHaveBeenCalled();
+    confirmSpy.mockRestore();
   });
 });

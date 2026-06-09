@@ -248,6 +248,7 @@ const LocalApp: React.FC = () => {
 
   const handleSelectDocument = async (name: string) => {
     if (!name || !hasOpenDirectory()) return;
+    if (dirty && !window.confirm('You have unsaved changes that will be lost. Switch anyway?')) return;
     setLoading(true);
     setError(null);
     try {
