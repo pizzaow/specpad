@@ -64,6 +64,8 @@ const LocalApp: React.FC = () => {
   const [vtpBaseline, setVtpBaseline] = useState<VtpDoc | null>(null);
   const [srsSnapshots, setSrsSnapshots] = useState<SnapshotInput[]>([]);
   const [vtpSnapshots, setVtpSnapshots] = useState<SnapshotInput[]>([]);
+  const [dirtySrs, setDirtySrs] = useState(false);
+  const [dirtyVtp, setDirtyVtp] = useState(false);
 
   const supportsFileSystemAccess = isFileSystemAccessSupported();
 
@@ -119,6 +121,8 @@ const LocalApp: React.FC = () => {
     setVtpDoc(vtp ? await loadDocument('vtp', name) : null);
     setSelectedDocName(name);
     await loadChangeTracking(name);
+    setDirtySrs(false);
+    setDirtyVtp(false);
   };
 
   // Variant used right after open(), before `documents` state has settled.
@@ -131,6 +135,8 @@ const LocalApp: React.FC = () => {
     setVtpDoc(vtp ? await loadDocument('vtp', name) : null);
     setSelectedDocName(name);
     await loadChangeTracking(name);
+    setDirtySrs(false);
+    setDirtyVtp(false);
   };
 
   // Apply a freshly-opened project: set state, auto-load a single/requested doc,
@@ -269,14 +275,26 @@ const LocalApp: React.FC = () => {
     }
   };
 
-  const handleSave = async (doc: SrsDoc | VtpDoc) => {
+  // Tables are controlled: an edit replaces the working doc and marks it dirty.
+  const handleChange = (next: SrsDoc | VtpDoc) => {
+    if (next.type === 'srs') { setSrsDoc(next); setDirtySrs(true); }
+    else { setVtpDoc(next); setDirtyVtp(true); }
+  };
+
+  const persist = async (doc: SrsDoc | VtpDoc) => {
+    if (supportsFileSystemAccess && hasOpenDirectory()) await saveDocument(doc);
+    else saveFileFallback(serializeDocument(doc), `${doc.name}.${doc.type}.json`);
+  };
+
+  const dirty = dirtySrs || dirtyVtp;
+
+  const save = async () => {
     try {
-      if (supportsFileSystemAccess && hasOpenDirectory()) await saveDocument(doc);
-      else saveFileFallback(serializeDocument(doc), `${doc.name}.${doc.type}.json`);
-      if (doc.type === 'srs') setSrsDoc(doc); else setVtpDoc(doc);
+      if (dirtySrs && srsDoc) { await persist(srsDoc); setDirtySrs(false); }
+      if (dirtyVtp && vtpDoc) { await persist(vtpDoc); setDirtyVtp(false); }
       setError(null);
     } catch (err: any) {
-      setError(`Failed to save document: ${err.message}`);
+      setError(`Failed to save: ${err.message}`);
     }
   };
 
@@ -287,6 +305,8 @@ const LocalApp: React.FC = () => {
       if (file.name.endsWith('.srs.json')) { setSrsDoc(data); setCurrentView('srs'); }
       else if (file.name.endsWith('.vtp.json')) { setVtpDoc(data); setCurrentView('vtp'); }
       setIsDirectoryOpen(true);
+      setDirtySrs(false);
+      setDirtyVtp(false);
     } catch (err: any) {
       setError(`Failed to open file: ${err.message}`);
     }
@@ -327,6 +347,7 @@ const LocalApp: React.FC = () => {
             )
           ) : (
             <>
+              <button className="btn btn-success" disabled={!dirty} onClick={save}>Save{dirty ? ' ●' : ''}</button>
               <button className="btn btn-success" disabled={!supportsFileSystemAccess} onClick={handleNewDocument}>New Document</button>
               <button className="btn btn-default" style={{ marginLeft: 5 }} onClick={() => handleOpenProject(false)}>Change Directory</button>
               {uniqueDocNames.length > 0 && (
@@ -371,9 +392,9 @@ const LocalApp: React.FC = () => {
       <div className="content">
         {/* key={selectedDocName} remounts the table when the open document changes,
             so each table re-seeds its working copy instead of editing the prior doc. */}
-        {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onSave={handleSave} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} />}
-        {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onSave={handleSave} redline={vtpRedline} attribution={vtpSnapshots.length ? vtpAttribution : undefined} />}
-        {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} onSave={handleSave} />}
+        {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onChange={handleChange} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} />}
+        {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onChange={handleChange} redline={vtpRedline} attribution={vtpSnapshots.length ? vtpAttribution : undefined} />}
+        {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} onChange={handleChange} />}
 
         {!isDirectoryOpen && !loading && (
           <>
