@@ -41,6 +41,7 @@ import SRSTable from './components/SRSTable';
 import VTPTable from './components/VTPTable';
 import TestingView from './components/TestingView';
 import ValidationPanel from './components/ValidationPanel';
+import ViewTabs from './components/ViewTabs';
 
 type ViewMode = 'srs' | 'vtp' | 'testing';
 type OpenResult = { name: string; documents: DocumentListItem[] };
@@ -370,13 +371,11 @@ const LocalApp: React.FC = () => {
       )}
 
       {(srsDoc || vtpDoc) && (
-        <div className="toolbar" style={{ marginBottom: 16 }}>
-          <div className="btn-group" role="group">
-            <button className={`btn ${currentView === 'srs' ? 'btn-info' : 'btn-default'}`} disabled={!srsDoc} onClick={() => setCurrentView('srs')}>SRS</button>
-            <button className={`btn ${currentView === 'vtp' ? 'btn-info' : 'btn-default'}`} disabled={!vtpDoc} onClick={() => setCurrentView('vtp')}>VTP</button>
-            <button className={`btn ${currentView === 'testing' ? 'btn-info' : 'btn-default'}`} disabled={!vtpDoc} onClick={() => setCurrentView('testing')}>Testing</button>
-          </div>
-        </div>
+        <ViewTabs
+          current={currentView}
+          enabled={{ srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc }}
+          onSelect={setCurrentView}
+        />
       )}
 
       {loading && <div className="alert alert-info">Loading...</div>}
