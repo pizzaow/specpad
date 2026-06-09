@@ -25,13 +25,13 @@ const vtp: VtpDoc = {
 
 describe('VTPTable', () => {
   it('renders the verifying requirement label for a valid ref', () => {
-    render(<VTPTable doc={vtp} srsDoc={srs} onSave={vi.fn()} />);
+    render(<VTPTable doc={vtp} srsDoc={srs} onChange={vi.fn()} />);
     expect(screen.getByText('Login')).toBeInTheDocument();
     expect(screen.getByText(/FUNC-1/)).toBeInTheDocument();
   });
 
   it('marks a row whose verifies ref does not resolve', () => {
-    const { container } = render(<VTPTable doc={vtp} srsDoc={srs} onSave={vi.fn()} />);
+    const { container } = render(<VTPTable doc={vtp} srsDoc={srs} onChange={vi.fn()} />);
     expect(container.querySelector('tr.danger')).not.toBeNull();
   });
 });
@@ -46,7 +46,7 @@ describe('VTPTable change tracking', () => {
       ['t_001', { addedIn: 'v1.0', addedBoundary: false, lastChangedIn: 'v1.0', author: { name: 'Sam', email: 's@x.com' } }],
     ]);
     const { container } = render(
-      <VTPTable doc={vtp} srsDoc={srs} onSave={vi.fn()} redline={redline} attribution={attribution} />,
+      <VTPTable doc={vtp} srsDoc={srs} onChange={vi.fn()} redline={redline} attribution={attribution} />,
     );
     expect(container.querySelector('tr.warning')).not.toBeNull();
     expect(screen.getByText('v1.0 · Sam')).toBeInTheDocument();
