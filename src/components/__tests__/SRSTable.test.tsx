@@ -2,8 +2,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import SRSTable from '../SRSTable';
 import type { SrsDoc, VtpDoc } from '../../shared';
-import type { RedlineView, AttributionView } from '../../changeTracking';
-
 const srs: SrsDoc = {
   schemaVersion: '1.0', type: 'srs', name: 'AcmeApp', title: 'Requirements',
   items: [
@@ -92,18 +90,29 @@ describe('SRSTable show-tests + info', () => {
   });
 });
 
-describe('SRSTable redline (preserved)', () => {
-  it('marks a modified row and lists removed items', () => {
-    const redline: RedlineView = {
-      byId: new Map([['r_001', { status: 'modified', changedFields: ['text'] }]]),
-      removed: [{ id: 'r_old', status: 'removed', before: { id: 'r_old', text: 'Old requirement' } }],
+describe('SRSTable redline (Word-style)', () => {
+  it('marks modified inline and shows removed rows struck through (no panel)', () => {
+    // working doc = `srs` (h_001 heading + r_001 "Shall authenticate.")
+    const baseline: SrsDoc = {
+      schemaVersion: '1.0', type: 'srs', name: 'AcmeApp', title: 'Requirements',
+      items: [
+        { id: 'r_001', code: 'FUNC-1', text: 'Old text', level: 1 },
+        { id: 'r_old', code: 'OLD-1', text: 'Old requirement', level: 1 },
+      ],
     };
-    const attribution = new Map<string, AttributionView>();
-    const { container } = render(
-      <SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} redline={redline} attribution={attribution} />,
-    );
+    const { container } = render(<SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} baseline={baseline} />);
+    // r_001 modified vs baseline -> warning row
     expect(container.querySelector('tr.warning')).not.toBeNull();
-    expect(screen.getByText(/Removed since baseline/)).toBeInTheDocument();
-    expect(screen.getByText('Old requirement')).toBeInTheDocument();
+    // r_old removed -> inline struck-through row (not a panel)
+    const removed = container.querySelector('tr.ct-removed-row');
+    expect(removed).not.toBeNull();
+    expect(removed?.textContent).toContain('Old requirement');
+    expect(screen.queryByText(/Removed since baseline/)).toBeNull(); // panel gone
+  });
+
+  it('treats everything as unchanged when there is no baseline', () => {
+    const { container } = render(<SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} />);
+    expect(container.querySelector('tr.warning')).toBeNull();
+    expect(container.querySelector('tr.ct-removed-row')).toBeNull();
   });
 });

@@ -1,13 +1,16 @@
 /**
  * SRSTable — requirements editor with hierarchy, a per-row hamburger menu,
- * inline test display, and change-tracking redline highlight.
+ * inline test display, and a Word-style change-tracking redline.
  * Rows are SRS items keyed by stable `id`; `level` is indent depth; heading rows
- * show a derived dotted code. Test counts are computed on read from the VTP.
+ * show a derived dotted code. The redline is computed live from the latest-release
+ * baseline: added/modified rows are highlighted, removed rows render inline as
+ * read-only, struck-through entries at their baseline position.
  */
 import React, { useMemo, useState } from 'react';
 import type { SrsDoc, SrsItem, VtpDoc, VtpItem } from '../shared';
 import { createSrsItem, generateId, ID_PREFIX } from '../shared';
-import type { RedlineView, AttributionView } from '../changeTracking';
+import type { AttributionView, RedlineEntry } from '../changeTracking';
+import { buildRedlineRows } from '../changeTracking';
 import { rowStatusClass, isCellChanged } from '../changeTrackingView';
 import { deriveHeadingCodes } from '../outline';
 import RowMenu from './RowMenu';
@@ -17,7 +20,7 @@ interface SRSTableProps {
   doc: SrsDoc;
   vtpDoc: VtpDoc | null;
   onSave: (doc: SrsDoc) => void;
-  redline?: RedlineView;
+  baseline?: SrsDoc | null;
   attribution?: Map<string, AttributionView>;
 }
 
@@ -26,7 +29,7 @@ type EditTarget = { index: number; field: EditField } | null;
 
 const INDENT_PX = 22;
 
-const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onSave, redline, attribution }) => {
+const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onSave, baseline, attribution }) => {
   const [data, setData] = useState<SrsDoc>(doc);
   const [editing, setEditing] = useState<EditTarget>(null);
   const [editValue, setEditValue] = useState('');
@@ -35,6 +38,12 @@ const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onSave, redline, attri
   const [dragIndex, setDragIndex] = useState<number | null>(null);
 
   const headingCodes = useMemo(() => deriveHeadingCodes(data.items), [data.items]);
+  const redlineRows = useMemo(() => buildRedlineRows(baseline ?? null, data), [baseline, data]);
+  const indexById = useMemo(() => {
+    const m = new Map<string, number>();
+    data.items.forEach((it, i) => m.set(it.id, i));
+    return m;
+  }, [data.items]);
 
   const testsByReq = useMemo(() => {
     const m = new Map<string, VtpItem[]>();
@@ -141,7 +150,11 @@ const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onSave, redline, attri
     );
   };
 
-  const rl = (id: string) => redline?.byId.get(id);
+  const entryFor = (status: 'added' | 'modified' | 'unchanged', changedFields?: string[]): RedlineEntry | undefined => {
+    if (status === 'added') return { status: 'added' };
+    if (status === 'modified') return { status: 'modified', changedFields };
+    return undefined;
+  };
 
   return (
     <div className="srs-table-container">
@@ -161,29 +174,44 @@ const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onSave, redline, attri
           </tr>
         </thead>
         <tbody>
-          {data.items.map((item, index) => {
+          {redlineRows.map((row) => {
+            const item = row.item as SrsItem;
+
+            if (row.status === 'removed') {
+              return (
+                <tr key={`removed-${item.id}`} className="ct-removed-row">
+                  <td style={{ paddingLeft: 8 + (item.level ?? 0) * INDENT_PX }}>
+                    <del>{item.code || item.id}</del>
+                  </td>
+                  <td colSpan={4}><del>{item.text}</del></td>
+                </tr>
+              );
+            }
+
+            const index = indexById.get(item.id) ?? 0;
+            const entry = entryFor(row.status, row.changedFields);
             const count = testsByReq.get(item.id)?.length ?? 0;
             const open = expanded.has(item.id);
             return (
               <React.Fragment key={item.id}>
                 <tr
-                  className={rowStatusClass(item.heading, rl(item.id))}
+                  className={rowStatusClass(item.heading, entry)}
                   draggable
                   onDragStart={() => setDragIndex(index)}
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={() => onDrop(index)}
                 >
-                  <td className={isCellChanged(rl(item.id), 'code') ? 'ct-changed' : undefined}
+                  <td className={isCellChanged(entry, 'code') ? 'ct-changed' : undefined}
                     style={{ paddingLeft: 8 + (item.level ?? 0) * INDENT_PX }}>
                     {item.heading
                       ? renderCell(index, 'code', <strong>{headingCodes.get(item.id)}</strong>)
                       : renderCell(index, 'code')}
                   </td>
-                  <td className={isCellChanged(rl(item.id), 'text') ? 'ct-changed' : undefined}
+                  <td className={isCellChanged(entry, 'text') ? 'ct-changed' : undefined}
                     style={item.heading ? { fontWeight: 'bold' } : undefined}>
                     {renderCell(index, 'text')}
                   </td>
-                  <td className={isCellChanged(rl(item.id), 'tags') ? 'ct-changed' : undefined}>
+                  <td className={isCellChanged(entry, 'tags') ? 'ct-changed' : undefined}>
                     {item.heading ? '' : renderCell(index, 'tags')}
                   </td>
                   <td>
@@ -234,20 +262,6 @@ const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onSave, redline, attri
           })}
         </tbody>
       </table>
-
-      {redline && redline.removed.length > 0 && (
-        <div className="panel panel-default ct-removed">
-          <div className="panel-heading"><strong>Removed since baseline ({redline.removed.length})</strong></div>
-          <ul className="list-group">
-            {redline.removed.map((c) => (
-              <li key={c.id} className="list-group-item">
-                {c.before?.code ? <strong>{c.before.code}: </strong> : null}
-                {c.before?.text}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
 
       {infoIndex !== null && data.items[infoIndex] && (
         <ItemInfo
