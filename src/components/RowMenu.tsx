@@ -12,7 +12,6 @@ export interface RowMenuProps {
   onAddHeading: () => void;
   onIndent: () => void;
   onOutdent: () => void;
-  onMove: () => void;
   onDelete: () => void;
   onViewInfo: () => void;
   canOutdent?: boolean; // default true; false disables Outdent (already at level 0)
@@ -59,7 +58,6 @@ const RowMenu: React.FC<RowMenuProps> = (props) => {
                 Outdent
               </a>
             </li>
-            <li><a href="#" onClick={pick(props.onMove)}>Move</a></li>
             <li role="separator" className="divider" />
             <li><a href="#" onClick={pick(props.onViewInfo)}>View information</a></li>
             <li><a href="#" className="text-danger" onClick={pick(props.onDelete)}>Delete</a></li>

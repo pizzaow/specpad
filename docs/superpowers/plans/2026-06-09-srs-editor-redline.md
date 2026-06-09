@@ -1,3 +1,78 @@
+# SRS Editor — Plan 4: Word-style Redline Rendering
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Render the SRS redline Word-style — removed rows shown **inline, red + strikethrough** at their baseline position, with added/modified rows highlighted — driven by the pure `buildRedlineRows`, computed live against the latest-release baseline. Also tidy the now-inert "Move" menu item.
+
+**Architecture:** SRSTable swaps its `redline: RedlineView` prop for `baseline: SrsDoc | null` and computes `buildRedlineRows(baseline, data)` itself, so the redline updates live as the user edits (not just on save). The interleaved row list renders removed rows as read-only struck-through rows; non-removed rows map back to their working-array index for editing/menu/drag. The separate "Removed since baseline" panel is removed. LocalApp passes `baseline` instead of `redline`.
+
+**Tech Stack:** React 18 + TypeScript, Bootstrap 3, LESS, Vitest + Testing Library. No new dependencies.
+
+**Source design:** `docs/design/specpad-srs-editor-enhancements-design.md` — §7 (Word-style redline rendering, supersedes the row/cell highlight + removed panel).
+
+---
+
+## File Structure
+
+- **Modify** `src/components/SRSTable.tsx` — render from `buildRedlineRows`; `redline` prop → `baseline`; inline removed rows; drop the panel.
+- **Modify** `src/components/__tests__/SRSTable.test.tsx` — update the redline group to the Word-style behavior (pass `baseline`).
+- **Modify** `src/LocalApp.tsx` — pass `baseline={srsBaseline}` to SRSTable; drop the now-unused `srsRedline` memo.
+- **Modify** `src/specpad.less` — `.ct-removed-row` styling.
+- **Modify** `src/components/RowMenu.tsx` + its test — remove the inert "Move" item/`onMove` (Task 2).
+
+---
+
+## Task 1: Word-style redline in SRSTable (+ LocalApp wiring)
+
+**Files:**
+- Modify: `src/components/SRSTable.tsx`
+- Modify: `src/components/__tests__/SRSTable.test.tsx`
+- Modify: `src/LocalApp.tsx`
+- Modify: `src/specpad.less`
+
+- [ ] **Step 1: Update the redline test group in `src/components/__tests__/SRSTable.test.tsx`.**
+
+Replace the existing `describe('SRSTable redline (preserved)', ...)` block with:
+
+```tsx
+describe('SRSTable redline (Word-style)', () => {
+  it('marks modified inline and shows removed rows struck through (no panel)', () => {
+    // working doc = `srs` (h_001 heading + r_001 "Shall authenticate.")
+    const baseline: SrsDoc = {
+      schemaVersion: '1.0', type: 'srs', name: 'AcmeApp', title: 'Requirements',
+      items: [
+        { id: 'r_001', code: 'FUNC-1', text: 'Old text', level: 1 },
+        { id: 'r_old', code: 'OLD-1', text: 'Old requirement', level: 1 },
+      ],
+    };
+    const { container } = render(<SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} baseline={baseline} />);
+    // r_001 modified vs baseline -> warning row
+    expect(container.querySelector('tr.warning')).not.toBeNull();
+    // r_old removed -> inline struck-through row (not a panel)
+    const removed = container.querySelector('tr.ct-removed-row');
+    expect(removed).not.toBeNull();
+    expect(removed?.textContent).toContain('Old requirement');
+    expect(screen.queryByText(/Removed since baseline/)).toBeNull(); // panel gone
+  });
+
+  it('treats everything as unchanged when there is no baseline', () => {
+    const { container } = render(<SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} />);
+    expect(container.querySelector('tr.warning')).toBeNull();
+    expect(container.querySelector('tr.ct-removed-row')).toBeNull();
+  });
+});
+```
+
+(The other describe blocks — structure, hierarchy/menu, show-tests/info — pass no `baseline`, so they render normally; leave them unchanged.)
+
+- [ ] **Step 2: Run the test to verify it fails**
+
+Run: `npx vitest run src/components/__tests__/SRSTable.test.tsx`
+Expected: FAIL — SRSTable doesn't accept `baseline`/render `.ct-removed-row` yet.
+
+- [ ] **Step 3: Replace `src/components/SRSTable.tsx` entirely with:**
+
+```tsx
 /**
  * SRSTable — requirements editor with hierarchy, a per-row hamburger menu,
  * inline test display, and a Word-style change-tracking redline.
@@ -230,6 +305,7 @@ const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onSave, baseline, attr
                       onAddHeading={() => addHeading(index)}
                       onIndent={() => indent(index)}
                       onOutdent={() => outdent(index)}
+                      onMove={() => undefined}
                       onDelete={() => deleteRow(index)}
                       onViewInfo={() => setInfoIndex(index)}
                       canOutdent={(item.level ?? 0) > 0}
@@ -276,3 +352,114 @@ const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onSave, baseline, attr
 };
 
 export default SRSTable;
+```
+
+- [ ] **Step 4: Run the SRSTable test to verify it passes**
+
+Run: `npx vitest run src/components/__tests__/SRSTable.test.tsx`
+Expected: PASS (all groups, including the new Word-style redline group).
+
+- [ ] **Step 5: Wire `baseline` into `SRSTable` from `src/LocalApp.tsx`**
+
+Find the SRS render line (it currently passes `redline={srsRedline}`):
+```tsx
+        {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onSave={handleSave} redline={srsRedline} attribution={srsSnapshots.length ? srsAttribution : undefined} />}
+```
+Replace it with (`baseline` instead of `redline`):
+```tsx
+        {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onSave={handleSave} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} />}
+```
+Then remove the now-unused `srsRedline` memo (the `const srsRedline = React.useMemo(...)` block for SRS). Leave `vtpRedline` (VTPTable still uses it) and `srsAttribution`/`vtpAttribution` untouched.
+
+- [ ] **Step 6: Add CSS to `src/specpad.less`**
+
+Append:
+```less
+tr.ct-removed-row > td {
+  background-color: #fdf0ef;
+}
+
+tr.ct-removed-row del {
+  color: #a94442;
+}
+```
+
+- [ ] **Step 7: Full suite, typecheck, lint, build**
+
+Run: `npm test` — all green (`LocalApp.test.tsx` still passes — it renders SRSTable with no baseline → all unchanged).
+Run: `npx tsc --noEmit` — clean (confirm no leftover `srsRedline`/`RedlineView` references).
+Run: `npm run lint` — clean.
+Run: `npm run build` — clean.
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add src/components/SRSTable.tsx src/components/__tests__/SRSTable.test.tsx src/LocalApp.tsx src/specpad.less
+git commit -m "feat(editor): Word-style SRS redline (inline struck-through removed rows)
+
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
+```
+
+---
+
+## Task 2: Remove the inert "Move" menu item
+
+**Files:**
+- Modify: `src/components/RowMenu.tsx`
+- Modify: `src/components/__tests__/RowMenu.test.tsx`
+- Modify: `src/components/SRSTable.tsx`
+
+- [ ] **Step 1: Update the RowMenu test.** In `src/components/__tests__/RowMenu.test.tsx`, remove `onMove: vi.fn(),` from the `handlers()` object, and add this assertion to the first test (`hides the menu until the trigger is clicked`), after the `Delete` expectation:
+
+```tsx
+    expect(screen.queryByText('Move')).toBeNull();
+```
+
+- [ ] **Step 2: Run the RowMenu test to verify it fails**
+
+Run: `npx vitest run src/components/__tests__/RowMenu.test.tsx`
+Expected: FAIL — "Move" is still rendered.
+
+- [ ] **Step 3: Remove "Move" from `src/components/RowMenu.tsx`.** Delete `onMove: () => void;` from `RowMenuProps`, and delete the menu line `<li><a href="#" onClick={pick(props.onMove)}>Move</a></li>`. (Rows are directly draggable, so the menu item was redundant.)
+
+- [ ] **Step 4: Remove the `onMove` prop from the `RowMenu` usage in `src/components/SRSTable.tsx`.** Delete the line `onMove={() => undefined}` from the `<RowMenu ... />` props.
+
+- [ ] **Step 5: Run tests + typecheck + lint**
+
+Run: `npx vitest run src/components/__tests__/RowMenu.test.tsx src/components/__tests__/SRSTable.test.tsx` — PASS.
+Run: `npm test` — all green.
+Run: `npx tsc --noEmit` — clean (no `onMove` references remain).
+Run: `npm run lint` — clean.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add src/components/RowMenu.tsx src/components/__tests__/RowMenu.test.tsx src/components/SRSTable.tsx
+git commit -m "feat(editor): drop the redundant inert 'Move' menu item (rows are draggable)
+
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
+```
+
+---
+
+## Self-Review
+
+**1. Spec coverage (design §7):**
+- Word-style redline: removed rows inline, red + strikethrough, at baseline position → `buildRedlineRows` render + `.ct-removed-row` + `<del>` (Task 1). ✓
+- Added/modified highlight retained (added→success, modified→warning+cell highlight) via `rowStatusClass`/`isCellChanged` from the row status. ✓
+- Live redline (computes against `data` as edited, not just saved) → `buildRedlineRows(baseline ?? null, data)` memo. ✓
+- Removed "Removed since baseline" panel → deleted from render; test asserts it's gone. ✓
+- §7 "supersedes the row/cell highlight + removed panel" — the `redline` prop is replaced by `baseline`; LocalApp updated. ✓
+- Tidy inert "Move" item → Task 2. ✓
+- Out of scope (noted): VTPTable still uses the prior redline rendering (this feature targets SRS); a follow-up can mirror it.
+
+**2. Placeholder scan:** No TBD/TODO; full component + tests + CSS + exact LocalApp edits; exact commands and expected results.
+
+**3. Type/name consistency:** SRSTable prop `baseline?: SrsDoc | null` (replaces `redline`); `buildRedlineRows`/`RedlineEntry` imported from `../changeTracking`; `rowStatusClass`/`isCellChanged` still from `../changeTrackingView`; `entryFor` constructs a `RedlineEntry`. LocalApp passes `baseline={srsBaseline}` (existing state) and drops `srsRedline`. RowMenu loses `onMove` from `RowMenuProps` and SRSTable drops the prop — consistent across Task 2.
+
+---
+
+## Out of scope / follow-ups
+- VTPTable Word-style redline (still uses the row/cell highlight + removed panel from the change-tracking feature).
+- Word-level (within-text) inline diff (deferred per the design).
+- After this lands: deploy via `infra/deploy.sh --ship`.
