@@ -12,7 +12,7 @@ import { rowStatusClass, isCellChanged, attributionLabel } from '../changeTracki
 interface VTPTableProps {
   doc: VtpDoc;
   srsDoc: SrsDoc | null;
-  onSave: (doc: VtpDoc) => void;
+  onChange: (doc: VtpDoc) => void;
   redline?: RedlineView;
   attribution?: Map<string, AttributionView>;
 }
@@ -21,8 +21,9 @@ type EditTarget = { index: number; field: 'code' | 'text' | 'verifies' | 'expect
 
 const RESULTS: TestResult[] = ['', 'not_tested', 'passed', 'failed'];
 
-const VTPTable: React.FC<VTPTableProps> = ({ doc, srsDoc, onSave, redline, attribution }) => {
-  const [data, setData] = useState<VtpDoc>(doc);
+const VTPTable: React.FC<VTPTableProps> = ({ doc, srsDoc, onChange, redline, attribution }) => {
+  const data = doc;
+  const update = (items: VtpItem[]) => onChange({ ...doc, items });
   const [editing, setEditing] = useState<EditTarget>(null);
   const [editValue, setEditValue] = useState('');
 
@@ -50,27 +51,27 @@ const VTPTable: React.FC<VTPTableProps> = ({ doc, srsDoc, onSave, redline, attri
       item[editing.field] = editValue;
     }
     items[editing.index] = item;
-    setData({ ...data, items });
+    update(items);
     setEditing(null);
   };
 
   const setResult = (index: number, result: TestResult) => {
     const items = data.items.slice();
     items[index] = { ...items[index], result };
-    setData({ ...data, items });
+    update(items);
   };
 
   const addRow = (afterIndex: number) => {
     const items = data.items.slice();
     items.splice(afterIndex + 1, 0, createVtpItem(existingIds()));
-    setData({ ...data, items });
+    update(items);
   };
 
   const deleteRow = (index: number) => {
     if (!confirm('Delete this row?')) return;
     const items = data.items.slice();
     items.splice(index, 1);
-    setData({ ...data, items });
+    update(items);
   };
 
   const moveRow = (index: number, delta: number) => {
@@ -79,7 +80,7 @@ const VTPTable: React.FC<VTPTableProps> = ({ doc, srsDoc, onSave, redline, attri
     const items = data.items.slice();
     const [item] = items.splice(index, 1);
     items.splice(target, 0, item);
-    setData({ ...data, items });
+    update(items);
   };
 
   const renderCell = (index: number, field: NonNullable<EditTarget>['field']) => {
@@ -129,7 +130,6 @@ const VTPTable: React.FC<VTPTableProps> = ({ doc, srsDoc, onSave, redline, attri
       <div style={{ marginBottom: 10 }}>
         <h2>{data.title || 'Verification Tests'}</h2>
         <strong>Document:</strong> {data.name}
-        <button className="btn btn-success btn-sm" style={{ marginLeft: 20 }} onClick={() => onSave(data)}>Save</button>
       </div>
       <table className="table table-bordered table-striped">
         <thead>
