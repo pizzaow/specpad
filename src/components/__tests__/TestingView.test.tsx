@@ -17,20 +17,18 @@ const vtp: VtpDoc = {
 
 describe('TestingView', () => {
   it('lists only non-heading tests', () => {
-    render(<TestingView doc={vtp} onSave={vi.fn()} />);
+    render(<TestingView doc={vtp} onChange={vi.fn()} />);
     expect(screen.getByText('Login')).toBeInTheDocument();
     expect(screen.getByText('Logout')).toBeInTheDocument();
     expect(screen.queryByText('Section')).toBeNull();
   });
 
-  it('saves an updated result back through onSave', () => {
-    const onSave = vi.fn();
-    render(<TestingView doc={vtp} onSave={onSave} />);
-    const selects = screen.getAllByRole('combobox');
-    fireEvent.change(selects[1], { target: { value: 'failed' } });
-    fireEvent.click(screen.getByText('Save'));
-    expect(onSave).toHaveBeenCalledTimes(1);
-    const saved = onSave.mock.calls[0][0] as VtpDoc;
-    expect(saved.items.find((i) => i.id === 't_002')?.result).toBe('failed');
+  it('reports a result change to onChange', () => {
+    const onChange = vi.fn();
+    render(<TestingView doc={vtp} onChange={onChange} />);
+    const select = screen.getAllByRole('combobox')[0];
+    fireEvent.change(select, { target: { value: 'passed' } });
+    const next = onChange.mock.calls.at(-1)![0];
+    expect(next.items.find((i: { id: string }) => i.id === vtp.items[0].id)?.result).toBe('passed');
   });
 });

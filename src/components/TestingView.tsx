@@ -8,13 +8,14 @@ import type { VtpDoc, VtpItem, TestResult } from '../shared';
 
 interface TestingViewProps {
   doc: VtpDoc;
-  onSave: (doc: VtpDoc) => void;
+  onChange: (doc: VtpDoc) => void;
 }
 
 const RESULTS: TestResult[] = ['', 'not_tested', 'passed', 'failed'];
 
-const TestingView: React.FC<TestingViewProps> = ({ doc, onSave }) => {
-  const [data, setData] = useState<VtpDoc>(doc);
+const TestingView: React.FC<TestingViewProps> = ({ doc, onChange }) => {
+  const data = doc;
+  const update = (items: VtpDoc['items']) => onChange({ ...doc, items });
   const [editingNotes, setEditingNotes] = useState<number | null>(null);
   const [editValue, setEditValue] = useState('');
 
@@ -33,13 +34,13 @@ const TestingView: React.FC<TestingViewProps> = ({ doc, onSave }) => {
   const setResult = (index: number, result: TestResult) => {
     const items = data.items.slice();
     items[index] = { ...items[index], result };
-    setData({ ...data, items });
+    update(items);
   };
 
   const commitNotes = (index: number) => {
     const items = data.items.slice();
     items[index] = { ...items[index], notes: editValue };
-    setData({ ...data, items });
+    update(items);
     setEditingNotes(null);
   };
 
@@ -51,7 +52,6 @@ const TestingView: React.FC<TestingViewProps> = ({ doc, onSave }) => {
       <div style={{ marginBottom: 10 }}>
         <h2>Testing — {data.title || 'Verification Tests'}</h2>
         <strong>Document:</strong> {data.name}
-        <button className="btn btn-success btn-sm" style={{ marginLeft: 20 }} onClick={() => onSave(data)}>Save</button>
         <div style={{ marginTop: 10 }}>
           <span className="label label-success">Passed: {counts.passed}</span>{' '}
           <span className="label label-danger">Failed: {counts.failed}</span>{' '}
