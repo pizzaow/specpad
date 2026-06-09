@@ -25,3 +25,6 @@ npm-debug.log*
 
 # Backup files
 *.bak
+
+# Brainstorming visual-companion artifacts
+.superpowers/
