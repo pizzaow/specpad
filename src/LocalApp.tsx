@@ -32,15 +32,16 @@ import {
 import { buildRedline, computeAttribution } from './changeTracking';
 import type { SnapshotInput } from './changeTracking';
 import { cachedReleases } from './changeTrackingView';
-import VersionTimeline from './components/VersionTimeline';
 import MenuBar from './components/MenuBar';
+import VersionHistoryDialog from './components/VersionHistoryDialog';
 import * as recentStore from './handleStore';
 import type { RecentProject } from './handleStore';
 import { parseLaunchParams } from './launchParams';
 import SRSTable from './components/SRSTable';
 import VTPTable from './components/VTPTable';
 import TestingView from './components/TestingView';
-import ValidationPanel from './components/ValidationPanel';
+import StatusBar from './components/StatusBar';
+import ViewTabs from './components/ViewTabs';
 
 type ViewMode = 'srs' | 'vtp' | 'testing';
 type OpenResult = { name: string; documents: DocumentListItem[] };
@@ -66,6 +67,7 @@ const LocalApp: React.FC = () => {
   const [vtpSnapshots, setVtpSnapshots] = useState<SnapshotInput[]>([]);
   const [dirtySrs, setDirtySrs] = useState(false);
   const [dirtyVtp, setDirtyVtp] = useState(false);
+  const [showVersions, setShowVersions] = useState(false);
 
   const supportsFileSystemAccess = isFileSystemAccessSupported();
 
@@ -246,6 +248,7 @@ const LocalApp: React.FC = () => {
 
   const handleSelectDocument = async (name: string) => {
     if (!name || !hasOpenDirectory()) return;
+    if (dirty && !window.confirm('You have unsaved changes that will be lost. Switch anyway?')) return;
     setLoading(true);
     setError(null);
     try {
@@ -352,6 +355,8 @@ const LocalApp: React.FC = () => {
         onOpenFallback={handleOpenFallback}
         job={job}
         onSetJob={handleSetJob}
+        version={releases?.baseline ?? null}
+        onShowVersions={() => setShowVersions(true)}
       />
 
       {!supportsFileSystemAccess && (
@@ -370,33 +375,14 @@ const LocalApp: React.FC = () => {
       )}
 
       {(srsDoc || vtpDoc) && (
-        <div className="toolbar" style={{ marginBottom: 16 }}>
-          <div className="btn-group" role="group">
-            <button className={`btn ${currentView === 'srs' ? 'btn-info' : 'btn-default'}`} disabled={!srsDoc} onClick={() => setCurrentView('srs')}>SRS</button>
-            <button className={`btn ${currentView === 'vtp' ? 'btn-info' : 'btn-default'}`} disabled={!vtpDoc} onClick={() => setCurrentView('vtp')}>VTP</button>
-            <button className={`btn ${currentView === 'testing' ? 'btn-info' : 'btn-default'}`} disabled={!vtpDoc} onClick={() => setCurrentView('testing')}>Testing</button>
-          </div>
-        </div>
+        <ViewTabs
+          current={currentView}
+          enabled={{ srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc }}
+          onSelect={setCurrentView}
+        />
       )}
 
       {loading && <div className="alert alert-info">Loading...</div>}
-
-      {(srsDoc || vtpDoc || projectDoc) && (
-        <ValidationPanel srsDoc={srsDoc} vtpDoc={vtpDoc} projectDoc={projectDoc} />
-      )}
-
-      {isDirectoryOpen && selectedDocName && (
-        <div className="change-tracking">
-          {releases ? (
-            <VersionTimeline releases={releases} />
-          ) : (
-            <div className="alert alert-info">
-              Change history unavailable — run <code>specpad refresh</code> to generate the version
-              snapshots. You can still edit and save normally.
-            </div>
-          )}
-        </div>
-      )}
 
       <div className="content">
         {/* key={selectedDocName} remounts the table when the open document changes,
@@ -434,6 +420,12 @@ const LocalApp: React.FC = () => {
           </>
         )}
       </div>
+
+      {isDirectoryOpen && (
+        <StatusBar path={`docs/specpad/${projectName}`} srsDoc={srsDoc} vtpDoc={vtpDoc} projectDoc={projectDoc} />
+      )}
+
+      {showVersions && <VersionHistoryDialog releases={releases} onClose={() => setShowVersions(false)} />}
     </div>
   );
 };

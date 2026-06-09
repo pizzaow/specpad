@@ -18,6 +18,8 @@ function props(over: Partial<React.ComponentProps<typeof MenuBar>> = {}) {
     onOpenFallback: vi.fn(),
     job: null as JobDoc | null,
     onSetJob: vi.fn(),
+    version: null as string | null,
+    onShowVersions: vi.fn(),
     ...over,
   };
 }
@@ -68,6 +70,13 @@ describe('MenuBar', () => {
     fireEvent.change(screen.getByPlaceholderText('Job id (e.g. PROJ-123)'), { target: { value: 'PROJ-9' } });
     fireEvent.click(screen.getByText('Set job'));
     expect(p.onSetJob).toHaveBeenCalledWith('PROJ-9', '');
+  });
+
+  it('shows the version chip and opens version history', () => {
+    const p = props({ version: 'v1.0' });
+    render(<MenuBar {...p} />);
+    fireEvent.click(screen.getByText('v1.0 ▾'));
+    expect(p.onShowVersions).toHaveBeenCalledTimes(1);
   });
 
   it('in the no-directory state, File offers Open project directory', () => {
