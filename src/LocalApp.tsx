@@ -32,8 +32,8 @@ import {
 import { buildRedline, computeAttribution } from './changeTracking';
 import type { SnapshotInput } from './changeTracking';
 import { cachedReleases } from './changeTrackingView';
-import VersionTimeline from './components/VersionTimeline';
 import MenuBar from './components/MenuBar';
+import VersionHistoryDialog from './components/VersionHistoryDialog';
 import * as recentStore from './handleStore';
 import type { RecentProject } from './handleStore';
 import { parseLaunchParams } from './launchParams';
@@ -67,6 +67,7 @@ const LocalApp: React.FC = () => {
   const [vtpSnapshots, setVtpSnapshots] = useState<SnapshotInput[]>([]);
   const [dirtySrs, setDirtySrs] = useState(false);
   const [dirtyVtp, setDirtyVtp] = useState(false);
+  const [showVersions, setShowVersions] = useState(false);
 
   const supportsFileSystemAccess = isFileSystemAccessSupported();
 
@@ -353,6 +354,8 @@ const LocalApp: React.FC = () => {
         onOpenFallback={handleOpenFallback}
         job={job}
         onSetJob={handleSetJob}
+        version={releases?.baseline ?? null}
+        onShowVersions={() => setShowVersions(true)}
       />
 
       {!supportsFileSystemAccess && (
@@ -379,19 +382,6 @@ const LocalApp: React.FC = () => {
       )}
 
       {loading && <div className="alert alert-info">Loading...</div>}
-
-      {isDirectoryOpen && selectedDocName && (
-        <div className="change-tracking">
-          {releases ? (
-            <VersionTimeline releases={releases} />
-          ) : (
-            <div className="alert alert-info">
-              Change history unavailable — run <code>specpad refresh</code> to generate the version
-              snapshots. You can still edit and save normally.
-            </div>
-          )}
-        </div>
-      )}
 
       <div className="content">
         {/* key={selectedDocName} remounts the table when the open document changes,
@@ -433,6 +423,8 @@ const LocalApp: React.FC = () => {
       {isDirectoryOpen && (
         <StatusBar path={`docs/specpad/${projectName}`} srsDoc={srsDoc} vtpDoc={vtpDoc} projectDoc={projectDoc} />
       )}
+
+      {showVersions && <VersionHistoryDialog releases={releases} onClose={() => setShowVersions(false)} />}
     </div>
   );
 };
