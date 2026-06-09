@@ -40,7 +40,7 @@ import { parseLaunchParams } from './launchParams';
 import SRSTable from './components/SRSTable';
 import VTPTable from './components/VTPTable';
 import TestingView from './components/TestingView';
-import ValidationPanel from './components/ValidationPanel';
+import StatusBar from './components/StatusBar';
 import ViewTabs from './components/ViewTabs';
 
 type ViewMode = 'srs' | 'vtp' | 'testing';
@@ -380,10 +380,6 @@ const LocalApp: React.FC = () => {
 
       {loading && <div className="alert alert-info">Loading...</div>}
 
-      {(srsDoc || vtpDoc || projectDoc) && (
-        <ValidationPanel srsDoc={srsDoc} vtpDoc={vtpDoc} projectDoc={projectDoc} />
-      )}
-
       {isDirectoryOpen && selectedDocName && (
         <div className="change-tracking">
           {releases ? (
@@ -433,6 +429,10 @@ const LocalApp: React.FC = () => {
           </>
         )}
       </div>
+
+      {isDirectoryOpen && (
+        <StatusBar path={`docs/specpad/${projectName}`} srsDoc={srsDoc} vtpDoc={vtpDoc} projectDoc={projectDoc} />
+      )}
     </div>
   );
 };
