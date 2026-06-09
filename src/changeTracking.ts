@@ -99,3 +99,52 @@ export function computeAttribution(snapshots: SnapshotInput[]): Map<string, Attr
   }
   return out;
 }
+
+export type RowStatus = 'unchanged' | 'added' | 'modified' | 'removed';
+
+export interface RedlineRow {
+  item: AnyItem;
+  status: RowStatus;
+  changedFields?: string[];
+}
+
+/**
+ * Ordered display rows for a Word-style redline: working items in order (tagged
+ * added/modified/unchanged), with baseline-only items spliced in as `removed` at
+ * their baseline position — right after their nearest surviving predecessor.
+ */
+export function buildRedlineRows(baseline: AnyDoc | null, working: AnyDoc): RedlineRow[] {
+  if (!baseline) return working.items.map((item) => ({ item, status: 'unchanged' as RowStatus }));
+
+  const diff = diffDocs(baseline, working);
+  const added = new Set(diff.added.map((c) => c.id));
+  const modified = new Map<string, string[] | undefined>(diff.modified.map((c) => [c.id, c.changedFields]));
+  const removedIds = new Set(diff.removed.map((c) => c.id));
+
+  const START = ' start';
+  const removedAfter = new Map<string, AnyItem[]>();
+  let predecessor = START;
+  for (const item of baseline.items) {
+    if (removedIds.has(item.id)) {
+      const list = removedAfter.get(predecessor) ?? [];
+      list.push(item);
+      removedAfter.set(predecessor, list);
+    } else {
+      predecessor = item.id;
+    }
+  }
+
+  const out: RedlineRow[] = [];
+  for (const r of removedAfter.get(START) ?? []) out.push({ item: r, status: 'removed' });
+  for (const item of working.items) {
+    if (added.has(item.id)) {
+      out.push({ item, status: 'added' });
+    } else if (modified.has(item.id)) {
+      out.push({ item, status: 'modified', changedFields: modified.get(item.id) });
+    } else {
+      out.push({ item, status: 'unchanged' });
+    }
+    for (const r of removedAfter.get(item.id) ?? []) out.push({ item: r, status: 'removed' });
+  }
+  return out;
+}

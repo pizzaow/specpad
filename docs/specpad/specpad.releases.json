@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1.0",
+  "type": "releases",
+  "name": "specpad",
+  "tagPattern": "v*",
+  "baseline": "v1.0",
+  "releases": [
+    {
+      "version": "v0.1",
+      "ref": "748dda133073c654bd30a4503f610a09d1d176d6",
+      "date": "2026-06-06",
+      "author": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "snapshot": ".specpad/snapshots/v0.1"
+    },
+    {
+      "version": "v1.0",
+      "ref": "9f693760f090c9e6e17b331d12e6d98a2e462b4c",
+      "date": "2026-06-07",
+      "author": { "name": "pizzaow", "email": "geoffpollard@gmail.com" },
+      "snapshot": ".specpad/baseline"
+    }
+  ]
+}
