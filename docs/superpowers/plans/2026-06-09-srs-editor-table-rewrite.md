@@ -1,3 +1,153 @@
+# SRS Editor — Plan 3: SRSTable Rewrite (hierarchy, menu, show-tests, hazards-out)
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Rewrite `SRSTable` to deliver the visible changes — per-row hamburger menu (replacing the action buttons), Hazards column removed, indentation by `level`, derived dotted heading codes, a per-requirement show-tests expander, and the `ItemInfo` modal — while preserving the existing change-tracking redline highlight.
+
+**Architecture:** `SRSTable` stays the stateful orchestrator over a flat `items` array. It consumes the already-built `RowMenu`/`ItemInfo` (Plan 2), `deriveHeadingCodes` (Plan 1), and the existing `rowStatusClass`/`isCellChanged` redline helpers. Hierarchy is `level`-based; the menu provides all structural edits; rows are HTML5-draggable to reorder. Redline *rendering* stays as-is here (row/cell highlight + removed panel); Plan 4 swaps it to the Word-style `buildRedlineRows`.
+
+**Tech Stack:** React 18 + TypeScript, Bootstrap 3, LESS, Vitest + Testing Library. No new dependencies.
+
+**Source design:** `docs/design/specpad-srs-editor-enhancements-design.md` — §3 (heading codes/indent), §4 (menu), §5 (show-tests), §6 (info modal), §9 (hazards out), §12 (edge cases: indent clamp, delete-confirm).
+
+---
+
+## File Structure
+
+- **Modify** `src/components/SRSTable.tsx` — full rewrite (below).
+- **Modify** `src/components/__tests__/SRSTable.test.tsx` — replace UI assertions for the new structure (keep/adjust the existing redline test).
+- **Modify** `src/specpad.less` — indentation, show-tests sub-row, menu polish.
+
+---
+
+## Task 1: Rewrite `SRSTable`
+
+**Files:**
+- Modify: `src/components/SRSTable.tsx`
+- Test: `src/components/__tests__/SRSTable.test.tsx`
+
+- [ ] **Step 1: Replace `src/components/__tests__/SRSTable.test.tsx` entirely with:**
+
+```tsx
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent, within } from '@testing-library/react';
+import SRSTable from '../SRSTable';
+import type { SrsDoc, VtpDoc } from '../../shared';
+import type { RedlineView, AttributionView } from '../../changeTracking';
+
+const srs: SrsDoc = {
+  schemaVersion: '1.0', type: 'srs', name: 'AcmeApp', title: 'Requirements',
+  items: [
+    { id: 'h_001', heading: true, text: 'Functional', code: 'Func' },
+    { id: 'r_001', code: 'FUNC-1', text: 'Shall authenticate.', level: 1 },
+  ],
+};
+const vtp: VtpDoc = {
+  schemaVersion: '1.0', type: 'vtp', name: 'AcmeApp', title: 'Tests',
+  items: [{ id: 't_001', code: 'TEST-1', text: 'Login test', verifies: ['r_001'], expected: 'ok', result: 'passed' }],
+};
+
+describe('SRSTable structure', () => {
+  it('renders requirement text and code, no Hazards column', () => {
+    render(<SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} />);
+    expect(screen.getByText('Shall authenticate.')).toBeInTheDocument();
+    expect(screen.getByText('FUNC-1')).toBeInTheDocument();
+    expect(screen.queryByText('Hazards')).toBeNull();
+  });
+
+  it('shows a derived dotted code for headings (not the word "heading")', () => {
+    render(<SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} />);
+    expect(screen.getByText('Func')).toBeInTheDocument();
+    expect(screen.queryByText('heading')).toBeNull();
+  });
+
+  it('uses a per-row hamburger menu instead of action buttons', () => {
+    render(<SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} />);
+    expect(screen.queryByTitle('Add row below')).toBeNull(); // old buttons gone
+    expect(screen.getAllByLabelText('Row actions').length).toBe(2); // one per row
+  });
+
+  it('test count column shows the verifying-test count', () => {
+    render(<SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} />);
+    expect(screen.getByText('1')).toBeInTheDocument();
+  });
+});
+
+describe('SRSTable hierarchy + menu actions', () => {
+  it('adds a child below at level+1 via the menu', () => {
+    const onSave = vi.fn();
+    render(<SRSTable doc={srs} vtpDoc={vtp} onSave={onSave} />);
+    // open the heading row's menu (first), add child
+    fireEvent.click(screen.getAllByLabelText('Row actions')[0]);
+    fireEvent.click(screen.getByText('Child'));
+    fireEvent.click(screen.getByText('Save'));
+    const saved = onSave.mock.calls[0][0] as SrsDoc;
+    expect(saved.items.length).toBe(3);
+    expect(saved.items[1].level).toBe(1); // child of a level-0 heading
+  });
+
+  it('deletes a requirement after confirmation', () => {
+    const onSave = vi.fn();
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    render(<SRSTable doc={srs} vtpDoc={vtp} onSave={onSave} />);
+    fireEvent.click(screen.getAllByLabelText('Row actions')[1]); // r_001
+    fireEvent.click(screen.getByText('Delete'));
+    fireEvent.click(screen.getByText('Save'));
+    const saved = onSave.mock.calls[0][0] as SrsDoc;
+    expect(saved.items.find((i) => i.id === 'r_001')).toBeUndefined();
+    vi.restoreAllMocks();
+  });
+
+  it('outdent is disabled for a level-0 row', () => {
+    render(<SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} />);
+    fireEvent.click(screen.getAllByLabelText('Row actions')[0]); // heading, level 0
+    const outdent = screen.getByText('Outdent').closest('li');
+    expect(outdent?.className).toContain('disabled');
+  });
+});
+
+describe('SRSTable show-tests + info', () => {
+  it('expands the verifying tests inline for a requirement', () => {
+    render(<SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} />);
+    fireEvent.click(screen.getByLabelText('Show tests for r_001'));
+    expect(screen.getByText('Login test')).toBeInTheDocument();
+    expect(screen.getByText(/TEST-1/)).toBeInTheDocument();
+  });
+
+  it('opens the info modal from the menu', () => {
+    render(<SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} />);
+    fireEvent.click(screen.getAllByLabelText('Row actions')[1]);
+    fireEvent.click(screen.getByText('View information'));
+    const dialog = screen.getByRole('dialog');
+    expect(within(dialog).getByText('r_001')).toBeInTheDocument();
+  });
+});
+
+describe('SRSTable redline (preserved)', () => {
+  it('marks a modified row and lists removed items', () => {
+    const redline: RedlineView = {
+      byId: new Map([['r_001', { status: 'modified', changedFields: ['text'] }]]),
+      removed: [{ id: 'r_old', status: 'removed', before: { id: 'r_old', text: 'Old requirement' } }],
+    };
+    const attribution = new Map<string, AttributionView>();
+    const { container } = render(
+      <SRSTable doc={srs} vtpDoc={vtp} onSave={vi.fn()} redline={redline} attribution={attribution} />,
+    );
+    expect(container.querySelector('tr.warning')).not.toBeNull();
+    expect(screen.getByText(/Removed since baseline/)).toBeInTheDocument();
+    expect(screen.getByText('Old requirement')).toBeInTheDocument();
+  });
+});
+```
+
+- [ ] **Step 2: Run the test to verify it fails**
+
+Run: `npx vitest run src/components/__tests__/SRSTable.test.tsx`
+Expected: FAIL — old SRSTable has the Hazards column / action buttons / no hamburger.
+
+- [ ] **Step 3: Replace `src/components/SRSTable.tsx` entirely with:**
+
+```tsx
 /**
  * SRSTable — requirements editor with hierarchy, a per-row hamburger menu,
  * inline test display, and change-tracking redline highlight.
@@ -190,7 +340,7 @@ const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onSave, redline, attri
                     {item.heading ? '' : (
                       <button type="button" className="btn btn-link btn-xs" aria-label={`Show tests for ${item.id}`}
                         onClick={() => toggleTests(item.id)}>
-                        <span>{count}</span> {open ? '▾' : '▸'}
+                        {count} {open ? '▾' : '▸'}
                       </button>
                     )}
                   </td>
@@ -217,9 +367,9 @@ const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onSave, redline, attri
                         <em className="text-muted">No verifying tests.</em>
                       ) : (
                         <ul className="list-unstyled" style={{ marginBottom: 0 }}>
-                          {(testsByReq.get(item.id) ?? []).map((t) => (
+                          {testsByReq.get(item.id)!.map((t) => (
                             <li key={t.id}>
-                              <strong>{t.code || t.id}</strong>: <span>{t.text}</span>
+                              <strong>{t.code || t.id}</strong>: {t.text}
                               {t.expected ? <span className="text-muted"> — expects: {t.expected}</span> : null}
                               {t.result ? <span className={`label label-${t.result === 'passed' ? 'success' : t.result === 'failed' ? 'danger' : 'default'}`} style={{ marginLeft: 6 }}>{t.result}</span> : null}
                             </li>
@@ -263,3 +413,74 @@ const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onSave, redline, attri
 };
 
 export default SRSTable;
+```
+
+- [ ] **Step 4: Run the test to verify it passes**
+
+Run: `npx vitest run src/components/__tests__/SRSTable.test.tsx`
+Expected: PASS (all groups). If the redline "modified" row also matches the heading-info class, confirm `tr.warning` targets `r_001` — adjust only if a real mismatch.
+
+- [ ] **Step 5: Add CSS to `src/specpad.less`**
+
+Append:
+```less
+.srs-table .row-menu .dropdown-menu {
+  min-width: 170px;
+}
+
+.srs-tests-row > td {
+  background-color: #f9f9f9;
+  font-size: 0.9em;
+  padding: 6px 10px;
+}
+
+.srs-tests-row .label {
+  font-size: 11px;
+  padding: 2px 6px;
+}
+
+tr[draggable="true"] {
+  cursor: grab;
+}
+```
+
+- [ ] **Step 6: Full suite, typecheck, lint, build**
+
+Run: `npm test` — all green (note: `LocalApp.test.tsx` renders SRSTable indirectly; confirm it still passes).
+Run: `npx tsc --noEmit` — clean.
+Run: `npm run lint` — clean.
+Run: `npm run build` — clean.
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add src/components/SRSTable.tsx src/components/__tests__/SRSTable.test.tsx src/specpad.less
+git commit -m "feat(editor): SRSTable hierarchy + hamburger menu + show-tests; drop Hazards column
+
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
+```
+
+---
+
+## Self-Review
+
+**1. Spec coverage (design §3/§4/§5/§6/§9/§12):**
+- §4 hamburger replaces action buttons (add above/below/child, add heading, indent/outdent, move, delete, view info) → `RowMenu` wired per row. ✓
+- §3 indentation by `level` (paddingLeft) + derived dotted heading codes in the Code cell → `headingCodes` + INDENT_PX. ✓
+- §5 show-tests expander listing verifying tests inline → `toggleTests` + the tests sub-row. ✓
+- §6 info modal from the menu → `ItemInfo` wired via `infoIndex`. ✓
+- §9 Hazards column removed (field retained in data, shown in `ItemInfo`). ✓
+- §12 indent clamp (≤ prev+1), outdent floor 0, delete confirm, outdent disabled at level 0 (`canOutdent`). ✓
+- Redline highlight preserved (`rowStatusClass`/`isCellChanged` + removed panel); Word-style rendering is Plan 4. ✓
+- `onMove` is a no-op (rows are HTML5-draggable directly); drag reorder implemented via `dragIndex`/`onDrop`. Note: the menu "Move" item is presently inert — flagged for Plan 4/polish.
+
+**2. Placeholder scan:** No TBD/TODO; complete component + tests + CSS; exact commands and expected results.
+
+**3. Type/name consistency:** Imports `RowMenu`/`ItemInfo` with the exact prop names from Plan 2 (`onAddAbove`…`onViewInfo`, `canOutdent`; `item`/`code`/`testCount`/`attribution`/`onClose`); `deriveHeadingCodes` from `../outline`; `rowStatusClass`/`isCellChanged` from `../changeTrackingView`; `createSrsItem`/`generateId`/`ID_PREFIX` from `../shared`. `redline`/`attribution` props unchanged from the current signature (LocalApp passes them as-is).
+
+---
+
+## Out of scope (Plan 4)
+- Word-style redline rendering via `buildRedlineRows` (interleaved removed rows, red strikethrough) — replaces the `rowStatusClass`/removed-panel approach used here.
+- Making the menu "Move" item drive the drag affordance (currently rows are directly draggable; the item is inert).
+- VTP table hamburger (SRS only this iteration).
