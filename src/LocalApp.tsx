@@ -67,10 +67,6 @@ const LocalApp: React.FC = () => {
 
   const supportsFileSystemAccess = isFileSystemAccessSupported();
 
-  const srsRedline = React.useMemo(
-    () => (srsDoc ? buildRedline(srsBaseline, srsDoc) : undefined),
-    [srsBaseline, srsDoc],
-  );
   const vtpRedline = React.useMemo(
     () => (vtpDoc ? buildRedline(vtpBaseline, vtpDoc) : undefined),
     [vtpBaseline, vtpDoc],
@@ -375,7 +371,7 @@ const LocalApp: React.FC = () => {
       <div className="content">
         {/* key={selectedDocName} remounts the table when the open document changes,
             so each table re-seeds its working copy instead of editing the prior doc. */}
-        {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onSave={handleSave} redline={srsRedline} attribution={srsSnapshots.length ? srsAttribution : undefined} />}
+        {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onSave={handleSave} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} />}
         {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onSave={handleSave} redline={vtpRedline} attribution={vtpSnapshots.length ? vtpAttribution : undefined} />}
         {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} onSave={handleSave} />}
 
