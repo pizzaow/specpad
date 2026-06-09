@@ -22,6 +22,8 @@ export interface MenuBarProps {
   onOpenFallback: () => void;
   job: JobDoc | null;
   onSetJob: (job: string, title: string) => void;
+  version?: string | null;
+  onShowVersions?: () => void;
 }
 
 type OpenMenu = null | 'file' | 'project' | 'job';
@@ -97,6 +99,10 @@ const MenuBar: React.FC<MenuBarProps> = (p) => {
             </div>
           )}
         </span>
+      )}
+
+      {p.isDirectoryOpen && p.version && (
+        <button type="button" className={chip} onClick={() => p.onShowVersions?.()}>{p.version} ▾</button>
       )}
     </div>
   );
