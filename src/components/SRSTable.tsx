@@ -19,7 +19,7 @@ import ItemInfo from './ItemInfo';
 interface SRSTableProps {
   doc: SrsDoc;
   vtpDoc: VtpDoc | null;
-  onSave: (doc: SrsDoc) => void;
+  onChange: (doc: SrsDoc) => void;
   baseline?: SrsDoc | null;
   attribution?: Map<string, AttributionView>;
 }
@@ -29,8 +29,8 @@ type EditTarget = { index: number; field: EditField } | null;
 
 const INDENT_PX = 22;
 
-const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onSave, baseline, attribution }) => {
-  const [data, setData] = useState<SrsDoc>(doc);
+const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onChange, baseline, attribution }) => {
+  const data = doc;
   const [editing, setEditing] = useState<EditTarget>(null);
   const [editValue, setEditValue] = useState('');
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
@@ -58,7 +58,7 @@ const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onSave, baseline, attr
   }, [vtpDoc]);
 
   const ids = () => data.items.map((i) => i.id);
-  const update = (items: SrsItem[]) => setData({ ...data, items });
+  const update = (items: SrsItem[]) => onChange({ ...doc, items });
 
   const startEdit = (index: number, field: EditField) => {
     const value = data.items[index][field];
@@ -161,7 +161,6 @@ const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onSave, baseline, attr
       <div style={{ marginBottom: 10 }}>
         <h2>{data.title || 'Requirements'}</h2>
         <strong>Document:</strong> {data.name}
-        <button className="btn btn-success btn-sm" style={{ marginLeft: 20 }} onClick={() => onSave(data)}>Save</button>
       </div>
       <table className="table table-bordered table-striped srs-table">
         <thead>
