@@ -4,7 +4,7 @@
  * launcher deep-link (#name=&open=&dir=), and a recent-projects list backed by
  * persisted directory handles so return visits reopen without re-picking.
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { ProjectDoc, SrsDoc, VtpDoc, ReleasesDoc, JobDoc } from './shared';
 import {
   DocumentListItem,
@@ -298,19 +298,27 @@ const LocalApp: React.FC = () => {
     }
   };
 
+  // Keep the latest dirty/save for the global key + unload handlers (avoids a
+  // stale closure when a second document becomes dirty without re-saving).
+  const shortcutRef = useRef({ dirty, save });
+  shortcutRef.current = { dirty, save };
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); if (dirty) void save(); }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        if (shortcutRef.current.dirty) void shortcutRef.current.save();
+      }
     };
-    const onBeforeUnload = (e: BeforeUnloadEvent) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } };
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (shortcutRef.current.dirty) { e.preventDefault(); e.returnValue = ''; }
+    };
     window.addEventListener('keydown', onKey);
     window.addEventListener('beforeunload', onBeforeUnload);
     return () => {
       window.removeEventListener('keydown', onKey);
       window.removeEventListener('beforeunload', onBeforeUnload);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dirty]);
+  }, []);
 
   const handleOpenFallback = async () => {
     try {
