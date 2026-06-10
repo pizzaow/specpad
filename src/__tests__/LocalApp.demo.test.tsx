@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import type { SrsDoc, VtpDoc, ProjectDoc } from '../shared';
 
 const demoSrs: SrsDoc = {
@@ -67,10 +67,9 @@ describe('LocalApp demo mode', () => {
     // Read-only indicator is visible.
     expect(screen.getByText(/Demo — read-only/)).toBeInTheDocument();
 
-    // No Save button, and no "New document…" in the File menu.
+    // No write affordances: no Save button and no File menu at all in demo.
     expect(screen.queryByLabelText('Save')).toBeNull();
-    fireEvent.click(screen.getByText('File ▾'));
-    expect(screen.queryByText('New document…')).toBeNull();
+    expect(screen.queryByText('File ▾')).toBeNull();
   });
 
   it('shows a friendly error when the demo fails to load', async () => {
