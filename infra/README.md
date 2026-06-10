@@ -57,7 +57,7 @@ infra/deploy.sh --ship
 ```bash
 # Step 4 in longhand (site + zip, then root sync with safe --delete scoping):
 npm run build:site
-( cd skill && zip -qr ../dist-site/specpad-skill.zip specpad )
+( cd skill && rm -f ../dist-site/specpad-skill.zip && zip -qr ../dist-site/specpad-skill.zip specpad )
 aws s3 sync dist-site/ s3://specpad-web-904915073567/ --delete --exclude "v0*/*" --exclude "demo/*"
 ```
 
