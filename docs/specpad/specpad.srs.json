@@ -42,6 +42,8 @@
     { "id": "r_a601", "code": "SKILL-1", "text": "The skill shall scaffold docs/specpad/ and create or edit documents programmatically, generating stable ids.", "tags": ["skill"] },
     { "id": "r_a602", "code": "SKILL-2", "text": "The skill shall validate structure and governance before reporting a task complete." },
     { "id": "r_a603", "code": "SKILL-3", "text": "The skill shall generate a launcher (index.html) that redirects to the version-pinned hosted editor at specpad.com/v01/." },
+    { "id": "r_ms001", "code": "SKILL-4", "text": "The schema reference page shall be generated at build time from the shared schema and governance modules, and the build shall fail if any schema field lacks a description." },
+    { "id": "r_ms002", "code": "SKILL-5", "text": "The distributable skill shall be downloadable from the site as a zip archive rebuilt from the repository at every deploy." },
 
     { "id": "h_ce100", "heading": true, "text": "Change tracking" },
     { "id": "r_ce101", "code": "CT-1", "text": "The editor shall show which requirements and tests have changed since the latest release by diffing the working documents against the cached baseline snapshot.", "tags": ["change-tracking"] },
