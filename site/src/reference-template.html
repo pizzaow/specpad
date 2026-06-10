@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Schema Reference — SpecPad</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <style>
+      /* ── Layout ─────────────────────────────────────────────── */
+      .page-wrap {
+        display: flex;
+        min-height: 100vh;
+      }
+      nav.toc {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        width: 220px;
+        flex-shrink: 0;
+        border-right: 1px solid var(--border);
+        padding: 1.5rem 1rem;
+        background: var(--surface);
+      }
+      main {
+        flex: 1;
+        min-width: 0;
+        padding: 2rem 2.5rem;
+        max-width: 900px;
+      }
+
+      /* ── Header ─────────────────────────────────────────────── */
+      .site-header {
+        border-bottom: 1px solid var(--border);
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: var(--surface);
+      }
+      .site-header a {
+        color: var(--accent);
+        text-decoration: none;
+        font-family: var(--mono);
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+      .site-header a:hover { text-decoration: underline; }
+      .site-header .breadcrumb {
+        color: var(--muted);
+        font-size: 0.875rem;
+      }
+
+      /* ── TOC ─────────────────────────────────────────────────── */
+      .toc-title {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        font-weight: 600;
+        margin: 0 0 0.75rem;
+      }
+      nav.toc ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      nav.toc li { margin: 0; }
+      nav.toc a {
+        display: block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 0.8125rem;
+        line-height: 1.4;
+        transition: color 0.15s, background 0.15s;
+      }
+      nav.toc a:hover {
+        color: var(--text);
+        background: rgba(48, 54, 61, 0.5);
+      }
+      nav.toc .toc-sub {
+        padding-left: 0.75rem;
+        border-left: 1px solid var(--border);
+        margin: 0.25rem 0 0.25rem 0.5rem;
+      }
+      nav.toc .toc-sub a { font-size: 0.75rem; }
+
+      /* ── Typography ─────────────────────────────────────────── */
+      h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0 0 0.25rem;
+        color: var(--text);
+        letter-spacing: -0.02em;
+      }
+      h2 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text);
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 0.4rem;
+        margin: 2.5rem 0 1rem;
+      }
+      h3 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text);
+        margin: 1.5rem 0 0.5rem;
+      }
+      p { color: var(--text); margin: 0.5rem 0 1rem; }
+      code {
+        font-family: var(--mono);
+        font-size: 0.85em;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        padding: 0.1em 0.35em;
+        color: var(--accent);
+      }
+      a { color: var(--accent); }
+      a:hover { color: var(--text); }
+
+      /* ── Field tables ──────────────────────────────────────── */
+      .field-tables section { margin-bottom: 2rem; }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.8125rem;
+        margin-top: 0.5rem;
+      }
+      thead tr {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+      }
+      th {
+        text-align: left;
+        padding: 0.4rem 0.6rem;
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        white-space: nowrap;
+      }
+      td {
+        padding: 0.35rem 0.6rem;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+        color: var(--text);
+        line-height: 1.45;
+      }
+      td:first-child code { color: var(--text); }
+      td:nth-child(2) code { color: var(--muted); font-size: 0.75em; }
+      td:nth-child(3) {
+        white-space: nowrap;
+        color: var(--muted);
+        font-size: 0.75rem;
+      }
+      tbody tr:hover { background: rgba(22, 27, 34, 0.6); }
+
+      /* ── Governance rules ──────────────────────────────────── */
+      .rule {
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.75rem;
+        background: var(--surface);
+      }
+      .rule h3 { margin: 0 0 0.4rem; font-size: 0.875rem; }
+      .rule p { margin: 0; font-size: 0.8125rem; color: var(--muted); }
+
+      /* ── Annotated example ─────────────────────────────────── */
+      .example-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+      .example-block {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        overflow: hidden;
+      }
+      .example-block .label {
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        padding: 0.35rem 0.75rem;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .example-block pre {
+        margin: 0;
+        padding: 0.75rem;
+        overflow-x: auto;
+        font-family: var(--mono);
+        font-size: 0.7875rem;
+        line-height: 1.55;
+        color: var(--text);
+      }
+      .callouts {
+        margin-top: 1rem;
+        list-style: none;
+        padding: 0;
+      }
+      .callouts li {
+        display: flex;
+        gap: 0.5rem;
+        font-size: 0.8125rem;
+        margin-bottom: 0.5rem;
+        color: var(--muted);
+      }
+      .callouts li strong { color: var(--text); white-space: nowrap; }
+      .callout-key {
+        display: inline-flex;
+        background: var(--accent-strong);
+        border-radius: 3px;
+        align-self: flex-start;
+        margin-top: 2px;
+        flex-shrink: 0;
+      }
+      .callout-key code {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 0.1em 0.4em;
+        white-space: nowrap;
+      }
+
+      /* ── Install section ──────────────────────────────────── */
+      .install-steps {
+        counter-reset: step;
+        list-style: none;
+        padding: 0;
+      }
+      .install-steps li {
+        counter-increment: step;
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+        align-items: flex-start;
+        font-size: 0.875rem;
+        color: var(--text);
+      }
+      .install-steps li::before {
+        content: counter(step);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.4rem;
+        height: 1.4rem;
+        border-radius: 50%;
+        background: var(--accent-strong);
+        color: #fff;
+        font-size: 0.7rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        margin-top: 0.1rem;
+      }
+      .trigger-list {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin: 0.5rem 0;
+      }
+      .trigger-list li code {
+        background: var(--surface);
+        border-color: var(--accent-strong);
+        color: var(--accent);
+      }
+
+      /* ── Responsive ──────────────────────────────────────── */
+      @media (max-width: 700px) {
+        .page-wrap { flex-direction: column; }
+        nav.toc {
+          position: static;
+          height: auto;
+          width: 100%;
+          border-right: none;
+          border-bottom: 1px solid var(--border);
+        }
+        .example-wrap { grid-template-columns: 1fr; }
+        main { padding: 1.25rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <a href="/">specpad_</a>
+      <span class="breadcrumb">/ schema reference</span>
+    </header>
+
+    <div class="page-wrap">
+      <nav class="toc" aria-label="Page contents">
+        <p class="toc-title">On this page</p>
+        <ul>
+          <li><a href="#overview">Overview</a></li>
+          <li><a href="#field-reference">Field reference</a>
+            <ul class="toc-sub">
+              <li><a href="#schema-project">project</a></li>
+              <li><a href="#schema-srs">srs</a></li>
+              <li><a href="#schema-vtp">vtp</a></li>
+              <li><a href="#schema-releases">releases</a></li>
+              <li><a href="#schema-job">job</a></li>
+            </ul>
+          </li>
+          <li><a href="#governance">Governance rules</a></li>
+          <li><a href="#example">Annotated example</a></li>
+          <li><a href="#install">Install the skill</a></li>
+        </ul>
+      </nav>
+
+      <main>
+        <h1>Schema reference</h1>
+        <p style="color:var(--muted);margin-top:0.25rem;">
+          Generated from the live contract module — always in sync with the editor and skill.
+        </p>
+
+        <!-- ── Overview ─────────────────────────────────────────────── -->
+        <section id="overview">
+          <h2>Overview</h2>
+
+          <p>A SpecPad project lives in <code>docs/specpad/</code> inside your git repository and
+          consists of up to five JSON files:</p>
+
+          <table>
+            <thead>
+              <tr><th>File</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>[name].proj.json</code></td>
+                <td>Project index — names the system and lists the SRS/VTP documents that belong to it.</td>
+              </tr>
+              <tr>
+                <td><code>[name].srs.json</code></td>
+                <td>Software Requirements Specification — ordered requirements and section headings.</td>
+              </tr>
+              <tr>
+                <td><code>[name].vtp.json</code></td>
+                <td>Verification Test Plan — ordered tests, each linking to the requirements it verifies.</td>
+              </tr>
+              <tr>
+                <td><code>[name].releases.json</code> <em>(sidecar)</em></td>
+                <td>Release manifest — one entry per git tag, with snapshot paths for change-tracking.</td>
+              </tr>
+              <tr>
+                <td><code>[name].job.json</code> <em>(sidecar)</em></td>
+                <td>Current-job marker — the active ticket or issue number attributed to in-flight spec changes.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>Snapshot files are cached under <code>docs/specpad/.specpad/</code>; that sub-folder is
+          regenerable from git history and is never the source of truth. Each release entry carries
+          a <code>snapshot</code> path (or <code>null</code> if not yet cached) pointing to the
+          corresponding raw document copy.</p>
+
+          <h3>Schema versioning</h3>
+          <p>Every file carries a <code>schemaVersion</code> field. Version <code>"1.0"</code> maps to
+          the pinned editor build at <a href="/v01/">/v01/</a>. When a new schema version ships, its
+          editor build is deployed at a new path (e.g. <code>/v02/</code>) and the old path remains
+          live forever — so existing documents always open in an editor that understands them.</p>
+
+          <h3>What is and isn't stored</h3>
+          <p><strong>Git owns history.</strong> The files contain no <code>modifiedBy</code>,
+          <code>modifiedDate</code>, author, or change-list fields — git commits carry that context.
+          <strong>Nothing derived is stored.</strong> Test counts, pass/fail roll-ups, and change diffs
+          are computed on read from the raw JSON; storing them would create a drift hazard.</p>
+        </section>
+
+        <!-- ── Field reference ──────────────────────────────────────── -->
+        <section id="field-reference">
+          <h2>Field reference</h2>
+          <p>Field descriptions are authoritative — they are read directly from the JSON Schema
+          definitions at build time. A missing description is a build error.</p>
+          <div class="field-tables">
+<!-- @FIELD_TABLES -->
+          </div>
+        </section>
+
+        <!-- ── Governance ────────────────────────────────────────────── -->
+        <section id="governance">
+          <h2>Governance rules</h2>
+          <p>JSON Schema validates structure only (required fields, types, enums). These policy rules
+          run in both the skill and the editor from one shared module
+          (<code>src/shared/governance.ts</code>) — they cannot drift.</p>
+<!-- @GOVERNANCE_RULES -->
+        </section>
+
+        <!-- ── Annotated example ─────────────────────────────────────── -->
+        <section id="example">
+          <h2>Annotated example</h2>
+          <p>A real requirement from SpecPad's own SRS (<code>DOC-1</code>) and its verifying test
+          (<code>TEST-1</code>), showing how the key fields relate.</p>
+
+          <div class="example-wrap">
+            <div class="example-block">
+              <div class="label">specpad.srs.json — one item</div>
+              <pre>{
+  "id":   "r_a101",
+  "code": "DOC-1",
+  "text": "The system shall store project documentation as JSON files under docs/specpad/: one project index, one SRS, and one VTP.",
+  "tags": ["schema"]
+}</pre>
+            </div>
+            <div class="example-block">
+              <div class="label">specpad.vtp.json — one item</div>
+              <pre>{
+  "id":       "t_c001",
+  "code":     "TEST-1",
+  "text":     "Confirm docs/specpad/ holds the three core files and each parses as JSON.",
+  "verifies": ["r_a101"],
+  "expected": "All three files exist and parse without error.",
+  "result":   "passed",
+  "notes":    "dogfood.test.ts"
+}</pre>
+            </div>
+          </div>
+
+          <ul class="callouts">
+            <li>
+              <span class="callout-key"><code>id</code></span>
+              <span><strong><code>r_a101</code> / <code>t_c001</code></strong> —
+                stable machine identifiers generated once and never changed.
+                Renaming <code>code</code> (the human label) never touches <code>id</code>.</span>
+            </li>
+            <li>
+              <span class="callout-key"><code>code</code></span>
+              <span><strong><code>DOC-1</code> / <code>TEST-1</code></strong> —
+                freely renameable display labels. The editor shows them; the skill
+                increments them; traceability links ignore them entirely.</span>
+            </li>
+            <li>
+              <span class="callout-key"><code>verifies</code></span>
+              <span><strong><code>["r_a101"]</code></strong> —
+                the test links to the requirement by <code>id</code>, never by <code>code</code>,
+                so renaming <code>DOC-1</code> to <code>ARCH-1</code> cannot break the link.</span>
+            </li>
+            <li>
+              <span class="callout-key"><code>expected</code></span>
+              <span><strong><code>"All three files exist…"</code></strong> —
+                a non-empty expected result is required on every non-heading test
+                (governance rule <code>missing-expected</code>).</span>
+            </li>
+          </ul>
+        </section>
+
+        <!-- ── Install ────────────────────────────────────────────────── -->
+        <section id="install">
+          <h2>Install &amp; use the skill</h2>
+          <p>The SpecPad Claude Code skill lets you create and maintain SRS/VTP documents
+          directly from your AI assistant, with full validation and governance checks.</p>
+
+          <ol class="install-steps">
+            <li>
+              Download <a href="/specpad-skill.zip"><code>specpad-skill.zip</code></a> and unzip it
+              into <code>~/.claude/skills/</code> so that
+              <code>~/.claude/skills/specpad/SKILL.md</code> exists.
+            </li>
+            <li>
+              In any repo, tell Claude Code: <strong>"set up specpad"</strong> — it scaffolds
+              <code>docs/specpad/</code> with a project index, an empty SRS, and an empty VTP.
+            </li>
+            <li>
+              Use natural language to manage your spec. Trigger phrases:
+              <ul class="trigger-list">
+                <li><code>write a spec</code></li>
+                <li><code>formalize requirements</code></li>
+                <li><code>add a requirement</code></li>
+                <li><code>write tests for</code></li>
+                <li><code>check traceability</code></li>
+              </ul>
+            </li>
+            <li>
+              Before finishing any task the skill validates structure and runs all three governance
+              rules — so the JSON files on disk are always editor-ready.
+            </li>
+            <li>
+              Open the same files in the hosted visual editor at
+              <a href="/v01/">specpad.com/v01/</a> to review, edit, and record test results
+              through a full UI. Git is the shared history layer; both halves read and write
+              the same JSON.
+            </li>
+          </ol>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

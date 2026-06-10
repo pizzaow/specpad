@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>SpecPad</title>
+  <rect width="64" height="64" rx="13" fill="#0d1117" stroke="#30363d" stroke-width="2"/>
+  <text x="31" y="46" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="40" font-weight="700" fill="#3fb950">s_</text>
+</svg>
