@@ -11,16 +11,19 @@ export interface LaunchParams {
   name?: string;
   open?: OpenView;
   dir?: string; // the launcher's own folder path, used only to correlate locally
+  demo: boolean; // read-only hosted demo (specpad.com/v01/?demo)
 }
 
 export function parseLaunchParams(loc: Location = window.location): LaunchParams {
   const fromHash = loc.hash && loc.hash.length > 1 ? loc.hash.slice(1) : '';
   const raw = fromHash || loc.search.replace(/^\?/, '');
   const p = new URLSearchParams(raw);
+  const search = new URLSearchParams(loc.search.replace(/^\?/, ''));
   const open = p.get('open');
   return {
     name: p.get('name') || undefined,
     open: open === 'srs' || open === 'vtp' || open === 'testing' ? open : undefined,
     dir: p.get('dir') || undefined,
+    demo: search.has('demo') || p.has('demo'),
   };
 }
