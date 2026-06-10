@@ -15,7 +15,7 @@
 #
 # Usage:  infra/deploy.sh            # full provision, waits on slow steps
 #         infra/deploy.sh --no-wait  # create everything but skip the long waiters
-#         infra/deploy.sh --ship     # routine content deploy: build + upload + invalidate
+#         infra/deploy.sh --ship     # routine content deploy: build + upload editor & demo + invalidate
 #
 set -euo pipefail
 
@@ -45,14 +45,27 @@ if [ "${1:-}" = "--ship" ]; then
     echo "No distribution for $DOMAIN yet — run a full 'infra/deploy.sh' first." >&2
     exit 1
   fi
-  log "Ship 1/3: build"
+  log "Ship 1/4: build"
   ( cd "$ROOT_DIR" && npm run build )
-  log "Ship 2/3: upload to s3://$BUCKET/$PREFIX/"
+  log "Ship 2/4: upload editor to s3://$BUCKET/$PREFIX/"
   aws s3 sync "$ROOT_DIR/dist/" "s3://$BUCKET/$PREFIX/" --delete
-  log "Ship 3/3: invalidate CloudFront ($DIST_ID)"
+  log "Ship 3/4: upload demo content to s3://$BUCKET/demo/"
+  # Stage so the generated manifest and the sync --delete see one consistent tree.
+  DEMO_STAGE="$(mktemp -d)"
+  trap 'rm -rf "$DEMO_STAGE"' EXIT
+  cp -r "$ROOT_DIR/docs/specpad/." "$DEMO_STAGE/"
+  rm -f "$DEMO_STAGE/index.html"   # local launcher, not demo content
+  ( cd "$DEMO_STAGE" && node -e '
+    const fs = require("fs");
+    const documents = fs.readdirSync(".").filter((f) => /\.(srs|vtp|proj)\.json$/.test(f));
+    fs.writeFileSync("manifest.json", JSON.stringify({ documents }, null, 2));
+  ' )
+  aws s3 sync "$DEMO_STAGE/" "s3://$BUCKET/demo/" --delete
+  rm -rf "$DEMO_STAGE"
+  log "Ship 4/4: invalidate CloudFront ($DIST_ID)"
   INVALIDATION_ID=$(aws cloudfront create-invalidation --distribution-id "$DIST_ID" \
-    --paths "/$PREFIX/*" --query 'Invalidation.Id' --output text)
-  log "DONE — shipped to https://$DOMAIN/$PREFIX/  (invalidation $INVALIDATION_ID)"
+    --paths "/$PREFIX/*" "/demo/*" --query 'Invalidation.Id' --output text)
+  log "DONE — shipped to https://$DOMAIN/$PREFIX/ and https://$DOMAIN/$PREFIX/?demo  (invalidation $INVALIDATION_ID)"
   exit 0
 fi
 

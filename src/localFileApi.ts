@@ -25,6 +25,60 @@ export interface DocumentListItem {
 let projectDirHandle: FileSystemDirectoryHandle | null = null;
 let projectName = '';
 
+// ---- Demo mode (read-only, HTTP-backed) ----
+// When enabled, every read fetches from `demoBaseUrl` instead of the File
+// System Access API, and every write throws. A manifest.json substitutes for
+// directory listing (you cannot list an HTTP "directory").
+
+let demoBaseUrl: string | null = null;
+let demoDocuments: DocumentListItem[] = [];
+
+const READ_ONLY_DEMO = 'This is a read-only demo — changes cannot be saved';
+
+/** Enable read-only demo mode, reading from `baseUrl` (e.g. "/demo/"). */
+export function enableDemoMode(baseUrl: string): void {
+  demoBaseUrl = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+  demoDocuments = [];
+}
+
+/** Reset demo mode (used by tests; a real session never leaves demo mode). */
+export function disableDemoMode(): void {
+  demoBaseUrl = null;
+  demoDocuments = [];
+  projectName = '';
+}
+
+export function isDemoMode(): boolean {
+  return demoBaseUrl !== null;
+}
+
+async function fetchDemoJson(relPath: string): Promise<SpecPadDoc | null> {
+  if (!demoBaseUrl) throw new Error('Demo mode is not enabled');
+  const res = await fetch(demoBaseUrl + relPath, { cache: 'no-cache' });
+  // S3 behind CloudFront OAC has GetObject but not ListBucket, so missing keys
+  // come back 403 AccessDenied, not 404. Both mean "absent" for optional files.
+  if (res.status === 404 || res.status === 403) return null;
+  if (!res.ok) throw new Error(`Demo fetch failed (HTTP ${res.status}): ${relPath}`);
+  return parseDocument(await res.text());
+}
+
+/** Open the hosted demo project: fetch the manifest and classify its documents. */
+export async function openDemoProject(): Promise<{ name: string; documents: DocumentListItem[] }> {
+  if (!demoBaseUrl) throw new Error('Demo mode is not enabled');
+  const res = await fetch(`${demoBaseUrl}manifest.json`, { cache: 'no-cache' });
+  if (!res.ok) throw new Error(`Could not load the demo manifest (HTTP ${res.status})`);
+  const manifest = (await res.json()) as { documents: string[] };
+  if (!Array.isArray(manifest.documents)) {
+    throw new Error('Demo manifest is malformed: missing "documents" array');
+  }
+  demoDocuments = manifest.documents
+    .map(classifyDocFilename)
+    .filter((d): d is DocumentListItem => d !== null);
+  const projFile = demoDocuments.find((d) => d.type === 'proj');
+  projectName = projFile ? projFile.name : (demoDocuments[0]?.name ?? '');
+  return { name: projectName, documents: demoDocuments };
+}
+
 export function isFileSystemAccessSupported(): boolean {
   return 'showDirectoryPicker' in window || 'showOpenFilePicker' in window;
 }
@@ -38,17 +92,20 @@ export function parseDocument(text: string): SpecPadDoc {
   return JSON.parse(text) as SpecPadDoc;
 }
 
+/** Classify a `[name].[type].json` filename; null for non-document files. */
+export function classifyDocFilename(filename: string): DocumentListItem | null {
+  const m = filename.match(/^(.+?)\.(srs|vtp|proj)\.json$/);
+  if (!m) return null;
+  return { type: m[2] as DocKind, name: m[1], filename };
+}
+
 async function listDocumentsInDirectory(): Promise<DocumentListItem[]> {
   if (!projectDirHandle) throw new Error('No directory selected');
   const documents: DocumentListItem[] = [];
   for await (const entry of (projectDirHandle as any).values()) {
-    if (entry.kind !== 'file' || !entry.name.endsWith('.json')) continue;
-    const srs = entry.name.match(/^(.+?)\.srs\.json$/);
-    const vtp = entry.name.match(/^(.+?)\.vtp\.json$/);
-    const proj = entry.name.match(/^(.+?)\.proj\.json$/);
-    if (srs) documents.push({ type: 'srs', name: srs[1], filename: entry.name });
-    else if (vtp) documents.push({ type: 'vtp', name: vtp[1], filename: entry.name });
-    else if (proj) documents.push({ type: 'proj', name: proj[1], filename: entry.name });
+    if (entry.kind !== 'file') continue;
+    const item = classifyDocFilename(entry.name);
+    if (item) documents.push(item);
   }
   return documents;
 }
@@ -98,6 +155,7 @@ export async function openProjectFile(): Promise<{ name: string; documents: Docu
 }
 
 export async function listDocuments(): Promise<DocumentListItem[]> {
+  if (demoBaseUrl) return demoDocuments;
   if (!projectDirHandle) return [];
   return listDocumentsInDirectory();
 }
@@ -134,6 +192,11 @@ export async function verifyPermission(
 }
 
 async function readJson(filename: string): Promise<SpecPadDoc> {
+  if (demoBaseUrl) {
+    const doc = await fetchDemoJson(filename);
+    if (!doc) throw new Error(`Document not found: ${filename}`);
+    return doc;
+  }
   if (!projectDirHandle) throw new Error('No directory selected');
   try {
     const fileHandle = await projectDirHandle.getFileHandle(filename);
@@ -156,6 +219,7 @@ export async function loadDocument(type: 'srs' | 'vtp', name: string): Promise<S
 }
 
 export async function saveDocument(doc: SrsDoc | VtpDoc | ProjectDoc): Promise<void> {
+  if (demoBaseUrl) throw new Error(READ_ONLY_DEMO);
   if (!projectDirHandle) throw new Error('No directory selected');
   const permission = await (projectDirHandle as any).requestPermission({ mode: 'readwrite' });
   if (permission !== 'granted') throw new Error('Write permission not granted');
@@ -188,7 +252,7 @@ export function getCurrentProjectName(): string {
 }
 
 export function hasOpenDirectory(): boolean {
-  return projectDirHandle !== null;
+  return demoBaseUrl !== null || projectDirHandle !== null;
 }
 
 export async function openFileFallback(accept = '.json'): Promise<File> {
@@ -260,18 +324,21 @@ async function readJsonFrom(
 
 /** Load the release manifest `<name>.releases.json`, or null if absent. */
 export async function loadReleases(name: string): Promise<ReleasesDoc | null> {
+  if (demoBaseUrl) return (await fetchDemoJson(`${name}.releases.json`)) as ReleasesDoc | null;
   if (!projectDirHandle) return null;
   return (await readJsonFrom(projectDirHandle, `${name}.releases.json`)) as ReleasesDoc | null;
 }
 
 /** Load the current-job marker `<name>.job.json`, or null if absent. */
 export async function loadJob(name: string): Promise<JobDoc | null> {
+  if (demoBaseUrl) return (await fetchDemoJson(`${name}.job.json`)) as JobDoc | null;
   if (!projectDirHandle) return null;
   return (await readJsonFrom(projectDirHandle, `${name}.job.json`)) as JobDoc | null;
 }
 
 /** Write the current-job marker `<name>.job.json`. */
 export async function saveJob(name: string, doc: JobDoc): Promise<void> {
+  if (demoBaseUrl) throw new Error(READ_ONLY_DEMO);
   if (!projectDirHandle) throw new Error('No directory selected');
   const fileHandle = await projectDirHandle.getFileHandle(`${name}.job.json`, { create: true });
   const writable = await fileHandle.createWritable();
@@ -290,6 +357,9 @@ export async function loadSnapshot(
   type: 'srs' | 'vtp' | 'proj',
   name: string,
 ): Promise<SpecPadDoc | null> {
+  if (demoBaseUrl) {
+    return fetchDemoJson(`${snapshotDirSegments(location).join('/')}/${name}.${type}.json`);
+  }
   const dir = await getSubDirectory(snapshotDirSegments(location));
   if (!dir) return null;
   return readJsonFrom(dir, `${name}.${type}.json`);
