@@ -9,6 +9,8 @@ import type { ProjectDoc, SrsDoc, VtpDoc, ReleasesDoc, JobDoc } from './shared';
 import {
   DocumentListItem,
   isFileSystemAccessSupported,
+  enableDemoMode,
+  openDemoProject,
   openProjectDirectory,
   openProjectFile,
   openProjectFromHandle,
@@ -219,6 +221,21 @@ const LocalApp: React.FC = () => {
   // points at a folder whose permission already persisted — reopen it silently.
   useEffect(() => {
     if (launch.open) setCurrentView(launch.open);
+    if (launch.demo) {
+      void (async () => {
+        setLoading(true);
+        try {
+          enableDemoMode('/demo/');
+          const result = await openDemoProject();
+          await applyOpened(result, launch.name);
+        } catch {
+          setError('Could not load the demo project — please try again later.');
+        } finally {
+          setLoading(false);
+        }
+      })();
+      return;
+    }
     if (!supportsFileSystemAccess || !recentStore.isSupported()) return;
     let cancelled = false;
     (async () => {
@@ -309,11 +326,11 @@ const LocalApp: React.FC = () => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
         e.preventDefault();
-        if (shortcutRef.current.dirty) void shortcutRef.current.save();
+        if (!launch.demo && shortcutRef.current.dirty) void shortcutRef.current.save();
       }
     };
     const onBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (shortcutRef.current.dirty) { e.preventDefault(); e.returnValue = ''; }
+      if (!launch.demo && shortcutRef.current.dirty) { e.preventDefault(); e.returnValue = ''; }
     };
     window.addEventListener('keydown', onKey);
     window.addEventListener('beforeunload', onBeforeUnload);
@@ -321,6 +338,7 @@ const LocalApp: React.FC = () => {
       window.removeEventListener('keydown', onKey);
       window.removeEventListener('beforeunload', onBeforeUnload);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleOpenFallback = async () => {
@@ -357,6 +375,7 @@ const LocalApp: React.FC = () => {
         onSetJob={handleSetJob}
         version={releases?.baseline ?? null}
         onShowVersions={() => setShowVersions(true)}
+        demo={launch.demo}
       />
 
       {!supportsFileSystemAccess && (
@@ -422,7 +441,11 @@ const LocalApp: React.FC = () => {
       </div>
 
       {isDirectoryOpen && (
-        <StatusBar path={`docs/specpad/${projectName}`} srsDoc={srsDoc} vtpDoc={vtpDoc} projectDoc={projectDoc} />
+        <StatusBar
+          path={launch.demo ? 'demo (hosted copy of docs/specpad/)' : `docs/specpad/${projectName}`}
+          srsDoc={srsDoc} vtpDoc={vtpDoc} projectDoc={projectDoc}
+          demo={launch.demo}
+        />
       )}
 
       {showVersions && <VersionHistoryDialog releases={releases} onClose={() => setShowVersions(false)} />}
