@@ -24,6 +24,7 @@ export interface MenuBarProps {
   onSetJob: (job: string, title: string) => void;
   version?: string | null;
   onShowVersions?: () => void;
+  demo?: boolean;
 }
 
 type OpenMenu = null | 'file' | 'project' | 'job';
@@ -60,27 +61,29 @@ const MenuBar: React.FC<MenuBarProps> = (p) => {
         )
       )}
 
-      <span className="menubar-dropdown">
-        <button type="button" className={chip} onClick={() => toggle('file')}>File ▾</button>
-        {open === 'file' && (
-          <ul className="menubar-menu">
-            {p.isDirectoryOpen && (
-              <li style={itemStyle} onClick={run(p.onNewDocument)}>New document…</li>
-            )}
-            {p.supportsFileSystemAccess ? (
-              <>
-                <li style={itemStyle} onClick={run(p.onOpenDirectory)}>Open project directory…</li>
-                <li style={itemStyle} onClick={run(p.onOpenProjectFile)}>Open project file…</li>
-                {p.isDirectoryOpen && <li style={itemStyle} onClick={run(p.onOpenDirectory)}>Change directory…</li>}
-              </>
-            ) : (
-              <li style={itemStyle} onClick={run(p.onOpenFallback)}>Open document file…</li>
-            )}
-          </ul>
-        )}
-      </span>
+      {!p.demo && (
+        <span className="menubar-dropdown">
+          <button type="button" className={chip} onClick={() => toggle('file')}>File ▾</button>
+          {open === 'file' && (
+            <ul className="menubar-menu">
+              {p.isDirectoryOpen && (
+                <li style={itemStyle} onClick={run(p.onNewDocument)}>New document…</li>
+              )}
+              {p.supportsFileSystemAccess ? (
+                <>
+                  <li style={itemStyle} onClick={run(p.onOpenDirectory)}>Open project directory…</li>
+                  <li style={itemStyle} onClick={run(p.onOpenProjectFile)}>Open project file…</li>
+                  {p.isDirectoryOpen && <li style={itemStyle} onClick={run(p.onOpenDirectory)}>Change directory…</li>}
+                </>
+              ) : (
+                <li style={itemStyle} onClick={run(p.onOpenFallback)}>Open document file…</li>
+              )}
+            </ul>
+          )}
+        </span>
+      )}
 
-      {p.isDirectoryOpen && (
+      {p.isDirectoryOpen && !p.demo && (
         <button type="button" className={chip} aria-label="Save" disabled={!p.dirty} onClick={p.onSave}>
           💾 Save{p.dirty ? ' ●' : ''}
         </button>
@@ -88,7 +91,10 @@ const MenuBar: React.FC<MenuBarProps> = (p) => {
 
       <span className="menubar-spacer" />
 
-      {p.isDirectoryOpen && (
+      {p.isDirectoryOpen && p.demo && p.job && (
+        <span className="menubar-project">Job: {p.job.job}</span>
+      )}
+      {p.isDirectoryOpen && !p.demo && (
         <span className="menubar-dropdown">
           <button type="button" className={chip} onClick={() => toggle('job')}>
             {p.job ? `Job: ${p.job.job} ▾` : 'Set job ▾'}
