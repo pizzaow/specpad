@@ -28,6 +28,8 @@ The design spec is the source of truth for scope, schema, and the runtime/redire
 - `skill/specpad/` — the distributable skill (`SKILL.md`) + scaffolding `templates/`.
 - `docs/specpad/` — SpecPad's own SRS/VTP/proj, authored with SpecPad (dogfood). Kept valid and
   governance-clean by `src/shared/__tests__/dogfood.test.ts`.
+- `site/` — the marketing site (second Vite build → `dist-site/`) + the build-time-generated
+  schema reference (`site/src/generate-reference.ts` imports the live contract).
 - `docs/design/` — the v1 design spec.
 
 ## Key contract rules (do not regress)
@@ -58,7 +60,9 @@ Prefer test-driven development, especially for the shared contract module. Run `
 
 ## Deployment
 
-The editor is live at `https://specpad.com/v01/` — private S3 bucket behind CloudFront (OAC),
-ACM cert in us-east-1, Route 53 hosted zone (nameservers migrated from Google). Provisioned by
-the idempotent `infra/deploy.sh`; resource ids and the redeploy steps are in `infra/README.md`.
+This repo is public (MIT). The site is live at `https://specpad.com/` (marketing at the apex,
+editor at `/v01/`, demo at `/v01/?demo`, reference at `/reference/`) — S3 + CloudFront + Route 53.
+**Deployment scripts and AWS resource identifiers live in the private `specpad-infra` repo**
+(cloned as a sibling of this checkout; its `deploy.sh` builds from here). Never commit AWS
+account ids, bucket names, or distribution ids to this repo.
 The `schemaVersion` maps to the path (`"1.0"` → `/v01/`); old version paths stay live forever.

@@ -24,6 +24,10 @@
   ],
   "author": "",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pizzaow/specpad.git"
+  },
   "dependencies": {
     "ajv": "^8.20.0",
     "bootstrap": "^3.4.1",
