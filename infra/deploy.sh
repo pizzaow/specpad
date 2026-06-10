@@ -15,7 +15,7 @@
 #
 # Usage:  infra/deploy.sh            # full provision, waits on slow steps
 #         infra/deploy.sh --no-wait  # create everything but skip the long waiters
-#         infra/deploy.sh --ship     # routine content deploy: build + upload editor & demo + invalidate
+#         infra/deploy.sh --ship     # routine content deploy: build + upload editor, demo & site + invalidate
 #
 set -euo pipefail
 
@@ -45,11 +45,11 @@ if [ "${1:-}" = "--ship" ]; then
     echo "No distribution for $DOMAIN yet — run a full 'infra/deploy.sh' first." >&2
     exit 1
   fi
-  log "Ship 1/4: build"
+  log "Ship 1/5: build"
   ( cd "$ROOT_DIR" && npm run build )
-  log "Ship 2/4: upload editor to s3://$BUCKET/$PREFIX/"
+  log "Ship 2/5: upload editor to s3://$BUCKET/$PREFIX/"
   aws s3 sync "$ROOT_DIR/dist/" "s3://$BUCKET/$PREFIX/" --delete
-  log "Ship 3/4: upload demo content to s3://$BUCKET/demo/"
+  log "Ship 3/5: upload demo content to s3://$BUCKET/demo/"
   # Stage so the generated manifest and the sync --delete see one consistent tree.
   DEMO_STAGE="$(mktemp -d)"
   trap 'rm -rf "$DEMO_STAGE"' EXIT
@@ -62,10 +62,16 @@ if [ "${1:-}" = "--ship" ]; then
   ' )
   aws s3 sync "$DEMO_STAGE/" "s3://$BUCKET/demo/" --delete
   rm -rf "$DEMO_STAGE"
-  log "Ship 4/4: invalidate CloudFront ($DIST_ID)"
+  log "Ship 4/5: build + upload site to s3://$BUCKET/ (root)"
+  ( cd "$ROOT_DIR" && npm run build:site )
+  ( cd "$ROOT_DIR/skill" && rm -f "$ROOT_DIR/dist-site/specpad-skill.zip" \
+    && zip -qr "$ROOT_DIR/dist-site/specpad-skill.zip" specpad )
+  aws s3 sync "$ROOT_DIR/dist-site/" "s3://$BUCKET/" --delete \
+    --exclude "v0*/*" --exclude "demo/*"
+  log "Ship 5/5: invalidate CloudFront ($DIST_ID)"
   INVALIDATION_ID=$(aws cloudfront create-invalidation --distribution-id "$DIST_ID" \
-    --paths "/$PREFIX/*" "/demo/*" --query 'Invalidation.Id' --output text)
-  log "DONE — shipped to https://$DOMAIN/$PREFIX/ and https://$DOMAIN/$PREFIX/?demo  (invalidation $INVALIDATION_ID)"
+    --paths "/*" --query 'Invalidation.Id' --output text)
+  log "DONE — shipped https://$DOMAIN/ (site), /$PREFIX/ (editor), /$PREFIX/?demo (demo)  (invalidation $INVALIDATION_ID)"
   exit 0
 fi
 
@@ -153,7 +159,13 @@ if [ "$FUNC_ARN" = "None" ] || [ -z "$FUNC_ARN" ]; then
   aws cloudfront publish-function --name "$FUNCTION_NAME" --if-match "$ETAG" >/dev/null
   echo "created + published function"
 else
-  echo "function exists"
+  ETAG=$(aws cloudfront describe-function --name "$FUNCTION_NAME" --query 'ETag' --output text)
+  aws cloudfront update-function --name "$FUNCTION_NAME" --if-match "$ETAG" \
+    --function-config Comment="SpecPad URL rewrite",Runtime="cloudfront-js-2.0" \
+    --function-code "fileb://$SCRIPT_DIR/cloudfront-function.js" >/dev/null
+  ETAG=$(aws cloudfront describe-function --name "$FUNCTION_NAME" --query 'ETag' --output text)
+  aws cloudfront publish-function --name "$FUNCTION_NAME" --if-match "$ETAG" >/dev/null
+  echo "function code updated + published"
 fi
 FUNC_ARN=$(aws cloudfront describe-function --name "$FUNCTION_NAME" \
   --query 'FunctionSummary.FunctionMetadata.FunctionARN' --output text)
@@ -261,4 +273,4 @@ fi
 log "DONE"
 echo "Distribution: $DIST_ID ($DIST_DOMAIN)"
 echo "Site:         https://$DOMAIN/$PREFIX/"
-echo "Apex:         https://$DOMAIN/  (rewrites to /$PREFIX/index.html)"
+echo "Apex:         https://$DOMAIN/  (rewrites to /index.html — marketing site)"
