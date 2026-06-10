@@ -74,6 +74,9 @@
     { "id": "h_ed0b50", "heading": true, "code": "SaveState", "text": "Save and document state", "level": 1 },
     { "id": "r_ed0b07", "code": "EDS-7", "text": "The document tables shall be controlled: the shell owns the working document and edits are reported via an onChange callback; tables render no internal Save button.", "level": 2, "tags": ["editor"] },
     { "id": "r_ed0b08", "code": "EDS-8", "text": "The menu-bar Save control shall reflect unsaved changes (an indicator when dirty, disabled when clean), and Ctrl/Cmd-S shall save.", "level": 2, "tags": ["editor"] },
-    { "id": "r_ed0b09", "code": "EDS-9", "text": "Switching project or document with unsaved changes shall prompt before discarding, and a page-close (beforeunload) guard shall warn when changes are unsaved.", "level": 2, "tags": ["editor"] }
+    { "id": "r_ed0b09", "code": "EDS-9", "text": "Switching project or document with unsaved changes shall prompt before discarding, and a page-close (beforeunload) guard shall warn when changes are unsaved.", "level": 2, "tags": ["editor"] },
+    { "id": "h_ed0b60", "heading": true, "code": "Demo", "text": "Demo mode", "level": 1 },
+    { "id": "r_ed0b10", "code": "EDS-10", "text": "When launched with the demo query parameter, the editor shall load the project read-only over HTTP from the hosted /demo/ directory, with the document tables, testing view, validation, version history, redlines, and the job indicator all available.", "level": 2, "tags": ["editor"] },
+    { "id": "r_ed0b11", "code": "EDS-11", "text": "In demo mode the editor shall disable all writes (save, new document, set job) and display a visible read-only indicator.", "level": 2, "tags": ["editor"] }
   ]
 }
