@@ -21,7 +21,7 @@ function demoContent(): Plugin {
         return;
       }
       const file = path.normalize(path.join(root, url));
-      if (!file.startsWith(root) || !file.endsWith('.json')) { next(); return; }
+      if (!file.startsWith(root + path.sep) || !file.endsWith('.json')) { next(); return; }
       const data = await fs.readFile(file);
       res.setHeader('Content-Type', 'application/json');
       res.end(data);
