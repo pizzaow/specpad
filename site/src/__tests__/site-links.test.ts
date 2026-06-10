@@ -27,4 +27,8 @@ describe('landing page link integrity', () => {
     expect(refs.some((r) => r.startsWith('/v01/?demo'))).toBe(true);
     expect(refs).toContain('/reference/');
   });
+
+  it('og-image.png exists in public/', () => {
+    expect(fs.existsSync(path.join(siteDir, 'public', 'og-image.png'))).toBe(true);
+  });
 });
