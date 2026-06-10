@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import type { SrsDoc, VtpDoc, ProjectDoc } from '../shared';
 
 const demoSrs: SrsDoc = {
@@ -21,8 +21,8 @@ vi.mock('../launchParams', () => ({
 
 vi.mock('../localFileApi', () => ({
   isFileSystemAccessSupported: () => true,
-  isDemoMode: () => true,
   enableDemoMode: vi.fn(),
+  disableDemoMode: vi.fn(),
   openDemoProject: vi.fn(async () => ({
     name: 'specpad',
     documents: [
@@ -53,7 +53,7 @@ vi.mock('../localFileApi', () => ({
 }));
 
 import LocalApp from '../LocalApp';
-import { enableDemoMode, openDemoProject } from '../localFileApi';
+import { enableDemoMode, openDemoProject, saveDocument } from '../localFileApi';
 
 describe('LocalApp demo mode', () => {
   it('auto-loads the demo project read-only', async () => {
@@ -70,6 +70,10 @@ describe('LocalApp demo mode', () => {
     // No write affordances: no Save button and no File menu at all in demo.
     expect(screen.queryByLabelText('Save')).toBeNull();
     expect(screen.queryByText('File ▾')).toBeNull();
+
+    // Ctrl+S is a no-op in demo mode — saveDocument must never be called.
+    fireEvent.keyDown(window, { key: 's', ctrlKey: true });
+    expect(saveDocument).not.toHaveBeenCalled();
   });
 
   it('shows a friendly error when the demo fails to load', async () => {

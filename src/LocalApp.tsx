@@ -10,6 +10,7 @@ import {
   DocumentListItem,
   isFileSystemAccessSupported,
   enableDemoMode,
+  disableDemoMode,
   openDemoProject,
   openProjectDirectory,
   openProjectFile,
@@ -222,19 +223,24 @@ const LocalApp: React.FC = () => {
   useEffect(() => {
     if (launch.open) setCurrentView(launch.open);
     if (launch.demo) {
+      let cancelled = false;
       void (async () => {
         setLoading(true);
         try {
           enableDemoMode('/demo/');
           const result = await openDemoProject();
-          await applyOpened(result, launch.name);
-        } catch {
-          setError('Could not load the demo project — please try again later.');
+          if (!cancelled) await applyOpened(result, launch.name);
+        } catch (err) {
+          disableDemoMode();
+          console.error('Demo load failed:', err);
+          if (!cancelled) setError('Could not load the demo project — please try again later.');
         } finally {
-          setLoading(false);
+          if (!cancelled) setLoading(false);
         }
       })();
-      return;
+      return () => {
+        cancelled = true;
+      };
     }
     if (!supportsFileSystemAccess || !recentStore.isSupported()) return;
     let cancelled = false;
@@ -378,7 +384,7 @@ const LocalApp: React.FC = () => {
         demo={launch.demo}
       />
 
-      {!supportsFileSystemAccess && (
+      {!supportsFileSystemAccess && !launch.demo && (
         <div className="alert alert-warning">
           Your browser doesn't support the File System Access API. Use Chrome or Edge for full editing.
         </div>
