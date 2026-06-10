@@ -10,7 +10,8 @@
     "test:watch": "vitest",
     "lint": "eslint \"src/**/*.{ts,tsx}\" \"site/src/**/*.ts\"",
     "dev:site": "vite --config site/vite.config.ts",
-    "build:site": "tsx site/src/generate-reference.ts && vite build --config site/vite.config.ts"
+    "build:site": "tsx site/src/generate-reference.ts && vite build --config site/vite.config.ts",
+    "capture:screenshots": "NODE_PATH=$(npm root -g) node site/scripts/capture-screenshots.mjs"
   },
   "keywords": [
     "specpad",
