@@ -68,7 +68,7 @@ function fieldTable(name: string, schema: AnySchema): string {
     <section id="schema-${name}">
       <h3><code>${name}</code></h3>
       <table>
-        <thead><tr><th>Field</th><th>Type</th><th></th><th>Description</th></tr></thead>
+        <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
         <tbody>${body}
         </tbody>
       </table>
@@ -89,8 +89,8 @@ export function renderReference(opts?: { schemas?: Record<string, AnySchema> }):
   const template = fs.readFileSync(path.join(dir, 'reference-template.html'), 'utf8');
   const tables = Object.entries(schemas).map(([n, s]) => fieldTable(n, s)).join('\n');
   return template
-    .replace('<!-- @FIELD_TABLES -->', tables)
-    .replace('<!-- @GOVERNANCE_RULES -->', governanceList());
+    .replace('<!-- @FIELD_TABLES -->', () => tables)
+    .replace('<!-- @GOVERNANCE_RULES -->', () => governanceList());
 }
 
 // Script entry: write the page for the site build.
