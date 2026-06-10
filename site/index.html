@@ -4,9 +4,220 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>SpecPad — requirements that live in your repo</title>
+    <meta
+      name="description"
+      content="Regulatory-grade requirements management for engineers: a traceable SRS and verification tests stored as schema-validated JSON in git."
+    />
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
-  <body>
-    <h1>specpad_</h1>
+  <body class="lp">
+    <!-- ── Header ─────────────────────────────────────────────────── -->
+    <header class="lp-header">
+      <div class="lp-header-inner">
+        <a class="lp-logo" href="/" aria-label="SpecPad home">specpad<span class="lp-cursor">_</span></a>
+        <nav class="lp-nav" aria-label="Site">
+          <a href="#how-it-works">How it works</a>
+          <a href="#features">Features</a>
+          <a href="#get-started">Get started</a>
+          <a href="/reference/">Schema reference</a>
+        </nav>
+        <a class="lp-btn lp-btn-primary lp-header-cta" href="/v01/">Open the editor <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </header>
+
+    <main>
+      <!-- ── Hero ─────────────────────────────────────────────────── -->
+      <section class="lp-hero">
+        <div class="lp-hero-inner">
+          <div class="lp-hero-copy">
+            <p class="lp-eyebrow lp-reveal" style="--d: 0s"><span class="lp-prompt">$</span> git log docs/specpad/srs.json</p>
+            <h1 class="lp-h1 lp-reveal" style="--d: 0.08s">Requirements that live in <span class="lp-h1-accent">your repo</span>.</h1>
+            <p class="lp-lede lp-reveal" style="--d: 0.16s">
+              Regulatory-grade requirements management for engineers: a traceable SRS and
+              verification tests stored as schema-validated JSON in git &mdash; kept in sync with
+              your code by a Claude skill, reviewed and approved by humans in a visual editor.
+            </p>
+            <div class="lp-cta-row lp-reveal" style="--d: 0.24s">
+              <a class="lp-btn lp-btn-primary lp-btn-lg" href="/specpad-skill.zip" download>Download the Claude skill</a>
+              <a class="lp-btn lp-btn-ghost lp-btn-lg" href="/v01/?demo">See it live <span aria-hidden="true">&rarr;</span></a>
+            </div>
+          </div>
+
+          <figure class="lp-diff-card lp-reveal" style="--d: 0.3s" aria-hidden="true">
+            <div class="lp-diff-chrome">
+              <span class="lp-dot"></span><span class="lp-dot"></span><span class="lp-dot"></span>
+              <span class="lp-diff-file">docs/specpad/specpad.srs.json</span>
+            </div>
+            <pre class="lp-diff-body"><code><span class="lp-diff-hunk">@@ REQ-12 &middot; review &amp; approval @@</span>
+<span class="lp-diff-ctx">  "id":   "r_b412",</span>
+<span class="lp-diff-ctx">  "code": "REQ-12",</span>
+<span class="lp-diff-del">- "status": "draft"</span>
+<span class="lp-diff-add">+ "status": "approved"</span></code></pre>
+            <div class="lp-diff-foot">
+              <span class="lp-check">&#10003; schema valid</span>
+              <span class="lp-check">&#10003; governance clean</span>
+              <span class="lp-diff-foot-muted">ready to commit</span>
+            </div>
+          </figure>
+        </div>
+      </section>
+
+      <!-- ── How it works ─────────────────────────────────────────── -->
+      <section class="lp-section" id="how-it-works">
+        <div class="lp-section-inner">
+          <p class="lp-kicker"><span class="lp-prompt">##</span> How it works</p>
+          <h2 class="lp-h2">One contract. Two ways to edit. Git in the middle.</h2>
+          <p class="lp-section-lede">
+            The skill edits programmatically; humans review visually. Both obey the same schema
+            and governance rules &mdash; and git keeps the history.
+          </p>
+
+          <div class="lp-diagrams">
+            <!-- Diagram A — the sync loop -->
+            <figure class="lp-diagram-card">
+              <svg
+                class="lp-diagram"
+                viewBox="0 0 480 420"
+                role="img"
+                aria-label="The sync loop: your code changes, the Claude skill updates the SRS and VTP JSON in docs/specpad in git, a human reviews and approves in the editor, the change is committed via git commit or PR, and the loop repeats."
+              >
+                <title>The sync loop: code changes flow through the Claude skill into git, are reviewed and approved by a human in the editor, committed, and the loop repeats.</title>
+                <defs>
+                  <marker id="arrA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
+                  </marker>
+                </defs>
+
+                <!-- git-graph rail -->
+                <line x1="42" y1="36" x2="42" y2="380" stroke="#30363d" stroke-width="2" />
+                <line x1="48" y1="36" x2="68" y2="36" stroke="#30363d" stroke-width="1.5" />
+                <line x1="48" y1="122" x2="68" y2="122" stroke="#30363d" stroke-width="1.5" />
+                <line x1="48" y1="208" x2="68" y2="208" stroke="#30363d" stroke-width="1.5" />
+                <line x1="48" y1="294" x2="68" y2="294" stroke="#30363d" stroke-width="1.5" />
+                <line x1="48" y1="380" x2="68" y2="380" stroke="#30363d" stroke-width="1.5" />
+                <circle cx="42" cy="36" r="5.5" fill="#0d1117" stroke="#3fb950" stroke-width="2.5" />
+                <circle cx="42" cy="122" r="5.5" fill="#0d1117" stroke="#1f6feb" stroke-width="2.5" />
+                <circle cx="42" cy="208" r="5.5" fill="#0d1117" stroke="#3fb950" stroke-width="2.5" />
+                <circle cx="42" cy="294" r="5.5" fill="#0d1117" stroke="#1f6feb" stroke-width="2.5" />
+                <circle cx="42" cy="380" r="5.5" fill="#0d1117" stroke="#3fb950" stroke-width="2.5" />
+
+                <!-- nodes -->
+                <rect x="68" y="12" width="348" height="48" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                <text x="88" y="41" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#e6edf3">your code changes</text>
+
+                <rect x="68" y="98" width="348" height="48" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                <text x="88" y="127" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#e6edf3">Claude skill updates srs/vtp JSON</text>
+
+                <rect x="68" y="184" width="348" height="48" rx="8" fill="#0d1117" stroke="#3fb950" stroke-width="1.5" />
+                <text x="88" y="213" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#3fb950">docs/specpad/*.json in git</text>
+
+                <rect x="68" y="270" width="348" height="48" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                <text x="88" y="299" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#e6edf3">human reviews &amp; approves in the editor</text>
+
+                <rect x="68" y="356" width="348" height="48" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                <text x="88" y="385" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#e6edf3">git commit / PR</text>
+
+                <!-- flow arrows -->
+                <line x1="242" y1="62" x2="242" y2="92" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrA)" />
+                <line x1="242" y1="148" x2="242" y2="178" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrA)" />
+                <line x1="242" y1="234" x2="242" y2="264" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrA)" />
+                <line x1="242" y1="320" x2="242" y2="350" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrA)" />
+
+                <!-- return loop -->
+                <path d="M 418,380 C 466,380 466,36 422,36" fill="none" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="4 5" opacity="0.85" marker-end="url(#arrA)" />
+              </svg>
+              <figcaption class="lp-diagram-caption">The sync loop &mdash; spec and code never drift</figcaption>
+            </figure>
+
+            <!-- Diagram B — one contract, two editors -->
+            <figure class="lp-diagram-card">
+              <svg
+                class="lp-diagram"
+                viewBox="0 0 480 420"
+                role="img"
+                aria-label="One contract, two editors: a shared schema and governance module governs both the Claude skill, which edits programmatically, and the visual editor, where humans review and approve. Both read and write the same docs/specpad JSON files. Git is the history and merge layer."
+              >
+                <title>One contract, two editors: the shared schema and governance module governs both the Claude skill and the visual editor; both read and write the same JSON files, with git as the history and merge layer.</title>
+                <defs>
+                  <marker id="arrB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 z" fill="#1f6feb" />
+                  </marker>
+                  <marker id="arrG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                    <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
+                  </marker>
+                </defs>
+
+                <!-- center: shared contract -->
+                <rect x="110" y="22" width="260" height="66" rx="8" fill="#0d1117" stroke="#3fb950" stroke-width="1.5" />
+                <text x="240" y="50" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#3fb950">shared schema + governance</text>
+                <text x="240" y="72" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11" fill="#8b949e">(src/shared)</text>
+
+                <!-- contract edges -->
+                <path d="M 198,88 C 160,120 130,140 116,176" fill="none" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrG)" />
+                <path d="M 282,88 C 320,120 350,140 364,176" fill="none" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrG)" />
+
+                <!-- left arm: Claude skill -->
+                <rect x="12" y="180" width="204" height="66" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                <text x="114" y="208" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#e6edf3">Claude skill</text>
+                <text x="114" y="229" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11" fill="#8b949e">edits programmatically</text>
+
+                <!-- right arm: visual editor -->
+                <rect x="264" y="180" width="204" height="66" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                <text x="366" y="208" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#e6edf3">visual editor</text>
+                <text x="366" y="229" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11" fill="#8b949e">humans review &amp; approve</text>
+
+                <!-- read/write edges to the file -->
+                <path d="M 114,250 C 114,286 150,290 172,302" fill="none" stroke="#1f6feb" stroke-width="1.5" marker-start="url(#arrB)" marker-end="url(#arrB)" />
+                <path d="M 366,250 C 366,286 330,290 308,302" fill="none" stroke="#1f6feb" stroke-width="1.5" marker-start="url(#arrB)" marker-end="url(#arrB)" />
+                <text x="96" y="284" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10" fill="#8b949e">read / write</text>
+                <text x="384" y="284" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10" fill="#8b949e">read / write</text>
+
+                <!-- file node (folded-corner document) -->
+                <path d="M 152,300 H 302 L 328,324 V 364 H 152 Z" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                <path d="M 302,300 L 302,324 L 328,324 Z" fill="#161b22" stroke="#30363d" stroke-width="1.5" stroke-linejoin="round" />
+                <text x="236" y="340" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#e6edf3">docs/specpad/*.json</text>
+
+                <!-- caption -->
+                <text x="240" y="400" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#8b949e">git is the history &amp; merge layer</text>
+              </svg>
+              <figcaption class="lp-diagram-caption">One contract, two editors &mdash; the rules cannot drift</figcaption>
+            </figure>
+          </div>
+
+          <!-- Demo CTA banner -->
+          <aside class="lp-demo-banner">
+            <div class="lp-demo-text">
+              <p class="lp-demo-title">See it live &mdash; browse SpecPad&rsquo;s own spec in the editor</p>
+              <p class="lp-demo-sub">
+                SpecPad documents itself with SpecPad. Open its real SRS and verification tests
+                in the hosted editor &mdash; read-only, nothing to install.
+              </p>
+            </div>
+            <a class="lp-btn lp-btn-primary" href="/v01/?demo">Open the live demo <span aria-hidden="true">&rarr;</span></a>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════════════════════════════════
+           TASK 5 INSERTION POINT — seven feature rows + audience +
+           get-started sections land here. The stubs below keep the
+           header nav anchors (#features, #get-started) valid until then.
+           ════════════════════════════════════════════════════════════ -->
+      <section class="lp-anchor-stub" id="features"></section>
+      <section class="lp-anchor-stub" id="get-started"></section>
+    </main>
+
+    <!-- ── Footer ─────────────────────────────────────────────────── -->
+    <footer class="lp-footer">
+      <div class="lp-footer-inner">
+        <a class="lp-logo lp-logo-sm" href="/">specpad<span class="lp-cursor">_</span></a>
+        <nav class="lp-footer-nav" aria-label="Footer">
+          <a href="/reference/">Schema reference</a>
+          <a href="/v01/">Open the editor</a>
+          <a href="/v01/?demo">Live demo</a>
+        </nav>
+        <p class="lp-footer-meta">schema v1.0 &middot; editor /v01/</p>
+      </div>
+    </footer>
   </body>
 </html>
