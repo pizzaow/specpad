@@ -129,4 +129,24 @@ describe('demo mode', () => {
     await openDemoProject();
     expect(calls).toContain('/demo/manifest.json');
   });
+
+  it('openDemoProject rejects a manifest without a documents array', async () => {
+    stubFetch({ '/demo/manifest.json': { nope: true } });
+    enableDemoMode('/demo/');
+    await expect(openDemoProject()).rejects.toThrow(/malformed/i);
+  });
+
+  it('openDemoProject handles an empty manifest', async () => {
+    stubFetch({ '/demo/manifest.json': { documents: [] } });
+    enableDemoMode('/demo/');
+    const result = await openDemoProject();
+    expect(result).toEqual({ name: '', documents: [] });
+  });
+
+  it('openDemoProject falls back to the first document name when no proj entry exists', async () => {
+    stubFetch({ '/demo/manifest.json': { documents: ['specpad.srs.json'] } });
+    enableDemoMode('/demo/');
+    const result = await openDemoProject();
+    expect(result.name).toBe('specpad');
+  });
 });
