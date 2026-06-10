@@ -12,9 +12,10 @@ interface StatusBarProps {
   srsDoc: SrsDoc | null;
   vtpDoc: VtpDoc | null;
   projectDoc: ProjectDoc | null;
+  demo?: boolean;
 }
 
-const StatusBar: React.FC<StatusBarProps> = ({ path, srsDoc, vtpDoc, projectDoc }) => {
+const StatusBar: React.FC<StatusBarProps> = ({ path, srsDoc, vtpDoc, projectDoc, demo }) => {
   const [open, setOpen] = useState(false);
 
   const structural = useMemo(
@@ -33,6 +34,7 @@ const StatusBar: React.FC<StatusBarProps> = ({ path, srsDoc, vtpDoc, projectDoc 
   return (
     <div className="status-bar">
       <span className="status-path">{path}</span>
+      {demo && <span className="status-demo">Demo — read-only</span>}
       <span className="status-spacer" />
       {clean ? (
         <span className="status-ok">✓ No problems found</span>
