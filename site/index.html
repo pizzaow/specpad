@@ -198,13 +198,513 @@
         </div>
       </section>
 
-      <!-- ════════════════════════════════════════════════════════════
-           TASK 5 INSERTION POINT — seven feature rows + audience +
-           get-started sections land here. The stubs below keep the
-           header nav anchors (#features, #get-started) valid until then.
-           ════════════════════════════════════════════════════════════ -->
-      <section class="lp-anchor-stub" id="features"></section>
-      <section class="lp-anchor-stub" id="get-started"></section>
+      <!-- ── Features ─────────────────────────────────────────────── -->
+      <section class="lp-section" id="features">
+        <div class="lp-section-inner">
+          <p class="lp-kicker"><span class="lp-prompt">##</span> Features</p>
+          <h2 class="lp-h2">Spreadsheet-fast on the surface. Audit-grade underneath.</h2>
+          <p class="lp-section-lede">
+            Each capability twice over &mdash; what you see in the editor, and the mechanism behind it.
+          </p>
+
+          <div class="lp-features">
+            <!-- 1 · Effortless requirements editing -->
+            <article class="lp-feature">
+              <h3 class="lp-h3"><span class="lp-feature-num">01</span> Effortless requirements editing</h3>
+              <p class="lp-feature-desc">
+                A spreadsheet-fast table for your SRS and VTP. The editor opens files straight
+                from your repo &mdash; no server, no import, nothing leaves your machine.
+              </p>
+              <div class="lp-feature-panels">
+                <figure class="lp-panel lp-panel-look">
+                  <figcaption class="lp-panel-label">What it looks like <span class="lp-panel-tag">&#9656; live demo</span></figcaption>
+                  <div class="lp-panel-body">
+                    <a class="lp-shot-link" href="/v01/?demo">
+                      <img
+                        class="lp-shot"
+                        src="/assets/shots/srs-table.png"
+                        alt="The SpecPad editor showing an SRS as an editable table of requirements with codes, names, and statuses"
+                        width="1400"
+                        height="620"
+                        loading="lazy"
+                      />
+                    </a>
+                  </div>
+                </figure>
+                <figure class="lp-panel">
+                  <figcaption class="lp-panel-label">How it works</figcaption>
+                  <div class="lp-panel-body">
+                    <svg
+                      class="lp-diagram"
+                      viewBox="0 0 460 220"
+                      role="img"
+                      aria-label="Your spec files in the repo connect directly to the browser editor over the File System Access API — no backend."
+                    >
+                      <title>The browser editor reads and writes docs/specpad JSON files directly via the File System Access API, with no backend.</title>
+                      <defs>
+                        <marker id="arr-f1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                          <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
+                        </marker>
+                      </defs>
+                      <!-- file node (folded-corner document) -->
+                      <path d="M 18,62 H 158 L 184,86 V 142 H 18 Z" fill="#0d1117" stroke="#3fb950" stroke-width="1.5" />
+                      <path d="M 158,62 L 158,86 L 184,86 Z" fill="#161b22" stroke="#3fb950" stroke-width="1.5" stroke-linejoin="round" />
+                      <text x="101" y="100" text-anchor="middle" font-size="11" fill="#3fb950">docs/specpad/</text>
+                      <text x="101" y="118" text-anchor="middle" font-size="11" fill="#3fb950">*.json</text>
+                      <text x="101" y="166" text-anchor="middle" font-size="10.5" fill="#8b949e">your repo</text>
+                      <!-- editor node -->
+                      <rect x="276" y="62" width="168" height="80" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                      <line x1="276" y1="86" x2="444" y2="86" stroke="#30363d" stroke-width="1" />
+                      <circle cx="290" cy="74" r="3" fill="#30363d" />
+                      <circle cx="301" cy="74" r="3" fill="#30363d" />
+                      <text x="360" y="112" text-anchor="middle" font-size="12.5" fill="#e6edf3">browser editor</text>
+                      <text x="360" y="131" text-anchor="middle" font-size="10.5" fill="#8b949e">runs locally</text>
+                      <!-- two-way arrow -->
+                      <line x1="194" y1="102" x2="266" y2="102" stroke="#3fb950" stroke-width="1.5" marker-start="url(#arr-f1)" marker-end="url(#arr-f1)" />
+                      <!-- annotation -->
+                      <text x="230" y="200" text-anchor="middle" font-size="11" fill="#8b949e">File System Access &mdash; no backend</text>
+                    </svg>
+                  </div>
+                </figure>
+              </div>
+            </article>
+
+            <!-- 2 · Docs that keep up with your code -->
+            <article class="lp-feature lp-feature-alt">
+              <h3 class="lp-h3"><span class="lp-feature-num">02</span> Docs that keep up with your code</h3>
+              <p class="lp-feature-desc">
+                The Claude skill reads and writes the same files. Finish a change, say
+                &ldquo;update the spec&rdquo; &mdash; requirements and tests stay current
+                without leaving the terminal.
+              </p>
+              <div class="lp-feature-panels">
+                <figure class="lp-panel lp-panel-look">
+                  <figcaption class="lp-panel-label">What it looks like</figcaption>
+                  <div class="lp-panel-body">
+                    <div class="lp-term" role="img" aria-label="Terminal transcript: the user asks Claude to update the spec for the new export flow; the skill updates specpad.srs.json with 2 requirements and specpad.vtp.json with 2 tests, and reports validation and governance clean.">
+                      <div class="lp-term-chrome">
+                        <span class="lp-dot"></span><span class="lp-dot"></span><span class="lp-dot"></span>
+                        <span class="lp-term-title">claude &mdash; your repo</span>
+                      </div>
+                      <pre class="lp-term-body"><code><span class="lp-term-line"><span class="lp-term-prompt">&gt;</span> update the spec for the new export flow</span>
+<span class="lp-term-line lp-term-pause"></span>
+<span class="lp-term-line"><span class="lp-term-ok">&#10003;</span> updated specpad.srs.json <span class="lp-term-dim">(2 requirements)</span></span>
+<span class="lp-term-line"><span class="lp-term-ok">&#10003;</span> updated specpad.vtp.json <span class="lp-term-dim">(2 tests)</span></span>
+<span class="lp-term-line"><span class="lp-term-ok">&#10003;</span> validation + governance clean</span></code></pre>
+                    </div>
+                  </div>
+                </figure>
+                <figure class="lp-panel">
+                  <figcaption class="lp-panel-label">How it works</figcaption>
+                  <div class="lp-panel-body">
+                    <svg
+                      class="lp-diagram"
+                      viewBox="0 0 460 240"
+                      role="img"
+                      aria-label="The Claude skill and the visual editor both point at the same docs/specpad JSON file — one shared contract."
+                    >
+                      <title>The Claude skill and the visual editor both read and write the same docs/specpad JSON files, governed by one shared contract.</title>
+                      <defs>
+                        <marker id="arr-f2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                          <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
+                        </marker>
+                      </defs>
+                      <!-- skill node -->
+                      <rect x="20" y="20" width="180" height="56" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                      <text x="110" y="44" text-anchor="middle" font-size="12.5" fill="#e6edf3">Claude skill</text>
+                      <text x="110" y="63" text-anchor="middle" font-size="10.5" fill="#8b949e">edits from the terminal</text>
+                      <!-- editor node -->
+                      <rect x="260" y="20" width="180" height="56" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                      <text x="350" y="44" text-anchor="middle" font-size="12.5" fill="#e6edf3">visual editor</text>
+                      <text x="350" y="63" text-anchor="middle" font-size="10.5" fill="#8b949e">edits in the browser</text>
+                      <!-- label -->
+                      <text x="230" y="121" text-anchor="middle" font-size="11" fill="#3fb950">one shared contract</text>
+                      <!-- arrows to the file -->
+                      <path d="M 110,76 C 110,118 150,140 186,158" fill="none" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arr-f2)" />
+                      <path d="M 350,76 C 350,118 310,140 274,158" fill="none" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arr-f2)" />
+                      <!-- file node (folded-corner document) -->
+                      <path d="M 150,160 H 286 L 310,182 V 222 H 150 Z" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                      <path d="M 286,160 L 286,182 L 310,182 Z" fill="#161b22" stroke="#30363d" stroke-width="1.5" stroke-linejoin="round" />
+                      <text x="230" y="198" text-anchor="middle" font-size="11.5" fill="#e6edf3">docs/specpad/*.json</text>
+                    </svg>
+                  </div>
+                </figure>
+              </div>
+            </article>
+
+            <!-- 3 · Traceability by construction -->
+            <article class="lp-feature">
+              <h3 class="lp-h3"><span class="lp-feature-num">03</span> Traceability by construction</h3>
+              <p class="lp-feature-desc">
+                Every test declares what it verifies, linked by stable ids that survive renames.
+                Governance checks flag untested requirements before an auditor does.
+              </p>
+              <div class="lp-feature-panels">
+                <figure class="lp-panel lp-panel-look">
+                  <figcaption class="lp-panel-label">What it looks like</figcaption>
+                  <div class="lp-panel-body">
+                    <img
+                      class="lp-shot"
+                      src="/assets/shots/testing-view.png"
+                      alt="The testing view pairing each verification test with the requirement it verifies, with pass and fail results"
+                      width="1400"
+                      height="620"
+                      loading="lazy"
+                    />
+                  </div>
+                </figure>
+                <figure class="lp-panel">
+                  <figcaption class="lp-panel-label">How it works</figcaption>
+                  <div class="lp-panel-body">
+                    <svg
+                      class="lp-diagram"
+                      viewBox="0 0 460 200"
+                      role="img"
+                      aria-label="A requirement with id r_4f2a links to a test that verifies r_4f2a, which links to a passed result — linked by id, never by name."
+                    >
+                      <title>Requirements link to tests link to results by stable id, never by human-readable name.</title>
+                      <defs>
+                        <marker id="arr-f3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                          <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
+                        </marker>
+                      </defs>
+                      <!-- requirement -->
+                      <rect x="10" y="52" width="132" height="64" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                      <text x="76" y="79" text-anchor="middle" font-size="12" fill="#e6edf3">requirement</text>
+                      <text x="76" y="99" text-anchor="middle" font-size="10.5" fill="#3fb950">id: r_4f2a</text>
+                      <!-- test -->
+                      <rect x="164" y="52" width="132" height="64" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                      <text x="230" y="79" text-anchor="middle" font-size="12" fill="#e6edf3">test</text>
+                      <text x="230" y="99" text-anchor="middle" font-size="10.5" fill="#3fb950">verifies: r_4f2a</text>
+                      <!-- result -->
+                      <rect x="318" y="52" width="132" height="64" rx="8" fill="#0d1117" stroke="#3fb950" stroke-width="1.5" />
+                      <text x="384" y="79" text-anchor="middle" font-size="12" fill="#e6edf3">result</text>
+                      <text x="384" y="99" text-anchor="middle" font-size="10.5" fill="#3fb950">&#10003; passed</text>
+                      <!-- arrows -->
+                      <line x1="142" y1="84" x2="158" y2="84" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arr-f3)" />
+                      <line x1="296" y1="84" x2="312" y2="84" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arr-f3)" />
+                      <!-- annotation -->
+                      <text x="230" y="166" text-anchor="middle" font-size="11" fill="#8b949e">linked by id, never by name &mdash; renames can&rsquo;t break the chain</text>
+                    </svg>
+                  </div>
+                </figure>
+              </div>
+            </article>
+
+            <!-- 4 · Redlines, automatically -->
+            <article class="lp-feature lp-feature-alt">
+              <h3 class="lp-h3"><span class="lp-feature-num">04</span> Redlines, automatically</h3>
+              <p class="lp-feature-desc">
+                The editor diffs your working copy against the released baseline &mdash; see
+                exactly what changed since the last release, with no hand-maintained change tables.
+              </p>
+              <div class="lp-feature-panels">
+                <figure class="lp-panel lp-panel-look">
+                  <figcaption class="lp-panel-label">What it looks like <span class="lp-panel-tag">&#9656; live demo</span></figcaption>
+                  <div class="lp-panel-body">
+                    <a class="lp-shot-link" href="/v01/?demo">
+                      <img
+                        class="lp-shot"
+                        src="/assets/shots/redlines.png"
+                        alt="The redline view highlighting additions and deletions between the working copy and the released baseline"
+                        width="1400"
+                        height="620"
+                        loading="lazy"
+                      />
+                    </a>
+                  </div>
+                </figure>
+                <figure class="lp-panel">
+                  <figcaption class="lp-panel-label">How it works</figcaption>
+                  <div class="lp-panel-body">
+                    <svg
+                      class="lp-diagram"
+                      viewBox="0 0 460 240"
+                      role="img"
+                      aria-label="The baseline snapshot from the v1.0 tag and the working copy feed a diff, which produces the redline view. Git owns the history."
+                    >
+                      <title>The baseline snapshot from the v1.0 git tag and the working copy are diffed to produce the redline view; git owns the history.</title>
+                      <defs>
+                        <marker id="arr-f4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                          <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
+                        </marker>
+                      </defs>
+                      <!-- baseline -->
+                      <rect x="12" y="22" width="172" height="60" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                      <text x="98" y="47" text-anchor="middle" font-size="11.5" fill="#e6edf3">baseline snapshot</text>
+                      <text x="98" y="67" text-anchor="middle" font-size="10.5" fill="#8b949e">(v1.0 tag)</text>
+                      <!-- working copy -->
+                      <rect x="12" y="122" width="172" height="60" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                      <text x="98" y="147" text-anchor="middle" font-size="11.5" fill="#e6edf3">working copy</text>
+                      <text x="98" y="167" text-anchor="middle" font-size="10.5" fill="#8b949e">(your edits)</text>
+                      <!-- diff node -->
+                      <rect x="234" y="72" width="80" height="60" rx="8" fill="#0d1117" stroke="#1f6feb" stroke-width="1.5" />
+                      <text x="274" y="108" text-anchor="middle" font-size="12.5" fill="#1f6feb">diff</text>
+                      <!-- redline view -->
+                      <rect x="348" y="72" width="102" height="60" rx="8" fill="#0d1117" stroke="#3fb950" stroke-width="1.5" />
+                      <text x="399" y="98" text-anchor="middle" font-size="10.5" fill="#f85149">&minus; was</text>
+                      <text x="399" y="116" text-anchor="middle" font-size="10.5" fill="#3fb950">+ now</text>
+                      <text x="399" y="156" text-anchor="middle" font-size="10.5" fill="#8b949e">redline view</text>
+                      <!-- arrows -->
+                      <path d="M 184,52 C 214,52 218,76 230,86" fill="none" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arr-f4)" />
+                      <path d="M 184,152 C 214,152 218,128 230,118" fill="none" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arr-f4)" />
+                      <line x1="314" y1="102" x2="342" y2="102" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arr-f4)" />
+                      <!-- caption -->
+                      <text x="230" y="222" text-anchor="middle" font-size="11" fill="#8b949e">git owns the history &mdash; nothing is hand-maintained</text>
+                    </svg>
+                  </div>
+                </figure>
+              </div>
+            </article>
+
+            <!-- 5 · Version history from your tags -->
+            <article class="lp-feature">
+              <h3 class="lp-h3"><span class="lp-feature-num">05</span> Version history from your tags</h3>
+              <p class="lp-feature-desc">
+                Releases are just git tags. SpecPad snapshots each one, so any past revision is
+                one click away &mdash; author and date come from the commit itself.
+              </p>
+              <div class="lp-feature-panels">
+                <figure class="lp-panel lp-panel-look">
+                  <figcaption class="lp-panel-label">What it looks like</figcaption>
+                  <div class="lp-panel-body">
+                    <img
+                      class="lp-shot"
+                      src="/assets/shots/version-history.png"
+                      alt="The version history dialog listing released revisions snapshotted from git tags, with author and date from each commit"
+                      width="1400"
+                      height="900"
+                      loading="lazy"
+                    />
+                  </div>
+                </figure>
+                <figure class="lp-panel">
+                  <figcaption class="lp-panel-label">How it works</figcaption>
+                  <div class="lp-panel-body">
+                    <svg
+                      class="lp-diagram"
+                      viewBox="0 0 460 240"
+                      role="img"
+                      aria-label="A timeline of git tags v0.1 and v1.0 plus the working copy; each tag has a snapshot, and the snapshots feed the history dialog."
+                    >
+                      <title>Each git tag on the timeline gets a snapshot, and the snapshots populate the editor's history dialog.</title>
+                      <defs>
+                        <marker id="arr-f5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                          <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
+                        </marker>
+                      </defs>
+                      <!-- timeline -->
+                      <line x1="32" y1="58" x2="332" y2="58" stroke="#30363d" stroke-width="2" />
+                      <line x1="332" y1="58" x2="428" y2="58" stroke="#30363d" stroke-width="2" stroke-dasharray="4 5" />
+                      <circle cx="90" cy="58" r="6" fill="#0d1117" stroke="#3fb950" stroke-width="2.5" />
+                      <circle cx="230" cy="58" r="6" fill="#0d1117" stroke="#3fb950" stroke-width="2.5" />
+                      <circle cx="370" cy="58" r="6" fill="#0d1117" stroke="#8b949e" stroke-width="2.5" stroke-dasharray="3 3" />
+                      <text x="90" y="36" text-anchor="middle" font-size="11.5" fill="#3fb950">v0.1</text>
+                      <text x="230" y="36" text-anchor="middle" font-size="11.5" fill="#3fb950">v1.0</text>
+                      <text x="370" y="36" text-anchor="middle" font-size="11.5" fill="#8b949e">working</text>
+                      <!-- snapshot boxes under tags -->
+                      <line x1="90" y1="64" x2="90" y2="86" stroke="#30363d" stroke-width="1.5" />
+                      <line x1="230" y1="64" x2="230" y2="86" stroke="#30363d" stroke-width="1.5" />
+                      <line x1="370" y1="64" x2="370" y2="86" stroke="#30363d" stroke-width="1.5" stroke-dasharray="3 3" />
+                      <rect x="38" y="86" width="104" height="36" rx="6" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                      <text x="90" y="108" text-anchor="middle" font-size="10.5" fill="#e6edf3">snapshot</text>
+                      <rect x="178" y="86" width="104" height="36" rx="6" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                      <text x="230" y="108" text-anchor="middle" font-size="10.5" fill="#e6edf3">snapshot</text>
+                      <rect x="318" y="86" width="104" height="36" rx="6" fill="#0d1117" stroke="#8b949e" stroke-width="1.5" stroke-dasharray="3 3" />
+                      <text x="370" y="108" text-anchor="middle" font-size="10.5" fill="#8b949e">uncommitted</text>
+                      <!-- arrows into history dialog -->
+                      <path d="M 90,122 C 90,160 140,166 168,172" fill="none" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arr-f5)" />
+                      <path d="M 230,122 L 230,166" fill="none" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arr-f5)" />
+                      <path d="M 370,122 C 370,160 320,166 292,172" fill="none" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arr-f5)" />
+                      <!-- history dialog -->
+                      <rect x="152" y="172" width="156" height="46" rx="8" fill="#0d1117" stroke="#3fb950" stroke-width="1.5" />
+                      <text x="230" y="200" text-anchor="middle" font-size="11.5" fill="#3fb950">history dialog</text>
+                    </svg>
+                  </div>
+                </figure>
+              </div>
+            </article>
+
+            <!-- 6 · Tied to your ticket -->
+            <article class="lp-feature lp-feature-alt">
+              <h3 class="lp-h3"><span class="lp-feature-num">06</span> Tied to your ticket</h3>
+              <p class="lp-feature-desc">
+                Associate working changes with a job &mdash; a ticket key, an issue number &mdash;
+                so every requirement edit traces back to why it happened.
+              </p>
+              <div class="lp-feature-panels">
+                <figure class="lp-panel lp-panel-look">
+                  <figcaption class="lp-panel-label">What it looks like</figcaption>
+                  <div class="lp-panel-body lp-panel-body-center">
+                    <img
+                      class="lp-shot lp-shot-chip"
+                      src="/assets/shots/job-chip.png"
+                      alt="A job chip in the editor toolbar associating the current working changes with ticket JIRA-123"
+                      width="420"
+                      height="56"
+                      loading="lazy"
+                    />
+                  </div>
+                </figure>
+                <figure class="lp-panel">
+                  <figcaption class="lp-panel-label">How it works</figcaption>
+                  <div class="lp-panel-body">
+                    <svg
+                      class="lp-diagram"
+                      viewBox="0 0 460 220"
+                      role="img"
+                      aria-label="A job marker file links the current edits to a ticket such as JIRA-123."
+                    >
+                      <title>A job marker file in the repo links the current working edits to the ticket that motivated them.</title>
+                      <defs>
+                        <marker id="arr-f6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                          <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
+                        </marker>
+                      </defs>
+                      <!-- job marker chip -->
+                      <rect x="142" y="22" width="176" height="56" rx="28" fill="#0d1117" stroke="#3fb950" stroke-width="1.5" />
+                      <text x="230" y="45" text-anchor="middle" font-size="10.5" fill="#8b949e">job marker</text>
+                      <text x="230" y="65" text-anchor="middle" font-size="11.5" fill="#3fb950">[name].job.json</text>
+                      <!-- dashed ties from chip to both ends -->
+                      <path d="M 152,72 C 110,92 96,108 92,128" fill="none" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="4 5" opacity="0.85" />
+                      <path d="M 308,72 C 350,92 364,108 368,128" fill="none" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="4 5" opacity="0.85" />
+                      <!-- current edits -->
+                      <rect x="16" y="130" width="152" height="60" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                      <text x="92" y="155" text-anchor="middle" font-size="11.5" fill="#e6edf3">current edits</text>
+                      <text x="92" y="175" text-anchor="middle" font-size="10.5" fill="#8b949e">working copy</text>
+                      <!-- ticket -->
+                      <rect x="292" y="130" width="152" height="60" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                      <text x="368" y="155" text-anchor="middle" font-size="11.5" fill="#e6edf3">ticket</text>
+                      <text x="368" y="175" text-anchor="middle" font-size="10.5" fill="#1f6feb">JIRA-123</text>
+                      <!-- link arrow -->
+                      <line x1="168" y1="160" x2="286" y2="160" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arr-f6)" />
+                      <text x="227" y="150" text-anchor="middle" font-size="10.5" fill="#8b949e">traces to</text>
+                    </svg>
+                  </div>
+                </figure>
+              </div>
+            </article>
+
+            <!-- 7 · Validated twice -->
+            <article class="lp-feature">
+              <h3 class="lp-h3"><span class="lp-feature-num">07</span> Validated twice: structure and policy</h3>
+              <p class="lp-feature-desc">
+                JSON Schema catches malformed files; governance rules catch broken links, missing
+                expected results, and untraceable requirements. The skill and the editor run the
+                same checks from one shared module.
+              </p>
+              <div class="lp-feature-panels">
+                <figure class="lp-panel lp-panel-look">
+                  <figcaption class="lp-panel-label">What it looks like</figcaption>
+                  <div class="lp-panel-body lp-panel-body-center">
+                    <img
+                      class="lp-shot"
+                      src="/assets/shots/status-bar.png"
+                      alt="The editor status bar reporting schema validation and governance checks as clean"
+                      width="1400"
+                      height="44"
+                      loading="lazy"
+                    />
+                  </div>
+                </figure>
+                <figure class="lp-panel">
+                  <figcaption class="lp-panel-label">How it works</figcaption>
+                  <div class="lp-panel-body">
+                    <svg
+                      class="lp-diagram"
+                      viewBox="0 0 460 280"
+                      role="img"
+                      aria-label="A spec file passes through two gates in order: structure, enforced by JSON Schema, then policy, enforced by governance rules. The file's schemaVersion 1.0 pins the editor build at /v01/."
+                    >
+                      <title>Every file passes a structure gate (JSON Schema) and then a policy gate (governance rules); its schemaVersion pins the matching editor build.</title>
+                      <defs>
+                        <marker id="arr-f7" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                          <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
+                        </marker>
+                      </defs>
+                      <!-- file node (folded-corner document) -->
+                      <path d="M 112,14 H 246 L 268,34 V 62 H 112 Z" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                      <path d="M 246,14 L 246,34 L 268,34 Z" fill="#161b22" stroke="#30363d" stroke-width="1.5" stroke-linejoin="round" />
+                      <text x="190" y="44" text-anchor="middle" font-size="10.5" fill="#e6edf3">docs/specpad/*.json</text>
+                      <!-- gate 1: structure -->
+                      <rect x="90" y="96" width="200" height="54" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                      <text x="190" y="119" text-anchor="middle" font-size="12" fill="#e6edf3">gate 1 &middot; structure</text>
+                      <text x="190" y="138" text-anchor="middle" font-size="10.5" fill="#8b949e">JSON Schema</text>
+                      <!-- gate 2: policy -->
+                      <rect x="90" y="184" width="200" height="54" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
+                      <text x="190" y="207" text-anchor="middle" font-size="12" fill="#e6edf3">gate 2 &middot; policy</text>
+                      <text x="190" y="226" text-anchor="middle" font-size="10.5" fill="#8b949e">governance rules</text>
+                      <!-- flow arrows -->
+                      <line x1="190" y1="62" x2="190" y2="90" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arr-f7)" />
+                      <line x1="190" y1="150" x2="190" y2="178" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arr-f7)" />
+                      <line x1="190" y1="238" x2="190" y2="262" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arr-f7)" />
+                      <text x="207" y="276" text-anchor="start" font-size="11" fill="#3fb950">&#10003; clean</text>
+                      <!-- side note -->
+                      <line x1="290" y1="123" x2="312" y2="123" stroke="#30363d" stroke-width="1.5" stroke-dasharray="3 3" />
+                      <text x="318" y="118" text-anchor="start" font-size="10.5" fill="#8b949e">schemaVersion &quot;1.0&quot;</text>
+                      <text x="318" y="136" text-anchor="start" font-size="10.5" fill="#8b949e">&rarr; pinned editor /v01/</text>
+                    </svg>
+                  </div>
+                </figure>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Who it's for ─────────────────────────────────────────── -->
+      <section class="lp-section">
+        <div class="lp-section-inner">
+          <p class="lp-kicker"><span class="lp-prompt">##</span> Who it&rsquo;s for</p>
+          <h2 class="lp-h2">Built for regulated work. Useful everywhere.</h2>
+          <div class="lp-audience">
+            <div class="lp-audience-card lp-audience-reg">
+              <h3>Regulated industries</h3>
+              <p>
+                Audit-ready traceability, structured evidence, and human approval gates &mdash;
+                without standing up heavyweight tooling.
+              </p>
+            </div>
+            <div class="lp-audience-card lp-audience-rest">
+              <h3>Everyone else</h3>
+              <p>
+                The same rigor is just good engineering practice: specs that can&rsquo;t silently
+                rot, tests that can&rsquo;t silently detach.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Get started ──────────────────────────────────────────── -->
+      <section class="lp-section" id="get-started">
+        <div class="lp-section-inner">
+          <p class="lp-kicker"><span class="lp-prompt">##</span> Get started</p>
+          <h2 class="lp-h2">Installed in under a minute.</h2>
+          <ol class="lp-steps">
+            <li class="lp-step">
+              <span class="lp-step-num">1</span>
+              <h3 class="lp-step-title">Download the skill</h3>
+              <p class="lp-step-text"><a href="/specpad-skill.zip" download>specpad-skill.zip</a></p>
+            </li>
+            <li class="lp-step">
+              <span class="lp-step-num">2</span>
+              <h3 class="lp-step-title">Unzip it</h3>
+              <p class="lp-step-text">into <code>~/.claude/skills/</code></p>
+            </li>
+            <li class="lp-step">
+              <span class="lp-step-num">3</span>
+              <h3 class="lp-step-title">Say the words</h3>
+              <p class="lp-step-text"><code>set up specpad</code> in your repo</p>
+            </li>
+          </ol>
+          <div class="lp-getstarted-cta">
+            <a class="lp-btn lp-btn-primary lp-btn-lg" href="/specpad-skill.zip" download>Download the Claude skill</a>
+            <p class="lp-getstarted-meta">specpad-skill.zip &middot; schema v1.0</p>
+            <a class="lp-getstarted-more" href="/reference/#install">full instructions <span aria-hidden="true">&rarr;</span></a>
+          </div>
+        </div>
+      </section>
     </main>
 
     <!-- ── Footer ─────────────────────────────────────────────────── -->
