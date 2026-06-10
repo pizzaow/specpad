@@ -1,7 +1,8 @@
 /**
  * Captures the marketing screenshots from the editor running in demo mode.
  * Prereq: `npm run dev` on :5173 (demo middleware serves docs/specpad at /demo).
- * Usage:  NODE_PATH=$(npm root -g) node site/scripts/capture-screenshots.mjs
+ * Usage:  npm run capture:screenshots
+ *         NODE_PATH=$(npm root -g) node site/scripts/capture-screenshots.mjs
  *         (set EDITOR_URL if Vite picked a different port)
  * Re-run after any editor UI change so the marketing shots never go stale.
  *
@@ -23,69 +24,72 @@ const OUT = new URL('../public/assets/shots/', import.meta.url).pathname;
 mkdirSync(OUT, { recursive: true });
 
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1400, height: 900 }, deviceScaleFactor: 2 });
-await page.goto(`${BASE}/?demo`);
-// Demo data is loaded once the read-only badge and the SRS table render.
-await page.waitForSelector('.status-demo');
-await page.waitForSelector('.srs-table-container table tbody tr');
-await page.waitForTimeout(800); // let the fadeIn animation and fonts settle
+try {
+  const page = await browser.newPage({ viewport: { width: 1400, height: 900 }, deviceScaleFactor: 2 });
+  await page.goto(`${BASE}/?demo`);
+  // Demo data is loaded once the read-only badge and the SRS table render.
+  await page.waitForSelector('.status-demo');
+  await page.waitForSelector('.srs-table-container table tbody tr');
+  await page.waitForTimeout(800); // let the fadeIn animation and fonts settle
 
-// fullPage is required whenever the clip lies below the 1400x900 viewport.
-const shot = (name, clip, fullPage = false) =>
-  page.screenshot({ path: `${OUT}${name}.png`, fullPage, ...(clip ? { clip } : {}) });
+  // fullPage is required whenever the clip lies below the 1400x900 viewport.
+  const shot = (name, clip, fullPage = false) =>
+    page.screenshot({ path: `${OUT}${name}.png`, fullPage, ...(clip ? { clip } : {}) });
 
-// The page is never scrolled before measuring, so boundingBox() (viewport
-// coords) equals document coords, which is what screenshot clips use.
-const box = async (selector) => {
-  const b = await page.locator(selector).first().boundingBox();
-  if (!b) throw new Error(`No bounding box for ${selector}`);
-  return b;
-};
+  // The page is never scrolled before measuring, so boundingBox() (viewport
+  // coords) equals document coords, which is what screenshot clips use.
+  const box = async (selector) => {
+    const b = await page.locator(selector).first().boundingBox();
+    if (!b) throw new Error(`No bounding box for ${selector}`);
+    return b;
+  };
 
-// 1. SRS table — menubar + tabs + the top of the requirements table
-//    (heading rows and the requirement hierarchy are in the first screenful).
-await shot('srs-table', { x: 0, y: 0, width: 1400, height: 620 });
+  // 1. SRS table — menubar + tabs + the top of the requirements table
+  //    (heading rows and the requirement hierarchy are in the first screenful).
+  await shot('srs-table', { x: 0, y: 0, width: 1400, height: 620 });
 
-// 2. Testing view with the pass/fail/pending roll-up labels at the top.
-await page.click('.view-tabs >> text=Results');
-await page.waitForSelector('.testing-view-container');
-await page.waitForTimeout(600);
-await shot('testing-view', { x: 0, y: 0, width: 1400, height: 620 });
+  // 2. Testing view with the pass/fail/pending roll-up labels at the top.
+  await page.click('.view-tabs >> text=Results');
+  await page.waitForSelector('.testing-view-container');
+  await page.waitForTimeout(600);
+  await shot('testing-view', { x: 0, y: 0, width: 1400, height: 620 });
 
-// 3. Redlines on the VTP view — the demo working copy has rows added since the
-//    v1.0 baseline, rendered as green `tr.success` rows. Clip around the first
-//    added row so unchanged rows above give contrast.
-await page.click('.view-tabs >> text=Verification Tests');
-await page.waitForSelector('.vtp-table-container');
-await page.waitForTimeout(600);
-const firstAdded = await box('.vtp-table-container tr.success');
-const docHeight = await page.evaluate(() => document.documentElement.scrollHeight);
-const redlineY = Math.max(0, Math.min(Math.round(firstAdded.y) - 220, docHeight - 620));
-await shot('redlines', { x: 0, y: redlineY, width: 1400, height: 620 }, redlineY + 620 > 900);
+  // 3. Redlines on the VTP view — the demo working copy has rows added since the
+  //    v1.0 baseline, rendered as green `tr.success` rows. Clip around the first
+  //    added row so unchanged rows above give contrast.
+  await page.click('.view-tabs >> text=Verification Tests');
+  await page.waitForSelector('.vtp-table-container');
+  await page.waitForTimeout(600);
+  const firstAdded = await box('.vtp-table-container tr.success');
+  const docHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+  const redlineY = Math.max(0, Math.min(Math.round(firstAdded.y) - 220, docHeight - 620));
+  await shot('redlines', { x: 0, y: redlineY, width: 1400, height: 620 }, redlineY + 620 > 900);
 
-// 4. Version history dialog (opened from the menubar's version chip).
-await page.click('.menubar button:has-text("v1.0")');
-await page.waitForSelector('.modal.in');
-await page.waitForTimeout(400);
-await shot('version-history'); // full 1400x900 viewport
-await page.click('.modal-footer button:has-text("Close")');
+  // 4. Version history dialog (opened from the menubar's version chip).
+  await page.click('.menubar button:has-text("v1.0")');
+  await page.waitForSelector('.modal.in');
+  await page.waitForTimeout(400);
+  await shot('version-history'); // full 1400x900 viewport
+  await page.click('.modal-footer button:has-text("Close")');
 
-// 5. Job chip — in demo mode the menubar shows "Job: <job>" on the right.
-//    Centre a 420x56 clip on it (vertically centred on the menubar).
-const chip = await box('.menubar >> text=Job:');
-const menubar = await box('.menubar');
-const chipClip = {
-  x: Math.max(0, Math.min(Math.round(chip.x + chip.width / 2 - 210), 1400 - 420)),
-  y: Math.max(0, Math.round(menubar.y + menubar.height / 2 - 28)),
-  width: 420,
-  height: 56,
-};
-await shot('job-chip', chipClip);
+  // 5. Job chip — in demo mode the menubar shows "Job: <job>" on the right.
+  //    Centre a 420x56 clip on it (vertically centred on the menubar).
+  const chip = await box('.menubar >> text=Job:');
+  const menubar = await box('.menubar');
+  const chipClip = {
+    x: Math.max(0, Math.min(Math.round(chip.x + chip.width / 2 - 210), 1400 - 420)),
+    y: Math.max(0, Math.round(menubar.y + menubar.height / 2 - 28)),
+    width: 420,
+    height: 56,
+  };
+  await shot('job-chip', chipClip);
 
-// 6. Status bar with the validation summary (bottom of the document).
-const bar = await box('.status-bar');
-const barY = Math.round(bar.y + bar.height / 2 - 22);
-await shot('status-bar', { x: 0, y: barY, width: 1400, height: 44 }, barY + 44 > 900);
+  // 6. Status bar with the validation summary (bottom of the document).
+  const bar = await box('.status-bar');
+  const barY = Math.round(bar.y + bar.height / 2 - 22);
+  await shot('status-bar', { x: 0, y: barY, width: 1400, height: 44 }, barY + 44 > 900);
 
-await browser.close();
-console.log(`6 screenshots written to ${OUT}`);
+  console.log(`6 screenshots written to ${OUT}`);
+} finally {
+  await browser.close();
+}
