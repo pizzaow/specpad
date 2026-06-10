@@ -45,6 +45,7 @@ export function enableDemoMode(baseUrl: string): void {
 export function disableDemoMode(): void {
   demoBaseUrl = null;
   demoDocuments = [];
+  projectName = '';
 }
 
 export function isDemoMode(): boolean {
@@ -52,6 +53,7 @@ export function isDemoMode(): boolean {
 }
 
 async function fetchDemoJson(relPath: string): Promise<SpecPadDoc | null> {
+  if (!demoBaseUrl) throw new Error('Demo mode is not enabled');
   const res = await fetch(demoBaseUrl + relPath, { cache: 'no-cache' });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`Demo fetch failed (HTTP ${res.status}): ${relPath}`);
@@ -64,6 +66,9 @@ export async function openDemoProject(): Promise<{ name: string; documents: Docu
   const res = await fetch(`${demoBaseUrl}manifest.json`, { cache: 'no-cache' });
   if (!res.ok) throw new Error(`Could not load the demo manifest (HTTP ${res.status})`);
   const manifest = (await res.json()) as { documents: string[] };
+  if (!Array.isArray(manifest.documents)) {
+    throw new Error('Demo manifest is malformed: missing "documents" array');
+  }
   demoDocuments = manifest.documents
     .map(classifyDocFilename)
     .filter((d): d is DocumentListItem => d !== null);
