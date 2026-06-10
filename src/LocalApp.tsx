@@ -231,7 +231,7 @@ const LocalApp: React.FC = () => {
           const result = await openDemoProject();
           if (!cancelled) await applyOpened(result, launch.name);
         } catch (err) {
-          disableDemoMode();
+          if (!cancelled) disableDemoMode();
           console.error('Demo load failed:', err);
           if (!cancelled) setError('Could not load the demo project — please try again later.');
         } finally {
