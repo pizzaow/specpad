@@ -6,8 +6,24 @@
     <title>SpecPad — requirements that live in your repo</title>
     <meta
       name="description"
-      content="Regulatory-grade requirements management for engineers: a traceable SRS and verification tests stored as schema-validated JSON in git."
+      content="Git-based, regulatory-grade requirements management: traceable SRS and verification tests as schema-validated JSON — synced by a Claude skill, reviewed in a visual editor."
     />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://specpad.com/" />
+    <meta property="og:title" content="SpecPad — requirements that live in your repo" />
+    <meta
+      property="og:description"
+      content="Git-based, regulatory-grade requirements management: traceable SRS and verification tests as schema-validated JSON — synced by a Claude skill, reviewed in a visual editor."
+    />
+    <meta property="og:image" content="https://specpad.com/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SpecPad — requirements that live in your repo" />
+    <meta
+      name="twitter:description"
+      content="Git-based, regulatory-grade requirements management: traceable SRS and verification tests as schema-validated JSON — synced by a Claude skill, reviewed in a visual editor."
+    />
+    <meta name="twitter:image" content="https://specpad.com/og-image.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
   <body class="lp">
@@ -103,19 +119,19 @@
 
                 <!-- nodes -->
                 <rect x="68" y="12" width="348" height="48" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
-                <text x="88" y="41" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#e6edf3">your code changes</text>
+                <text x="88" y="41" font-size="12.5" fill="#e6edf3">your code changes</text>
 
                 <rect x="68" y="98" width="348" height="48" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
-                <text x="88" y="127" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#e6edf3">Claude skill updates srs/vtp JSON</text>
+                <text x="88" y="127" font-size="12.5" fill="#e6edf3">Claude skill updates srs/vtp JSON</text>
 
                 <rect x="68" y="184" width="348" height="48" rx="8" fill="#0d1117" stroke="#3fb950" stroke-width="1.5" />
-                <text x="88" y="213" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#3fb950">docs/specpad/*.json in git</text>
+                <text x="88" y="213" font-size="12.5" fill="#3fb950">docs/specpad/*.json in git</text>
 
                 <rect x="68" y="270" width="348" height="48" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
-                <text x="88" y="299" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#e6edf3">human reviews &amp; approves in the editor</text>
+                <text x="88" y="299" font-size="12.5" fill="#e6edf3">human reviews &amp; approves in the editor</text>
 
                 <rect x="68" y="356" width="348" height="48" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
-                <text x="88" y="385" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#e6edf3">git commit / PR</text>
+                <text x="88" y="385" font-size="12.5" fill="#e6edf3">git commit / PR</text>
 
                 <!-- flow arrows -->
                 <line x1="242" y1="62" x2="242" y2="92" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrA)" />
@@ -149,8 +165,8 @@
 
                 <!-- center: shared contract -->
                 <rect x="110" y="22" width="260" height="66" rx="8" fill="#0d1117" stroke="#3fb950" stroke-width="1.5" />
-                <text x="240" y="50" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#3fb950">shared schema + governance</text>
-                <text x="240" y="72" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11" fill="#8b949e">(src/shared)</text>
+                <text x="240" y="50" text-anchor="middle" font-size="12.5" fill="#3fb950">shared schema + governance</text>
+                <text x="240" y="72" text-anchor="middle" font-size="11" fill="#8b949e">(src/shared)</text>
 
                 <!-- contract edges -->
                 <path d="M 198,88 C 160,120 130,140 116,176" fill="none" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrG)" />
@@ -158,27 +174,27 @@
 
                 <!-- left arm: Claude skill -->
                 <rect x="12" y="180" width="204" height="66" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
-                <text x="114" y="208" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#e6edf3">Claude skill</text>
-                <text x="114" y="229" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11" fill="#8b949e">edits programmatically</text>
+                <text x="114" y="208" text-anchor="middle" font-size="12.5" fill="#e6edf3">Claude skill</text>
+                <text x="114" y="229" text-anchor="middle" font-size="11" fill="#8b949e">edits programmatically</text>
 
                 <!-- right arm: visual editor -->
                 <rect x="264" y="180" width="204" height="66" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
-                <text x="366" y="208" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#e6edf3">visual editor</text>
-                <text x="366" y="229" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11" fill="#8b949e">humans review &amp; approve</text>
+                <text x="366" y="208" text-anchor="middle" font-size="12.5" fill="#e6edf3">visual editor</text>
+                <text x="366" y="229" text-anchor="middle" font-size="11" fill="#8b949e">humans review &amp; approve</text>
 
                 <!-- read/write edges to the file -->
                 <path d="M 114,250 C 114,286 150,290 172,302" fill="none" stroke="#1f6feb" stroke-width="1.5" marker-start="url(#arrB)" marker-end="url(#arrB)" />
                 <path d="M 366,250 C 366,286 330,290 308,302" fill="none" stroke="#1f6feb" stroke-width="1.5" marker-start="url(#arrB)" marker-end="url(#arrB)" />
-                <text x="96" y="284" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10" fill="#8b949e">read / write</text>
-                <text x="384" y="284" text-anchor="start" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10" fill="#8b949e">read / write</text>
+                <text x="96" y="284" text-anchor="end" font-size="10" fill="#8b949e">read / write</text>
+                <text x="384" y="284" text-anchor="start" font-size="10" fill="#8b949e">read / write</text>
 
                 <!-- file node (folded-corner document) -->
                 <path d="M 152,300 H 302 L 328,324 V 364 H 152 Z" fill="#0d1117" stroke="#30363d" stroke-width="1.5" />
                 <path d="M 302,300 L 302,324 L 328,324 Z" fill="#161b22" stroke="#30363d" stroke-width="1.5" stroke-linejoin="round" />
-                <text x="236" y="340" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12.5" fill="#e6edf3">docs/specpad/*.json</text>
+                <text x="236" y="340" text-anchor="middle" font-size="12.5" fill="#e6edf3">docs/specpad/*.json</text>
 
                 <!-- caption -->
-                <text x="240" y="400" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11.5" fill="#8b949e">git is the history &amp; merge layer</text>
+                <text x="240" y="400" text-anchor="middle" font-size="11.5" fill="#8b949e">git is the history &amp; merge layer</text>
               </svg>
               <figcaption class="lp-diagram-caption">One contract, two editors &mdash; the rules cannot drift</figcaption>
             </figure>
@@ -683,17 +699,17 @@
           <h2 class="lp-h2">Installed in under a minute.</h2>
           <ol class="lp-steps">
             <li class="lp-step">
-              <span class="lp-step-num">1</span>
+              <span class="lp-step-num" aria-hidden="true">1</span>
               <h3 class="lp-step-title">Download the skill</h3>
               <p class="lp-step-text"><a href="/specpad-skill.zip" download>specpad-skill.zip</a></p>
             </li>
             <li class="lp-step">
-              <span class="lp-step-num">2</span>
+              <span class="lp-step-num" aria-hidden="true">2</span>
               <h3 class="lp-step-title">Unzip it</h3>
               <p class="lp-step-text">into <code>~/.claude/skills/</code></p>
             </li>
             <li class="lp-step">
-              <span class="lp-step-num">3</span>
+              <span class="lp-step-num" aria-hidden="true">3</span>
               <h3 class="lp-step-title">Say the words</h3>
               <p class="lp-step-text"><code>set up specpad</code> in your repo</p>
             </li>

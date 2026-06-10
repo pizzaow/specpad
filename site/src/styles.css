@@ -109,10 +109,11 @@ body {
   border-color: rgba(63, 185, 80, 0.4);
 }
 .lp-btn-primary:hover {
-  background: #2ea043;
+  /* keep the #238636 background — #2ea043 with white text falls below AA —
+     and signal hover with lift + glow + brighter border instead */
   border-color: var(--accent);
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(35, 134, 54, 0.35);
+  box-shadow: 0 4px 16px rgba(35, 134, 54, 0.45), 0 0 0 1px rgba(63, 185, 80, 0.25);
 }
 .lp-btn-ghost {
   background: transparent;
@@ -321,7 +322,8 @@ body {
   padding: 1.75rem 1.5rem 1.25rem;
   transition: border-color 0.2s, transform 0.25s ease;
 }
-.lp-diagram-card:hover {
+.lp-diagram-card:hover,
+.lp-panel:hover {
   border-color: rgba(63, 185, 80, 0.45);
   transform: translateY(-3px);
 }
@@ -425,10 +427,7 @@ body {
   flex-direction: column;
   transition: border-color 0.2s, transform 0.25s ease;
 }
-.lp-panel:hover {
-  border-color: rgba(63, 185, 80, 0.45);
-  transform: translateY(-3px);
-}
+/* hover treatment shared with .lp-diagram-card — see Diagrams section */
 .lp-panel-label {
   display: flex;
   align-items: center;
@@ -690,6 +689,8 @@ body {
     gap: 0.1rem 1.1rem;
   }
   .lp-section-inner { padding: 3.5rem 1.25rem; }
+  /* the wrapped two-row header is taller, so anchor targets need more room */
+  .lp-section { scroll-margin-top: 7.5rem; }
   .lp-term-body { font-size: 0.72rem; }
   .lp-getstarted-more { margin-left: 0; }
   .lp-demo-banner {
@@ -704,4 +705,12 @@ body {
     gap: 0.9rem;
   }
   .lp-diff-body { font-size: 0.8rem; }
+}
+@media (max-width: 480px) {
+  /* hero + get-started CTAs go full-width on phones */
+  .lp-cta-row .lp-btn,
+  .lp-getstarted-cta .lp-btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
