@@ -3,6 +3,10 @@
  * self-contained HTML card rendered in the site's visual language.
  * No server needed — the page is set via page.setContent.
  *
+ * NOTE: Output is machine-dependent — font fallbacks differ per OS, so
+ * rendering may vary. Re-run only when card content changes; treat the
+ * committed PNG as authoritative.
+ *
  * Usage: NODE_PATH=$(npm root -g) node site/scripts/generate-og-image.mjs
  * Re-run after changing the hero headline or the visual tokens.
  */

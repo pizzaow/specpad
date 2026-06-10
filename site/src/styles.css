@@ -706,6 +706,7 @@ body {
   }
   .lp-diff-body { font-size: 0.8rem; }
 }
+/* Additive on top of the 720px nav-wrap behaviour above */
 @media (max-width: 480px) {
   /* hero + get-started CTAs go full-width on phones */
   .lp-cta-row .lp-btn,
