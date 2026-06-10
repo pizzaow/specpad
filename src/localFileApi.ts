@@ -55,7 +55,9 @@ export function isDemoMode(): boolean {
 async function fetchDemoJson(relPath: string): Promise<SpecPadDoc | null> {
   if (!demoBaseUrl) throw new Error('Demo mode is not enabled');
   const res = await fetch(demoBaseUrl + relPath, { cache: 'no-cache' });
-  if (res.status === 404) return null;
+  // S3 behind CloudFront OAC has GetObject but not ListBucket, so missing keys
+  // come back 403 AccessDenied, not 404. Both mean "absent" for optional files.
+  if (res.status === 404 || res.status === 403) return null;
   if (!res.ok) throw new Error(`Demo fetch failed (HTTP ${res.status}): ${relPath}`);
   return parseDocument(await res.text());
 }
