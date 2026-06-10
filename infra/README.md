@@ -46,3 +46,12 @@ aws cloudfront create-invalidation --distribution-id E37XJUZS3ENIU9 --paths '/v0
 
 A future `schemaVersion: "2.0"` publishes to `/v02/` alongside `/v01/`, which stays live so
 old files keep opening in a compatible editor.
+
+## Demo content
+
+Demo documents live at `https://specpad.com/demo/` — uploaded from `docs/specpad/` by `--ship`.
+A `manifest.json` is generated at upload time listing every `*.{srs,vtp,proj}.json` file;
+the local `index.html` launcher is excluded from the upload.
+
+The live demo URL is `https://specpad.com/v01/?demo` — the editor fetches
+`/demo/manifest.json` and loads the listed documents in read-only demo mode.
