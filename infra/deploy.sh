@@ -64,6 +64,7 @@ if [ "${1:-}" = "--ship" ]; then
   rm -rf "$DEMO_STAGE"
   log "Ship 4/5: build + upload site to s3://$BUCKET/ (root)"
   ( cd "$ROOT_DIR" && npm run build:site )
+  # Rebuild the zip fresh so a prior partial ship can't leave a stale archive.
   ( cd "$ROOT_DIR/skill" && rm -f "$ROOT_DIR/dist-site/specpad-skill.zip" \
     && zip -qr "$ROOT_DIR/dist-site/specpad-skill.zip" specpad )
   aws s3 sync "$ROOT_DIR/dist-site/" "s3://$BUCKET/" --delete \
@@ -272,5 +273,5 @@ fi
 
 log "DONE"
 echo "Distribution: $DIST_ID ($DIST_DOMAIN)"
-echo "Site:         https://$DOMAIN/$PREFIX/"
-echo "Apex:         https://$DOMAIN/  (rewrites to /index.html — marketing site)"
+echo "Marketing site: https://$DOMAIN/"
+echo "Editor:         https://$DOMAIN/$PREFIX/"
