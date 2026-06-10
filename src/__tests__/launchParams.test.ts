@@ -30,18 +30,23 @@ describe('parseLaunchParams', () => {
   });
 
   it('parses ?demo from the query string', () => {
-    const p = parseLaunchParams({ hash: '', search: '?demo' } as Location);
+    const p = parseLaunchParams(loc('', '?demo'));
     expect(p.demo).toBe(true);
   });
 
   it('demo defaults to false', () => {
-    const p = parseLaunchParams({ hash: '#name=specpad&open=srs', search: '' } as Location);
+    const p = parseLaunchParams(loc('#name=specpad&open=srs'));
     expect(p.demo).toBe(false);
   });
 
   it('parses ?demo even when launcher params ride in the fragment', () => {
-    const p = parseLaunchParams({ hash: '#name=specpad', search: '?demo' } as Location);
+    const p = parseLaunchParams(loc('#name=specpad', '?demo'));
     expect(p.demo).toBe(true);
     expect(p.name).toBe('specpad');
+  });
+
+  it('parses demo from the fragment (legacy form)', () => {
+    const p = parseLaunchParams(loc('#demo', ''));
+    expect(p.demo).toBe(true);
   });
 });
