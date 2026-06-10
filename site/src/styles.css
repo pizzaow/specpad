@@ -11,10 +11,427 @@
   --sans: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
 }
 * { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
   font-family: var(--sans);
   line-height: 1.6;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   Landing page (.lp-*) — all selectors scoped so the reference page,
+   which shares this stylesheet, is untouched.
+   ════════════════════════════════════════════════════════════════════ */
+
+.lp {
+  --red: #f85149;
+  --max: 1120px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Logo with blinking cursor ─────────────────────────────────────── */
+.lp-logo {
+  font-family: var(--mono);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.lp-logo:hover { color: var(--text); }
+.lp-cursor {
+  color: var(--accent);
+  animation: lp-blink 1.1s steps(1, end) infinite;
+}
+@keyframes lp-blink {
+  0%, 55% { opacity: 1; }
+  56%, 100% { opacity: 0; }
+}
+
+/* ── Header ────────────────────────────────────────────────────────── */
+.lp-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(13, 17, 23, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+.lp-header-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0.7rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+.lp-nav {
+  display: flex;
+  gap: 1.4rem;
+  flex: 1;
+}
+.lp-nav a {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 0.2rem 0;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+.lp-nav a:hover {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
+/* ── Buttons ───────────────────────────────────────────────────────── */
+.lp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+.lp-btn-primary {
+  background: var(--accent-strong);
+  color: #fff;
+  border-color: rgba(63, 185, 80, 0.4);
+}
+.lp-btn-primary:hover {
+  background: #2ea043;
+  border-color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(35, 134, 54, 0.35);
+}
+.lp-btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border);
+}
+.lp-btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+.lp-btn-lg {
+  font-size: 0.9375rem;
+  padding: 0.7rem 1.4rem;
+}
+
+/* ── Hero ──────────────────────────────────────────────────────────── */
+.lp-hero {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+.lp-hero::before {
+  /* faint blueprint grid + green glow atmosphere */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 55% at 72% 30%, rgba(63, 185, 80, 0.08), transparent 70%),
+    radial-gradient(ellipse 45% 45% at 12% 85%, rgba(31, 111, 235, 0.06), transparent 70%),
+    repeating-linear-gradient(0deg, rgba(48, 54, 61, 0.22) 0 1px, transparent 1px 56px),
+    repeating-linear-gradient(90deg, rgba(48, 54, 61, 0.22) 0 1px, transparent 1px 56px);
+  pointer-events: none;
+}
+.lp-hero-inner {
+  position: relative;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 6rem 1.5rem 6.5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 4rem;
+  align-items: center;
+}
+.lp-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--muted);
+  margin: 0 0 1.4rem;
+  letter-spacing: 0.01em;
+}
+.lp-prompt { color: var(--accent); }
+.lp-h1 {
+  font-family: var(--sans);
+  font-size: clamp(2.2rem, 4.6vw, 3.4rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  margin: 0 0 1.4rem;
+}
+.lp-h1-accent {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-decoration-color: rgba(63, 185, 80, 0.4);
+  text-underline-offset: 7px;
+}
+.lp-lede {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--muted);
+  margin: 0 0 2.2rem;
+  max-width: 34rem;
+}
+.lp-cta-row {
+  display: flex;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+
+/* ── Hero diff card ────────────────────────────────────────────────── */
+.lp-diff-card {
+  margin: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(63, 185, 80, 0.07),
+    0 0 80px rgba(63, 185, 80, 0.07);
+  transform: rotate(0.6deg);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.lp-diff-card:hover { transform: rotate(0deg) translateY(-4px); }
+.lp-diff-chrome {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.lp-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border);
+}
+.lp-diff-file {
+  margin-left: 0.6rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.lp-diff-body {
+  margin: 0;
+  padding: 1.1rem 0;
+  font-family: var(--mono);
+  font-size: 0.875rem;
+  line-height: 1.9;
+  overflow-x: auto;
+}
+.lp-diff-body span {
+  display: block;
+  padding: 0 1.25rem;
+  white-space: pre;
+}
+.lp-diff-hunk { color: var(--blue); }
+.lp-diff-ctx { color: var(--muted); }
+.lp-diff-del {
+  color: var(--red);
+  background: rgba(248, 81, 73, 0.12);
+}
+.lp-diff-add {
+  color: var(--accent);
+  background: rgba(63, 185, 80, 0.13);
+}
+.lp-diff-foot {
+  display: flex;
+  gap: 1.1rem;
+  align-items: center;
+  padding: 0.6rem 1.25rem;
+  border-top: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+}
+.lp-check { color: var(--accent); }
+.lp-diff-foot-muted { color: var(--muted); margin-left: auto; }
+
+/* ── Entrance reveals ──────────────────────────────────────────────── */
+.lp-reveal {
+  opacity: 0;
+  animation: lp-rise 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--d, 0s);
+}
+@keyframes lp-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-reveal { animation: none; opacity: 1; }
+  .lp-cursor { animation: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* ── Sections ──────────────────────────────────────────────────────── */
+.lp-section {
+  border-bottom: 1px solid var(--border);
+  scroll-margin-top: 4.5rem;
+}
+.lp-section-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 5.5rem 1.5rem;
+}
+.lp-kicker {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--muted);
+  margin: 0 0 0.9rem;
+}
+.lp-h2 {
+  font-size: clamp(1.55rem, 3vw, 2.15rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  margin: 0 0 1rem;
+}
+.lp-section-lede {
+  color: var(--muted);
+  font-size: 1rem;
+  max-width: 42rem;
+  margin: 0 0 3rem;
+}
+
+/* ── Diagrams ──────────────────────────────────────────────────────── */
+.lp-diagrams {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+.lp-diagram-card {
+  margin: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.75rem 1.5rem 1.25rem;
+  transition: border-color 0.2s, transform 0.25s ease;
+}
+.lp-diagram-card:hover {
+  border-color: rgba(63, 185, 80, 0.45);
+  transform: translateY(-3px);
+}
+.lp-diagram {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.lp-diagram-caption {
+  margin-top: 1.1rem;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+/* ── Demo CTA banner ───────────────────────────────────────────────── */
+.lp-demo-banner {
+  margin-top: 3rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 1.6rem 2rem;
+  background:
+    radial-gradient(ellipse 70% 130% at 0% 50%, rgba(63, 185, 80, 0.1), transparent 60%),
+    var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+}
+.lp-demo-text { flex: 1; min-width: 0; }
+.lp-demo-title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.3rem;
+}
+.lp-demo-sub {
+  color: var(--muted);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* ── Anchor stubs (Task 5 sections land here) ──────────────────────── */
+.lp-anchor-stub {
+  scroll-margin-top: 4.5rem;
+}
+
+/* ── Footer ────────────────────────────────────────────────────────── */
+.lp-footer {
+  background: var(--surface);
+}
+.lp-footer-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+.lp-logo-sm { font-size: 1rem; }
+.lp-footer-nav {
+  display: flex;
+  gap: 1.4rem;
+  flex: 1;
+  flex-wrap: wrap;
+}
+.lp-footer-nav a {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.lp-footer-nav a:hover { color: var(--accent); }
+.lp-footer-meta {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* ── Responsive ────────────────────────────────────────────────────── */
+@media (max-width: 920px) {
+  .lp-hero-inner {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    padding: 4rem 1.5rem;
+  }
+  .lp-diff-card {
+    max-width: 480px;
+    transform: none;
+  }
+  .lp-diagrams { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) {
+  .lp-nav { display: none; }
+  .lp-header-inner { justify-content: space-between; }
+  .lp-section-inner { padding: 3.5rem 1.25rem; }
+  .lp-demo-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.2rem;
+    padding: 1.4rem 1.4rem;
+  }
+  .lp-footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+  }
+  .lp-diff-body { font-size: 0.8rem; }
 }
