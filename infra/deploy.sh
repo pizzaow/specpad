@@ -52,6 +52,7 @@ if [ "${1:-}" = "--ship" ]; then
   log "Ship 3/4: upload demo content to s3://$BUCKET/demo/"
   # Stage so the generated manifest and the sync --delete see one consistent tree.
   DEMO_STAGE="$(mktemp -d)"
+  trap 'rm -rf "$DEMO_STAGE"' EXIT
   cp -r "$ROOT_DIR/docs/specpad/." "$DEMO_STAGE/"
   rm -f "$DEMO_STAGE/index.html"   # local launcher, not demo content
   ( cd "$DEMO_STAGE" && node -e '

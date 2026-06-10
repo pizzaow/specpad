@@ -115,6 +115,17 @@ describe('demo mode', () => {
     expect(calls).toContain('/demo/.specpad/snapshots/v0.1/specpad.srs.json');
   });
 
+  it('treats 403 as absent for optional files (S3 behind OAC has no ListBucket)', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => ({
+      ok: false, status: 403,
+      text: async () => 'AccessDenied', json: async () => ({}),
+    }) as unknown as Response));
+    enableDemoMode('/demo/');
+    expect(await loadJob('specpad')).toBeNull();
+    expect(await loadReleases('specpad')).toBeNull();
+    expect(await loadSnapshot('baseline', 'srs', 'specpad')).toBeNull();
+  });
+
   it('writes throw a read-only error', async () => {
     stubFetch({ '/demo/manifest.json': MANIFEST });
     enableDemoMode('/demo/');

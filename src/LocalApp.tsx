@@ -233,7 +233,10 @@ const LocalApp: React.FC = () => {
         } catch (err) {
           if (!cancelled) disableDemoMode();
           console.error('Demo load failed:', err);
-          if (!cancelled) setError('Could not load the demo project — please try again later.');
+          if (!cancelled) {
+            setIsDirectoryOpen(false);
+            setError('Could not load the demo project — please try again later.');
+          }
         } finally {
           if (!cancelled) setLoading(false);
         }
