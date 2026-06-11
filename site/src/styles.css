@@ -87,6 +87,16 @@ body {
   color: var(--text);
   border-bottom-color: var(--accent);
 }
+.lp-nav-gh {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.lp-gh-mark {
+  flex: none;
+  position: relative;
+  top: 1px;
+}
 
 /* ── Buttons ───────────────────────────────────────────────────────── */
 .lp-btn {
@@ -192,6 +202,35 @@ body {
   display: flex;
   gap: 0.9rem;
   flex-wrap: wrap;
+}
+.lp-oss-line {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--muted);
+  margin: 1.1rem 0 0;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+.lp-oss-line a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s;
+}
+.lp-oss-line a:hover {
+  border-bottom-color: var(--accent);
+}
+.lp-oss-badge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  border: 1px solid rgba(63, 185, 80, 0.45);
+  border-radius: 4px;
+  padding: 0.1rem 0.4rem;
+  background: rgba(63, 185, 80, 0.08);
 }
 
 /* ── Hero diff card ────────────────────────────────────────────────── */
