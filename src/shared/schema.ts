@@ -182,10 +182,14 @@ export interface ReleasesDoc {
   releases: ReleaseEntry[];
 }
 
+// The active-job marker. `jobs` (preferred) lets one commit be attributed to
+// several jobs; `job` is the legacy single form, still read via activeJobIds().
+// Entries are job-record ids (with a register) or tracker keys (without one).
 export interface JobDoc {
   schemaVersion: SchemaVersion;
   type: 'job';
-  job: string;
+  jobs?: string[];
+  job?: string;
   title?: string;
 }
 
@@ -251,12 +255,13 @@ export const releasesSchema = {
 export const jobSchema = {
   $id: 'specpad/v1/job',
   type: 'object',
-  required: ['schemaVersion', 'type', 'job'],
+  required: ['schemaVersion', 'type'],
   properties: {
     schemaVersion: { const: '1.0', description: 'Contract version of this file; "1.0" documents open in the pinned editor build at /v01/.' },
     type: { const: 'job', description: 'Document discriminator; selects the schema this file is validated against.' },
-    job: { type: 'string', description: 'The active work item that current changes are attributed to — a ticket key, or (no-tracker case) a job record id from the jobs register.' },
-    title: { type: 'string', description: 'Optional human-readable summary of the job.' },
+    jobs: { ...stringArray, description: 'The active work items current changes are attributed to — job-record ids (with a register) or tracker keys. One commit may carry several; the skill writes one Job: trailer per entry.' },
+    job: { type: 'string', description: 'Legacy single active work item; readers normalize it into the jobs list via activeJobIds(). Prefer jobs.' },
+    title: { type: 'string', description: 'Optional human-readable summary, meaningful only for a single external-tracker job with no register.' },
   },
 } as const;
 

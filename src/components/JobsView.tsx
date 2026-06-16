@@ -15,16 +15,16 @@ import { createJobsDoc, createJobRecord } from '../shared';
 interface JobsViewProps {
   doc: JobsDoc | null;
   projectName: string;
-  activeJobId: string | null;
+  activeIds: string[];
   onChange: (next: JobsDoc) => void;
-  onSetActive: (id: string, title: string) => void;
+  onSetActive: (ids: string[]) => void;
   readOnly?: boolean;
 }
 
 const JobsView: React.FC<JobsViewProps> = ({
   doc,
   projectName,
-  activeJobId,
+  activeIds,
   onChange,
   onSetActive,
   readOnly,
@@ -41,7 +41,12 @@ const JobsView: React.FC<JobsViewProps> = ({
 
   const addJob = () => {
     const job = createJobRecord(jobs.map((j) => j.id));
-    job.code = `JOB-${jobs.length + 1}`;
+    // Next JOB-N from the highest existing number, so deleting/reordering can't collide.
+    const nextNum = jobs.reduce((max, j) => {
+      const m = /^JOB-(\d+)$/.exec(j.code ?? '');
+      return m ? Math.max(max, Number(m[1])) : max;
+    }, 0) + 1;
+    job.code = `JOB-${nextNum}`;
     job.title = 'New job';
     replace([...jobs, job]);
     setSelectedId(job.id);
@@ -51,6 +56,10 @@ const JobsView: React.FC<JobsViewProps> = ({
     if (!selected) return;
     replace(jobs.map((j) => (j.id === selected.id ? { ...j, ...patch } : j)));
   };
+
+  // Toggle a job in/out of the active set (the marker may hold several).
+  const setActive = (id: string, on: boolean) =>
+    onSetActive(on ? [...activeIds, id] : activeIds.filter((x) => x !== id));
 
   if (!doc && readOnly) {
     return <div className="alert alert-info">No jobs register for this project.</div>;
@@ -83,7 +92,7 @@ const JobsView: React.FC<JobsViewProps> = ({
                   {j.title || <em>(untitled)</em>}
                 </span>
                 <span style={{ float: 'right' }}>
-                  {j.id === activeJobId && <span className="label label-primary" style={{ marginRight: 4 }}>active</span>}
+                  {activeIds.includes(j.id) && <span className="label label-primary" style={{ marginRight: 4 }}>active</span>}
                   <span className={`label label-${j.status === 'open' ? 'success' : 'default'}`}>{j.status}</span>
                 </span>
               </li>
@@ -152,16 +161,22 @@ const JobsView: React.FC<JobsViewProps> = ({
             {!readOnly && (
               <div className="form-group">
                 <div className="col-sm-offset-2 col-sm-10">
-                  {selected.id === activeJobId ? (
-                    <span className="text-muted">This is the active job.</span>
+                  {activeIds.includes(selected.id) ? (
+                    <>
+                      <span className="text-muted" style={{ marginRight: 8 }}>
+                        {selected.status === 'closed'
+                          ? 'Active but closed — remove it from the active set.'
+                          : 'Active.'}
+                      </span>
+                      <button className="btn btn-default btn-sm" onClick={() => setActive(selected.id, false)}>
+                        Remove from active
+                      </button>
+                    </>
                   ) : selected.status === 'closed' ? (
                     <span className="text-muted">A closed job can't be made active — reopen it or start a new job.</span>
                   ) : (
-                    <button
-                      className="btn btn-primary btn-sm"
-                      onClick={() => onSetActive(selected.id, selected.title)}
-                    >
-                      Set as active job
+                    <button className="btn btn-primary btn-sm" onClick={() => setActive(selected.id, true)}>
+                      Add to active jobs
                     </button>
                   )}
                 </div>

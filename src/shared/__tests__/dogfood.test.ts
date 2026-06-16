@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { validate } from '../validate';
-import { checkGovernance } from '../governance';
+import { checkGovernance, activeJobIds } from '../governance';
 import proj from '../../../docs/specpad/specpad.proj.json';
 import srs from '../../../docs/specpad/specpad.srs.json';
 import vtp from '../../../docs/specpad/specpad.vtp.json';
@@ -33,9 +33,13 @@ describe('SpecPad self-documentation (dogfood)', () => {
     ).toEqual([]);
   });
 
-  it('keeps the active job pointed at an open record in the register', () => {
-    const active = (jobs as JobsDoc).jobs.find((j) => j.id === (job as JobDoc).job);
-    expect(active).toBeDefined();
-    expect(active!.status).toBe('open');
+  it('keeps every active job pointed at an open record in the register', () => {
+    const ids = activeJobIds(job as JobDoc);
+    expect(ids.length).toBeGreaterThan(0);
+    for (const id of ids) {
+      const active = (jobs as JobsDoc).jobs.find((j) => j.id === id);
+      expect(active, `active id ${id} resolves`).toBeDefined();
+      expect(active!.status).toBe('open');
+    }
   });
 });

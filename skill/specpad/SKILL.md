@@ -134,8 +134,9 @@ Maintain it as authoritative metadata (it is **not** part of the regenerable `.s
 - **Create** it the first time the user tracks work without a tracker (or let them create it in the
   editor's Jobs tab). Generate each record's `id` like any other key — a `j_` prefix + 6 hex digits,
   unique within the file, immutable. `code` (e.g. `JOB-1`) is a human label, freely renameable.
-- **Activate** a job by writing its `id` into `<name>.job.json`. Only **open** jobs may be activated
-  (the `active-job-open` governance rule).
+- **Activate** one or more jobs by writing their `id`s into `<name>.job.json` (`jobs: ["j_…", …]`;
+  the legacy single `job: "…"` is still read). Only **open** jobs may be activated (the
+  `active-job-open` / `active-job-known` rules).
 - **Lifecycle.** Set `status: "closed"` when a job's scope is done; its change-set is then sealed by
   git history. **Never reopen a closed job for new work** — create a new record (the closed job's
   scope was fixed by the commits that already referenced it).
@@ -146,27 +147,31 @@ Maintain it as authoritative metadata (it is **not** part of the regenerable `.s
 Each commit should carry its spec/test edits **and** an associated job; this is what makes
 `job → SRS → VTP → source` traceable. When you commit on the user's behalf:
 - **Job association is required (pre-commit gate).** If staged changes touch any `docs/specpad/*.json`
-  requirements/tests (`git diff --cached --name-only`), then `<name>.job.json` must name an **open**
-  job. If it is missing, or points at a `closed` record in `<name>.jobs.json`, stop and ask the user to
-  set/reopen or open a new job before committing. This is the `active-job-required-for-spec-changes`
-  rule; it needs `HEAD`, so it lives here — not in the data-only governance set the editor runs.
+  requirements/tests (`git diff --cached --name-only`), then `<name>.job.json` must name **at least one
+  open** job. If it is empty, or any entry is missing from / `closed` in `<name>.jobs.json`, stop and
+  ask the user to set/reopen or open a job before committing. This is the
+  `active-job-required-for-spec-changes` rule; it needs `HEAD`, so it lives here — not in the data-only
+  governance set the editor runs.
 - **Spec rides with code (pre-commit gate).** If code files are staged, confirm the related
   `docs/specpad/*.json` are staged too when requirements/tests changed. Warn if they look missing.
-- **Trailer.** Add a `Job: <job>` trailer. With the owned register the trailer carries the record's
-  stable **`id`** (never its renameable `code`), so renames can't orphan past commits — render
-  `Job: <id>` (optionally `Job: JOB-1 (<id>)`, parsed on the id).
-- **Many commits/pushes per job is normal.** A job stays the active marker across as many commits and
-  pushes as the work takes; every one carries the same `Job:` trailer. The job's change-set is the
-  union of those commits, reconstructed from git on demand — never stored.
+- **Trailers — one per active job.** Write a separate `Job: <job>` trailer line for **each** entry in
+  the marker (a commit may belong to several jobs). With the owned register each trailer carries the
+  record's stable **`id`** (never its renameable `code`), so renames can't orphan past commits — render
+  `Job: <id>` (optionally `Job: JOB-1 (<id>)`, parsed on the id). Keep all trailers in the final
+  trailer block (no blank line between them, alongside any `Co-Authored-By`) or git won't parse them.
+- **Many commits/pushes per job is normal.** A job stays in the active marker across as many commits
+  and pushes as the work takes; every one carries its `Job:` trailer. The job's change-set is the union
+  of those commits, reconstructed from git on demand — never stored.
 
 ### On-demand reports (advisory prose, never cached)
 Walk git directly and summarize in prose; these are advisory and nothing depends on them.
 - **"What changed for the next release"**: the editor shows this live as redline; confirm precisely
   from git by diffing the latest tag (`git describe --tags --abbrev=0`) → `HEAD`.
-- **"Trace job `<id>`" (job → SRS → VTP → source)**: `git log --grep='Job: <id>'` lists every commit
-  and push that carried the job (often several). For the spec delta, diff the spec files between the
-  job's first commit's parent and its last commit (the `diffDocs` shape: added/modified/removed
-  SRS/VTP items); the rest of each commit's diff is the source code the job changed.
+- **"Trace job `<id>`" (job → SRS → VTP → source)**: `git log -E --grep='^Job: <id>'` lists every
+  commit and push that carried the job (often several; a commit may also carry other jobs). For the
+  spec delta, diff the spec files between the job's first commit's parent and its last commit (the
+  `diffDocs` shape: added/modified/removed SRS/VTP items); the rest of each commit's diff is the source
+  code the job changed.
 - **Release notes**: for a release range, group the distinct `Job:` ids in `git log <prev>..<rel>`,
   and for each emit its `title`/`description` from `<name>.jobs.json` plus its spec delta.
 - **"Who last changed `r_x`"**: `git log -- docs/specpad/<name>.srs.json` (commit-level, on demand).
@@ -180,9 +185,11 @@ declaring a task done:
 - `traceability`: Every non-heading SRS requirement is referenced by at least one VTP test.
 - `referential-integrity`: Every VTP `verifies` entry resolves to an existing SRS item id.
 - `missing-expected`: Every non-heading VTP test has a non-empty `expected` value.
-- `active-job-open`: If a jobs register and an active-job marker both exist, the marker must not point
-  at a `closed` job record. (Requiring an active job *whenever spec/test files change* needs `HEAD`,
-  so that lives in the commit-workflow pre-commit check above, not in this data-only rule set.)
+- `active-job-open`: No entry in the active-job marker may point at a `closed` job record.
+- `active-job-known`: When a jobs register exists, every active-job marker entry must resolve to a
+  record in it (no dangling or mistyped ids). With no register, entries are external tracker keys and
+  neither job rule applies. (Requiring an active job *whenever spec/test files change* needs `HEAD`, so
+  that lives in the commit-workflow pre-commit check above, not in this data-only rule set.)
 
 Also confirm structural validity: required fields present, `result` within its enum,
 `schemaVersion` is "1.0".

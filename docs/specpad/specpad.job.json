@@ -1,6 +1,5 @@
 {
   "schemaVersion": "1.0",
   "type": "job",
-  "job": "j_4a7f1c",
-  "title": "Jobs register & change-tracking traceability"
+  "jobs": ["j_4a7f1c"]
 }

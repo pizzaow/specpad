@@ -71,13 +71,15 @@ describe('sidecar schemas', () => {
     expect(validate(bad).length).toBeGreaterThan(0);
   });
 
-  it('accepts a well-formed job doc and one without a title', () => {
-    expect(validate(job)).toEqual([]);
-    expect(validate({ schemaVersion: '1.0', type: 'job', job: 'PROJ-9' })).toEqual([]);
+  it('accepts the marker in legacy single, multi, and empty forms', () => {
+    expect(validate(job)).toEqual([]); // legacy { job: 'PROJ-123' }
+    expect(validate({ schemaVersion: '1.0', type: 'job', jobs: ['j_a1b2c3', 'j_d4e5f6'] })).toEqual([]);
+    expect(validate({ schemaVersion: '1.0', type: 'job', jobs: [] })).toEqual([]);
+    expect(validate({ schemaVersion: '1.0', type: 'job' })).toEqual([]);
   });
 
-  it('rejects a job doc missing the job id', () => {
-    expect(validate({ schemaVersion: '1.0', type: 'job', title: 'x' }).length).toBeGreaterThan(0);
+  it('rejects a marker whose jobs entries are not strings', () => {
+    expect(validate({ schemaVersion: '1.0', type: 'job', jobs: [1, 2] }).length).toBeGreaterThan(0);
   });
 
   it('accepts a well-formed jobs register (with and without optional fields)', () => {

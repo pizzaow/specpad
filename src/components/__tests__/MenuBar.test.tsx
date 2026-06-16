@@ -69,7 +69,7 @@ describe('MenuBar', () => {
     fireEvent.click(screen.getByText('Set job ▾'));
     fireEvent.change(screen.getByPlaceholderText('Job id (e.g. PROJ-123)'), { target: { value: 'PROJ-9' } });
     fireEvent.click(screen.getByText('Set job'));
-    expect(p.onSetJob).toHaveBeenCalledWith('PROJ-9', '');
+    expect(p.onSetJob).toHaveBeenCalledWith(['PROJ-9'], '');
   });
 
   it('shows the version chip and opens version history', () => {

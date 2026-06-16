@@ -4,7 +4,15 @@ export type GovernanceRuleId =
   | 'traceability'
   | 'referential-integrity'
   | 'missing-expected'
-  | 'active-job-open';
+  | 'active-job-open'
+  | 'active-job-known';
+
+/** Normalize the active-job marker to a list, tolerating the legacy single `job`. */
+export function activeJobIds(job: JobDoc | null | undefined): string[] {
+  if (!job) return [];
+  if (job.jobs && job.jobs.length) return job.jobs;
+  return job.job ? [job.job] : [];
+}
 
 export interface GovernanceRule {
   id: GovernanceRuleId;
@@ -34,9 +42,15 @@ export const GOVERNANCE_RULES: GovernanceRule[] = [
   },
   {
     id: 'active-job-open',
-    title: 'The active job is open',
+    title: 'Active jobs are open',
     description:
-      'The active-job marker must not point at a closed job record; reopen it or create a new job before attaching more changes.',
+      'No active-job marker entry may point at a closed job record; reopen it or pick another before attaching more changes.',
+  },
+  {
+    id: 'active-job-known',
+    title: 'Active jobs exist in the register',
+    description:
+      'When a jobs register exists, every active-job marker entry must resolve to a record in it (no dangling or mistyped ids).',
   },
 ];
 
@@ -101,18 +115,28 @@ export function checkGovernance(bundle: ProjectBundle): GovernanceViolation[] {
     }
   }
 
-  // active-job-open: the active-job marker must not point at a closed job record.
+  // active-job-{known,open}: every active-job entry must resolve to an OPEN record.
   // (Pure data — both files are in the working tree, so the editor can evaluate this too.
-  // Requiring an active job *for spec changes* needs HEAD and lives in the skill pre-commit gate.)
-  const activeId = bundle.job?.job;
-  if (activeId && bundle.jobs) {
-    const record = bundle.jobs.jobs.find((j) => j.id === activeId);
-    if (record && record.status === 'closed') {
-      violations.push({
-        rule: 'active-job-open',
-        itemId: record.id,
-        message: `Active job ${record.code ?? record.id} is closed; reopen it or create a new job before attaching more changes.`,
-      });
+  // Requiring an active job *for spec changes* needs HEAD and lives in the skill pre-commit gate.
+  // With no register, entries are external tracker keys we can't resolve, so we skip the check.)
+  const active = activeJobIds(bundle.job);
+  if (active.length && bundle.jobs) {
+    const byId = new Map(bundle.jobs.jobs.map((j) => [j.id, j]));
+    for (const id of active) {
+      const record = byId.get(id);
+      if (!record) {
+        violations.push({
+          rule: 'active-job-known',
+          itemId: id,
+          message: `Active job "${id}" is not a record in the jobs register.`,
+        });
+      } else if (record.status === 'closed') {
+        violations.push({
+          rule: 'active-job-open',
+          itemId: record.id,
+          message: `Active job ${record.code ?? record.id} is closed; reopen it or pick another before attaching more changes.`,
+        });
+      }
     }
   }
 

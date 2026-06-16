@@ -22,8 +22,9 @@ export interface MenuBarProps {
   onOpenFallback: () => void;
   job: JobDoc | null;
   jobs?: JobRecord[];
+  activeIds?: string[];
   activeJobLabel?: string | null;
-  onSetJob: (job: string, title: string) => void;
+  onSetJob: (ids: string[], title?: string) => void;
   version?: string | null;
   onShowVersions?: () => void;
   demo?: boolean;
@@ -103,7 +104,7 @@ const MenuBar: React.FC<MenuBarProps> = (p) => {
           </button>
           {open === 'job' && (
             <div className="menubar-popover">
-              <JobControl job={p.job} jobs={p.jobs} onSet={(j, t) => { close(); p.onSetJob(j, t); }} />
+              <JobControl job={p.job} jobs={p.jobs} activeIds={p.activeIds} onSet={(ids, t) => { close(); p.onSetJob(ids, t); }} />
             </div>
           )}
         </span>

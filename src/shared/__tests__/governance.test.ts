@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { checkGovernance, GOVERNANCE_RULES } from '../governance';
+import { checkGovernance, GOVERNANCE_RULES, activeJobIds } from '../governance';
 import type { SrsDoc, VtpDoc, JobsDoc, JobDoc } from '../schema';
 
 const srs: SrsDoc = {
@@ -80,11 +80,12 @@ describe('checkGovernance', () => {
     name: 'AcmeApp',
     jobs: [
       { id: 'j_open', code: 'JOB-1', title: 'Open work', status: 'open' },
-      { id: 'j_closed', code: 'JOB-2', title: 'Closed work', status: 'closed' },
+      { id: 'j_two', code: 'JOB-2', title: 'More open work', status: 'open' },
+      { id: 'j_closed', code: 'JOB-3', title: 'Closed work', status: 'closed' },
     ],
   };
-  function job(id: string): JobDoc {
-    return { schemaVersion: '1.0', type: 'job', job: id };
+  function job(...ids: string[]): JobDoc {
+    return { schemaVersion: '1.0', type: 'job', jobs: ids };
   }
 
   it('flags an active job that is closed (active-job-open)', () => {
@@ -92,22 +93,40 @@ describe('checkGovernance', () => {
     expect(v.some((x) => x.rule === 'active-job-open' && x.itemId === 'j_closed')).toBe(true);
   });
 
-  it('does not flag an active job that is open', () => {
+  it('does not flag active jobs that are open (including several at once)', () => {
     expect(checkGovernance({ jobs, job: job('j_open') })).toEqual([]);
+    expect(checkGovernance({ jobs, job: job('j_open', 'j_two') })).toEqual([]);
   });
 
-  it('does not flag when there is no active job or no register', () => {
+  it('normalizes the legacy single `job` field', () => {
+    const legacy: JobDoc = { schemaVersion: '1.0', type: 'job', job: 'j_closed' };
+    expect(checkGovernance({ jobs, job: legacy }).some((x) => x.rule === 'active-job-open')).toBe(true);
+  });
+
+  it('flags a dangling/mistyped active id when a register exists (active-job-known)', () => {
+    const v = checkGovernance({ jobs, job: job('j_open', 'j_missing') });
+    expect(v.some((x) => x.rule === 'active-job-known' && x.itemId === 'j_missing')).toBe(true);
+    // The valid open one in the same marker produces no violation.
+    expect(v.some((x) => x.itemId === 'j_open')).toBe(false);
+  });
+
+  it('does not flag when there is no active job or no register (external tracker)', () => {
     expect(checkGovernance({ jobs })).toEqual([]);
-    expect(checkGovernance({ job: job('j_closed') })).toEqual([]);
-  });
-
-  it('does not flag when the active id matches no record', () => {
-    expect(checkGovernance({ jobs, job: job('j_missing') })).toEqual([]);
+    expect(checkGovernance({ job: job('PROJ-123') })).toEqual([]);
   });
 
   it('exposes a stable list of rule ids', () => {
     expect(GOVERNANCE_RULES.map((r) => r.id).sort()).toEqual([
-      'active-job-open', 'missing-expected', 'referential-integrity', 'traceability',
+      'active-job-known', 'active-job-open', 'missing-expected', 'referential-integrity', 'traceability',
     ]);
+  });
+});
+
+describe('activeJobIds', () => {
+  it('prefers the jobs array, falls back to legacy job, else empty', () => {
+    expect(activeJobIds({ schemaVersion: '1.0', type: 'job', jobs: ['a', 'b'] })).toEqual(['a', 'b']);
+    expect(activeJobIds({ schemaVersion: '1.0', type: 'job', job: 'x' })).toEqual(['x']);
+    expect(activeJobIds({ schemaVersion: '1.0', type: 'job' })).toEqual([]);
+    expect(activeJobIds(null)).toEqual([]);
   });
 });

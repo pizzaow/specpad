@@ -433,3 +433,56 @@ The two rules live in different layers because of the §4 editor-vs-skill visibi
   when there is no tracker; reconciling owned records against a live Jira/Linear is out of scope here.
 - Job **dependencies / parent-child / ordering** — the register is a flat list in v1.
 - Per-job **status beyond open/closed** (in-review, blocked, …) — two states cover the lifecycle rule.
+
+## 14. Multi-job support & git-workflow assumption audit
+
+**Date:** 2026-06-16 · extends §13.
+
+### 14.1 Multi-job marker
+A commit may belong to several jobs. The marker `<name>.job.json` holds `jobs: string[]` (record ids,
+or tracker keys with no register); the legacy single `job: string` is still read. All readers go
+through `activeJobIds(marker)` → `marker.jobs ?? (marker.job ? [marker.job] : [])`. The skill writes
+**one `Job:` trailer per active id**; the editor offers a **checkbox multi-select** of open records.
+The trace report and release notes already group by distinct trailer id, so a commit naturally appears
+under each of its jobs.
+
+### 14.2 Dummy-proofing the data (governance + editor)
+Two pure-data rules, evaluated by **both** the editor and the skill (parity-tested):
+- `active-job-open` — no active entry points at a `closed` record.
+- `active-job-known` — when a register exists, every active entry resolves to a record (catches
+  dangling/mistyped ids). With no register, entries are external keys and neither rule applies.
+
+The editor never *offers* a closed job for activation, lets a hand-edited closed-but-active job be
+removed from the active set (self-heal), and continues new `code`s from the highest `JOB-N` so
+deleting/reordering can't collide.
+
+### 14.3 Works with any git workflow — the assumption audit
+The traceability spine is the **commit trailer**, which travels through branch / merge / rebase / fork
+/ cherry-pick. Nothing authoritative depends on branch topology — the report just walks `git log`.
+
+| Workflow | Result |
+|---|---|
+| Trunk-based / commit-to-main | ✓ |
+| Feature branch + merge commit | ✓ original commits + trailers retained |
+| Rebase-and-merge | ✓ commits replayed, trailers preserved |
+| Forking / PR from a fork | ✓ trailers travel with the commits |
+| No release tags (continuous deploy) | ✓ jobs are independent of releases; baseline / release-notes degrade gracefully |
+| Worktrees / monorepo | ✓ marker is per-project-name and per-branch (it is a committed file) |
+
+**Soft spots — degrade, never break:**
+1. **Squash merge** collapses N commits → 1; the job association survives only if the `Job:` trailer
+   lands in the squash message (granularity drops to the squash commit). Mitigation is a PR-template /
+   squash convention — never enforced.
+2. **The active-job marker is a convenience cursor, not truth.** Committing it makes the active job
+   per-branch (handles parallel branches); a team may keep it local instead. Either way traceability
+   is unaffected, because the durable link is the trailer.
+3. **The pre-commit gate is advisory** (skill behavior), not a forced hook. Teams wanting hard
+   enforcement add a real `commit-msg` / `pre-commit` hook; SpecPad does not impose one.
+
+**Residual assumptions — documented and accepted:**
+- Spec files live in the **same repo** as code (the "spec rides with code" gate can't reach a separate
+  spec repo).
+- Records are **closed, not deleted** — deleting a record that past commits reference orphans the
+  trailer (still traceable by id, just without a title); the editor offers close, not delete.
+- `<name>.job.json` (marker) vs `<name>.jobs.json` (register) differ by one letter — humans never type
+  them; the editor and skill own both files.

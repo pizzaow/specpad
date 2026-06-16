@@ -34,6 +34,7 @@ import {
   saveJobs,
   loadSnapshot,
 } from './localFileApi';
+import { activeJobIds } from './shared';
 import { buildRedline, computeAttribution } from './changeTracking';
 import type { SnapshotInput } from './changeTracking';
 import { cachedReleases } from './changeTrackingView';
@@ -86,9 +87,16 @@ const LocalApp: React.FC = () => {
   const srsAttribution = React.useMemo(() => computeAttribution(srsSnapshots), [srsSnapshots]);
   const vtpAttribution = React.useMemo(() => computeAttribution(vtpSnapshots), [vtpSnapshots]);
 
-  const handleSetJob = async (jobId: string, title: string) => {
+  // Set the active jobs (one or many). Writes the canonical `jobs` array form;
+  // `title` is only kept for a single free-text job with no register.
+  const handleSetJob = async (ids: string[], title?: string) => {
     const name = selectedDocName || projectName;
-    const doc: JobDoc = { schemaVersion: '1.0', type: 'job', job: jobId, ...(title ? { title } : {}) };
+    const doc: JobDoc = {
+      schemaVersion: '1.0',
+      type: 'job',
+      jobs: ids,
+      ...(title && ids.length === 1 ? { title } : {}),
+    };
     try {
       await saveJob(name, doc);
       setJob(doc);
@@ -382,8 +390,16 @@ const LocalApp: React.FC = () => {
   };
 
   const uniqueDocNames = Array.from(new Set(documents.map((d) => d.name))).sort();
-  const activeRecord = jobsDoc?.jobs.find((j) => j.id === job?.job) ?? null;
-  const activeJobLabel = activeRecord ? (activeRecord.code ?? activeRecord.title) : job?.job ?? null;
+  const activeIds = activeJobIds(job);
+  const labelFor = (id: string) => {
+    const rec = jobsDoc?.jobs.find((j) => j.id === id);
+    return rec ? (rec.code ?? rec.title) : id;
+  };
+  const activeJobLabel = activeIds.length
+    ? activeIds.length <= 2
+      ? activeIds.map(labelFor).join(', ')
+      : `${labelFor(activeIds[0])} +${activeIds.length - 1}`
+    : null;
 
   return (
     <div className="container-fluid">
@@ -401,6 +417,7 @@ const LocalApp: React.FC = () => {
         onOpenFallback={handleOpenFallback}
         job={job}
         jobs={jobsDoc?.jobs}
+        activeIds={activeIds}
         activeJobLabel={activeJobLabel}
         onSetJob={handleSetJob}
         version={releases?.baseline ?? null}
@@ -443,7 +460,7 @@ const LocalApp: React.FC = () => {
           <JobsView
             doc={jobsDoc}
             projectName={selectedDocName || projectName}
-            activeJobId={job?.job ?? null}
+            activeIds={activeIds}
             onChange={handleJobsChange}
             onSetActive={handleSetJob}
             readOnly={launch.demo}

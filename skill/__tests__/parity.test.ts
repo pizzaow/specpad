@@ -14,7 +14,7 @@ describe('skill ↔ module governance parity', () => {
 
   it('does not reference governance rule ids the module no longer defines', () => {
     const known = new Set<string>(GOVERNANCE_RULES.map((r) => r.id));
-    const referenced = skill.match(/`(traceability|referential-integrity|missing-expected|active-job-open)`/g) ?? [];
+    const referenced = skill.match(/`(traceability|referential-integrity|missing-expected|active-job-open|active-job-known)`/g) ?? [];
     for (const token of referenced) {
       expect(known.has(token.replace(/`/g, ''))).toBe(true);
     }
