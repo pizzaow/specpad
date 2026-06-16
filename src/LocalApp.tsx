@@ -251,7 +251,7 @@ const LocalApp: React.FC = () => {
       void (async () => {
         setLoading(true);
         try {
-          enableDemoMode('/demo/');
+          enableDemoMode(import.meta.env.VITE_DEMO_BASE || '/demo/');
           const result = await openDemoProject();
           if (!cancelled) await applyOpened(result, launch.name);
         } catch (err) {
