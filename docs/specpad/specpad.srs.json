@@ -79,6 +79,16 @@
     { "id": "r_ed0b09", "code": "EDS-9", "text": "Switching project or document with unsaved changes shall prompt before discarding, and a page-close (beforeunload) guard shall warn when changes are unsaved.", "level": 2, "tags": ["editor"] },
     { "id": "h_ed0b60", "heading": true, "code": "Demo", "text": "Demo mode", "level": 1 },
     { "id": "r_ed0b10", "code": "EDS-10", "text": "When launched with the demo query parameter, the editor shall load the project read-only over HTTP from the hosted /demo/ directory, with the document tables, testing view, validation, version history, redlines, and the job indicator all available.", "level": 2, "tags": ["editor"] },
-    { "id": "r_ed0b11", "code": "EDS-11", "text": "In demo mode the editor shall disable all writes (save, new document, set job) and display a visible read-only indicator.", "level": 2, "tags": ["editor"] }
+    { "id": "r_ed0b11", "code": "EDS-11", "text": "In demo mode the editor shall disable all writes (save, new document, set job) and display a visible read-only indicator.", "level": 2, "tags": ["editor"] },
+
+    { "id": "h_jb000", "heading": true, "text": "Jobs and change attribution" },
+    { "id": "r_jb001", "code": "JOBS-1", "text": "The skill shall maintain an owned jobs register (<name>.jobs.json) of job records — each with a stable id, an optional code label, a title, an optional description, and an open/closed status — used when there is no external tracker.", "tags": ["jobs", "change-tracking"] },
+    { "id": "r_jb002", "code": "JOBS-2", "text": "The jobs register shall store records only; a job's change-set (the requirements, tests, and source it touched) shall be derived from git commit trailers on demand and never stored.", "tags": ["jobs", "change-tracking"] },
+    { "id": "r_jb003", "code": "JOBS-3", "text": "The active-job marker (<name>.job.json) shall name one or more active jobs as a list (with a legacy single job still read), and the skill shall write one Job: commit trailer per active job, carrying each job record's stable id.", "tags": ["jobs", "change-tracking"] },
+    { "id": "r_jb004", "code": "JOBS-4", "text": "When a jobs register exists, governance shall flag any active-job entry that does not resolve to a record in it, and any that points at a closed record.", "tags": ["jobs", "governance"] },
+    { "id": "r_jb005", "code": "JOBS-5", "text": "The editor shall provide a Jobs view to list, create, and edit job records and to choose the active job(s) by multi-select, never offering a closed job for activation and allowing a closed-but-active job to be removed.", "tags": ["jobs", "editor"] },
+    { "id": "r_jb006", "code": "JOBS-6", "text": "A closed job's scope shall be sealed: the skill shall not reactivate a closed job for new work but shall create a new job record instead.", "tags": ["jobs"] },
+    { "id": "r_jb007", "code": "JOBS-7", "text": "Every commit that changes requirements or tests shall be associated with at least one open job; the skill's pre-commit gate shall require an active open job before such a commit.", "tags": ["jobs", "governance"] },
+    { "id": "r_jb008", "code": "JOBS-8", "text": "A source change that adds or alters a product behavior shall be accompanied by the corresponding SRS and VTP updates in the same job, so that no feature ships without a recorded requirement and test.", "tags": ["jobs", "governance"] }
   ]
 }

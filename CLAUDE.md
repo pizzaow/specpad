@@ -2,6 +2,23 @@
 
 Guidance for Claude Code working in this repository.
 
+## Dogfood rule — SpecPad governs SpecPad (read first)
+
+**SpecPad must follow its own process.** Any change to product behavior in this repo (the editor, the
+skill, or the shared contract) is incomplete until it is recorded as requirements and verification
+tests in `docs/specpad/specpad.srs.json` / `specpad.vtp.json`, attributed to an active job, **in the
+same commit**. This is not optional and not deferrable: a feature with no requirement is a process
+failure, exactly the thing SpecPad exists to prevent.
+
+Before committing feature work, confirm:
+1. An **active open job** is set in `docs/specpad/specpad.job.json` (`jobs: ["j_…"]`).
+2. New/changed behavior has matching **SRS requirements + VTP tests** (governance-clean: every
+   requirement verified, every test has an expected result).
+3. `npm test` and `npx tsc --noEmit` pass.
+
+A pure refactor, typo, or non-behavioral change needs no SRS update — say so explicitly in the commit
+rather than skipping silently. (Automated enforcement of this rule is tracked as JOBS-7/JOBS-8.)
+
 ## What SpecPad is
 
 SpecPad is a **distributable product** with two co-governed halves:
