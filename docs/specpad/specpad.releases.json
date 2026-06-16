@@ -3,7 +3,7 @@
   "type": "releases",
   "name": "specpad",
   "tagPattern": "v*",
-  "baseline": "v1.0",
+  "baseline": "v1.1",
   "releases": [
     {
       "version": "v0.1",
@@ -17,6 +17,13 @@
       "ref": "819eb460d937a37075f753a21440a672ff7c99b4",
       "date": "2026-06-07",
       "author": { "name": "pizzaow", "email": "geoffpollard@gmail.com" },
+      "snapshot": null
+    },
+    {
+      "version": "v1.1",
+      "ref": "909b6d796fb76f1e6db02da81763f92c507229b2",
+      "date": "2026-06-11",
+      "author": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
       "snapshot": ".specpad/baseline"
     }
   ]

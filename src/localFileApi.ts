@@ -4,7 +4,7 @@
  * Chrome/Edge: full support. Firefox/Safari: fallback upload/download.
  */
 
-import type { ProjectDoc, SrsDoc, VtpDoc, SpecPadDoc, ReleasesDoc, JobDoc, SidecarDoc } from './shared';
+import type { ProjectDoc, SrsDoc, VtpDoc, SpecPadDoc, ReleasesDoc, JobDoc, JobsDoc, SidecarDoc } from './shared';
 import { createSrsDoc, createVtpDoc } from './shared';
 
 declare global {
@@ -341,6 +341,28 @@ export async function saveJob(name: string, doc: JobDoc): Promise<void> {
   if (demoBaseUrl) throw new Error(READ_ONLY_DEMO);
   if (!projectDirHandle) throw new Error('No directory selected');
   const fileHandle = await projectDirHandle.getFileHandle(`${name}.job.json`, { create: true });
+  const writable = await fileHandle.createWritable();
+  try {
+    await writable.write(serializeDocument(doc));
+    await writable.close();
+  } catch (err) {
+    await writable.abort();
+    throw err;
+  }
+}
+
+/** Load the jobs register `<name>.jobs.json`, or null if absent. */
+export async function loadJobs(name: string): Promise<JobsDoc | null> {
+  if (demoBaseUrl) return (await fetchDemoJson(`${name}.jobs.json`)) as JobsDoc | null;
+  if (!projectDirHandle) return null;
+  return (await readJsonFrom(projectDirHandle, `${name}.jobs.json`)) as JobsDoc | null;
+}
+
+/** Write the jobs register `<name>.jobs.json`. */
+export async function saveJobs(name: string, doc: JobsDoc): Promise<void> {
+  if (demoBaseUrl) throw new Error(READ_ONLY_DEMO);
+  if (!projectDirHandle) throw new Error('No directory selected');
+  const fileHandle = await projectDirHandle.getFileHandle(`${name}.jobs.json`, { create: true });
   const writable = await fileHandle.createWritable();
   try {
     await writable.write(serializeDocument(doc));

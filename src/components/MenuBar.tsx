@@ -5,7 +5,7 @@
  * closed by a shared backdrop (same pattern as RowMenu).
  */
 import React, { useState } from 'react';
-import type { JobDoc } from '../shared';
+import type { JobDoc, JobRecord } from '../shared';
 import JobControl from './JobControl';
 
 export interface MenuBarProps {
@@ -21,6 +21,8 @@ export interface MenuBarProps {
   onOpenProjectFile: () => void;
   onOpenFallback: () => void;
   job: JobDoc | null;
+  jobs?: JobRecord[];
+  activeJobLabel?: string | null;
   onSetJob: (job: string, title: string) => void;
   version?: string | null;
   onShowVersions?: () => void;
@@ -92,16 +94,16 @@ const MenuBar: React.FC<MenuBarProps> = (p) => {
       <span className="menubar-spacer" />
 
       {p.isDirectoryOpen && p.demo && p.job && (
-        <span className="menubar-project">Job: {p.job.job}</span>
+        <span className="menubar-project">Job: {p.activeJobLabel ?? p.job.job}</span>
       )}
       {p.isDirectoryOpen && !p.demo && (
         <span className="menubar-dropdown">
           <button type="button" className={chip} onClick={() => toggle('job')}>
-            {p.job ? `Job: ${p.job.job} ▾` : 'Set job ▾'}
+            {p.job ? `Job: ${p.activeJobLabel ?? p.job.job} ▾` : 'Set job ▾'}
           </button>
           {open === 'job' && (
             <div className="menubar-popover">
-              <JobControl job={p.job} onSet={(j, t) => { close(); p.onSetJob(j, t); }} />
+              <JobControl job={p.job} jobs={p.jobs} onSet={(j, t) => { close(); p.onSetJob(j, t); }} />
             </div>
           )}
         </span>

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "type": "jobs",
+  "name": "specpad",
+  "jobs": [
+    {
+      "id": "j_4a7f1c",
+      "code": "JOB-1",
+      "title": "Jobs register & change-tracking traceability",
+      "description": "Add a SpecPad-owned jobs register (jobs.json) with an open/closed lifecycle, the active-job governance rule, the editor Jobs view and active-job picker, and the skill git plumbing so every spec change traces to a job. Baselined at v1.1.",
+      "status": "open"
+    }
+  ]
+}

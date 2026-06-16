@@ -5,7 +5,7 @@
  * persisted directory handles so return visits reopen without re-picking.
  */
 import React, { useEffect, useRef, useState } from 'react';
-import type { ProjectDoc, SrsDoc, VtpDoc, ReleasesDoc, JobDoc } from './shared';
+import type { ProjectDoc, SrsDoc, VtpDoc, ReleasesDoc, JobDoc, JobsDoc } from './shared';
 import {
   DocumentListItem,
   isFileSystemAccessSupported,
@@ -30,6 +30,8 @@ import {
   loadReleases,
   loadJob,
   saveJob,
+  loadJobs,
+  saveJobs,
   loadSnapshot,
 } from './localFileApi';
 import { buildRedline, computeAttribution } from './changeTracking';
@@ -43,10 +45,11 @@ import { parseLaunchParams } from './launchParams';
 import SRSTable from './components/SRSTable';
 import VTPTable from './components/VTPTable';
 import TestingView from './components/TestingView';
+import JobsView from './components/JobsView';
 import StatusBar from './components/StatusBar';
 import ViewTabs from './components/ViewTabs';
 
-type ViewMode = 'srs' | 'vtp' | 'testing';
+type ViewMode = 'srs' | 'vtp' | 'testing' | 'jobs';
 type OpenResult = { name: string; documents: DocumentListItem[] };
 
 const LocalApp: React.FC = () => {
@@ -64,6 +67,8 @@ const LocalApp: React.FC = () => {
   const [launch] = useState(parseLaunchParams);
   const [releases, setReleases] = useState<ReleasesDoc | null>(null);
   const [job, setJob] = useState<JobDoc | null>(null);
+  const [jobsDoc, setJobsDoc] = useState<JobsDoc | null>(null);
+  const [dirtyJobs, setDirtyJobs] = useState(false);
   const [srsBaseline, setSrsBaseline] = useState<SrsDoc | null>(null);
   const [vtpBaseline, setVtpBaseline] = useState<VtpDoc | null>(null);
   const [srsSnapshots, setSrsSnapshots] = useState<SnapshotInput[]>([]);
@@ -93,12 +98,21 @@ const LocalApp: React.FC = () => {
     }
   };
 
+  // Jobs register edits are buffered like the spec docs: changing it marks dirty,
+  // and `save` writes <name>.jobs.json.
+  const handleJobsChange = (next: JobsDoc) => {
+    setJobsDoc(next);
+    setDirtyJobs(true);
+  };
+
   // Load the change-tracking cache for a project: manifest, job marker, and the
   // cached snapshots (oldest→newest) used for redline (baseline) and attribution.
   const loadChangeTracking = async (name: string) => {
     const rel = await loadReleases(name);
     setReleases(rel);
     setJob(await loadJob(name));
+    setJobsDoc(await loadJobs(name));
+    setDirtyJobs(false);
     const cached = cachedReleases(rel);
     const srsSnaps: SnapshotInput[] = [];
     const vtpSnaps: SnapshotInput[] = [];
@@ -162,6 +176,8 @@ const LocalApp: React.FC = () => {
       setProjectDoc(null);
       setReleases(null);
       setJob(null);
+      setJobsDoc(null);
+      setDirtyJobs(false);
       setSrsBaseline(null);
       setVtpBaseline(null);
       setSrsSnapshots([]);
@@ -315,12 +331,13 @@ const LocalApp: React.FC = () => {
     else saveFileFallback(serializeDocument(doc), `${doc.name}.${doc.type}.json`);
   };
 
-  const dirty = dirtySrs || dirtyVtp;
+  const dirty = dirtySrs || dirtyVtp || dirtyJobs;
 
   const save = async () => {
     try {
       if (dirtySrs && srsDoc) { await persist(srsDoc); setDirtySrs(false); }
       if (dirtyVtp && vtpDoc) { await persist(vtpDoc); setDirtyVtp(false); }
+      if (dirtyJobs && jobsDoc) { await saveJobs(selectedDocName || projectName, jobsDoc); setDirtyJobs(false); }
       setError(null);
     } catch (err: any) {
       setError(`Failed to save: ${err.message}`);
@@ -365,6 +382,8 @@ const LocalApp: React.FC = () => {
   };
 
   const uniqueDocNames = Array.from(new Set(documents.map((d) => d.name))).sort();
+  const activeRecord = jobsDoc?.jobs.find((j) => j.id === job?.job) ?? null;
+  const activeJobLabel = activeRecord ? (activeRecord.code ?? activeRecord.title) : job?.job ?? null;
 
   return (
     <div className="container-fluid">
@@ -381,6 +400,8 @@ const LocalApp: React.FC = () => {
         onOpenProjectFile={() => handleOpenProject(true)}
         onOpenFallback={handleOpenFallback}
         job={job}
+        jobs={jobsDoc?.jobs}
+        activeJobLabel={activeJobLabel}
         onSetJob={handleSetJob}
         version={releases?.baseline ?? null}
         onShowVersions={() => setShowVersions(true)}
@@ -405,7 +426,7 @@ const LocalApp: React.FC = () => {
       {(srsDoc || vtpDoc) && (
         <ViewTabs
           current={currentView}
-          enabled={{ srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc }}
+          enabled={{ srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc }}
           onSelect={setCurrentView}
         />
       )}
@@ -418,6 +439,16 @@ const LocalApp: React.FC = () => {
         {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onChange={handleChange} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} />}
         {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onChange={handleChange} redline={vtpRedline} attribution={vtpSnapshots.length ? vtpAttribution : undefined} />}
         {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} onChange={handleChange} />}
+        {currentView === 'jobs' && isDirectoryOpen && (
+          <JobsView
+            doc={jobsDoc}
+            projectName={selectedDocName || projectName}
+            activeJobId={job?.job ?? null}
+            onChange={handleJobsChange}
+            onSetActive={handleSetJob}
+            readOnly={launch.demo}
+          />
+        )}
 
         {!isDirectoryOpen && !loading && (
           <>
@@ -453,6 +484,7 @@ const LocalApp: React.FC = () => {
         <StatusBar
           path={launch.demo ? 'demo (hosted copy of docs/specpad/)' : `docs/specpad/${projectName}`}
           srsDoc={srsDoc} vtpDoc={vtpDoc} projectDoc={projectDoc}
+          jobsDoc={jobsDoc} job={job}
           demo={launch.demo}
         />
       )}

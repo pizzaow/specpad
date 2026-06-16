@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { checkGovernance, GOVERNANCE_RULES } from '../governance';
-import type { SrsDoc, VtpDoc } from '../schema';
+import type { SrsDoc, VtpDoc, JobsDoc, JobDoc } from '../schema';
 
 const srs: SrsDoc = {
   schemaVersion: '1.0',
@@ -74,9 +74,40 @@ describe('checkGovernance', () => {
     expect(v.some((x) => x.rule === 'missing-expected' && x.itemId === 't_002')).toBe(true);
   });
 
+  const jobs: JobsDoc = {
+    schemaVersion: '1.0',
+    type: 'jobs',
+    name: 'AcmeApp',
+    jobs: [
+      { id: 'j_open', code: 'JOB-1', title: 'Open work', status: 'open' },
+      { id: 'j_closed', code: 'JOB-2', title: 'Closed work', status: 'closed' },
+    ],
+  };
+  function job(id: string): JobDoc {
+    return { schemaVersion: '1.0', type: 'job', job: id };
+  }
+
+  it('flags an active job that is closed (active-job-open)', () => {
+    const v = checkGovernance({ jobs, job: job('j_closed') });
+    expect(v.some((x) => x.rule === 'active-job-open' && x.itemId === 'j_closed')).toBe(true);
+  });
+
+  it('does not flag an active job that is open', () => {
+    expect(checkGovernance({ jobs, job: job('j_open') })).toEqual([]);
+  });
+
+  it('does not flag when there is no active job or no register', () => {
+    expect(checkGovernance({ jobs })).toEqual([]);
+    expect(checkGovernance({ job: job('j_closed') })).toEqual([]);
+  });
+
+  it('does not flag when the active id matches no record', () => {
+    expect(checkGovernance({ jobs, job: job('j_missing') })).toEqual([]);
+  });
+
   it('exposes a stable list of rule ids', () => {
     expect(GOVERNANCE_RULES.map((r) => r.id).sort()).toEqual([
-      'missing-expected', 'referential-integrity', 'traceability',
+      'active-job-open', 'missing-expected', 'referential-integrity', 'traceability',
     ]);
   });
 });

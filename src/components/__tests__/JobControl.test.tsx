@@ -16,4 +16,22 @@ describe('JobControl', () => {
     fireEvent.click(screen.getByText('Set job'));
     expect(onSet).toHaveBeenCalledWith('PROJ-9', 'Add login');
   });
+
+  it('register mode: picks an open record and sets it active by id', () => {
+    const onSet = vi.fn();
+    render(
+      <JobControl
+        job={null}
+        onSet={onSet}
+        jobs={[
+          { id: 'j_open', code: 'JOB-1', title: 'Open work', status: 'open' },
+          { id: 'j_closed', code: 'JOB-2', title: 'Closed work', status: 'closed' },
+        ]}
+      />,
+    );
+    // Closed records are excluded from the picker.
+    expect(screen.queryByText('JOB-2 — Closed work')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText('Set active'));
+    expect(onSet).toHaveBeenCalledWith('j_open', 'Open work');
+  });
 });

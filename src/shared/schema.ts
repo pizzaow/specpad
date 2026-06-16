@@ -156,7 +156,9 @@ export const vtpSchema = {
 // JSON Schema validates STRUCTURE ONLY, exactly like the core docs.
 // The skill writes these; it never computes diffs. The editor diffs the snapshots.
 
-export type SidecarType = 'releases' | 'job';
+export type SidecarType = 'releases' | 'job' | 'jobs';
+
+export type JobStatus = 'open' | 'closed';
 
 export interface AuthorRef {
   name: string;
@@ -187,7 +189,25 @@ export interface JobDoc {
   title?: string;
 }
 
-export type SidecarDoc = ReleasesDoc | JobDoc;
+// The jobs register (no-tracker case): SpecPad owns the job *records* (title/description/status).
+// It stores NO change associations — which items/commits a job touched is derived from git via the
+// `Job:` trailer. See docs/design/specpad-change-tracking-design.md §13.
+export interface JobRecord {
+  id: string;
+  code?: string;
+  title: string;
+  description?: string;
+  status: JobStatus;
+}
+
+export interface JobsDoc {
+  schemaVersion: SchemaVersion;
+  type: 'jobs';
+  name: string;
+  jobs: JobRecord[];
+}
+
+export type SidecarDoc = ReleasesDoc | JobDoc | JobsDoc;
 
 const nullableString = { type: ['string', 'null'] } as const;
 
@@ -235,7 +255,33 @@ export const jobSchema = {
   properties: {
     schemaVersion: { const: '1.0', description: 'Contract version of this file; "1.0" documents open in the pinned editor build at /v01/.' },
     type: { const: 'job', description: 'Document discriminator; selects the schema this file is validated against.' },
-    job: { type: 'string', description: 'The active work item (a ticket key or issue number) that current changes are attributed to.' },
+    job: { type: 'string', description: 'The active work item that current changes are attributed to — a ticket key, or (no-tracker case) a job record id from the jobs register.' },
     title: { type: 'string', description: 'Optional human-readable summary of the job.' },
+  },
+} as const;
+
+export const jobsSchema = {
+  $id: 'specpad/v1/jobs',
+  type: 'object',
+  required: ['schemaVersion', 'type', 'name', 'jobs'],
+  properties: {
+    schemaVersion: { const: '1.0', description: 'Contract version of this file; "1.0" documents open in the pinned editor build at /v01/.' },
+    type: { const: 'jobs', description: 'Document discriminator; selects the schema this file is validated against.' },
+    name: { type: 'string', description: 'Project name this register belongs to.' },
+    jobs: {
+      type: 'array',
+      description: 'The job records owned by this project (used when there is no external tracker).',
+      items: {
+        type: 'object',
+        required: ['id', 'title', 'status'],
+        properties: {
+          id: { type: 'string', minLength: 1, description: 'Stable machine identifier, generated once and never changed; the Job: commit trailer and all references target it.' },
+          code: { type: 'string', description: 'Human-facing label (e.g. "JOB-1"); freely renameable because references never use it.' },
+          title: { type: 'string', description: 'Short human-readable summary of the job.' },
+          description: { type: 'string', description: 'Optional longer description of the work the job covers.' },
+          status: { enum: ['open', 'closed'], description: 'Lifecycle state: "open" (may accrue more commits) or "closed" (scope sealed; further work spawns a new job).' },
+        },
+      },
+    },
   },
 } as const;

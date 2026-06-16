@@ -205,6 +205,10 @@ diff is the code).
 hook. The trailer convention is forward-compatible — a real tracker integration (Jira, Linear, GitHub
 Issues) slots in behind `resolveJob` with zero rework to the storage or diff layers.
 
+**Addendum (§13):** when there is **no external tracker**, SpecPad owns the job *records* itself in a
+`<name>.jobs.json` register, and the `Job:` trailer carries the record's stable `id` (not a code).
+See §13 for the register schema, the open/closed lifecycle, and the governance rules.
+
 ## 8. Editor UI
 
 - **Redline rendering:** `SRSTable`/`VTPTable` mark rows added / modified / removed (with
@@ -282,3 +286,150 @@ Issues) slots in behind `resolveJob` with zero rework to the storage or diff lay
    the editor's.
 6. **`attribution.json` is removed** from the design. The `attribution` sidecar type/schema introduced
    in Plan 1 is dropped from the shared contract; `ReleaseEntry` gains `author`.
+
+## 13. Jobs register (addendum)
+
+**Date:** 2026-06-16 · **Status:** Design draft — extends §7 ("Jobs: convention now, integration later").
+
+§7 covered the case where jobs live in an external tracker (the trailer is just a key, `resolveJob`
+fills in the rest). This section covers the **no-tracker** case: the user defines jobs *inside* SpecPad
+while working with Claude, and SpecPad owns the job records. It changes nothing about the diff
+primitive, the cache, or the spec schema — it is one new sidecar plus two policy rules.
+
+### 13.1 The stored-vs-derived split (the load-bearing decision)
+
+A job has two kinds of information, and they live in two different places:
+
+- **The record** — `title`, `description`, `status`. There is nowhere else for this to live (no
+  tracker), so SpecPad stores it, authoritatively, in the register. This is descriptive metadata, not
+  history — the same category as `VtpItem.result`.
+- **The associations** — which SRS/VTP items the job touched, and across which commits/pushes. These
+  are **never stored.** They are derived from git by walking the commits that carry the job's `Job:`
+  trailer and running `diffDocs` on the spec deltas — identical to §7.
+
+So the register holds **records only, never associations**. That is the line that keeps "git owns
+history / nothing derived is stored" intact while still letting a job have a human title and a status.
+There is **no `jobId` field on SRS/VTP items** (that would be change-tracking-as-data; see §11).
+
+### 13.2 `<name>.jobs.json` — the job register
+
+New sidecar, sibling of `releases.json` and `job.json`. Skill-maintained and editor-writable.
+
+```jsonc
+{
+  "schemaVersion": "1.0",
+  "type": "jobs",
+  "name": "AcmeApp",
+  "jobs": [
+    { "id": "j_a1b2c3",        // stable, immutable — the Job: trailer and all references target this
+      "code": "JOB-1",         // human label, freely renameable (SRS/VTP pattern); never referenced
+      "title": "Add jobs list",
+      "description": "Maintain a jobs register inside the SpecPad hierarchy.",
+      "status": "open" }       // 'open' | 'closed' — current state, like VtpItem.result
+  ]
+}
+```
+
+`<name>.job.json` (§3) keeps its role unchanged: it points at the **active** job's `id`. It is the
+"which record is current" cursor *into* this register; the register is the set of records. Setting a
+job active = writing its `id` into `job.json`.
+
+Proposed contract additions (sidecar only — core `proj/srs/vtp` schema untouched):
+
+```ts
+export type SidecarType = 'releases' | 'job' | 'jobs';
+
+export interface JobRecord {
+  id: string;            // stable, immutable
+  code?: string;         // human label, renameable
+  title: string;
+  description?: string;
+  status: 'open' | 'closed';
+}
+
+export interface JobsDoc {
+  schemaVersion: SchemaVersion;
+  type: 'jobs';
+  name: string;
+  jobs: JobRecord[];
+}
+// jobsSchema: $id 'specpad/v1/jobs' — STRUCTURE ONLY (required: schemaVersion, type, name, jobs;
+// each job requires id, title, status; status enum ['open','closed']). Lifecycle policy is governance.
+```
+
+### 13.3 The `Job:` trailer carries `id`, not `code`
+
+Contract invariant: references target the immutable `id`, never the renameable `code`, so renames
+can't break links. A trailer reading `Job: JOB-1` is prettier in `git log`, but renaming `JOB-1` in the
+register would orphan every past commit from the job. Therefore:
+
+> **Decision.** The `Job:` trailer carries the stable `id` (e.g. `Job: j_a1b2c3`). Reports and the
+> editor render it as the current `code`/`title` by lookup. For human readability the skill *may* write
+> `Job: JOB-1 (j_a1b2c3)`, but the parse target is always the `id`.
+
+This refines §7's illustrative `Job: PROJ-123` (an external key) for the SpecPad-owned case.
+
+### 13.4 Lifecycle — open vs closed
+
+`status` maps exactly onto "will any *future* commit carry this job's trailer?"
+
+- **`open`** — the job can be activated; new commits may carry its trailer; its derived change-set and
+  commit timeline keep growing.
+- **`closed`** — scope is sealed. No future commit may reference it, so its change-set is frozen *by
+  git history itself*. Further work spawns a **new** record.
+
+The history of a status flip (open→closed) is just the git history of the `jobs.json` file — no status
+changelog field.
+
+### 13.5 Walkthrough — create, accrue, view, export
+
+1. **Create:** skill appends `JOB-1` (`status: open`) to `jobs.json`, writes its `id` into `job.json`.
+2. **Define the feature:** skill edits SRS/VTP normally; spec items gain no job field.
+3. **Commit(s):** the §4 pre-commit gate stages spec/test edits with the code; each commit carries
+   `Job: j_a1b2c3`. **Many commits/pushes over days all carry the same trailer** → multiple commits per
+   job for free.
+4. **View "everything for JOB-1":** skill walks `git log` for the trailer → commit timeline (hash,
+   date, author, message, push refs); editor runs `diffDocs` across the job's start→HEAD snapshots →
+   added/modified/removed SRS & VTP items. Record + timeline + semantic diff, all reconstructed.
+5. **Release notes:** compose with `releases.json` — the jobs that landed in `v26.0→v26.1` are the
+   distinct `Job:` trailers in that commit range; emit each record's title/description + its derived
+   spec changes. Pure projection of (releases × records × diffs).
+
+### 13.6 Walkthrough — modifying a job
+
+- **Job still `open`:** set it active again, edit SRS/VTP, commit. The commit carries the same trailer —
+  just one more commit on the same job; its change-set grows. Editing the record's own title/description
+  is an edit to the `jobs.json` entry + a commit.
+- **Job `closed`:** the skill refuses to re-activate it and offers to create `JOB-2` (new `id`,
+  `status: open`) scoped to only the new work. New commits carry `Job: j_<new>`; `JOB-1` stays sealed.
+
+### 13.7 Governance rules (two — placed by what they can see)
+
+The two rules live in different layers because of the §4 editor-vs-skill visibility split:
+
+1. **`active-job-open`** — pure data check: `job.json`'s active `id` must not resolve to a
+   `jobs.json` record whose `status` is `closed`. Both files are in the working tree, so this is a
+   real `checkGovernance` rule — runs in **both** the editor (`ValidationPanel`) and the skill, and is
+   covered by `skill/__tests__/parity.test.ts`.
+2. **`active-job-required-for-spec-changes`** — when spec/test files differ from `HEAD`, `job.json`
+   must name an open job. This needs `HEAD`, which the browser can't see, so it is **not** a
+   `checkGovernance` rule — it extends the existing skill **pre-commit gate** (§4 #1) and must *not* be
+   added to `GOVERNANCE_RULES` (doing so would break parity, since the editor can't evaluate it).
+
+### 13.8 Testing / dogfood touchpoints
+
+- **Shared contract:** `jobs` schema validates; missing `status`/`title` rejected; `status` enum
+  enforced.
+- **Governance:** `active-job-open` fires when `job.json` points at a closed record, clean
+  otherwise; parity test sees the new rule name on both sides.
+- **Skill:** pre-commit gate blocks a spec change with no active open job; `SKILL.md` documents the
+  register, the `id`-trailer rule, and the closed→new-job behavior.
+- **Dogfood:** SpecPad's own `docs/specpad/` gains `<name>.jobs.json` and stays valid/clean under
+  `dogfood.test.ts`.
+
+### 13.9 Deferred (adds to §11)
+
+- A `resolveJob`-style **two-way sync** with an external tracker. The register is authoritative *only*
+  when there is no tracker; reconciling owned records against a live Jira/Linear is out of scope here.
+- Job **dependencies / parent-child / ordering** — the register is a flat list in v1.
+- Per-job **status beyond open/closed** (in-review, blocked, …) — two states cover the lifecycle rule.

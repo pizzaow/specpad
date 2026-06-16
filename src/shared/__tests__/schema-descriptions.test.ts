@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { projectSchema, srsSchema, vtpSchema, releasesSchema, jobSchema } from '../schema';
+import { projectSchema, srsSchema, vtpSchema, releasesSchema, jobSchema, jobsSchema } from '../schema';
 
 // The reference page is generated from these schemas; a field without a
 // description renders an empty cell and means the contract is under-documented.
@@ -29,6 +29,7 @@ describe('schema field descriptions', () => {
     ['vtp', vtpSchema],
     ['releases', releasesSchema],
     ['job', jobSchema],
+    ['jobs', jobsSchema],
   ])('%s schema describes every field', (_name, schema) => {
     expect(missingDescriptions(schema as AnySchema, _name)).toEqual([]);
   });

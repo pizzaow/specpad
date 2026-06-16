@@ -1,9 +1,10 @@
-import type { ProjectDoc, SrsDoc, VtpDoc } from './schema';
+import type { ProjectDoc, SrsDoc, VtpDoc, JobsDoc, JobDoc } from './schema';
 
 export type GovernanceRuleId =
   | 'traceability'
   | 'referential-integrity'
-  | 'missing-expected';
+  | 'missing-expected'
+  | 'active-job-open';
 
 export interface GovernanceRule {
   id: GovernanceRuleId;
@@ -31,12 +32,20 @@ export const GOVERNANCE_RULES: GovernanceRule[] = [
     description:
       'Every non-heading VTP test must have a non-empty `expected` value.',
   },
+  {
+    id: 'active-job-open',
+    title: 'The active job is open',
+    description:
+      'The active-job marker must not point at a closed job record; reopen it or create a new job before attaching more changes.',
+  },
 ];
 
 export interface ProjectBundle {
   project?: ProjectDoc | null;
   srs?: SrsDoc | null;
   vtp?: VtpDoc | null;
+  jobs?: JobsDoc | null;
+  job?: JobDoc | null;
 }
 
 export interface GovernanceViolation {
@@ -88,6 +97,21 @@ export function checkGovernance(bundle: ProjectBundle): GovernanceViolation[] {
         rule: 'traceability',
         itemId: req.id,
         message: `Requirement ${req.id} has no verifying test.`,
+      });
+    }
+  }
+
+  // active-job-open: the active-job marker must not point at a closed job record.
+  // (Pure data — both files are in the working tree, so the editor can evaluate this too.
+  // Requiring an active job *for spec changes* needs HEAD and lives in the skill pre-commit gate.)
+  const activeId = bundle.job?.job;
+  if (activeId && bundle.jobs) {
+    const record = bundle.jobs.jobs.find((j) => j.id === activeId);
+    if (record && record.status === 'closed') {
+      violations.push({
+        rule: 'active-job-open',
+        itemId: record.id,
+        message: `Active job ${record.code ?? record.id} is closed; reopen it or create a new job before attaching more changes.`,
       });
     }
   }

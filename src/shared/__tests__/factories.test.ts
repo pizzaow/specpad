@@ -5,6 +5,8 @@ import {
   createVtpDoc,
   createSrsItem,
   createVtpItem,
+  createJobsDoc,
+  createJobRecord,
 } from '../factories';
 import { validate } from '../validate';
 
@@ -35,5 +37,17 @@ describe('factories', () => {
 
   it('creates vtp items with t_ ids', () => {
     expect(createVtpItem([]).id).toMatch(/^t_[0-9a-f]{6}$/);
+  });
+
+  it('creates a schema-valid empty jobs register', () => {
+    expect(validate(createJobsDoc('AcmeApp'))).toEqual([]);
+  });
+
+  it('creates open job records with unique j_ ids', () => {
+    const a = createJobRecord([], 'First');
+    const b = createJobRecord([a.id], 'Second');
+    expect(a.id).toMatch(/^j_[0-9a-f]{6}$/);
+    expect(a.status).toBe('open');
+    expect(b.id).not.toBe(a.id);
   });
 });
