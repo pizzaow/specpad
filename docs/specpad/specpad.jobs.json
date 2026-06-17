@@ -9,6 +9,13 @@
       "title": "Jobs register & change-tracking traceability",
       "description": "Add a SpecPad-owned jobs register (jobs.json) with an open/closed lifecycle, the active-job governance rule, the editor Jobs view and active-job picker, and the skill git plumbing so every spec change traces to a job. Baselined at v1.1.",
       "status": "open"
+    },
+    {
+      "id": "j_9b2e07",
+      "code": "JOB-2",
+      "title": "Onboarding: specpad init",
+      "description": "One-command setup that scaffolds docs/specpad/, installs the pre-push hook, wires the SpecPad working-loop directive into the project CLAUDE.md, and generates the launcher — so a new user is fully set up on install with no manual configuration. Idempotent and non-destructive.",
+      "status": "open"
     }
   ]
 }

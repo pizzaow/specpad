@@ -4,6 +4,7 @@ Guidance for Claude Code working in this repository.
 
 ## Dogfood rule — SpecPad governs SpecPad (read first)
 
+<!-- specpad:working-loop -->
 **SpecPad must follow its own process.** Any change to product behavior in this repo (the editor, the
 skill, or the shared contract) is incomplete until it is recorded as requirements and verification
 tests in `docs/specpad/specpad.srs.json` / `specpad.vtp.json`, attributed to an active job, **in the

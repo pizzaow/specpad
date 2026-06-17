@@ -58,6 +58,31 @@ This loop is the **primary** mechanism. The pre-push gate and requirement audit 
 
 Every file carries `"schemaVersion": "1.0"`.
 
+## Initialize SpecPad (`specpad init`)
+
+When a user installs the skill and asks to "set up specpad" / "specpad init" / "initialize specpad",
+run this one-time, **idempotent** setup so the project is fully wired — capture loop, enforcement, and
+launcher — with no manual configuration. Re-running it must be a safe no-op.
+
+1. **Scaffold** `docs/specpad/` if absent (see "Scaffolding a new project"): project index, SRS, VTP,
+   and the empty releases manifest, with `PROJECT_NAME` replaced. **Never overwrite** existing documents.
+2. **Generate the launcher** `docs/specpad/index.html` from the template.
+3. **Install the pre-push hook** (the commit-check backstop):
+   ```
+   mkdir -p .githooks
+   cp <skill>/templates/hooks/pre-push .githooks/pre-push
+   chmod +x .githooks/pre-push
+   git config core.hooksPath .githooks
+   ```
+   If `core.hooksPath` is already set to a different directory, **do not clobber it** — copy the hook
+   into that directory instead and tell the user.
+4. **Wire `CLAUDE.md`** (this is what turns the pull-triggered skill into the always-on working loop):
+   if the file has no `<!-- specpad:working-loop -->` sentinel, **append** `templates/CLAUDE.specpad.md`
+   to it (create `CLAUDE.md` only if absent). **Never overwrite** an existing `CLAUDE.md`.
+5. **Validate** every file written and **report** what was set up versus already present.
+
+After `init`, the working loop is active every session and the pre-push gate enforces a job per commit.
+
 ## Scaffolding a new project
 
 1. Create `docs/specpad/` if missing.
