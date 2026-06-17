@@ -10,6 +10,11 @@ tests in `docs/specpad/specpad.srs.json` / `specpad.vtp.json`, attributed to an 
 same commit**. This is not optional and not deferrable: a feature with no requirement is a process
 failure, exactly the thing SpecPad exists to prevent.
 
+Follow the **SpecPad working loop** defined in `skill/specpad/SKILL.md` — capture requirements as you
+build, **spec-first** (job → requirement → test → code), distilling the intent from our conversation
+rather than batching the spec to the end. Write the requirements/tests autonomously, then tell me the
+codes you captured so I can correct them.
+
 Before committing feature work, confirm:
 1. An **active open job** is set in `docs/specpad/specpad.job.json` (`jobs: ["j_…"]`).
 2. New/changed behavior has matching **SRS requirements + VTP tests** (governance-clean: every

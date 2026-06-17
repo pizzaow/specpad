@@ -20,6 +20,35 @@ feature. The brainstorming skill writes a prose design doc and then hands off to
 writing-plans; insert SpecPad in between when you want the requirements captured as
 governed, test-traceable documents rather than prose.
 
+## The SpecPad working loop (capture requirements as you build)
+
+In a SpecPad-governed repo (`docs/specpad/` present), requirements and tests are a **first-class
+output of development, captured as you work** — never written up afterward. The user's intent, expressed
+in the working conversation, *is* the requirement before it is formalized; your job is to distill it
+into the SRS/VTP **spec-first**, attributed to a job, alongside the code. For each unit of work:
+
+1. **Job first.** Ensure an active open job exists (`<name>.jobs.json` + `<name>.job.json`); create one
+   if needed. It groups this unit's commits and pushes.
+2. **Distill intent → requirement, before you implement.** When the user settles what to build or
+   change, write the durable behavioral rule(s) as SRS requirement(s) *first*, each with a verifying
+   VTP test (procedure + expected result). Capture **intent, not transcript**.
+3. **Author the test chain.** requirement → VTP entry → the actual automated test where automatable
+   (e.g. vitest), named in the VTP `notes` → code. No requirement should ship without a test.
+4. **Implement against the spec**, keeping ids/refs stable and governance clean.
+5. **Autonomous but visible.** Write the requirements/tests without waiting for line-by-line approval,
+   then tell the user what you captured (the codes + one line each) so they can **edit after** and
+   correct granularity. Wrong granularity is the main risk; surfacing it is the cheap fix.
+
+**What rises to a requirement (distillation — the hard part):** a testable statement about
+externally-observable behavior or a governing constraint — "what the system *shall* do." NOT incidental
+implementation detail ("uses a Map"), how a function is structured, or exploratory back-and-forth that
+didn't land. One requirement per distinct behavioral rule, at the "shall" altitude, not the
+code-structure altitude. The litmus test: *could I write a test that fails if this behavior regressed?*
+If yes, it's a requirement.
+
+This loop is the **primary** mechanism. The pre-push gate and requirement audit (below) are the
+**backstop** that catches whatever the loop missed or any manual edit — not a substitute for it.
+
 ## Files and naming
 
 - `docs/specpad/<name>.proj.json` — project index
