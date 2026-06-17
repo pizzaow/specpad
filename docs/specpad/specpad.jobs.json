@@ -29,6 +29,13 @@
       "code": "JOB-4",
       "title": "Requirement audit (reconcile spec with code)",
       "description": "An agent procedure that reconciles the existing SRS/VTP against the whole codebase, reporting drift both directions — code behavior with no requirement (missing), requirements whose behavior is gone/changed (stale), and requirements/test references with no covering test (coverage). Reports ratifiable proposals; applies nothing destructive. The commit-time audit is its staged-diff form.",
+      "status": "closed"
+    },
+    {
+      "id": "j_7e0c84",
+      "code": "JOB-5",
+      "title": "Spec reconciliation (apply requirement-audit findings)",
+      "description": "Apply the ratified findings from the first requirement audit: add the missing recent-projects requirement (EDS-12) mapped to its existing tests, correct the stale ValidationPanel test reference (TEST-22 -> StatusBar), and close two of the four not_tested coverage gaps (TEST-9 id-immutability, TEST-59 records-only) with real tests.",
       "status": "open"
     }
   ]

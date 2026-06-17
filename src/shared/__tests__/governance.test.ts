@@ -115,6 +115,24 @@ describe('checkGovernance', () => {
     expect(checkGovernance({ job: job('PROJ-123') })).toEqual([]);
   });
 
+  it('keeps ids stable and references intact when a code label is renamed (r_a204)', () => {
+    const renamed: SrsDoc = {
+      ...srs,
+      items: srs.items.map((i) => (i.id === 'r_001' ? { ...i, code: 'AUTH-RENAMED' } : i)),
+    };
+    const bundle = {
+      srs: renamed,
+      vtp: vtp([
+        { id: 't_001', text: 'Login', verifies: ['r_001'], expected: 'OK.' },
+        { id: 't_002', text: 'Logout', verifies: ['r_002'], expected: 'OK.' },
+      ]),
+    };
+    // The id is unchanged despite the rename, and the verifies (which targets the id,
+    // never the code) still resolves — no referential-integrity violation.
+    expect(renamed.items.find((i) => i.code === 'AUTH-RENAMED')!.id).toBe('r_001');
+    expect(checkGovernance(bundle).some((v) => v.rule === 'referential-integrity')).toBe(false);
+  });
+
   it('exposes a stable list of rule ids', () => {
     expect(GOVERNANCE_RULES.map((r) => r.id).sort()).toEqual([
       'active-job-known', 'active-job-open', 'missing-expected', 'referential-integrity', 'traceability',

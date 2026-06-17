@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { validate } from '../validate';
+import { jobsSchema } from '../schema';
 import type { ReleasesDoc, JobDoc, JobsDoc } from '../schema';
 
 const releases: ReleasesDoc = {
@@ -84,6 +85,11 @@ describe('sidecar schemas', () => {
 
   it('accepts a well-formed jobs register (with and without optional fields)', () => {
     expect(validate(jobs)).toEqual([]);
+  });
+
+  it('a job record stores only record fields — no change associations (r_jb002)', () => {
+    const keys = Object.keys((jobsSchema as any).properties.jobs.items.properties).sort();
+    expect(keys).toEqual(['code', 'description', 'id', 'status', 'title']);
   });
 
   it('rejects a job record missing a status', () => {

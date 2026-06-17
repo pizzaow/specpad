@@ -73,6 +73,7 @@
     { "id": "r_ed0b04", "code": "EDS-4", "text": "Document views shall be presented as tabs (Requirements, Verification Tests, Results), extensible to further document types, with a tab disabled when its document is absent.", "level": 1, "tags": ["editor"] },
     { "id": "r_ed0b05", "code": "EDS-5", "text": "A footer status bar shall summarize validation — clean, or a clickable error/warning count that expands the detail messages.", "level": 1, "tags": ["editor", "validation"] },
     { "id": "r_ed0b06", "code": "EDS-6", "text": "Release history shall be available on demand from a menu-bar version chip that opens a dialog (or an empty state prompting a refresh).", "level": 1, "tags": ["editor", "change-tracking"] },
+    { "id": "r_ed0b12", "code": "EDS-12", "text": "The editor shall remember recently opened project folders via persisted directory handles, reopen them without re-picking the folder, and let the user forget a remembered folder.", "level": 1, "tags": ["editor"] },
     { "id": "h_ed0b50", "heading": true, "code": "SaveState", "text": "Save and document state", "level": 1 },
     { "id": "r_ed0b07", "code": "EDS-7", "text": "The document tables shall be controlled: the shell owns the working document and edits are reported via an onChange callback; tables render no internal Save button.", "level": 2, "tags": ["editor"] },
     { "id": "r_ed0b08", "code": "EDS-8", "text": "The menu-bar Save control shall reflect unsaved changes (an indicator when dirty, disabled when clean), and Ctrl/Cmd-S shall save.", "level": 2, "tags": ["editor"] },
