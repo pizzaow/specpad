@@ -106,6 +106,26 @@ authoritative** — deriving requirements from code *proposes* intent; the user 
    counts, and invite edits. This is the cold-start form of the requirement audit; the commit-time
    audit then keeps it in sync as the code evolves.
 
+## Requirement audit (reconcile the spec with the code)
+
+Periodically — or on request ("audit requirements", "check for drift") — reconcile the existing SRS/VTP
+against the **whole codebase**. This is the whole-repo form of the commit-time audit (which does the
+same over a single staged diff); both **propose, never auto-apply**.
+
+1. **Job first.** Open an audit job.
+2. **Read** the current SRS/VTP and survey the code (as for the baseline generator).
+3. **Compare both directions and categorize findings:**
+   - **Missing** — code behavior with no requirement → propose a `draft` requirement (and a verifying
+     test) derived from the code, for the user to ratify.
+   - **Stale** — a requirement whose described behavior is gone or changed → flag for update or
+     removal; **never silently delete** a requirement.
+   - **Coverage** — a requirement with no covering test, or a VTP `notes` reference to a test that no
+     longer resolves → flag the gap.
+4. **Report, don't mutate:** present the findings as categorized proposals; apply nothing destructive
+   automatically. Ratified new requirements land as `draft` for review.
+5. **Report coverage/confidence** — which areas you audited and how confident — rather than silently
+   truncating.
+
 ## Scaffolding a new project
 
 1. Create `docs/specpad/` if missing.

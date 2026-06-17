@@ -105,6 +105,13 @@
     { "id": "r_bg002", "code": "BASE-2", "text": "Generated requirements shall be drafts proposed for human ratification, not authoritative: each shall be tagged `draft` and surfaced for review, and deriving a requirement from code shall never bypass the user's confirmation of intent.", "tags": ["skill", "onboarding"] },
     { "id": "r_bg003", "code": "BASE-3", "text": "The generator shall distill testable behavioral requirements at the \"shall\" altitude — one per distinct externally-observable behavior or constraint, not implementation detail — and produce governance-clean output (every requirement carries a verifying VTP entry with an expected result).", "tags": ["skill", "onboarding"] },
     { "id": "r_bg004", "code": "BASE-4", "text": "The generator shall map requirements to existing automated tests where present (named in the VTP notes, with result reflecting the test) and shall record a behavior with no test as a not_tested gap rather than omitting it.", "tags": ["skill", "onboarding"] },
-    { "id": "r_bg005", "code": "BASE-5", "text": "The generator shall report its coverage explicitly — what it covered and what it could not — rather than silently truncating.", "tags": ["skill", "onboarding"] }
+    { "id": "r_bg005", "code": "BASE-5", "text": "The generator shall report its coverage explicitly — what it covered and what it could not — rather than silently truncating.", "tags": ["skill", "onboarding"] },
+
+    { "id": "h_au000", "heading": true, "text": "Requirement audit (drift detection)" },
+    { "id": "r_au001", "code": "AUDIT-1", "text": "The skill shall provide a requirement audit that reconciles the existing SRS/VTP against the whole codebase and reports drift in both directions; the commit-time audit is the same check scoped to a staged diff.", "tags": ["skill", "governance"] },
+    { "id": "r_au002", "code": "AUDIT-2", "text": "The audit shall flag code behavior that has no requirement (missing) and propose a draft requirement, with a verifying test, derived from the code for the user to ratify.", "tags": ["skill", "governance"] },
+    { "id": "r_au003", "code": "AUDIT-3", "text": "The audit shall flag a requirement whose described behavior is no longer present or has changed in the code (stale) for update or removal, and shall never silently delete a requirement.", "tags": ["skill", "governance"] },
+    { "id": "r_au004", "code": "AUDIT-4", "text": "The audit shall flag coverage gaps — a requirement with no covering test, and a VTP notes reference to a test that no longer resolves.", "tags": ["skill", "governance"] },
+    { "id": "r_au005", "code": "AUDIT-5", "text": "The audit shall present findings as categorized proposals for the user to ratify, apply nothing destructive automatically, and report its coverage and confidence rather than silently truncating.", "tags": ["skill", "governance"] }
   ]
 }
