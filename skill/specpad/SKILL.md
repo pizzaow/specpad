@@ -163,6 +163,24 @@ Each commit should carry its spec/test edits **and** an associated job; this is 
   and pushes as the work takes; every one carries its `Job:` trailer. The job's change-set is the union
   of those commits, reconstructed from git on demand — never stored.
 
+### Pre-push gate and requirement audit (two layers)
+The commit checks above are enforced by two complementary layers; the gate is a deterministic git
+hook, the audit is your (the agent's) intelligence.
+
+- **Layer 1 — deterministic hook (`pre-push`).** Canonical copy ships in this skill's
+  `templates/hooks/pre-push`; `specpad init` installs it via `git config core.hooksPath .githooks`. It
+  runs on every push (even manual ones), so it catches edits made outside the Claude loop. It
+  **hard-blocks** any pushed commit with no `Job:` trailer, and **warns** when a commit changes code but
+  touches no SRS/VTP — suppressed per commit with a `Spec: none <reason>` trailer (refactor/comments),
+  bypassed entirely with `SPECPAD_SKIP=1 git push`. It skips merge commits and never polices history
+  before SpecPad was adopted, so it is safe on any branching model and on existing repos.
+- **Layer 2 — requirement audit (you, before committing).** When committing on the user's behalf, audit
+  the staged diff against the requirements: for any code change with **no mapped requirement**, propose
+  a requirement (and verifying test) **derived from the diff** for the user to ratify or waive — do not
+  invent intent silently. This is the same audit as a whole-repo requirement audit, scoped to the
+  staged diff; it is what keeps the SRS/VTP a faithful twin of the code and catches manual edits the
+  hook only warns about.
+
 ### On-demand reports (advisory prose, never cached)
 Walk git directly and summarize in prose; these are advisory and nothing depends on them.
 - **"What changed for the next release"**: the editor shows this live as redline; confirm precisely
