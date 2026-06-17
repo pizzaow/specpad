@@ -83,6 +83,29 @@ launcher — with no manual configuration. Re-running it must be a safe no-op.
 
 After `init`, the working loop is active every session and the pre-push gate enforces a job per commit.
 
+## Baseline generator (draft a spec from existing code)
+
+When adopting SpecPad on an **existing codebase** (no SRS/VTP yet), draft an initial spec from the code
+so there is a baseline to maintain. The output is a **draft for human ratification, never
+authoritative** — deriving requirements from code *proposes* intent; the user confirms it.
+
+1. **Job first.** Open an adoption job (e.g. "Baseline draft").
+2. **Survey** the codebase: entry points, public API / CLI / UI surfaces, modules and their
+   responsibilities, the README/docs, and the **existing tests** (the richest source of intended
+   behavior).
+3. **Distill behavioral requirements**, grouped into SRS sections (headings) by feature area, at the
+   "shall" altitude — one per distinct externally-observable behavior or constraint, **not**
+   implementation detail. Tag every generated item `draft`.
+4. **Map to tests.** For each requirement write a VTP entry. If an existing automated test covers it,
+   name it in `notes` and set `result` to reflect it (`passed` if it passes); for a behavior with **no**
+   test, write the VTP procedure with `result: "not_tested"` — record the gap, never omit the behavior.
+5. **Keep it governance-clean**: every requirement has a verifying VTP entry, every test an `expected`.
+6. **Report coverage** explicitly — what you covered and what you could not (areas too unclear to spec)
+   — rather than silently truncating.
+7. **Surface for ratification.** Say it is a draft, summarize the sections and the `draft` / `not_tested`
+   counts, and invite edits. This is the cold-start form of the requirement audit; the commit-time
+   audit then keeps it in sync as the code evolves.
+
 ## Scaffolding a new project
 
 1. Create `docs/specpad/` if missing.

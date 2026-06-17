@@ -15,6 +15,13 @@
       "code": "JOB-2",
       "title": "Onboarding: specpad init",
       "description": "One-command setup that scaffolds docs/specpad/, installs the pre-push hook, wires the SpecPad working-loop directive into the project CLAUDE.md, and generates the launcher — so a new user is fully set up on install with no manual configuration. Idempotent and non-destructive.",
+      "status": "closed"
+    },
+    {
+      "id": "j_c1a8f3",
+      "code": "JOB-3",
+      "title": "Baseline generator (draft a spec from existing code)",
+      "description": "An agent procedure that bootstraps a draft v1 SRS/VTP from an existing codebase — surveying modules, public behavior, and existing tests — so SpecPad can be adopted on a project that did not start with it. Output is a draft for human ratification, mapped to existing tests, governance-clean.",
       "status": "open"
     }
   ]

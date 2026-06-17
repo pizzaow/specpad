@@ -98,6 +98,13 @@
     { "id": "h_in000", "heading": true, "text": "Onboarding (specpad init)" },
     { "id": "r_in001", "code": "INIT-1", "text": "The skill shall provide an idempotent init setup that, in one step, scaffolds docs/specpad/, generates the launcher, installs the pre-push hook (via core.hooksPath), and wires the SpecPad working-loop directive into the project CLAUDE.md — so a freshly-installed skill is fully configured with no manual steps.", "tags": ["skill", "onboarding"] },
     { "id": "r_in002", "code": "INIT-2", "text": "init shall be safe to re-run: it shall not overwrite existing SpecPad documents, shall not duplicate the CLAUDE.md directive (guarded by a sentinel marker), and shall not clobber an existing core.hooksPath set to another directory.", "tags": ["skill", "onboarding"] },
-    { "id": "r_in003", "code": "INIT-3", "text": "init shall never overwrite an existing project CLAUDE.md; it shall append the SpecPad directive, creating CLAUDE.md only if absent.", "tags": ["skill", "onboarding"] }
+    { "id": "r_in003", "code": "INIT-3", "text": "init shall never overwrite an existing project CLAUDE.md; it shall append the SpecPad directive, creating CLAUDE.md only if absent.", "tags": ["skill", "onboarding"] },
+
+    { "id": "h_bg000", "heading": true, "text": "Baseline generation (existing projects)" },
+    { "id": "r_bg001", "code": "BASE-1", "text": "The skill shall provide a baseline generator that drafts an initial SRS and VTP from an existing codebase — surveying entry points, public surfaces, modules, docs, and existing tests — so SpecPad can be adopted on a project that did not start with it.", "tags": ["skill", "onboarding"] },
+    { "id": "r_bg002", "code": "BASE-2", "text": "Generated requirements shall be drafts proposed for human ratification, not authoritative: each shall be tagged `draft` and surfaced for review, and deriving a requirement from code shall never bypass the user's confirmation of intent.", "tags": ["skill", "onboarding"] },
+    { "id": "r_bg003", "code": "BASE-3", "text": "The generator shall distill testable behavioral requirements at the \"shall\" altitude — one per distinct externally-observable behavior or constraint, not implementation detail — and produce governance-clean output (every requirement carries a verifying VTP entry with an expected result).", "tags": ["skill", "onboarding"] },
+    { "id": "r_bg004", "code": "BASE-4", "text": "The generator shall map requirements to existing automated tests where present (named in the VTP notes, with result reflecting the test) and shall record a behavior with no test as a not_tested gap rather than omitting it.", "tags": ["skill", "onboarding"] },
+    { "id": "r_bg005", "code": "BASE-5", "text": "The generator shall report its coverage explicitly — what it covered and what it could not — rather than silently truncating.", "tags": ["skill", "onboarding"] }
   ]
 }
