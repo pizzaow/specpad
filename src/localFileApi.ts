@@ -373,6 +373,21 @@ export async function saveJobs(name: string, doc: JobsDoc): Promise<void> {
   }
 }
 
+/** Write a project text file (e.g. `<name>.sad.md`, `<name>.workspace.dsl`). */
+export async function saveProjectText(filename: string, content: string): Promise<void> {
+  if (demoBaseUrl) throw new Error(READ_ONLY_DEMO);
+  if (!projectDirHandle) throw new Error('No directory selected');
+  const fileHandle = await projectDirHandle.getFileHandle(filename, { create: true });
+  const writable = await fileHandle.createWritable();
+  try {
+    await writable.write(content);
+    await writable.close();
+  } catch (err) {
+    await writable.abort();
+    throw err;
+  }
+}
+
 /** Load a project text file (e.g. `<name>.sad.md`, `<name>.workspace.dsl`), or null if absent. */
 export async function loadProjectText(filename: string): Promise<string | null> {
   if (demoBaseUrl) {

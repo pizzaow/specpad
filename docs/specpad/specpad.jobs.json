@@ -91,6 +91,15 @@
       "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
       "title": "Architecture templates (generic + medical), init path quiz, beefed-up generic SAD",
       "description": "Ship two architecture profiles — a beefed-up generic arc42+C4 template (several diagrams, no safety classification) and a medical template (62304/FDA: per-unit classification, segregation, verification) — each with a soft authoring guide. The init quiz lets the user pick generic vs medical and scaffolds the match. Re-dogfood SpecPad's SAD with the richer generic template. Cybersecurity architecture is a noted coming-soon pillar.",
+      "status": "closed"
+    },
+    {
+      "id": "j_2b9e44",
+      "code": "JOB-11",
+      "type": "feature",
+      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "title": "Architecture Edit/Display view: CodeMirror editor, markdown rendering, diagram SVG",
+      "description": "Give the Architecture tab Edit/Display sub-tabs: a syntax-highlighting CodeMirror editor for the arc42 markdown and C4 source, and a Display that renders the markdown as HTML (react-markdown) with inline diagram SVGs (draw.io export) and the authoring-guide panel. Diagram change tracking stays coarse (file changed: yes/no). draw.io is the pragmatic diagram source; SVG export is rendered client-side.",
       "status": "open"
     }
   ]

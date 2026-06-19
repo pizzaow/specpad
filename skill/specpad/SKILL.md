@@ -86,6 +86,13 @@ hard rules out of the guide.
 - **Third-party components (SOUP/OTS) are NOT inventoried in the SAD** — they belong in a separate,
   SBOM-aligned components register (a planned pillar). The SAD references it; it does not contain it.
 - **Cybersecurity architecture** is a planned companion pillar (much of it derivable) — not built yet.
+- **Diagrams:** author in **draw.io** and drop in the **SVG export** as `<name>.context.svg` (etc.);
+  the editor's Architecture view renders the SVG inline (client-side). Structurizr DSL stays an option.
+  Per-job diagram change tracking is **coarse** — "the diagram file changed", never in-diagram deltas
+  (no regulatory submission tracks that).
+- The Architecture view has **Edit** (syntax-highlighting markdown/DSL editor) and **Display**
+  (rendered arc42 + inline diagram + the guide) sub-tabs; the web view is a pseudo-render (formal Word
+  output comes from the skill export, not the browser).
 - Author/update the SAD in the **working loop** alongside requirements when a change affects the
   architecture; it rides with the job and the code.
 - The editor's **Architecture view** renders the arc42 markdown and presents the C4 DSL (live C4

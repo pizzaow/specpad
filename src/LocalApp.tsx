@@ -36,6 +36,7 @@ import {
   loadJobSnapshot,
   loadJobCommits,
   loadProjectText,
+  saveProjectText,
 } from './localFileApi';
 import { activeJobIds, diffDocs } from './shared';
 import type { DocDiff, SrsItem, VtpItem, JobCommit } from './shared';
@@ -110,6 +111,9 @@ const LocalApp: React.FC = () => {
   const [sad, setSad] = useState<string | null>(null);
   const [dsl, setDsl] = useState<string | null>(null);
   const [sadGuide, setSadGuide] = useState<string | null>(null);
+  const [diagramSvg, setDiagramSvg] = useState<string | null>(null);
+  const [dirtySad, setDirtySad] = useState(false);
+  const [dirtyDsl, setDirtyDsl] = useState(false);
   const [srsBaseline, setSrsBaseline] = useState<SrsDoc | null>(null);
   const [vtpBaseline, setVtpBaseline] = useState<VtpDoc | null>(null);
   const [srsSnapshots, setSrsSnapshots] = useState<SnapshotInput[]>([]);
@@ -168,6 +172,9 @@ const LocalApp: React.FC = () => {
     setSad(await loadProjectText(`${name}.sad.md`));
     setDsl(await loadProjectText(`${name}.workspace.dsl`));
     setSadGuide(await loadProjectText(`${name}.sad.guide.md`));
+    setDiagramSvg(await loadProjectText(`${name}.context.svg`));
+    setDirtySad(false);
+    setDirtyDsl(false);
     const cached = cachedReleases(rel);
     const srsSnaps: SnapshotInput[] = [];
     const vtpSnaps: SnapshotInput[] = [];
@@ -238,6 +245,9 @@ const LocalApp: React.FC = () => {
       setSad(null);
       setDsl(null);
       setSadGuide(null);
+      setDiagramSvg(null);
+      setDirtySad(false);
+      setDirtyDsl(false);
       setSrsBaseline(null);
       setVtpBaseline(null);
       setSrsSnapshots([]);
@@ -391,13 +401,16 @@ const LocalApp: React.FC = () => {
     else saveFileFallback(serializeDocument(doc), `${doc.name}.${doc.type}.json`);
   };
 
-  const dirty = dirtySrs || dirtyVtp || dirtyJobs;
+  const dirty = dirtySrs || dirtyVtp || dirtyJobs || dirtySad || dirtyDsl;
 
   const save = async () => {
+    const name = selectedDocName || projectName;
     try {
       if (dirtySrs && srsDoc) { await persist(srsDoc); setDirtySrs(false); }
       if (dirtyVtp && vtpDoc) { await persist(vtpDoc); setDirtyVtp(false); }
-      if (dirtyJobs && jobsDoc) { await saveJobs(selectedDocName || projectName, jobsDoc); setDirtyJobs(false); }
+      if (dirtyJobs && jobsDoc) { await saveJobs(name, jobsDoc); setDirtyJobs(false); }
+      if (dirtySad && sad !== null) { await saveProjectText(`${name}.sad.md`, sad); setDirtySad(false); }
+      if (dirtyDsl && dsl !== null) { await saveProjectText(`${name}.workspace.dsl`, dsl); setDirtyDsl(false); }
       setError(null);
     } catch (err: any) {
       setError(`Failed to save: ${err.message}`);
@@ -508,7 +521,14 @@ const LocalApp: React.FC = () => {
         {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onChange={handleChange} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} />}
         {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onChange={handleChange} redline={vtpRedline} attribution={vtpSnapshots.length ? vtpAttribution : undefined} />}
         {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} onChange={handleChange} />}
-        {currentView === 'arch' && isDirectoryOpen && <ArchitectureView sad={sad} dsl={dsl} guide={sadGuide} />}
+        {currentView === 'arch' && isDirectoryOpen && (
+          <ArchitectureView
+            sad={sad} dsl={dsl} guide={sadGuide} diagramSvg={diagramSvg}
+            onChangeSad={(v) => { setSad(v); setDirtySad(true); }}
+            onChangeDsl={(v) => { setDsl(v); setDirtyDsl(true); }}
+            readOnly={launch.demo}
+          />
+        )}
         {currentView === 'jobs' && isDirectoryOpen && (
           <JobsView
             doc={jobsDoc}

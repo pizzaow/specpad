@@ -42,6 +42,7 @@ vi.mock('../localFileApi', () => ({
   loadJobSnapshot: vi.fn(async () => null),
   loadJobCommits: vi.fn(async () => []),
   loadProjectText: vi.fn(async () => null),
+  saveProjectText: vi.fn(async () => undefined),
   loadSnapshot: vi.fn(async () => null),
   getDirHandle: vi.fn(() => null),
   verifyPermission: vi.fn(async () => false),

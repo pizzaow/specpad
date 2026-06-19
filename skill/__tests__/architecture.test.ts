@@ -53,6 +53,13 @@ describe('architecture profiles & templates', () => {
     expect(skill).toMatch(/sad\.medical\.md/);
     expect(skill).toMatch(/reads\s+it\s+before\s+editing\s+the\s+SAD/i);
   });
+
+  it('documents draw.io SVG diagrams, coarse change tracking, and the Edit/Display view', () => {
+    expect(skill).toMatch(/draw\.io/i);
+    expect(skill).toMatch(/\.context\.svg|SVG export/i);
+    expect(skill).toMatch(/coarse/i);
+    expect(skill).toMatch(/Edit.*Display|Display.*sub-tabs?/i);
+  });
 });
 
 describe('SpecPad dogfoods its own architecture spec', () => {
@@ -66,5 +73,11 @@ describe('SpecPad dogfoods its own architecture spec', () => {
     expect(dsl).toMatch(/workspace "SpecPad"/);
     expect(dsl).toMatch(/model\s*\{/);
     expect(dsl).toMatch(/views\s*\{/);
+  });
+
+  it('ships a rendered context diagram (draw.io-style SVG)', () => {
+    const svg = readFileSync(new URL('../../docs/specpad/specpad.context.svg', import.meta.url), 'utf8');
+    expect(svg).toMatch(/<svg/);
+    expect(svg).toMatch(/SpecPad/);
   });
 });
