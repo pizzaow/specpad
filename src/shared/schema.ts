@@ -160,6 +160,8 @@ export type SidecarType = 'releases' | 'job' | 'jobs';
 
 export type JobStatus = 'open' | 'closed';
 
+export type JobType = 'feature' | 'bugfix';
+
 export interface AuthorRef {
   name: string;
   email: string;
@@ -199,6 +201,8 @@ export interface JobDoc {
 export interface JobRecord {
   id: string;
   code?: string;
+  type?: JobType;
+  version?: string;
   title: string;
   description?: string;
   status: JobStatus;
@@ -282,6 +286,8 @@ export const jobsSchema = {
         properties: {
           id: { type: 'string', minLength: 1, description: 'Stable machine identifier, generated once and never changed; the Job: commit trailer and all references target it.' },
           code: { type: 'string', description: 'Human-facing label (e.g. "JOB-1"); freely renameable because references never use it.' },
+          type: { enum: ['feature', 'bugfix'], description: 'Kind of work — "feature" or "bugfix"; organizes the release-notes Jobs view.' },
+          version: { type: 'string', description: 'Release version this job belongs to (e.g. "1.2"); the Jobs view groups by its major component, unversioned jobs under "Unreleased".' },
           title: { type: 'string', description: 'Short human-readable summary of the job.' },
           description: { type: 'string', description: 'Optional longer description of the work the job covers.' },
           status: { enum: ['open', 'closed'], description: 'Lifecycle state: "open" (may accrue more commits) or "closed" (scope sealed; further work spawns a new job).' },

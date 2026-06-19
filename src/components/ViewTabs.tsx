@@ -8,10 +8,10 @@ import React from 'react';
 export type ViewKey = 'srs' | 'vtp' | 'testing' | 'jobs';
 
 const TABS: { key: ViewKey; label: string }[] = [
+  { key: 'jobs', label: 'Jobs' },
   { key: 'srs', label: 'Requirements' },
   { key: 'vtp', label: 'Verification Tests' },
   { key: 'testing', label: 'Results' },
-  { key: 'jobs', label: 'Jobs' },
 ];
 
 interface ViewTabsProps {

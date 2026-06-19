@@ -13,6 +13,11 @@ describe('ViewTabs', () => {
     expect(container.querySelector('li.active')?.textContent).toBe('Requirements');
   });
 
+  it('places Jobs as the leftmost tab', () => {
+    const { container } = render(<ViewTabs current="srs" enabled={enabled} onSelect={vi.fn()} />);
+    expect(container.querySelector('li:first-child')?.textContent).toBe('Jobs');
+  });
+
   it('selects a tab on click', () => {
     const onSelect = vi.fn();
     render(<ViewTabs current="srs" enabled={enabled} onSelect={onSelect} />);
