@@ -14,7 +14,7 @@
  * git-derived, frozen-on-close cache.
  */
 import React, { useState } from 'react';
-import type { JobsDoc, JobRecord, JobType, DocDiff, ItemChange, SrsItem, VtpItem } from '../shared';
+import type { JobsDoc, JobRecord, JobType, DocDiff, ItemChange, SrsItem, VtpItem, JobCommit } from '../shared';
 import { createJobsDoc, createJobRecord } from '../shared';
 
 type JobDiff = { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpItem> };
@@ -24,6 +24,7 @@ interface JobsViewProps {
   projectName: string;
   activeIds: string[];
   jobDiffs?: Record<string, JobDiff>;
+  jobCommits?: Record<string, JobCommit[]>;
   onChange: (next: JobsDoc) => void;
   onSetActive: (ids: string[]) => void;
   readOnly?: boolean;
@@ -48,7 +49,7 @@ function groupOrder(a: string, b: string): number {
 const typeOf = (j: JobRecord): JobType => j.type ?? 'feature';
 const ownerOf = (j: JobRecord): string => (j.owner ? j.owner.name : '');
 
-const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDiffs, onChange, onSetActive, readOnly }) => {
+const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDiffs, jobCommits, onChange, onSetActive, readOnly }) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const jobs = doc?.jobs ?? [];
@@ -85,6 +86,7 @@ const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDif
   if (selected) {
     const isActive = activeIds.includes(selected.id);
     const diff = jobDiffs?.[selected.id];
+    const commits = jobCommits?.[selected.id] ?? [];
     return (
       <div className="jobs-detail">
         <button className="btn btn-link" style={{ paddingLeft: 0 }} onClick={() => setSelectedId(null)}>← All jobs</button>
@@ -154,6 +156,20 @@ const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDif
           </>
         ) : (
           <p className="text-muted">No cached changes for this job — run <code>specpad refresh</code>.</p>
+        )}
+
+        {selected.status === 'closed' && commits.length > 0 && (
+          <>
+            <h4 style={{ marginTop: 20 }}>Commits ({commits.length})</h4>
+            <ul className="list-unstyled" style={{ marginLeft: 8 }}>
+              {commits.map((c) => (
+                <li key={c.hash} style={{ padding: '2px 0' }}>
+                  <code className="text-muted">{c.hash.slice(0, 9)}</code> {c.subject}
+                  <span className="text-muted"> · {c.author} · {c.date}</span>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
       </div>
     );

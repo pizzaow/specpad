@@ -240,8 +240,17 @@ Maintain it as authoritative metadata (it is **not** part of the regenerable `.s
   matching the manifest `tagPattern` that contains the job's last commit (`git tag --contains <sha>`).
 - **On close**, snapshot the job's before/after spec into `.specpad/jobs/<id>/{before,after}/` (raw
   `git show <base>:…` and `<last>:…`, where `<base>` is the parent of the job's first commit and
-  `<last>` its final commit) and commit it. The editor diffs these to show the job's changes; you never
-  diff. `refresh` rebuilds these caches and re-derives versions.
+  `<last>` its final commit) and commit it. Also write `.specpad/jobs/<id>/commits.json` — the job's
+  commits from `git log --grep='Job: <id>' --format='%H … %s … %an … %cs'` — so the editor can show the
+  commits behind a job's changes. The editor diffs/renders these; you never diff. `refresh` rebuilds
+  the caches and re-derives versions.
+
+### Source-traceability export (job → commits → code)
+Because every commit carries a `Job:` trailer (enforced by the pre-push hook), source-code traceability
+is **free and git-derived** — no maintained matrix. On request, or as part of the eQMS export, produce a
+per-job report: `git log --grep='Job: <id>'` for the commits, and `git show`/`git diff` for the actual
+code changes. This gives **change-mediated** requirement→code traceability (a job ties its SRS/VTP edits,
+SAD/SDD edits, and code commits together). It is generated on demand, never a stored matrix.
 - **Activate** one or more jobs by writing their `id`s into `<name>.job.json` (`jobs: ["j_…", …]`;
   the legacy single `job: "…"` is still read). Only **open** jobs may be activated (the
   `active-job-open` / `active-job-known` rules).

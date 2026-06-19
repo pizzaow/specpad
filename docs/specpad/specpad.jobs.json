@@ -64,6 +64,15 @@
       "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
       "title": "Closed-job change cache, owner, derived version, in-progress vs released views",
       "description": "On close, cache a job's before/after spec snapshots (lockfile-class) so the browser editor can show its SRS/VTP changes; add an owner set from git at creation; derive a job's version from the release tag containing its commits; split the Jobs tab into In progress (open) and Released (closed) views.",
+      "status": "closed"
+    },
+    {
+      "id": "j_d4f1a0",
+      "code": "JOB-8",
+      "type": "feature",
+      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "title": "Source-code traceability (job to commits to code)",
+      "description": "Cache each closed job's commit list (commits.json, derived from the Job: trailer) so the editor shows a job's commits alongside its SRS/VTP changes, and document the skill's source-traceability export (per-job commits + code diffs from git) that feeds the eQMS evidence package.",
       "status": "open"
     }
   ]

@@ -34,9 +34,10 @@ import {
   saveJobs,
   loadSnapshot,
   loadJobSnapshot,
+  loadJobCommits,
 } from './localFileApi';
 import { activeJobIds, diffDocs } from './shared';
-import type { DocDiff, SrsItem, VtpItem } from './shared';
+import type { DocDiff, SrsItem, VtpItem, JobCommit } from './shared';
 import { buildRedline, computeAttribution } from './changeTracking';
 import type { SnapshotInput } from './changeTracking';
 import { cachedReleases } from './changeTrackingView';
@@ -56,24 +57,31 @@ type ViewMode = 'srs' | 'vtp' | 'testing' | 'jobs';
 type OpenResult = { name: string; documents: DocumentListItem[] };
 type JobDiff = { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpItem> };
 
-// For each CLOSED job, diff its committed before/after spec snapshots so the
-// browser editor can show the job's SRS/VTP changes (the cache is frozen on close).
-async function loadJobDiffs(name: string, jd: JobsDoc | null): Promise<Record<string, JobDiff>> {
-  const out: Record<string, JobDiff> = {};
+// For each CLOSED job, diff its committed before/after spec snapshots and load its
+// commit list, so the browser editor can show the job's SRS/VTP changes and the code
+// commits behind them (the cache is frozen on close).
+async function loadJobCaches(
+  name: string,
+  jd: JobsDoc | null,
+): Promise<{ diffs: Record<string, JobDiff>; commits: Record<string, JobCommit[]> }> {
+  const diffs: Record<string, JobDiff> = {};
+  const commits: Record<string, JobCommit[]> = {};
   for (const j of jd?.jobs ?? []) {
     if (j.status !== 'closed') continue;
-    const [sb, sa, vb, va] = await Promise.all([
+    const [sb, sa, vb, va, cs] = await Promise.all([
       loadJobSnapshot(j.id, 'before', 'srs', name),
       loadJobSnapshot(j.id, 'after', 'srs', name),
       loadJobSnapshot(j.id, 'before', 'vtp', name),
       loadJobSnapshot(j.id, 'after', 'vtp', name),
+      loadJobCommits(j.id),
     ]);
     const entry: JobDiff = {};
     if (sb && sa) entry.srs = diffDocs(sb as SrsDoc, sa as SrsDoc);
     if (vb && va) entry.vtp = diffDocs(vb as VtpDoc, va as VtpDoc);
-    if (entry.srs || entry.vtp) out[j.id] = entry;
+    if (entry.srs || entry.vtp) diffs[j.id] = entry;
+    if (cs.length) commits[j.id] = cs;
   }
-  return out;
+  return { diffs, commits };
 }
 
 const LocalApp: React.FC = () => {
@@ -93,8 +101,9 @@ const LocalApp: React.FC = () => {
   const [job, setJob] = useState<JobDoc | null>(null);
   const [jobsDoc, setJobsDoc] = useState<JobsDoc | null>(null);
   const [dirtyJobs, setDirtyJobs] = useState(false);
-  // Per closed-job SRS/VTP diffs, computed from the committed .specpad/jobs/<id>/ cache.
+  // Per closed-job SRS/VTP diffs + commit lists, from the committed .specpad/jobs/<id>/ cache.
   const [jobDiffs, setJobDiffs] = useState<Record<string, { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpItem> }>>({});
+  const [jobCommits, setJobCommits] = useState<Record<string, JobCommit[]>>({});
   const [srsBaseline, setSrsBaseline] = useState<SrsDoc | null>(null);
   const [vtpBaseline, setVtpBaseline] = useState<VtpDoc | null>(null);
   const [srsSnapshots, setSrsSnapshots] = useState<SnapshotInput[]>([]);
@@ -147,7 +156,9 @@ const LocalApp: React.FC = () => {
     const jd = await loadJobs(name);
     setJobsDoc(jd);
     setDirtyJobs(false);
-    setJobDiffs(await loadJobDiffs(name, jd));
+    const caches = await loadJobCaches(name, jd);
+    setJobDiffs(caches.diffs);
+    setJobCommits(caches.commits);
     const cached = cachedReleases(rel);
     const srsSnaps: SnapshotInput[] = [];
     const vtpSnaps: SnapshotInput[] = [];
@@ -214,6 +225,7 @@ const LocalApp: React.FC = () => {
       setJobsDoc(null);
       setDirtyJobs(false);
       setJobDiffs({});
+      setJobCommits({});
       setSrsBaseline(null);
       setVtpBaseline(null);
       setSrsSnapshots([]);
@@ -490,6 +502,7 @@ const LocalApp: React.FC = () => {
             projectName={selectedDocName || projectName}
             activeIds={activeIds}
             jobDiffs={jobDiffs}
+            jobCommits={jobCommits}
             onChange={handleJobsChange}
             onSetActive={handleSetJob}
             readOnly={launch.demo}

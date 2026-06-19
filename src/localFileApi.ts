@@ -4,7 +4,7 @@
  * Chrome/Edge: full support. Firefox/Safari: fallback upload/download.
  */
 
-import type { ProjectDoc, SrsDoc, VtpDoc, SpecPadDoc, ReleasesDoc, JobDoc, JobsDoc, SidecarDoc } from './shared';
+import type { ProjectDoc, SrsDoc, VtpDoc, SpecPadDoc, ReleasesDoc, JobDoc, JobsDoc, JobCommit, SidecarDoc } from './shared';
 import { createSrsDoc, createVtpDoc } from './shared';
 
 declare global {
@@ -370,6 +370,24 @@ export async function saveJobs(name: string, doc: JobsDoc): Promise<void> {
   } catch (err) {
     await writable.abort();
     throw err;
+  }
+}
+
+/** Load a closed job's cached commit list (`.specpad/jobs/<id>/commits.json`), or [] if absent. */
+export async function loadJobCommits(jobId: string): Promise<JobCommit[]> {
+  const filename = 'commits.json';
+  try {
+    if (demoBaseUrl) {
+      const res = await fetch(`${demoBaseUrl}.specpad/jobs/${jobId}/${filename}`, { cache: 'no-cache' });
+      if (!res.ok) return [];
+      return (await res.json()) as JobCommit[];
+    }
+    const dir = await getSubDirectory(['.specpad', 'jobs', jobId]);
+    if (!dir) return [];
+    const fh = await dir.getFileHandle(filename);
+    return JSON.parse(await (await fh.getFile()).text()) as JobCommit[];
+  } catch {
+    return [];
   }
 }
 

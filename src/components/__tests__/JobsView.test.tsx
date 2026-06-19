@@ -22,11 +22,15 @@ const jobDiffs = {
   },
 };
 
+const jobCommits = {
+  j_feat: [{ hash: 'abc1234def', subject: 'feat: add login', author: 'Sam', date: '2026-01-02' }],
+};
+
 function renderView(overrides: Partial<React.ComponentProps<typeof JobsView>> = {}) {
   const onChange = vi.fn();
   const onSetActive = vi.fn();
   render(
-    <JobsView doc={doc} projectName="AcmeApp" activeIds={['j_open']} jobDiffs={jobDiffs} onChange={onChange} onSetActive={onSetActive} {...overrides} />,
+    <JobsView doc={doc} projectName="AcmeApp" activeIds={['j_open']} jobDiffs={jobDiffs} jobCommits={jobCommits} onChange={onChange} onSetActive={onSetActive} {...overrides} />,
   );
   return { onChange, onSetActive };
 }
@@ -49,6 +53,14 @@ describe('JobsView — in progress vs released', () => {
     expect(screen.getByText(/AUTH-1 — Shall log in\./)).toBeInTheDocument();
     fireEvent.click(screen.getByText('← All jobs'));
     expect(screen.getByText('Released')).toBeInTheDocument();
+  });
+
+  it('lists a closed job\'s commits in its detail', () => {
+    renderView();
+    fireEvent.click(screen.getByText('Login'));
+    expect(screen.getByText('Commits (1)')).toBeInTheDocument();
+    expect(screen.getByText(/feat: add login/)).toBeInTheDocument();
+    expect(screen.getByText(/abc1234de/)).toBeInTheDocument();
   });
 
   it('shows owner and derived (read-only) version in the detail', () => {

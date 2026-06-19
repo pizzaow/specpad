@@ -35,6 +35,12 @@ describe('skill documents the change-tracking plumbing', () => {
     expect(skill).toMatch(/git tag --contains/);          // derivation mechanism
     expect(skill).toMatch(/owner.*from git|set `owner`/i); // owner set from git
   });
+
+  it('documents the source-traceability export (job → commits → code) and the commits cache', () => {
+    expect(skill).toMatch(/Source-traceability export/i);
+    expect(skill).toMatch(/commits\.json/);
+    expect(skill).toMatch(/git log --grep/);
+  });
 });
 
 describe('dogfood closed-job caches', () => {
@@ -49,6 +55,12 @@ describe('dogfood closed-job caches', () => {
         const srs = JSON.parse(readFileSync(`${jobsDir}${id}/${state}/specpad.srs.json`, 'utf8'));
         expect(validate(srs)).toEqual([]);
       }
+      // each closed job also caches its commit list
+      const commits = JSON.parse(readFileSync(`${jobsDir}${id}/commits.json`, 'utf8'));
+      expect(Array.isArray(commits)).toBe(true);
+      expect(commits.length).toBeGreaterThan(0);
+      expect(commits[0]).toHaveProperty('hash');
+      expect(commits[0]).toHaveProperty('subject');
     }
   });
 });

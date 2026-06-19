@@ -216,6 +216,15 @@ export interface JobsDoc {
   jobs: JobRecord[];
 }
 
+// One commit attributed to a job (via its `Job:` trailer). Cached per closed job in
+// .specpad/jobs/<id>/commits.json — a raw, git-derived, regenerable projection (no schema).
+export interface JobCommit {
+  hash: string;
+  subject: string;
+  author: string;
+  date: string;
+}
+
 export type SidecarDoc = ReleasesDoc | JobDoc | JobsDoc;
 
 const nullableString = { type: ['string', 'null'] } as const;
