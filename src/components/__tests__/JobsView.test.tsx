@@ -26,11 +26,20 @@ const jobCommits = {
   j_feat: [{ hash: 'abc1234def', subject: 'feat: add login', author: 'Sam', date: '2026-01-02' }],
 };
 
+const jobArch = {
+  j_feat: {
+    added: ['acme.context.svg'],
+    modified: ['acme.sad.md'],
+    removed: ['acme.workspace.dsl'],
+    sadDiff: { added: ['New architecture note.'], removed: ['Old note.'] },
+  },
+};
+
 function renderView(overrides: Partial<React.ComponentProps<typeof JobsView>> = {}) {
   const onChange = vi.fn();
   const onSetActive = vi.fn();
   render(
-    <JobsView doc={doc} projectName="AcmeApp" activeIds={['j_open']} jobDiffs={jobDiffs} jobCommits={jobCommits} onChange={onChange} onSetActive={onSetActive} {...overrides} />,
+    <JobsView doc={doc} projectName="AcmeApp" activeIds={['j_open']} jobDiffs={jobDiffs} jobCommits={jobCommits} jobArch={jobArch} onChange={onChange} onSetActive={onSetActive} {...overrides} />,
   );
   return { onChange, onSetActive };
 }
@@ -53,6 +62,17 @@ describe('JobsView — in progress vs released', () => {
     expect(screen.getByText(/AUTH-1 — Shall log in\./)).toBeInTheDocument();
     fireEvent.click(screen.getByText('← All jobs'));
     expect(screen.getByText('Released')).toBeInTheDocument();
+  });
+
+  it('shows a closed job\'s architecture changes (coarse files + SAD line diff)', () => {
+    renderView();
+    fireEvent.click(screen.getByText('Login'));
+    expect(screen.getByText('Architecture changes')).toBeInTheDocument();
+    expect(screen.getByText(/acme\.context\.svg/)).toBeInTheDocument();
+    expect(screen.getByText(/acme\.sad\.md/)).toBeInTheDocument();
+    expect(screen.getByText(/acme\.workspace\.dsl/)).toBeInTheDocument();
+    expect(screen.getByText('SAD text changes')).toBeInTheDocument();
+    expect(screen.getByText(/New architecture note\./)).toBeInTheDocument();
   });
 
   it('lists a closed job\'s commits in its detail', () => {

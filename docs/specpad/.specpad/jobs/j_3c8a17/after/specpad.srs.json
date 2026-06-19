@@ -147,8 +147,6 @@
     { "id": "r_av004", "code": "AV-4", "text": "Per-job diagram change tracking shall be coarse — that the diagram file changed — not in-diagram deltas.", "tags": ["architecture", "change-tracking"] },
     { "id": "r_dg001", "code": "DGM-1", "text": "Diagrams shall be placed by the arc42 markdown via image references (![caption](name.svg)), so the document defines where each diagram appears — a context overview near the top, plus building block (interfaces), runtime (process), and deployment.", "tags": ["architecture", "editor"] },
     { "id": "r_dg002", "code": "DGM-2", "text": "The Architecture Display shall render each markdown-referenced diagram SVG inline at its place in the document.", "tags": ["architecture", "editor"] },
-    { "id": "r_dg003", "code": "DGM-3", "text": "The Structurizr C4 DSL shall be optional — supported when present (loader kept; the editor shows it only when present) but not included in the default templates or scaffold.", "tags": ["architecture", "editor"] },
-    { "id": "r_ac001", "code": "AC-1", "text": "The closed-job cache shall snapshot the architecture files (sad.md, diagram SVGs, the guide, and the optional workspace.dsl) plus a per-state manifest, so a job's architecture changes are available to the editor.", "tags": ["architecture", "change-tracking"] },
-    { "id": "r_ac002", "code": "AC-2", "text": "A closed job's detail shall present an Architecture changes section listing which architecture files it added, modified, or removed (coarse, file-level), plus an added/removed-line diff for the SAD markdown.", "tags": ["architecture", "editor"] }
+    { "id": "r_dg003", "code": "DGM-3", "text": "The Structurizr C4 DSL shall be optional — supported when present (loader kept; the editor shows it only when present) but not included in the default templates or scaffold.", "tags": ["architecture", "editor"] }
   ]
 }

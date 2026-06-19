@@ -61,7 +61,19 @@ describe('dogfood closed-job caches', () => {
       expect(commits.length).toBeGreaterThan(0);
       expect(commits[0]).toHaveProperty('hash');
       expect(commits[0]).toHaveProperty('subject');
+      // and a per-state architecture manifest
+      for (const state of ['before', 'after']) {
+        expect(Array.isArray(JSON.parse(readFileSync(`${jobsDir}${id}/${state}/arch-files.json`, 'utf8')))).toBe(true);
+      }
     }
+  });
+
+  it('captures the architecture file change for the job that created the SAD', () => {
+    const job = fileURLToPath(new URL('../../docs/specpad/.specpad/jobs/j_e7a2b1/', import.meta.url));
+    const before = JSON.parse(readFileSync(`${job}before/arch-files.json`, 'utf8'));
+    const after = JSON.parse(readFileSync(`${job}after/arch-files.json`, 'utf8'));
+    expect(before).toEqual([]);                       // SAD did not exist before JOB-9
+    expect(after).toContain('specpad.sad.md');        // JOB-9 added it
   });
 });
 

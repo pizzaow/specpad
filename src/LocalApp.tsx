@@ -35,6 +35,7 @@ import {
   loadSnapshot,
   loadJobSnapshot,
   loadJobCommits,
+  loadJobText,
   loadProjectText,
   saveProjectText,
 } from './localFileApi';
@@ -59,6 +60,43 @@ import ViewTabs from './components/ViewTabs';
 type ViewMode = 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch';
 type OpenResult = { name: string; documents: DocumentListItem[] };
 type JobDiff = { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpItem> };
+export type ArchChange = {
+  added: string[];
+  removed: string[];
+  modified: string[];
+  sadDiff?: { added: string[]; removed: string[] };
+};
+
+// Coarse line diff (added/removed non-empty lines) for the SAD markdown.
+function lineDiff(before: string, after: string): { added: string[]; removed: string[] } {
+  const b = before.split('\n'), a = after.split('\n');
+  const bSet = new Set(b), aSet = new Set(a);
+  return {
+    added: a.filter((l) => !bSet.has(l) && l.trim()),
+    removed: b.filter((l) => !aSet.has(l) && l.trim()),
+  };
+}
+
+// For a closed job, compute which architecture files it added/modified/removed
+// (coarse, file-level) plus an added/removed-line diff for the SAD markdown.
+async function loadJobArch(jobId: string): Promise<ArchChange | undefined> {
+  const before: string[] = JSON.parse((await loadJobText(jobId, 'before', 'arch-files.json')) ?? '[]');
+  const after: string[] = JSON.parse((await loadJobText(jobId, 'after', 'arch-files.json')) ?? '[]');
+  const bSet = new Set(before), aSet = new Set(after);
+  const added = after.filter((f) => !bSet.has(f));
+  const removed = before.filter((f) => !aSet.has(f));
+  const modified: string[] = [];
+  let sadDiff: { added: string[]; removed: string[] } | undefined;
+  for (const f of after.filter((x) => bSet.has(x))) {
+    const [b, a] = await Promise.all([loadJobText(jobId, 'before', f), loadJobText(jobId, 'after', f)]);
+    if (b !== a) {
+      modified.push(f);
+      if (f.endsWith('.sad.md') && b != null && a != null) sadDiff = lineDiff(b, a);
+    }
+  }
+  if (added.length || removed.length || modified.length) return { added, removed, modified, sadDiff };
+  return undefined;
+}
 
 // For each CLOSED job, diff its committed before/after spec snapshots and load its
 // commit list, so the browser editor can show the job's SRS/VTP changes and the code
@@ -66,25 +104,28 @@ type JobDiff = { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpIt
 async function loadJobCaches(
   name: string,
   jd: JobsDoc | null,
-): Promise<{ diffs: Record<string, JobDiff>; commits: Record<string, JobCommit[]> }> {
+): Promise<{ diffs: Record<string, JobDiff>; commits: Record<string, JobCommit[]>; arch: Record<string, ArchChange> }> {
   const diffs: Record<string, JobDiff> = {};
   const commits: Record<string, JobCommit[]> = {};
+  const arch: Record<string, ArchChange> = {};
   for (const j of jd?.jobs ?? []) {
     if (j.status !== 'closed') continue;
-    const [sb, sa, vb, va, cs] = await Promise.all([
+    const [sb, sa, vb, va, cs, ac] = await Promise.all([
       loadJobSnapshot(j.id, 'before', 'srs', name),
       loadJobSnapshot(j.id, 'after', 'srs', name),
       loadJobSnapshot(j.id, 'before', 'vtp', name),
       loadJobSnapshot(j.id, 'after', 'vtp', name),
       loadJobCommits(j.id),
+      loadJobArch(j.id),
     ]);
     const entry: JobDiff = {};
     if (sb && sa) entry.srs = diffDocs(sb as SrsDoc, sa as SrsDoc);
     if (vb && va) entry.vtp = diffDocs(vb as VtpDoc, va as VtpDoc);
     if (entry.srs || entry.vtp) diffs[j.id] = entry;
     if (cs.length) commits[j.id] = cs;
+    if (ac) arch[j.id] = ac;
   }
-  return { diffs, commits };
+  return { diffs, commits, arch };
 }
 
 // The arc42 markdown declares its diagrams via ![alt](name.svg); load exactly those
@@ -121,6 +162,7 @@ const LocalApp: React.FC = () => {
   // Per closed-job SRS/VTP diffs + commit lists, from the committed .specpad/jobs/<id>/ cache.
   const [jobDiffs, setJobDiffs] = useState<Record<string, { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpItem> }>>({});
   const [jobCommits, setJobCommits] = useState<Record<string, JobCommit[]>>({});
+  const [jobArch, setJobArch] = useState<Record<string, ArchChange>>({});
   // Architecture spec: arc42 markdown + the C4 Structurizr DSL (both optional, tracked text files).
   const [sad, setSad] = useState<string | null>(null);
   const [dsl, setDsl] = useState<string | null>(null);
@@ -183,6 +225,7 @@ const LocalApp: React.FC = () => {
     const caches = await loadJobCaches(name, jd);
     setJobDiffs(caches.diffs);
     setJobCommits(caches.commits);
+    setJobArch(caches.arch);
     const sadText = await loadProjectText(`${name}.sad.md`);
     setSad(sadText);
     setDsl(await loadProjectText(`${name}.workspace.dsl`));
@@ -257,6 +300,7 @@ const LocalApp: React.FC = () => {
       setDirtyJobs(false);
       setJobDiffs({});
       setJobCommits({});
+      setJobArch({});
       setSad(null);
       setDsl(null);
       setSadGuide(null);
@@ -551,6 +595,7 @@ const LocalApp: React.FC = () => {
             activeIds={activeIds}
             jobDiffs={jobDiffs}
             jobCommits={jobCommits}
+            jobArch={jobArch}
             onChange={handleJobsChange}
             onSetActive={handleSetJob}
             readOnly={launch.demo}

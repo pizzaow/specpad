@@ -18,6 +18,7 @@ import type { JobsDoc, JobRecord, JobType, DocDiff, ItemChange, SrsItem, VtpItem
 import { createJobsDoc, createJobRecord } from '../shared';
 
 type JobDiff = { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpItem> };
+type ArchChange = { added: string[]; removed: string[]; modified: string[]; sadDiff?: { added: string[]; removed: string[] } };
 
 interface JobsViewProps {
   doc: JobsDoc | null;
@@ -25,6 +26,7 @@ interface JobsViewProps {
   activeIds: string[];
   jobDiffs?: Record<string, JobDiff>;
   jobCommits?: Record<string, JobCommit[]>;
+  jobArch?: Record<string, ArchChange>;
   onChange: (next: JobsDoc) => void;
   onSetActive: (ids: string[]) => void;
   readOnly?: boolean;
@@ -49,7 +51,7 @@ function groupOrder(a: string, b: string): number {
 const typeOf = (j: JobRecord): JobType => j.type ?? 'feature';
 const ownerOf = (j: JobRecord): string => (j.owner ? j.owner.name : '');
 
-const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDiffs, jobCommits, onChange, onSetActive, readOnly }) => {
+const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDiffs, jobCommits, jobArch, onChange, onSetActive, readOnly }) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const jobs = doc?.jobs ?? [];
@@ -87,6 +89,7 @@ const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDif
     const isActive = activeIds.includes(selected.id);
     const diff = jobDiffs?.[selected.id];
     const commits = jobCommits?.[selected.id] ?? [];
+    const arch = jobArch?.[selected.id];
     return (
       <div className="jobs-detail">
         <button className="btn btn-link" style={{ paddingLeft: 0 }} onClick={() => setSelectedId(null)}>← All jobs</button>
@@ -156,6 +159,26 @@ const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDif
           </>
         ) : (
           <p className="text-muted">No cached changes for this job — run <code>specpad refresh</code>.</p>
+        )}
+
+        {selected.status === 'closed' && arch && (
+          <>
+            <h4 style={{ marginTop: 20 }}>Architecture changes</h4>
+            <ul className="list-unstyled" style={{ marginLeft: 8 }}>
+              {arch.added.map((f) => <li key={`a${f}`} className="text-success">+ {f}</li>)}
+              {arch.modified.map((f) => <li key={`m${f}`} className="text-warning">~ {f}</li>)}
+              {arch.removed.map((f) => <li key={`r${f}`} className="text-danger" style={{ textDecoration: 'line-through' }}>− {f}</li>)}
+            </ul>
+            {arch.sadDiff && (arch.sadDiff.added.length > 0 || arch.sadDiff.removed.length > 0) && (
+              <details style={{ marginLeft: 8 }}>
+                <summary style={{ cursor: 'pointer' }}>SAD text changes</summary>
+                <pre style={{ maxHeight: 280, overflow: 'auto', marginTop: 6 }}>
+                  {arch.sadDiff.removed.map((l, i) => <div key={`-${i}`} className="text-danger">- {l}</div>)}
+                  {arch.sadDiff.added.map((l, i) => <div key={`+${i}`} className="text-success">+ {l}</div>)}
+                </pre>
+              </details>
+            )}
+          </>
         )}
 
         {selected.status === 'closed' && commits.length > 0 && (

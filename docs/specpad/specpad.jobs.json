@@ -109,6 +109,15 @@
       "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
       "title": "Diagram-heavy architecture: markdown-placed inline diagrams; Structurizr DSL optional",
       "description": "Let the arc42 markdown define where diagrams go via image references; the Display renders each referenced SVG inline at its place. Ship several diagrams (Context overview near the top, Building Block interfaces, Runtime process, Deployment) and demote the Structurizr/C4 DSL to an optional alternative (loader kept, editor shows it only when present, removed from default templates + SpecPad's dogfood).",
+      "status": "closed"
+    },
+    {
+      "id": "j_5e1d92",
+      "code": "JOB-13",
+      "type": "feature",
+      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "title": "Architecture changes in the job detail (coarse file-level + SAD line diff)",
+      "description": "Snapshot the architecture files (sad.md, diagrams, guide, optional dsl) into the closed-job cache, and show an Architecture changes section in the job detail: which arch files were added/modified/removed (coarse), plus an added/removed-line diff for the SAD markdown. Completes SAD-4. Diagrams stay coarse (no in-diagram deltas).",
       "status": "open"
     }
   ]

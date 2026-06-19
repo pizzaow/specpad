@@ -405,6 +405,23 @@ export async function loadProjectText(filename: string): Promise<string | null> 
   }
 }
 
+/** Load a text file from a closed job's cache (`.specpad/jobs/<id>/<state>/<filename>`), or null. */
+export async function loadJobText(jobId: string, state: 'before' | 'after', filename: string): Promise<string | null> {
+  const segments = ['.specpad', 'jobs', jobId, state];
+  try {
+    if (demoBaseUrl) {
+      const res = await fetch(`${demoBaseUrl}${segments.join('/')}/${filename}`, { cache: 'no-cache' });
+      return res.ok ? res.text() : null;
+    }
+    const dir = await getSubDirectory(segments);
+    if (!dir) return null;
+    const fh = await dir.getFileHandle(filename);
+    return await (await fh.getFile()).text();
+  } catch {
+    return null;
+  }
+}
+
 /** Load a closed job's cached commit list (`.specpad/jobs/<id>/commits.json`), or [] if absent. */
 export async function loadJobCommits(jobId: string): Promise<JobCommit[]> {
   const filename = 'commits.json';
