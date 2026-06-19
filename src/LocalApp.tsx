@@ -33,8 +33,10 @@ import {
   loadJobs,
   saveJobs,
   loadSnapshot,
+  loadJobSnapshot,
 } from './localFileApi';
-import { activeJobIds } from './shared';
+import { activeJobIds, diffDocs } from './shared';
+import type { DocDiff, SrsItem, VtpItem } from './shared';
 import { buildRedline, computeAttribution } from './changeTracking';
 import type { SnapshotInput } from './changeTracking';
 import { cachedReleases } from './changeTrackingView';
@@ -52,6 +54,27 @@ import ViewTabs from './components/ViewTabs';
 
 type ViewMode = 'srs' | 'vtp' | 'testing' | 'jobs';
 type OpenResult = { name: string; documents: DocumentListItem[] };
+type JobDiff = { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpItem> };
+
+// For each CLOSED job, diff its committed before/after spec snapshots so the
+// browser editor can show the job's SRS/VTP changes (the cache is frozen on close).
+async function loadJobDiffs(name: string, jd: JobsDoc | null): Promise<Record<string, JobDiff>> {
+  const out: Record<string, JobDiff> = {};
+  for (const j of jd?.jobs ?? []) {
+    if (j.status !== 'closed') continue;
+    const [sb, sa, vb, va] = await Promise.all([
+      loadJobSnapshot(j.id, 'before', 'srs', name),
+      loadJobSnapshot(j.id, 'after', 'srs', name),
+      loadJobSnapshot(j.id, 'before', 'vtp', name),
+      loadJobSnapshot(j.id, 'after', 'vtp', name),
+    ]);
+    const entry: JobDiff = {};
+    if (sb && sa) entry.srs = diffDocs(sb as SrsDoc, sa as SrsDoc);
+    if (vb && va) entry.vtp = diffDocs(vb as VtpDoc, va as VtpDoc);
+    if (entry.srs || entry.vtp) out[j.id] = entry;
+  }
+  return out;
+}
 
 const LocalApp: React.FC = () => {
   const [documents, setDocuments] = useState<DocumentListItem[]>([]);
@@ -70,6 +93,8 @@ const LocalApp: React.FC = () => {
   const [job, setJob] = useState<JobDoc | null>(null);
   const [jobsDoc, setJobsDoc] = useState<JobsDoc | null>(null);
   const [dirtyJobs, setDirtyJobs] = useState(false);
+  // Per closed-job SRS/VTP diffs, computed from the committed .specpad/jobs/<id>/ cache.
+  const [jobDiffs, setJobDiffs] = useState<Record<string, { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpItem> }>>({});
   const [srsBaseline, setSrsBaseline] = useState<SrsDoc | null>(null);
   const [vtpBaseline, setVtpBaseline] = useState<VtpDoc | null>(null);
   const [srsSnapshots, setSrsSnapshots] = useState<SnapshotInput[]>([]);
@@ -119,8 +144,10 @@ const LocalApp: React.FC = () => {
     const rel = await loadReleases(name);
     setReleases(rel);
     setJob(await loadJob(name));
-    setJobsDoc(await loadJobs(name));
+    const jd = await loadJobs(name);
+    setJobsDoc(jd);
     setDirtyJobs(false);
+    setJobDiffs(await loadJobDiffs(name, jd));
     const cached = cachedReleases(rel);
     const srsSnaps: SnapshotInput[] = [];
     const vtpSnaps: SnapshotInput[] = [];
@@ -186,6 +213,7 @@ const LocalApp: React.FC = () => {
       setJob(null);
       setJobsDoc(null);
       setDirtyJobs(false);
+      setJobDiffs({});
       setSrsBaseline(null);
       setVtpBaseline(null);
       setSrsSnapshots([]);
@@ -461,6 +489,7 @@ const LocalApp: React.FC = () => {
             doc={jobsDoc}
             projectName={selectedDocName || projectName}
             activeIds={activeIds}
+            jobDiffs={jobDiffs}
             onChange={handleJobsChange}
             onSetActive={handleSetJob}
             readOnly={launch.demo}

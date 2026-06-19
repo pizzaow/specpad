@@ -89,11 +89,11 @@ describe('sidecar schemas', () => {
 
   it('a job record stores only record fields — no change associations (r_jb002)', () => {
     const keys = Object.keys((jobsSchema as any).properties.jobs.items.properties).sort();
-    expect(keys).toEqual(['code', 'description', 'id', 'status', 'title', 'type', 'version']);
+    expect(keys).toEqual(['code', 'description', 'id', 'owner', 'status', 'title', 'type', 'version']);
   });
 
-  it('accepts a job record with type/version and rejects a bad type', () => {
-    const withMeta = { ...jobs, jobs: [{ id: 'j_x', code: 'JOB-9', type: 'bugfix', version: '1.2', title: 'Fix', status: 'open' }] };
+  it('accepts a job record with type/version/owner and rejects a bad type', () => {
+    const withMeta = { ...jobs, jobs: [{ id: 'j_x', code: 'JOB-9', type: 'bugfix', version: '1.2', owner: { name: 'A', email: 'a@b' }, title: 'Fix', status: 'open' }] };
     expect(validate(withMeta)).toEqual([]);
     const badType = { ...jobs, jobs: [{ id: 'j_x', type: 'chore', title: 'Bad', status: 'open' }] };
     expect(validate(badType).length).toBeGreaterThan(0);

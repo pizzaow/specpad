@@ -1,25 +1,34 @@
 /**
- * JobsView — the Jobs tab, presented as release notes. The list groups jobs by
- * major version (unversioned under "Unreleased"), then by type into Features and
- * Bugfixes, with each job's description beneath its title. Selecting a job opens a
- * separate detail view (record editor + active-job control); the SRS/VTP changes
- * for a job will live there too. The register stores records only — a job's
- * change-set is derived from git, never stored here.
+ * JobsView — the Jobs tab. Two areas:
+ *  - "In progress" (open jobs) — what's being worked on; the active one shows live
+ *    work in the spec tabs. Others' open jobs have no detail until they're closed.
+ *  - "Released" (closed jobs) — release notes, grouped by major version
+ *    (unversioned under "Unreleased"), then Features / Bugfixes, description beneath.
+ *
+ * Selecting a job opens a separate detail view. For a CLOSED job the detail renders
+ * the job's SRS/VTP changes from its committed before/after cache (diffed here); an
+ * open job's per-job changes aren't materialized until it closes.
+ *
+ * `version` is skill-derived (the release containing the job); `owner` is set from
+ * git at creation. The register still stores records only — the change-set is the
+ * git-derived, frozen-on-close cache.
  */
 import React, { useState } from 'react';
-import type { JobsDoc, JobRecord, JobType } from '../shared';
+import type { JobsDoc, JobRecord, JobType, DocDiff, ItemChange, SrsItem, VtpItem } from '../shared';
 import { createJobsDoc, createJobRecord } from '../shared';
+
+type JobDiff = { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpItem> };
 
 interface JobsViewProps {
   doc: JobsDoc | null;
   projectName: string;
   activeIds: string[];
+  jobDiffs?: Record<string, JobDiff>;
   onChange: (next: JobsDoc) => void;
   onSetActive: (ids: string[]) => void;
   readOnly?: boolean;
 }
 
-/** Major-version group label for a job: "v1" from "1.2"/"v1.x", else "Unreleased". */
 function majorLabel(version?: string): string {
   const v = (version ?? '').trim();
   if (!v) return 'Unreleased';
@@ -32,13 +41,14 @@ function groupOrder(a: string, b: string): number {
   if (b === 'Unreleased') return 1;
   const na = parseInt(a.replace(/^v/i, ''), 10);
   const nb = parseInt(b.replace(/^v/i, ''), 10);
-  if (!isNaN(na) && !isNaN(nb)) return nb - na; // newest major first
+  if (!isNaN(na) && !isNaN(nb)) return nb - na;
   return a < b ? 1 : -1;
 }
 
 const typeOf = (j: JobRecord): JobType => j.type ?? 'feature';
+const ownerOf = (j: JobRecord): string => (j.owner ? j.owner.name : '');
 
-const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, onChange, onSetActive, readOnly }) => {
+const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDiffs, onChange, onSetActive, readOnly }) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const jobs = doc?.jobs ?? [];
@@ -74,6 +84,7 @@ const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, onChan
   // ---- Detail view ---------------------------------------------------------
   if (selected) {
     const isActive = activeIds.includes(selected.id);
+    const diff = jobDiffs?.[selected.id];
     return (
       <div className="jobs-detail">
         <button className="btn btn-link" style={{ paddingLeft: 0 }} onClick={() => setSelectedId(null)}>← All jobs</button>
@@ -94,8 +105,10 @@ const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, onChan
             </select>
           </Field>
           <Field label="Version">
-            <input type="text" className="form-control" value={selected.version ?? ''} disabled={readOnly}
-              placeholder="e.g. 1.2 (blank = Unreleased)" onChange={(e) => updateSelected({ version: e.target.value })} />
+            <p className="form-control-static text-muted">{selected.version || 'Unreleased'} <small>(derived from git)</small></p>
+          </Field>
+          <Field label="Owner">
+            <p className="form-control-static">{selected.owner ? `${selected.owner.name} <${selected.owner.email}>` : <span className="text-muted">unassigned</span>}</p>
           </Field>
           <Field label="Title">
             <input type="text" className="form-control" value={selected.title} disabled={readOnly}
@@ -129,29 +142,42 @@ const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, onChan
             </Field>
           )}
         </div>
-        <p className="text-muted" style={{ marginTop: 16 }}>
-          The SRS/VTP changes for this job will appear here.
-        </p>
+
+        <h4 style={{ marginTop: 20 }}>Changes</h4>
+        {selected.status !== 'closed' ? (
+          <p className="text-muted">In progress — this job's SRS/VTP changes are materialized once it is closed.</p>
+        ) : diff && (diff.srs || diff.vtp) ? (
+          <>
+            <DiffList label="Requirements (SRS)" diff={diff.srs} />
+            <DiffList label="Verification tests (VTP)" diff={diff.vtp} />
+            {isEmptyDiff(diff.srs) && isEmptyDiff(diff.vtp) && <p className="text-muted">No SRS/VTP changes in this job.</p>}
+          </>
+        ) : (
+          <p className="text-muted">No cached changes for this job — run <code>specpad refresh</code>.</p>
+        )}
       </div>
     );
   }
 
-  // ---- List view (release notes) ------------------------------------------
+  // ---- List view -----------------------------------------------------------
+  const open = jobs.filter((j) => j.status === 'open');
+  const closed = jobs.filter((j) => j.status === 'closed');
+
   const groups = new Map<string, JobRecord[]>();
-  for (const j of jobs) {
+  for (const j of closed) {
     const key = majorLabel(j.version);
     (groups.get(key) ?? groups.set(key, []).get(key)!).push(j);
   }
   const orderedGroups = [...groups.keys()].sort(groupOrder);
 
-  const jobRow = (j: JobRecord) => (
+  const row = (j: JobRecord) => (
     <li key={j.id} className="jobs-note" role="button" tabIndex={0} style={{ cursor: 'pointer', padding: '6px 0' }}
       onClick={() => setSelectedId(j.id)}>
       <div>
         {j.code && <span className="text-muted" style={{ marginRight: 6 }}>{j.code}</span>}
         <strong>{j.title || <em>(untitled)</em>}</strong>
         {activeIds.includes(j.id) && <span className="label label-primary" style={{ marginLeft: 6 }}>active</span>}
-        {j.status === 'closed' && <span className="label label-default" style={{ marginLeft: 6 }}>closed</span>}
+        {ownerOf(j) && <span className="text-muted" style={{ marginLeft: 6 }}>· {ownerOf(j)}</span>}
       </div>
       {j.description && <div className="text-muted" style={{ marginTop: 2 }}>{j.description}</div>}
     </li>
@@ -163,32 +189,64 @@ const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, onChan
         <h3 style={{ margin: 0 }}>Jobs</h3>
         {!readOnly && <button className="btn btn-default btn-xs" onClick={addJob}>+ New job</button>}
       </div>
-      {jobs.length === 0 ? (
-        <p className="text-muted">No jobs yet.{!readOnly && ' Add one to start tracking work.'}</p>
-      ) : (
-        orderedGroups.map((g) => {
-          const inGroup = groups.get(g)!;
-          const features = inGroup.filter((j) => typeOf(j) === 'feature');
-          const bugfixes = inGroup.filter((j) => typeOf(j) === 'bugfix');
-          return (
-            <section key={g} className="jobs-release" style={{ marginBottom: 18 }}>
-              <h4 style={{ borderBottom: '1px solid #ddd', paddingBottom: 4 }}>{g}</h4>
-              {features.length > 0 && (
-                <>
-                  <h5>Features</h5>
-                  <ul className="list-unstyled" style={{ marginLeft: 8 }}>{features.map(jobRow)}</ul>
-                </>
-              )}
-              {bugfixes.length > 0 && (
-                <>
-                  <h5>Bugfixes</h5>
-                  <ul className="list-unstyled" style={{ marginLeft: 8 }}>{bugfixes.map(jobRow)}</ul>
-                </>
-              )}
-            </section>
-          );
-        })
-      )}
+
+      <section className="jobs-inprogress" style={{ marginBottom: 18 }}>
+        <h4 style={{ borderBottom: '1px solid #ddd', paddingBottom: 4 }}>In progress</h4>
+        {open.length === 0 ? (
+          <p className="text-muted">No open jobs.</p>
+        ) : (
+          <ul className="list-unstyled" style={{ marginLeft: 8 }}>{open.map(row)}</ul>
+        )}
+      </section>
+
+      <section className="jobs-released">
+        <h4 style={{ borderBottom: '1px solid #ddd', paddingBottom: 4 }}>Released</h4>
+        {closed.length === 0 ? (
+          <p className="text-muted">No closed jobs yet.</p>
+        ) : (
+          orderedGroups.map((g) => {
+            const inGroup = groups.get(g)!;
+            const features = inGroup.filter((j) => typeOf(j) === 'feature');
+            const bugfixes = inGroup.filter((j) => typeOf(j) === 'bugfix');
+            return (
+              <div key={g} style={{ marginBottom: 14 }}>
+                <h5 style={{ fontWeight: 'bold' }}>{g}</h5>
+                {features.length > 0 && (<><h6>Features</h6><ul className="list-unstyled" style={{ marginLeft: 8 }}>{features.map(row)}</ul></>)}
+                {bugfixes.length > 0 && (<><h6>Bugfixes</h6><ul className="list-unstyled" style={{ marginLeft: 8 }}>{bugfixes.map(row)}</ul></>)}
+              </div>
+            );
+          })
+        )}
+      </section>
+    </div>
+  );
+};
+
+const isEmptyDiff = (d?: DocDiff<SrsItem | VtpItem>) => !d || (!d.added.length && !d.modified.length && !d.removed.length);
+
+type Change = ItemChange<SrsItem | VtpItem>;
+
+const label = (c: Change) => {
+  const item = c.after ?? c.before;
+  if (!item) return '';
+  return item.code ? `${item.code} — ${item.text}` : item.text;
+};
+
+const DiffList: React.FC<{ label: string; diff?: DocDiff<SrsItem | VtpItem> }> = ({ label: heading, diff }) => {
+  if (isEmptyDiff(diff)) return null;
+  const visible = (cs: Change[]) => cs.filter((c) => !(c.after ?? c.before)?.heading);
+  const added = visible(diff!.added);
+  const modified = visible(diff!.modified);
+  const removed = visible(diff!.removed);
+  if (!added.length && !modified.length && !removed.length) return null;
+  return (
+    <div style={{ marginBottom: 10 }}>
+      <strong>{heading}</strong>
+      <ul className="list-unstyled" style={{ marginLeft: 8 }}>
+        {added.map((c) => <li key={c.id} className="text-success">+ {label(c)}</li>)}
+        {modified.map((c) => <li key={c.id} className="text-warning">~ {label(c)}{c.changedFields?.length ? ` (${c.changedFields.join(', ')})` : ''}</li>)}
+        {removed.map((c) => <li key={c.id} className="text-danger" style={{ textDecoration: 'line-through' }}>− {label(c)}</li>)}
+      </ul>
     </div>
   );
 };

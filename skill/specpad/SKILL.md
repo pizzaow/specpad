@@ -195,6 +195,9 @@ all redlines, version diffs, and attribution from the raw snapshots you write us
 - `.specpad/baseline/` — raw snapshot of the spec files at the latest release (always present once
   refreshed).
 - `.specpad/snapshots/<version>/` — raw snapshots of older releases, pulled on demand and then kept.
+- `.specpad/jobs/<id>/{before,after}/` — raw before/after spec snapshots for a **closed** job, written
+  when it is closed so the browser editor can show that job's SRS/VTP changes. Frozen on close (a
+  closed job's change-set never grows), so it can't go stale; regenerable by `refresh`.
 
 `.specpad/` is a normal committed directory (deliberately not named `.cache/`, which many global
 gitignores exclude). It holds **only verbatim copies** of past spec files — never diffs.
@@ -230,7 +233,15 @@ change associations** (which items and commits a job touched is derived from git
 Maintain it as authoritative metadata (it is **not** part of the regenerable `.specpad/` cache):
 - **Create** it the first time the user tracks work without a tracker (or let them create it in the
   editor's Jobs tab). Generate each record's `id` like any other key — a `j_` prefix + 6 hex digits,
-  unique within the file, immutable. `code` (e.g. `JOB-1`) is a human label, freely renameable.
+  unique within the file, immutable. `code` (e.g. `JOB-1`) is a human label, freely renameable. Set
+  `owner` from git (`user.name`/`user.email`) at creation; set `type` to `feature` or `bugfix`.
+- **Version is derived, not hand-set.** A job's `version` is the release tag whose commits contain the
+  job (Unreleased until a release does). Derive it at `refresh`: for each closed job, the earliest tag
+  matching the manifest `tagPattern` that contains the job's last commit (`git tag --contains <sha>`).
+- **On close**, snapshot the job's before/after spec into `.specpad/jobs/<id>/{before,after}/` (raw
+  `git show <base>:…` and `<last>:…`, where `<base>` is the parent of the job's first commit and
+  `<last>` its final commit) and commit it. The editor diffs these to show the job's changes; you never
+  diff. `refresh` rebuilds these caches and re-derives versions.
 - **Activate** one or more jobs by writing their `id`s into `<name>.job.json` (`jobs: ["j_…", …]`;
   the legacy single `job: "…"` is still read). Only **open** jobs may be activated (the
   `active-job-open` / `active-job-known` rules).

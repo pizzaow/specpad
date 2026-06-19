@@ -8,57 +8,62 @@ const doc: JobsDoc = {
   type: 'jobs',
   name: 'AcmeApp',
   jobs: [
-    { id: 'j_feat1', code: 'JOB-1', type: 'feature', version: '1.0', title: 'Login', description: 'Adds login.', status: 'closed' },
-    { id: 'j_bug1', code: 'JOB-2', type: 'bugfix', version: '1.1', title: 'Fix logout', description: 'Logout crash.', status: 'closed' },
-    { id: 'j_feat2', code: 'JOB-3', type: 'feature', title: 'SSO', description: 'Single sign-on.', status: 'open' },
+    { id: 'j_open', code: 'JOB-3', type: 'feature', owner: { name: 'Sam', email: 's@x' }, title: 'SSO', description: 'Single sign-on.', status: 'open' },
+    { id: 'j_feat', code: 'JOB-1', type: 'feature', title: 'Login', description: 'Adds login.', status: 'closed' },
+    { id: 'j_bug', code: 'JOB-2', type: 'bugfix', title: 'Fix logout', description: 'Logout crash.', status: 'closed' },
   ],
+};
+
+// A cached diff for the closed feature job.
+const jobDiffs = {
+  j_feat: {
+    srs: { added: [{ id: 'r_1', status: 'added' as const, after: { id: 'r_1', code: 'AUTH-1', text: 'Shall log in.' } }], removed: [], modified: [] },
+    vtp: { added: [], removed: [], modified: [] },
+  },
 };
 
 function renderView(overrides: Partial<React.ComponentProps<typeof JobsView>> = {}) {
   const onChange = vi.fn();
   const onSetActive = vi.fn();
   render(
-    <JobsView doc={doc} projectName="AcmeApp" activeIds={['j_feat2']} onChange={onChange} onSetActive={onSetActive} {...overrides} />,
+    <JobsView doc={doc} projectName="AcmeApp" activeIds={['j_open']} jobDiffs={jobDiffs} onChange={onChange} onSetActive={onSetActive} {...overrides} />,
   );
   return { onChange, onSetActive };
 }
 
-describe('JobsView — release notes list', () => {
-  it('groups by major version (unversioned under Unreleased) and by type', () => {
+describe('JobsView — in progress vs released', () => {
+  it('separates open jobs (In progress) from closed jobs (Released)', () => {
     renderView();
-    // Three groups: Unreleased (the unversioned open feature), v1 (1.0 + 1.1).
-    expect(screen.getByText('Unreleased')).toBeInTheDocument();
-    expect(screen.getByText('v1')).toBeInTheDocument();
-    // Features and Bugfixes subheadings appear.
-    expect(screen.getAllByText('Features').length).toBeGreaterThan(0);
+    expect(screen.getByText('In progress')).toBeInTheDocument();
+    expect(screen.getByText('Released')).toBeInTheDocument();
+    // Open job appears with its owner; closed jobs grouped under Features/Bugfixes.
+    expect(screen.getByText('SSO')).toBeInTheDocument();
+    expect(screen.getByText('Features')).toBeInTheDocument();
     expect(screen.getByText('Bugfixes')).toBeInTheDocument();
   });
 
-  it('shows the description beneath each job title', () => {
+  it('renders a closed job\'s cached SRS/VTP changes in its detail', () => {
     renderView();
-    expect(screen.getByText('Single sign-on.')).toBeInTheDocument();
-    expect(screen.getByText('Logout crash.')).toBeInTheDocument();
-  });
-
-  it('opens a separate detail view when a job is clicked, with a way back', () => {
-    renderView();
-    fireEvent.click(screen.getByText('SSO'));
-    // Detail view: editable fields are now present...
-    expect(screen.getByLabelText('Job type')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('Single sign-on.')).toBeInTheDocument();
-    // ...and the list groups are gone.
-    expect(screen.queryByText('Bugfixes')).not.toBeInTheDocument();
-    // Back returns to the list.
+    fireEvent.click(screen.getByText('Login'));
+    expect(screen.getByText('Changes')).toBeInTheDocument();
+    expect(screen.getByText(/AUTH-1 — Shall log in\./)).toBeInTheDocument();
     fireEvent.click(screen.getByText('← All jobs'));
-    expect(screen.getByText('Bugfixes')).toBeInTheDocument();
+    expect(screen.getByText('Released')).toBeInTheDocument();
   });
 
-  it('edits the job type from the detail view', () => {
-    const { onChange } = renderView();
+  it('shows owner and derived (read-only) version in the detail', () => {
+    renderView();
     fireEvent.click(screen.getByText('SSO'));
-    fireEvent.change(screen.getByLabelText('Job type'), { target: { value: 'bugfix' } });
-    const next = onChange.mock.calls.at(-1)![0] as JobsDoc;
-    expect(next.jobs.find((j) => j.id === 'j_feat2')!.type).toBe('bugfix');
+    expect(screen.getByText(/Sam <s@x>/)).toBeInTheDocument();
+    expect(screen.getByText(/Unreleased/)).toBeInTheDocument();
+    // version is derived — no editable input for it
+    expect(screen.queryByPlaceholderText(/blank = Unreleased/)).not.toBeInTheDocument();
+  });
+
+  it('tells the user an open job\'s changes appear once closed', () => {
+    renderView();
+    fireEvent.click(screen.getByText('SSO'));
+    expect(screen.getByText(/materialized once it is closed/)).toBeInTheDocument();
   });
 
   it('adds a new feature job and opens its detail', () => {

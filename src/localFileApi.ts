@@ -373,6 +373,20 @@ export async function saveJobs(name: string, doc: JobsDoc): Promise<void> {
   }
 }
 
+/** Load a cached closed-job snapshot doc (`.specpad/jobs/<id>/<before|after>/...`), or null. */
+export async function loadJobSnapshot(
+  jobId: string,
+  state: 'before' | 'after',
+  type: 'srs' | 'vtp' | 'proj',
+  name: string,
+): Promise<SpecPadDoc | null> {
+  const segments = ['.specpad', 'jobs', jobId, state];
+  if (demoBaseUrl) return fetchDemoJson(`${segments.join('/')}/${name}.${type}.json`);
+  const dir = await getSubDirectory(segments);
+  if (!dir) return null;
+  return readJsonFrom(dir, `${name}.${type}.json`);
+}
+
 /** Load a cached snapshot doc (`.specpad/baseline/...` or `.specpad/snapshots/<version>/...`). */
 export async function loadSnapshot(
   location: SnapshotLocation,

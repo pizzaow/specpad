@@ -7,6 +7,7 @@
       "id": "j_4a7f1c",
       "code": "JOB-1",
       "type": "feature",
+      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
       "title": "Jobs register & change-tracking traceability",
       "description": "Add a SpecPad-owned jobs register (jobs.json) with an open/closed lifecycle, the active-job governance rule, the editor Jobs view and active-job picker, and the skill git plumbing so every spec change traces to a job. Baselined at v1.1.",
       "status": "open"
@@ -15,6 +16,7 @@
       "id": "j_9b2e07",
       "code": "JOB-2",
       "type": "feature",
+      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
       "title": "Onboarding: specpad init",
       "description": "One-command setup that scaffolds docs/specpad/, installs the pre-push hook, wires the SpecPad working-loop directive into the project CLAUDE.md, and generates the launcher — so a new user is fully set up on install with no manual configuration. Idempotent and non-destructive.",
       "status": "closed"
@@ -23,6 +25,7 @@
       "id": "j_c1a8f3",
       "code": "JOB-3",
       "type": "feature",
+      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
       "title": "Baseline generator (draft a spec from existing code)",
       "description": "An agent procedure that bootstraps a draft v1 SRS/VTP from an existing codebase — surveying modules, public behavior, and existing tests — so SpecPad can be adopted on a project that did not start with it. Output is a draft for human ratification, mapped to existing tests, governance-clean.",
       "status": "closed"
@@ -31,6 +34,7 @@
       "id": "j_5d3b29",
       "code": "JOB-4",
       "type": "feature",
+      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
       "title": "Requirement audit (reconcile spec with code)",
       "description": "An agent procedure that reconciles the existing SRS/VTP against the whole codebase, reporting drift both directions — code behavior with no requirement (missing), requirements whose behavior is gone/changed (stale), and requirements/test references with no covering test (coverage). Reports ratifiable proposals; applies nothing destructive. The commit-time audit is its staged-diff form.",
       "status": "closed"
@@ -39,6 +43,7 @@
       "id": "j_7e0c84",
       "code": "JOB-5",
       "type": "bugfix",
+      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
       "title": "Spec reconciliation (apply requirement-audit findings)",
       "description": "Apply the ratified findings from the first requirement audit: add the missing recent-projects requirement (EDS-12) mapped to its existing tests, correct the stale ValidationPanel test reference (TEST-22 -> StatusBar), and close two of the four not_tested coverage gaps (TEST-9 id-immutability, TEST-59 records-only) with real tests.",
       "status": "closed"
@@ -47,8 +52,18 @@
       "id": "j_a3f7d2",
       "code": "JOB-6",
       "type": "feature",
+      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
       "title": "Jobs view as release notes",
-      "description": "Reframe the editor Jobs tab as release notes: group jobs by major version (unversioned under Unreleased), then by type into Features and Bugfixes, with each job's description beneath its title. Clicking a job opens a separate detail view. Adds the job record `type` and `version` fields and moves Jobs to the leftmost tab.",
+      "description": "Reframe the editor Jobs tab as release notes: group jobs by major version (unversioned under Unreleased), then by type into Features and Bugfixes, with each job's description beneath its title. Clicking a job opens a separate detail view. Adds the job record type and version fields and moves Jobs to the leftmost tab.",
+      "status": "closed"
+    },
+    {
+      "id": "j_b8c2e5",
+      "code": "JOB-7",
+      "type": "feature",
+      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "title": "Closed-job change cache, owner, derived version, in-progress vs released views",
+      "description": "On close, cache a job's before/after spec snapshots (lockfile-class) so the browser editor can show its SRS/VTP changes; add an owner set from git at creation; derive a job's version from the release tag containing its commits; split the Jobs tab into In progress (open) and Released (closed) views.",
       "status": "open"
     }
   ]

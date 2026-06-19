@@ -1,6 +1,7 @@
 // @vitest-environment node
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { validate } from '../../src/shared/validate';
 
 const skill = readFileSync(new URL('../specpad/SKILL.md', import.meta.url), 'utf8');
@@ -25,6 +26,30 @@ describe('skill documents the change-tracking plumbing', () => {
   it('states the skill never computes diffs (the editor does)', () => {
     expect(skill.toLowerCase()).toContain('never');
     expect(skill).toMatch(/editor (computes|owns|diffs)/i);
+  });
+
+  it('documents the closed-job cache, derived version, and owner-from-git', () => {
+    expect(skill).toMatch(/\.specpad\/jobs\//);          // closed-job before/after cache
+    expect(skill).toMatch(/On close/i);                   // cache written on close
+    expect(skill).toMatch(/version is derived/i);         // version not hand-set
+    expect(skill).toMatch(/git tag --contains/);          // derivation mechanism
+    expect(skill).toMatch(/owner.*from git|set `owner`/i); // owner set from git
+  });
+});
+
+describe('dogfood closed-job caches', () => {
+  const jobsDir = fileURLToPath(new URL('../../docs/specpad/.specpad/jobs/', import.meta.url));
+
+  it('has committed before/after spec snapshots for closed jobs that parse and validate', () => {
+    expect(existsSync(jobsDir)).toBe(true);
+    const ids = readdirSync(jobsDir);
+    expect(ids.length).toBeGreaterThan(0);
+    for (const id of ids) {
+      for (const state of ['before', 'after']) {
+        const srs = JSON.parse(readFileSync(`${jobsDir}${id}/${state}/specpad.srs.json`, 'utf8'));
+        expect(validate(srs)).toEqual([]);
+      }
+    }
   });
 });
 
