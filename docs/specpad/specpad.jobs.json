@@ -73,6 +73,15 @@
       "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
       "title": "Source-code traceability (job to commits to code)",
       "description": "Cache each closed job's commit list (commits.json, derived from the Job: trailer) so the editor shows a job's commits alongside its SRS/VTP changes, and document the skill's source-traceability export (per-job commits + code diffs from git) that feeds the eQMS evidence package.",
+      "status": "closed"
+    },
+    {
+      "id": "j_e7a2b1",
+      "code": "JOB-9",
+      "type": "feature",
+      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "title": "Architecture spec (arc42 + C4) and Architecture view",
+      "description": "Add an optional architecture spec — an arc42 software architecture document (markdown) plus a C4 model in Structurizr DSL — tracked under docs/specpad/, job/release coupled (no requirement-level trace matrix). New editor Architecture view renders the arc42 doc and presents the C4 DSL. Dogfooded with SpecPad's own SAD.",
       "status": "open"
     }
   ]

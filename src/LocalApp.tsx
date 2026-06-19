@@ -35,6 +35,7 @@ import {
   loadSnapshot,
   loadJobSnapshot,
   loadJobCommits,
+  loadProjectText,
 } from './localFileApi';
 import { activeJobIds, diffDocs } from './shared';
 import type { DocDiff, SrsItem, VtpItem, JobCommit } from './shared';
@@ -50,10 +51,11 @@ import SRSTable from './components/SRSTable';
 import VTPTable from './components/VTPTable';
 import TestingView from './components/TestingView';
 import JobsView from './components/JobsView';
+import ArchitectureView from './components/ArchitectureView';
 import StatusBar from './components/StatusBar';
 import ViewTabs from './components/ViewTabs';
 
-type ViewMode = 'srs' | 'vtp' | 'testing' | 'jobs';
+type ViewMode = 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch';
 type OpenResult = { name: string; documents: DocumentListItem[] };
 type JobDiff = { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpItem> };
 
@@ -104,6 +106,9 @@ const LocalApp: React.FC = () => {
   // Per closed-job SRS/VTP diffs + commit lists, from the committed .specpad/jobs/<id>/ cache.
   const [jobDiffs, setJobDiffs] = useState<Record<string, { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpItem> }>>({});
   const [jobCommits, setJobCommits] = useState<Record<string, JobCommit[]>>({});
+  // Architecture spec: arc42 markdown + the C4 Structurizr DSL (both optional, tracked text files).
+  const [sad, setSad] = useState<string | null>(null);
+  const [dsl, setDsl] = useState<string | null>(null);
   const [srsBaseline, setSrsBaseline] = useState<SrsDoc | null>(null);
   const [vtpBaseline, setVtpBaseline] = useState<VtpDoc | null>(null);
   const [srsSnapshots, setSrsSnapshots] = useState<SnapshotInput[]>([]);
@@ -159,6 +164,8 @@ const LocalApp: React.FC = () => {
     const caches = await loadJobCaches(name, jd);
     setJobDiffs(caches.diffs);
     setJobCommits(caches.commits);
+    setSad(await loadProjectText(`${name}.sad.md`));
+    setDsl(await loadProjectText(`${name}.workspace.dsl`));
     const cached = cachedReleases(rel);
     const srsSnaps: SnapshotInput[] = [];
     const vtpSnaps: SnapshotInput[] = [];
@@ -226,6 +233,8 @@ const LocalApp: React.FC = () => {
       setDirtyJobs(false);
       setJobDiffs({});
       setJobCommits({});
+      setSad(null);
+      setDsl(null);
       setSrsBaseline(null);
       setVtpBaseline(null);
       setSrsSnapshots([]);
@@ -483,7 +492,7 @@ const LocalApp: React.FC = () => {
       {(srsDoc || vtpDoc) && (
         <ViewTabs
           current={currentView}
-          enabled={{ srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc }}
+          enabled={{ srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl) }}
           onSelect={setCurrentView}
         />
       )}
@@ -496,6 +505,7 @@ const LocalApp: React.FC = () => {
         {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onChange={handleChange} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} />}
         {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onChange={handleChange} redline={vtpRedline} attribution={vtpSnapshots.length ? vtpAttribution : undefined} />}
         {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} onChange={handleChange} />}
+        {currentView === 'arch' && isDirectoryOpen && <ArchitectureView sad={sad} dsl={dsl} />}
         {currentView === 'jobs' && isDirectoryOpen && (
           <JobsView
             doc={jobsDoc}

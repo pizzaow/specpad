@@ -373,6 +373,23 @@ export async function saveJobs(name: string, doc: JobsDoc): Promise<void> {
   }
 }
 
+/** Load a project text file (e.g. `<name>.sad.md`, `<name>.workspace.dsl`), or null if absent. */
+export async function loadProjectText(filename: string): Promise<string | null> {
+  if (demoBaseUrl) {
+    const res = await fetch(demoBaseUrl + filename, { cache: 'no-cache' });
+    if (!res.ok) return null;
+    return res.text();
+  }
+  if (!projectDirHandle) return null;
+  try {
+    const fh = await projectDirHandle.getFileHandle(filename);
+    return await (await fh.getFile()).text();
+  } catch (err: any) {
+    if (err?.name === 'NotFoundError') return null;
+    throw err;
+  }
+}
+
 /** Load a closed job's cached commit list (`.specpad/jobs/<id>/commits.json`), or [] if absent. */
 export async function loadJobCommits(jobId: string): Promise<JobCommit[]> {
   const filename = 'commits.json';

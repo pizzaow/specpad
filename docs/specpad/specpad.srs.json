@@ -130,6 +130,12 @@
     { "id": "h_sc000", "heading": true, "text": "Source-code traceability" },
     { "id": "r_sc001", "code": "SRC-1", "text": "Because every commit carries a Job: trailer, the skill shall derive a job's commits and code changes from git (job → commits → code) on demand, with no maintained requirement-to-code matrix.", "tags": ["skill", "change-tracking"] },
     { "id": "r_sc002", "code": "SRC-2", "text": "On close, the skill shall cache a job's commit list (.specpad/jobs/<id>/commits.json, derived from the Job: trailer) so the editor can show the commits behind a job's changes.", "tags": ["skill", "change-tracking"] },
-    { "id": "r_sc003", "code": "SRC-3", "text": "A closed job's detail view shall list its commits (hash, subject, author, date) alongside its SRS/VTP changes.", "tags": ["editor", "jobs"] }
+    { "id": "r_sc003", "code": "SRC-3", "text": "A closed job's detail view shall list its commits (hash, subject, author, date) alongside its SRS/VTP changes.", "tags": ["editor", "jobs"] },
+
+    { "id": "h_sa000", "heading": true, "text": "Architecture documentation" },
+    { "id": "r_sa001", "code": "SAD-1", "text": "The system shall support an optional architecture spec — an arc42 software architecture document (<name>.sad.md) plus a C4 model in Structurizr DSL (<name>.workspace.dsl) — tracked under docs/specpad/, separate from the id-keyed JSON requirements contract.", "tags": ["architecture", "skill"] },
+    { "id": "r_sa002", "code": "SAD-2", "text": "The editor shall provide an Architecture view that renders the arc42 document and presents the C4 Structurizr DSL (live C4 diagram rendering is a planned follow-up).", "tags": ["architecture", "editor"] },
+    { "id": "r_sa003", "code": "SAD-3", "text": "Architecture shall be job/release-coupled, not requirement-coupled: no requirement-to-architecture trace matrix is maintained; a job's architecture impact comes from diffing snapshots.", "tags": ["architecture", "change-tracking"] },
+    { "id": "r_sa004", "code": "SAD-4", "text": "On close/refresh, the architecture docs shall be snapshotted into the per-job and release caches alongside the spec docs, so a job's architecture changes can be shown.", "tags": ["architecture", "change-tracking"] }
   ]
 }

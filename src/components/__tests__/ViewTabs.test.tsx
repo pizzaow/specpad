@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import ViewTabs from '../ViewTabs';
 
 describe('ViewTabs', () => {
-  const enabled = { srs: true, vtp: true, testing: true, jobs: true };
+  const enabled = { srs: true, vtp: true, testing: true, jobs: true, arch: true };
 
   it('renders the three labels and marks the active one', () => {
     const { container } = render(<ViewTabs current="srs" enabled={enabled} onSelect={vi.fn()} />);
@@ -18,6 +18,11 @@ describe('ViewTabs', () => {
     expect(container.querySelector('li:first-child')?.textContent).toBe('Jobs');
   });
 
+  it('includes an Architecture tab', () => {
+    render(<ViewTabs current="srs" enabled={enabled} onSelect={vi.fn()} />);
+    expect(screen.getByText('Architecture')).toBeInTheDocument();
+  });
+
   it('selects a tab on click', () => {
     const onSelect = vi.fn();
     render(<ViewTabs current="srs" enabled={enabled} onSelect={onSelect} />);
@@ -28,7 +33,7 @@ describe('ViewTabs', () => {
   it('disables a tab whose document is absent and does not select it', () => {
     const onSelect = vi.fn();
     render(
-      <ViewTabs current="srs" enabled={{ srs: true, vtp: false, testing: false, jobs: false }} onSelect={onSelect} />,
+      <ViewTabs current="srs" enabled={{ srs: true, vtp: false, testing: false, jobs: false, arch: false }} onSelect={onSelect} />,
     );
     const vtpTab = screen.getByText('Verification Tests').closest('li');
     expect(vtpTab?.className).toContain('disabled');

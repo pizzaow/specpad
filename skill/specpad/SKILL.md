@@ -54,9 +54,29 @@ This loop is the **primary** mechanism. The pre-push gate and requirement audit 
 - `docs/specpad/<name>.proj.json` — project index
 - `docs/specpad/<name>.srs.json` — requirements
 - `docs/specpad/<name>.vtp.json` — verification tests
+- `docs/specpad/<name>.sad.md` — optional architecture document (arc42 skeleton, markdown)
+- `docs/specpad/<name>.workspace.dsl` — optional C4 model (Structurizr DSL)
 - `docs/specpad/index.html` — generated launcher (opens the hosted editor)
 
-Every file carries `"schemaVersion": "1.0"`.
+Every JSON file carries `"schemaVersion": "1.0"`.
+
+## Architecture spec (arc42 + C4) — optional
+
+When a project documents its architecture, keep it as **two tracked text files** (not the id-keyed JSON
+contract): `<name>.sad.md` (arc42 skeleton — the 12 sections) and `<name>.workspace.dsl` (a Structurizr
+C4 model). This keeps the requirements contract simple; architecture is a separate, optional spec.
+
+- **Coupling is job/release-level, not requirement-level.** Do NOT maintain a requirement↔architecture
+  trace matrix (not required by 62304; architecture only needs to be derived-from and verified-to-
+  implement the requirements, which the arc42 prose states). A job's architecture impact comes from
+  diffing its snapshots, the same as SRS/VTP.
+- Author/update the SAD in the **working loop** alongside requirements when a change affects the
+  architecture; it rides with the job and the code.
+- The editor's **Architecture view** renders the arc42 markdown and presents the C4 DSL (live C4
+  diagram rendering is a planned follow-up; render with Structurizr meanwhile).
+- **On close / refresh**, snapshot `<name>.sad.md` and `<name>.workspace.dsl` into the release baseline
+  and the per-job cache (`.specpad/jobs/<id>/{before,after}/`) alongside the spec docs, so a job's
+  architecture changes can be shown going forward.
 
 ## Initialize SpecPad (`specpad init`)
 
