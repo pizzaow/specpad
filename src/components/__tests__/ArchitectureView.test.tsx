@@ -37,4 +37,10 @@ describe('ArchitectureView', () => {
     render(<ArchitectureView sad={null} dsl={null} />);
     expect(screen.getByText(/No architecture document/)).toBeInTheDocument();
   });
+
+  it('surfaces the authoring guide in a panel when provided', () => {
+    render(<ArchitectureView sad={sad} dsl={dsl} guide={'# Guide\n- be concise'} />);
+    expect(screen.getByText('Authoring guide')).toBeInTheDocument();
+    expect(screen.getByText('be concise')).toBeInTheDocument();
+  });
 });

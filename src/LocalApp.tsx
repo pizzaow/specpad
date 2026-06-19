@@ -109,6 +109,7 @@ const LocalApp: React.FC = () => {
   // Architecture spec: arc42 markdown + the C4 Structurizr DSL (both optional, tracked text files).
   const [sad, setSad] = useState<string | null>(null);
   const [dsl, setDsl] = useState<string | null>(null);
+  const [sadGuide, setSadGuide] = useState<string | null>(null);
   const [srsBaseline, setSrsBaseline] = useState<SrsDoc | null>(null);
   const [vtpBaseline, setVtpBaseline] = useState<VtpDoc | null>(null);
   const [srsSnapshots, setSrsSnapshots] = useState<SnapshotInput[]>([]);
@@ -166,6 +167,7 @@ const LocalApp: React.FC = () => {
     setJobCommits(caches.commits);
     setSad(await loadProjectText(`${name}.sad.md`));
     setDsl(await loadProjectText(`${name}.workspace.dsl`));
+    setSadGuide(await loadProjectText(`${name}.sad.guide.md`));
     const cached = cachedReleases(rel);
     const srsSnaps: SnapshotInput[] = [];
     const vtpSnaps: SnapshotInput[] = [];
@@ -235,6 +237,7 @@ const LocalApp: React.FC = () => {
       setJobCommits({});
       setSad(null);
       setDsl(null);
+      setSadGuide(null);
       setSrsBaseline(null);
       setVtpBaseline(null);
       setSrsSnapshots([]);
@@ -505,7 +508,7 @@ const LocalApp: React.FC = () => {
         {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onChange={handleChange} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} />}
         {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onChange={handleChange} redline={vtpRedline} attribution={vtpSnapshots.length ? vtpAttribution : undefined} />}
         {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} onChange={handleChange} />}
-        {currentView === 'arch' && isDirectoryOpen && <ArchitectureView sad={sad} dsl={dsl} />}
+        {currentView === 'arch' && isDirectoryOpen && <ArchitectureView sad={sad} dsl={dsl} guide={sadGuide} />}
         {currentView === 'jobs' && isDirectoryOpen && (
           <JobsView
             doc={jobsDoc}

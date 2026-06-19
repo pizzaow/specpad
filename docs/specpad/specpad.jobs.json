@@ -82,6 +82,15 @@
       "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
       "title": "Architecture spec (arc42 + C4) and Architecture view",
       "description": "Add an optional architecture spec — an arc42 software architecture document (markdown) plus a C4 model in Structurizr DSL — tracked under docs/specpad/, job/release coupled (no requirement-level trace matrix). New editor Architecture view renders the arc42 doc and presents the C4 DSL. Dogfooded with SpecPad's own SAD.",
+      "status": "closed"
+    },
+    {
+      "id": "j_f1c3d8",
+      "code": "JOB-10",
+      "type": "feature",
+      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "title": "Architecture templates (generic + medical), init path quiz, beefed-up generic SAD",
+      "description": "Ship two architecture profiles — a beefed-up generic arc42+C4 template (several diagrams, no safety classification) and a medical template (62304/FDA: per-unit classification, segregation, verification) — each with a soft authoring guide. The init quiz lets the user pick generic vs medical and scaffolds the match. Re-dogfood SpecPad's SAD with the richer generic template. Cybersecurity architecture is a noted coming-soon pillar.",
       "status": "open"
     }
   ]

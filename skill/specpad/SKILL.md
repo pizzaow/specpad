@@ -62,14 +62,30 @@ Every JSON file carries `"schemaVersion": "1.0"`.
 
 ## Architecture spec (arc42 + C4) — optional
 
-When a project documents its architecture, keep it as **two tracked text files** (not the id-keyed JSON
-contract): `<name>.sad.md` (arc42 skeleton — the 12 sections) and `<name>.workspace.dsl` (a Structurizr
-C4 model). This keeps the requirements contract simple; architecture is a separate, optional spec.
+When a project documents its architecture, keep it as **tracked text files** (not the id-keyed JSON
+contract): `<name>.sad.md` (arc42 skeleton) + `<name>.workspace.dsl` (a Structurizr C4 model), plus an
+editable soft **authoring guide** `<name>.sad.guide.md`. This keeps the requirements contract simple;
+architecture is a separate, optional spec.
+
+**Two profiles ship as templates; `init` picks one (see the init quiz):**
+- **generic** (`templates/sad.generic.md` + `workspace.dsl` + `sad.guide.generic.md`) — a clean, fuller
+  arc42 with several C4 views and **no safety classification**. The default for non-medical projects.
+- **medical** (`templates/sad.medical.md` + `workspace.dsl` + `sad.guide.medical.md`) — aligned with
+  IEC 62304 / FDA premarket guidance: per-unit **classification** (a profile convention — each C4 unit
+  carries a `class` property/tag, coloured in views), **segregation** for risk control, and an
+  **architecture-verification** section.
+
+The **authoring guide** is soft context (tone, terminology, what to emphasize) — the skill **reads it
+before editing the SAD**; the editor shows it as a panel. Guidance steers; governance enforces — keep
+hard rules out of the guide.
 
 - **Coupling is job/release-level, not requirement-level.** Do NOT maintain a requirement↔architecture
   trace matrix (not required by 62304; architecture only needs to be derived-from and verified-to-
   implement the requirements, which the arc42 prose states). A job's architecture impact comes from
   diffing its snapshots, the same as SRS/VTP.
+- **Third-party components (SOUP/OTS) are NOT inventoried in the SAD** — they belong in a separate,
+  SBOM-aligned components register (a planned pillar). The SAD references it; it does not contain it.
+- **Cybersecurity architecture** is a planned companion pillar (much of it derivable) — not built yet.
 - Author/update the SAD in the **working loop** alongside requirements when a change affects the
   architecture; it rides with the job and the code.
 - The editor's **Architecture view** renders the arc42 markdown and presents the C4 DSL (live C4
@@ -86,8 +102,13 @@ launcher — with no manual configuration. Re-running it must be a safe no-op.
 
 1. **Scaffold** `docs/specpad/` if absent (see "Scaffolding a new project"): project index, SRS, VTP,
    and the empty releases manifest, with `PROJECT_NAME` replaced. **Never overwrite** existing documents.
-2. **Generate the launcher** `docs/specpad/index.html` from the template.
-3. **Install the pre-push hook** (the commit-check backstop):
+2. **Ask the project path (short quiz):** "Is this a **medical** device project (IEC 62304 / FDA), or a
+   **generic** project?" Scaffold the matching architecture profile — `sad.generic.md` or
+   `sad.medical.md` → `<name>.sad.md`, the `workspace.dsl` → `<name>.workspace.dsl`, and the matching
+   guide → `<name>.sad.guide.md` (replace `PROJECT_NAME`). Generic is the default; the user can switch
+   later by re-scaffolding. (Today the quiz is just this one choice; more profile options can be added.)
+3. **Generate the launcher** `docs/specpad/index.html` from the template.
+4. **Install the pre-push hook** (the commit-check backstop):
    ```
    mkdir -p .githooks
    cp <skill>/templates/hooks/pre-push .githooks/pre-push
@@ -96,10 +117,10 @@ launcher — with no manual configuration. Re-running it must be a safe no-op.
    ```
    If `core.hooksPath` is already set to a different directory, **do not clobber it** — copy the hook
    into that directory instead and tell the user.
-4. **Wire `CLAUDE.md`** (this is what turns the pull-triggered skill into the always-on working loop):
+5. **Wire `CLAUDE.md`** (this is what turns the pull-triggered skill into the always-on working loop):
    if the file has no `<!-- specpad:working-loop -->` sentinel, **append** `templates/CLAUDE.specpad.md`
    to it (create `CLAUDE.md` only if absent). **Never overwrite** an existing `CLAUDE.md`.
-5. **Validate** every file written and **report** what was set up versus already present.
+6. **Validate** every file written and **report** what was set up versus already present.
 
 After `init`, the working loop is active every session and the pre-push gate enforces a job per commit.
 

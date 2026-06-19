@@ -9,6 +9,7 @@ import React from 'react';
 interface ArchitectureViewProps {
   sad: string | null;
   dsl: string | null;
+  guide?: string | null;
 }
 
 const clean = (s: string) => s.replace(/\*\*/g, '').replace(/`([^`]+)`/g, '$1');
@@ -37,12 +38,18 @@ function renderMarkdown(md: string): React.ReactNode[] {
   return out;
 }
 
-const ArchitectureView: React.FC<ArchitectureViewProps> = ({ sad, dsl }) => {
+const ArchitectureView: React.FC<ArchitectureViewProps> = ({ sad, dsl, guide }) => {
   if (!sad && !dsl) {
     return <div className="alert alert-info">No architecture document for this project.</div>;
   }
   return (
     <div className="architecture-view">
+      {guide && (
+        <details className="arch-guide" style={{ marginBottom: 12 }}>
+          <summary style={{ cursor: 'pointer' }}>Authoring guide</summary>
+          <div className="text-muted" style={{ marginTop: 6 }}>{renderMarkdown(guide)}</div>
+        </details>
+      )}
       {sad ? <div className="arch-doc">{renderMarkdown(sad)}</div> : <p className="text-muted">No arc42 document.</p>}
       <h4 style={{ marginTop: 24 }}>C4 model (Structurizr DSL)</h4>
       {dsl ? (

@@ -25,6 +25,36 @@ describe('skill documents the architecture spec', () => {
   });
 });
 
+const tpl = (f: string) => readFileSync(new URL(`../specpad/templates/${f}`, import.meta.url), 'utf8');
+
+describe('architecture profiles & templates', () => {
+  it('ships generic and medical SAD templates with the right sections', () => {
+    const generic = tpl('sad.generic.md');
+    const medical = tpl('sad.medical.md');
+    expect(generic).toMatch(/arc42/i);
+    expect(medical).toMatch(/Safety classification & segregation/);
+    expect(medical).toMatch(/Architecture Verification/);
+    // generic has no per-unit classification sections
+    expect(generic).not.toMatch(/Safety classification & segregation/);
+    expect(generic).not.toMatch(/Architecture Verification/);
+  });
+
+  it('ships a multi-view C4 workspace template and per-profile authoring guides', () => {
+    const w = tpl('workspace.dsl');
+    expect(w).toMatch(/systemContext/);
+    expect(w).toMatch(/container /);
+    expect(() => tpl('sad.guide.generic.md')).not.toThrow();
+    expect(() => tpl('sad.guide.medical.md')).not.toThrow();
+  });
+
+  it('documents the init medical/generic quiz and reading the guide', () => {
+    expect(skill).toMatch(/medical.*device project|medical.*or.*generic/i);
+    expect(skill).toMatch(/sad\.generic\.md/);
+    expect(skill).toMatch(/sad\.medical\.md/);
+    expect(skill).toMatch(/reads\s+it\s+before\s+editing\s+the\s+SAD/i);
+  });
+});
+
 describe('SpecPad dogfoods its own architecture spec', () => {
   it('has a non-empty arc42 SAD with section headings', () => {
     expect(sad.length).toBeGreaterThan(200);
