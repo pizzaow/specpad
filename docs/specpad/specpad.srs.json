@@ -149,6 +149,11 @@
     { "id": "r_dg002", "code": "DGM-2", "text": "The Architecture Display shall render each markdown-referenced diagram SVG inline at its place in the document.", "tags": ["architecture", "editor"] },
     { "id": "r_dg003", "code": "DGM-3", "text": "The Structurizr C4 DSL shall be optional — supported when present (loader kept; the editor shows it only when present) but not included in the default templates or scaffold.", "tags": ["architecture", "editor"] },
     { "id": "r_ac001", "code": "AC-1", "text": "The closed-job cache shall snapshot the architecture files (sad.md, diagram SVGs, the guide, and the optional workspace.dsl) plus a per-state manifest, so a job's architecture changes are available to the editor.", "tags": ["architecture", "change-tracking"] },
-    { "id": "r_ac002", "code": "AC-2", "text": "A closed job's detail shall present an Architecture changes section listing which architecture files it added, modified, or removed (coarse, file-level), plus an added/removed-line diff for the SAD markdown.", "tags": ["architecture", "editor"] }
+    { "id": "r_ac002", "code": "AC-2", "text": "A closed job's detail shall present an Architecture changes section listing which architecture files it added, modified, or removed (coarse, file-level), plus an added/removed-line diff for the SAD markdown.", "tags": ["architecture", "editor"] },
+
+    { "id": "h_co000", "heading": true, "text": "Packaging: core vs medical add-on" },
+    { "id": "r_co001", "code": "CORE-1", "text": "SpecPad shall ship as a lean core skill (contract, requirements/tests, jobs, working loop, generic architecture profile, generic evidence export) plus an optional specpad-medical add-on skill; the regulated layer's cost is paid only when opted in.", "tags": ["skill", "packaging"] },
+    { "id": "r_co002", "code": "CORE-2", "text": "The core skill shall not carry medical/regulatory content; the specpad-medical add-on shall provide the medical architecture profile (its template and authoring guide) and the regulatory governance.", "tags": ["skill", "packaging"] },
+    { "id": "r_co003", "code": "CORE-3", "text": "The shared contract and the editor shall remain unified across both skills — the medical add-on adds prose, templates, and governance, never a code fork; the editor activates medical features only when a medical profile is present.", "tags": ["skill", "packaging"] }
   ]
 }

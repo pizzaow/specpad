@@ -70,13 +70,11 @@ SVG exports (`![caption](<name>.context.svg)` etc.), plus an editable soft **aut
 draw.io for teams that want model-as-code C4. This keeps the requirements contract simple; architecture
 is a separate, optional spec.
 
-**Two profiles ship as templates; `init` picks one (see the init quiz):**
-- **generic** (`templates/sad.generic.md` + `workspace.dsl` + `sad.guide.generic.md`) — a clean, fuller
-  arc42 with several C4 views and **no safety classification**. The default for non-medical projects.
-- **medical** (`templates/sad.medical.md` + `workspace.dsl` + `sad.guide.medical.md`) — aligned with
-  IEC 62304 / FDA premarket guidance: per-unit **classification** (a profile convention — each C4 unit
-  carries a `class` property/tag, coloured in views), **segregation** for risk control, and an
-  **architecture-verification** section.
+**Profiles:** the **generic** profile ships in core (`templates/sad.generic.md` + `sad.guide.generic.md`)
+— a clean, fuller arc42, **no safety classification**, the default for any project. For **medical /
+regulated** projects (IEC 62304 / FDA), install the separate **`specpad-medical`** add-on skill, which
+brings the medical profile (per-unit classification, segregation, architecture verification) and its
+regulatory governance. Core stays lean; the regulated layer is opt-in.
 
 The **authoring guide** is soft context (tone, terminology, what to emphasize) — the skill **reads it
 before editing the SAD**; the editor shows it as a panel. Guidance steers; governance enforces — keep
@@ -112,12 +110,11 @@ launcher — with no manual configuration. Re-running it must be a safe no-op.
 1. **Scaffold** `docs/specpad/` if absent (see "Scaffolding a new project"): project index, SRS, VTP,
    and the empty releases manifest, with `PROJECT_NAME` replaced. **Never overwrite** existing documents.
 2. **Ask the project path (short quiz):** "Is this a **medical** device project (IEC 62304 / FDA), or a
-   **generic** project?" Scaffold the matching architecture profile — `sad.generic.md` or
-   `sad.medical.md` → `<name>.sad.md`, and the matching guide → `<name>.sad.guide.md` (replace
-   `PROJECT_NAME`). The SAD references diagrams (draw.io SVGs) the user adds; the Structurizr
-   `workspace.dsl` is **opt-in only** (offer it if the user wants model-as-code C4), not scaffolded by
-   default. Generic is the default; the user can switch later by re-scaffolding. (Today the quiz is just
-   this one choice; more profile options can be added.)
+   **generic** project?" For **generic** (the default), scaffold `sad.generic.md` → `<name>.sad.md` and
+   `sad.guide.generic.md` → `<name>.sad.guide.md` (replace `PROJECT_NAME`). For **medical**, use the
+   **`specpad-medical`** add-on skill (its templates) — if it isn't installed, tell the user to add it.
+   The SAD references diagrams (draw.io SVGs) the user adds; the Structurizr `workspace.dsl` is opt-in
+   only. The user can switch later by re-scaffolding. (More profile options can be added.)
 3. **Generate the launcher** `docs/specpad/index.html` from the template.
 4. **Install the pre-push hook** (the commit-check backstop):
    ```

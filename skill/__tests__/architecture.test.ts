@@ -26,15 +26,17 @@ describe('skill documents the architecture spec', () => {
 });
 
 const tpl = (f: string) => readFileSync(new URL(`../specpad/templates/${f}`, import.meta.url), 'utf8');
+const medTpl = (f: string) => readFileSync(new URL(`../specpad-medical/templates/${f}`, import.meta.url), 'utf8');
+const medSkill = readFileSync(new URL('../specpad-medical/SKILL.md', import.meta.url), 'utf8');
 
 describe('architecture profiles & templates', () => {
-  it('ships generic and medical SAD templates with the right sections', () => {
+  it('core ships the generic SAD template; the medical one lives in the add-on', () => {
     const generic = tpl('sad.generic.md');
-    const medical = tpl('sad.medical.md');
+    const medical = medTpl('sad.md');
     expect(generic).toMatch(/arc42/i);
     expect(medical).toMatch(/Safety classification & segregation/);
     expect(medical).toMatch(/Architecture Verification/);
-    // generic has no per-unit classification sections
+    // generic (core) has no per-unit classification sections
     expect(generic).not.toMatch(/Safety classification & segregation/);
     expect(generic).not.toMatch(/Architecture Verification/);
   });
@@ -43,15 +45,22 @@ describe('architecture profiles & templates', () => {
     const w = tpl('workspace.dsl');
     expect(w).toMatch(/systemContext/);
     expect(w).toMatch(/container /);
-    expect(() => tpl('sad.guide.generic.md')).not.toThrow();
-    expect(() => tpl('sad.guide.medical.md')).not.toThrow();
+    expect(() => tpl('sad.guide.generic.md')).not.toThrow();   // core
+    expect(() => medTpl('sad.guide.md')).not.toThrow();        // add-on
   });
 
   it('documents the init medical/generic quiz and reading the guide', () => {
     expect(skill).toMatch(/medical.*device project|medical.*or.*generic/i);
     expect(skill).toMatch(/sad\.generic\.md/);
-    expect(skill).toMatch(/sad\.medical\.md/);
+    expect(skill).toMatch(/specpad-medical/);                  // medical path points to the add-on
     expect(skill).toMatch(/reads\s+it\s+before\s+editing\s+the\s+SAD/i);
+  });
+
+  it('the medical add-on extends core (62304/FDA) without forking the contract/editor', () => {
+    expect(medSkill).toMatch(/specpad-medical/);
+    expect(medSkill).toMatch(/62304/);
+    expect(medSkill).toMatch(/extends/i);
+    expect(medSkill).toMatch(/one shared|never a code fork|do not.*fork/i);
   });
 
   it('documents draw.io SVG diagrams, coarse change tracking, and the Edit/Display view', () => {

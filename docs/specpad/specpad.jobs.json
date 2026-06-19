@@ -118,6 +118,15 @@
       "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
       "title": "Architecture changes in the job detail (coarse file-level + SAD line diff)",
       "description": "Snapshot the architecture files (sad.md, diagrams, guide, optional dsl) into the closed-job cache, and show an Architecture changes section in the job detail: which arch files were added/modified/removed (coarse), plus an added/removed-line diff for the SAD markdown. Completes SAD-4. Diagrams stay coarse (no in-diagram deltas).",
+      "status": "closed"
+    },
+    {
+      "id": "j_6f2b40",
+      "code": "JOB-14",
+      "type": "feature",
+      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "title": "Split into core specpad + optional specpad-medical add-on skill",
+      "description": "Extract medical/regulatory content into a separate specpad-medical add-on skill (62304/FDA profile, medical template + guide, regulatory governance), keeping core specpad lean and general (generic profile, contract, jobs, working loop). The contract and editor stay unified (medical features light up only when a medical profile is present). Controls bloat: the regulated layer's token cost is paid only when opted in.",
       "status": "open"
     }
   ]
