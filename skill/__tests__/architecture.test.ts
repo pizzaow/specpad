@@ -1,10 +1,10 @@
 // @vitest-environment node
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 
 const skill = readFileSync(new URL('../specpad/SKILL.md', import.meta.url), 'utf8');
 const sad = readFileSync(new URL('../../docs/specpad/specpad.sad.md', import.meta.url), 'utf8');
-const dsl = readFileSync(new URL('../../docs/specpad/specpad.workspace.dsl', import.meta.url), 'utf8');
+const docPath = (f: string) => new URL(`../../docs/specpad/${f}`, import.meta.url);
 
 describe('skill documents the architecture spec', () => {
   it('documents the arc42 + C4 tracked files as a separate optional spec', () => {
@@ -69,15 +69,19 @@ describe('SpecPad dogfoods its own architecture spec', () => {
     expect(sad).toMatch(/^##\s+12\. Glossary/m);
   });
 
-  it('has a Structurizr workspace with model and views', () => {
-    expect(dsl).toMatch(/workspace "SpecPad"/);
-    expect(dsl).toMatch(/model\s*\{/);
-    expect(dsl).toMatch(/views\s*\{/);
+  it('places multiple diagrams via markdown image refs, and the SVGs exist and render', () => {
+    const refs = [...sad.matchAll(/!\[[^\]]*\]\(([^)]+\.svg)\)/g)].map((m) => m[1]);
+    // Context (overview), building block, runtime, deployment.
+    expect(refs.length).toBeGreaterThanOrEqual(4);
+    expect(refs).toContain('specpad.context.svg');
+    for (const ref of refs) {
+      const svg = readFileSync(docPath(ref), 'utf8');
+      expect(svg).toMatch(/<svg/);
+    }
   });
 
-  it('ships a rendered context diagram (draw.io-style SVG)', () => {
-    const svg = readFileSync(new URL('../../docs/specpad/specpad.context.svg', import.meta.url), 'utf8');
-    expect(svg).toMatch(/<svg/);
-    expect(svg).toMatch(/SpecPad/);
+  it('no longer ships the optional C4 DSL in the dogfood (it is opt-in via the template)', () => {
+    expect(existsSync(docPath('specpad.workspace.dsl'))).toBe(false);
+    expect(() => tpl('workspace.dsl')).not.toThrow(); // template kept for opt-in
   });
 });

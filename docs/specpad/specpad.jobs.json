@@ -100,6 +100,15 @@
       "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
       "title": "Architecture Edit/Display view: CodeMirror editor, markdown rendering, diagram SVG",
       "description": "Give the Architecture tab Edit/Display sub-tabs: a syntax-highlighting CodeMirror editor for the arc42 markdown and C4 source, and a Display that renders the markdown as HTML (react-markdown) with inline diagram SVGs (draw.io export) and the authoring-guide panel. Diagram change tracking stays coarse (file changed: yes/no). draw.io is the pragmatic diagram source; SVG export is rendered client-side.",
+      "status": "closed"
+    },
+    {
+      "id": "j_3c8a17",
+      "code": "JOB-12",
+      "type": "feature",
+      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "title": "Diagram-heavy architecture: markdown-placed inline diagrams; Structurizr DSL optional",
+      "description": "Let the arc42 markdown define where diagrams go via image references; the Display renders each referenced SVG inline at its place. Ship several diagrams (Context overview near the top, Building Block interfaces, Runtime process, Deployment) and demote the Structurizr/C4 DSL to an optional alternative (loader kept, editor shows it only when present, removed from default templates + SpecPad's dogfood).",
       "status": "open"
     }
   ]

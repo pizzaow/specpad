@@ -1,8 +1,9 @@
 # PROJECT_NAME — Software Architecture Document (arc42)
 
-> Generic architecture profile. arc42 skeleton; the C4 model lives in `PROJECT_NAME.workspace.dsl`
-> (render with Structurizr). Job/release-coupled — the Jobs view shows how each change affected this.
-> Replace the guidance under each heading. No safety classification in this profile.
+> Generic architecture profile. arc42 skeleton. **Diagrams are draw.io SVG exports, placed inline by
+> this document** via `![caption](PROJECT_NAME.<name>.svg)`; a Structurizr C4 model
+> (`PROJECT_NAME.workspace.dsl`) is an optional alternative. Job/release-coupled — the Jobs view shows
+> how each change affected this. Replace the guidance under each heading. No safety classification here.
 
 ## 1. Introduction and Goals
 What the system does, its top 3–5 quality goals, and the key stakeholders. Keep it to the essentials a
@@ -14,16 +15,18 @@ compliance, team boundaries). One bullet each.
 
 ## 3. Context and Scope
 The system's boundary: external actors and systems it talks to, and the data crossing each boundary.
-→ See the **System Context** diagram (`Context` view in the workspace DSL).
+
+![System context (C1)](PROJECT_NAME.context.svg)
 
 ## 4. Solution Strategy
 The handful of decisions that most shape the architecture (decomposition approach, key patterns,
 technology choices) and why. Link to ADRs in §9.
 
 ## 5. Building Block View
-The static decomposition into **units** (modules/services/components) and their responsibilities,
-top-down. Level 1 = the containers; expand important containers into components.
-→ See the **Container** and **Component** diagrams (`Containers`, `Components` views).
+The static decomposition into **units** (modules/services/components) and their responsibilities and
+**key interfaces**, top-down.
+
+![Building block view](PROJECT_NAME.building-block.svg)
 
 | Unit | Responsibility | Key interfaces |
 |------|----------------|----------------|
@@ -31,11 +34,13 @@ top-down. Level 1 = the containers; expand important containers into components.
 
 ## 6. Runtime View
 2–4 important scenarios as sequences (startup, the main use case, a failure path).
-→ See the **dynamic** views in the workspace DSL where applicable.
+
+![Runtime view](PROJECT_NAME.runtime.svg)
 
 ## 7. Deployment View
 How the software maps to infrastructure (environments, nodes, networking).
-→ See the **Deployment** diagram (`Deployment` view).
+
+![Deployment view](PROJECT_NAME.deployment.svg)
 
 ## 8. Crosscutting Concepts
 Patterns and rules that apply across units: error handling, persistence, security, logging,

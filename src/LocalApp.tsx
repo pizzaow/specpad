@@ -87,6 +87,20 @@ async function loadJobCaches(
   return { diffs, commits };
 }
 
+// The arc42 markdown declares its diagrams via ![alt](name.svg); load exactly those
+// referenced files so the Architecture view can render each inline at its place.
+async function loadDiagrams(sad: string | null): Promise<Record<string, string>> {
+  if (!sad) return {};
+  const out: Record<string, string> = {};
+  const refs = new Set<string>();
+  for (const m of sad.matchAll(/!\[[^\]]*\]\(([^)]+\.svg)\)/g)) refs.add(m[1]);
+  for (const ref of refs) {
+    const svg = await loadProjectText(ref);
+    if (svg) out[ref] = svg;
+  }
+  return out;
+}
+
 const LocalApp: React.FC = () => {
   const [documents, setDocuments] = useState<DocumentListItem[]>([]);
   const [projectDoc, setProjectDoc] = useState<ProjectDoc | null>(null);
@@ -111,7 +125,7 @@ const LocalApp: React.FC = () => {
   const [sad, setSad] = useState<string | null>(null);
   const [dsl, setDsl] = useState<string | null>(null);
   const [sadGuide, setSadGuide] = useState<string | null>(null);
-  const [diagramSvg, setDiagramSvg] = useState<string | null>(null);
+  const [diagrams, setDiagrams] = useState<Record<string, string>>({});
   const [dirtySad, setDirtySad] = useState(false);
   const [dirtyDsl, setDirtyDsl] = useState(false);
   const [srsBaseline, setSrsBaseline] = useState<SrsDoc | null>(null);
@@ -169,10 +183,11 @@ const LocalApp: React.FC = () => {
     const caches = await loadJobCaches(name, jd);
     setJobDiffs(caches.diffs);
     setJobCommits(caches.commits);
-    setSad(await loadProjectText(`${name}.sad.md`));
+    const sadText = await loadProjectText(`${name}.sad.md`);
+    setSad(sadText);
     setDsl(await loadProjectText(`${name}.workspace.dsl`));
     setSadGuide(await loadProjectText(`${name}.sad.guide.md`));
-    setDiagramSvg(await loadProjectText(`${name}.context.svg`));
+    setDiagrams(await loadDiagrams(sadText));
     setDirtySad(false);
     setDirtyDsl(false);
     const cached = cachedReleases(rel);
@@ -245,7 +260,7 @@ const LocalApp: React.FC = () => {
       setSad(null);
       setDsl(null);
       setSadGuide(null);
-      setDiagramSvg(null);
+      setDiagrams({});
       setDirtySad(false);
       setDirtyDsl(false);
       setSrsBaseline(null);
@@ -523,7 +538,7 @@ const LocalApp: React.FC = () => {
         {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} onChange={handleChange} />}
         {currentView === 'arch' && isDirectoryOpen && (
           <ArchitectureView
-            sad={sad} dsl={dsl} guide={sadGuide} diagramSvg={diagramSvg}
+            sad={sad} dsl={dsl} guide={sadGuide} diagrams={diagrams}
             onChangeSad={(v) => { setSad(v); setDirtySad(true); }}
             onChangeDsl={(v) => { setDsl(v); setDirtyDsl(true); }}
             readOnly={launch.demo}

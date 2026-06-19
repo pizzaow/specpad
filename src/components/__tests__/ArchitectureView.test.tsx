@@ -17,9 +17,12 @@ SpecPad governs documentation.
 
 ## 3. Context and Scope
 - A developer authors specs.
+
+![Context overview](specpad.context.svg)
 `;
 const dsl = `workspace "SpecPad" { model { specpad = softwareSystem "SpecPad" } }`;
 const svg = '<svg xmlns="http://www.w3.org/2000/svg"><text>CONTEXT-DIAGRAM</text></svg>';
+const diagrams = { 'specpad.context.svg': svg };
 
 describe('ArchitectureView', () => {
   it('renders the arc42 markdown as HTML headings and the C4 source', () => {
@@ -29,10 +32,18 @@ describe('ArchitectureView', () => {
     expect(screen.getByText(/workspace "SpecPad"/)).toBeInTheDocument();
   });
 
-  it('renders an embedded diagram SVG inline', () => {
-    const { container } = render(<ArchitectureView sad={sad} dsl={dsl} diagramSvg={svg} />);
+  it('renders a markdown-placed diagram SVG inline', () => {
+    const { container } = render(<ArchitectureView sad={sad} dsl={dsl} diagrams={diagrams} />);
     expect(container.querySelector('.arch-diagram svg')).toBeTruthy();
     expect(container.innerHTML).toContain('CONTEXT-DIAGRAM');
+  });
+
+  it('shows the C4 DSL section only when a DSL is present (optional)', () => {
+    const withoutDsl = render(<ArchitectureView sad={sad} dsl={null} />);
+    expect(withoutDsl.queryByText(/C4 model/)).not.toBeInTheDocument();
+    withoutDsl.unmount();
+    render(<ArchitectureView sad={sad} dsl={dsl} />);
+    expect(screen.getByText(/C4 model/)).toBeInTheDocument();
   });
 
   it('shows Edit/Display sub-tabs only when editing is enabled, and emits edits', () => {

@@ -55,7 +55,8 @@ This loop is the **primary** mechanism. The pre-push gate and requirement audit 
 - `docs/specpad/<name>.srs.json` — requirements
 - `docs/specpad/<name>.vtp.json` — verification tests
 - `docs/specpad/<name>.sad.md` — optional architecture document (arc42 skeleton, markdown)
-- `docs/specpad/<name>.workspace.dsl` — optional C4 model (Structurizr DSL)
+- `docs/specpad/<name>.<diagram>.svg` — optional diagrams (draw.io SVG exports) the SAD references inline
+- `docs/specpad/<name>.workspace.dsl` — optional C4 model (Structurizr DSL — an alternative to draw.io)
 - `docs/specpad/index.html` — generated launcher (opens the hosted editor)
 
 Every JSON file carries `"schemaVersion": "1.0"`.
@@ -63,9 +64,11 @@ Every JSON file carries `"schemaVersion": "1.0"`.
 ## Architecture spec (arc42 + C4) — optional
 
 When a project documents its architecture, keep it as **tracked text files** (not the id-keyed JSON
-contract): `<name>.sad.md` (arc42 skeleton) + `<name>.workspace.dsl` (a Structurizr C4 model), plus an
-editable soft **authoring guide** `<name>.sad.guide.md`. This keeps the requirements contract simple;
-architecture is a separate, optional spec.
+contract): `<name>.sad.md` (arc42 skeleton) with **diagrams placed inline by the markdown** as draw.io
+SVG exports (`![caption](<name>.context.svg)` etc.), plus an editable soft **authoring guide**
+`<name>.sad.guide.md`. A Structurizr C4 model (`<name>.workspace.dsl`) is an **optional** alternative to
+draw.io for teams that want model-as-code C4. This keeps the requirements contract simple; architecture
+is a separate, optional spec.
 
 **Two profiles ship as templates; `init` picks one (see the init quiz):**
 - **generic** (`templates/sad.generic.md` + `workspace.dsl` + `sad.guide.generic.md`) — a clean, fuller
@@ -86,17 +89,16 @@ hard rules out of the guide.
 - **Third-party components (SOUP/OTS) are NOT inventoried in the SAD** — they belong in a separate,
   SBOM-aligned components register (a planned pillar). The SAD references it; it does not contain it.
 - **Cybersecurity architecture** is a planned companion pillar (much of it derivable) — not built yet.
-- **Diagrams:** author in **draw.io** and drop in the **SVG export** as `<name>.context.svg` (etc.);
-  the editor's Architecture view renders the SVG inline (client-side). Structurizr DSL stays an option.
-  Per-job diagram change tracking is **coarse** — "the diagram file changed", never in-diagram deltas
-  (no regulatory submission tracks that).
-- The Architecture view has **Edit** (syntax-highlighting markdown/DSL editor) and **Display**
-  (rendered arc42 + inline diagram + the guide) sub-tabs; the web view is a pseudo-render (formal Word
-  output comes from the skill export, not the browser).
+- **Diagrams — the markdown defines where they go.** Author in **draw.io**, export **SVG**, and
+  reference each from the SAD with `![caption](<name>.context.svg)`; the editor renders each inline at
+  that spot (client-side). Put the **Context overview near the top**, plus Building Block (interfaces),
+  Runtime (process), and Deployment diagrams where they belong. Per-job diagram change tracking is
+  **coarse** — "the diagram file changed", never in-diagram deltas (no regulatory submission tracks that).
+- The Architecture view has **Edit** (syntax-highlighting markdown editor; the optional DSL too) and
+  **Display** (rendered arc42 with inline diagrams + the guide) sub-tabs; the web view is a pseudo-render
+  (formal Word output comes from the skill export, not the browser).
 - Author/update the SAD in the **working loop** alongside requirements when a change affects the
   architecture; it rides with the job and the code.
-- The editor's **Architecture view** renders the arc42 markdown and presents the C4 DSL (live C4
-  diagram rendering is a planned follow-up; render with Structurizr meanwhile).
 - **On close / refresh**, snapshot `<name>.sad.md` and `<name>.workspace.dsl` into the release baseline
   and the per-job cache (`.specpad/jobs/<id>/{before,after}/`) alongside the spec docs, so a job's
   architecture changes can be shown going forward.
@@ -111,9 +113,11 @@ launcher — with no manual configuration. Re-running it must be a safe no-op.
    and the empty releases manifest, with `PROJECT_NAME` replaced. **Never overwrite** existing documents.
 2. **Ask the project path (short quiz):** "Is this a **medical** device project (IEC 62304 / FDA), or a
    **generic** project?" Scaffold the matching architecture profile — `sad.generic.md` or
-   `sad.medical.md` → `<name>.sad.md`, the `workspace.dsl` → `<name>.workspace.dsl`, and the matching
-   guide → `<name>.sad.guide.md` (replace `PROJECT_NAME`). Generic is the default; the user can switch
-   later by re-scaffolding. (Today the quiz is just this one choice; more profile options can be added.)
+   `sad.medical.md` → `<name>.sad.md`, and the matching guide → `<name>.sad.guide.md` (replace
+   `PROJECT_NAME`). The SAD references diagrams (draw.io SVGs) the user adds; the Structurizr
+   `workspace.dsl` is **opt-in only** (offer it if the user wants model-as-code C4), not scaffolded by
+   default. Generic is the default; the user can switch later by re-scaffolding. (Today the quiz is just
+   this one choice; more profile options can be added.)
 3. **Generate the launcher** `docs/specpad/index.html` from the template.
 4. **Install the pre-push hook** (the commit-check backstop):
    ```

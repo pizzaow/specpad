@@ -1,7 +1,8 @@
 # PROJECT_NAME — Software Architecture Document (arc42, medical profile)
 
 > Medical architecture profile, aligned with IEC 62304 and the FDA premarket software guidance. arc42
-> skeleton + the C4 model in `PROJECT_NAME.workspace.dsl`. Follow `PROJECT_NAME.sad.guide.md` for the
+> skeleton. Diagrams are draw.io SVG exports placed inline via `![caption](PROJECT_NAME.<name>.svg)`; a
+> Structurizr C4 model (`PROJECT_NAME.workspace.dsl`) is optional. Follow `PROJECT_NAME.sad.guide.md` for the
 > regulatory authoring tact. Classification is a profile convention — every software unit carries a
 > `class` (and where relevant a documentation level); do not invent a scheme here, use the project's.
 > NOTE: third-party components (SOUP/OTS) are tracked in the separate components/SBOM register, not here.
@@ -17,14 +18,17 @@ policy). One bullet each.
 
 ## 3. Context and Scope
 System boundary, external actors/systems, and the data crossing each interface (62304 §5.3.2).
-→ See the **System Context** diagram.
+
+![System context (C1)](PROJECT_NAME.context.svg)
 
 ## 4. Solution Strategy
 The decisions that most shape the architecture, including how the design supports **risk control**.
 
 ## 5. Building Block View (software items and units)
 The decomposition into **software items → units** (62304 §5.3.1), top-down, each with its **safety
-classification**. → See the **Container** / **Component** diagrams (class shown by colour).
+classification** and key interfaces.
+
+![Building block view](PROJECT_NAME.building-block.svg)
 
 | Unit | Responsibility | Class | Interfaces |
 |------|----------------|-------|------------|
@@ -39,7 +43,9 @@ higher-class system may contain lower-class units only with justified, effective
 Important scenarios as sequences, including risk-control and failure paths.
 
 ## 8. Deployment View
-Mapping of software to infrastructure/hardware. → See the **Deployment** diagram.
+Mapping of software to infrastructure/hardware.
+
+![Deployment view](PROJECT_NAME.deployment.svg)
 
 ## 9. Crosscutting Concepts
 Error handling, persistence, security, logging, configuration — and how each supports the safety goals.
