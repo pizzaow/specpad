@@ -48,6 +48,7 @@ check_commit() {
 
 while read -r local_ref local_sha remote_ref remote_sha; do
   [ "$local_sha" = "$ZERO" ] && continue            # branch deletion
+  case "$local_ref" in refs/tags/*) continue ;; esac # tag push points at already-pushed commits
   if [ "$remote_sha" != "$ZERO" ]; then
     base="$remote_sha"
   else

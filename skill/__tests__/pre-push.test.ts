@@ -81,6 +81,18 @@ describe('pre-push hook', () => {
     expect(r.out).not.toMatch(/changed code but no SRS\/VTP/);
   });
 
+  it('skips tag pushes (they point at already-pushed commits)', () => {
+    const before = head();
+    const local = commit('release: no job trailer', { 'feature9.ts': 'export const t = 9;\n' });
+    // As a branch push this would block (no Job trailer); as a tag push it must be skipped.
+    expect(runHook(local, before).code).toBe(1);
+    const tag = spawnSync('bash', [hook, 'origin', 'url'], {
+      cwd: repo, encoding: 'utf8', env,
+      input: `refs/tags/v1.0 ${local} refs/tags/v1.0 ${ZERO}\n`,
+    });
+    expect(tag.status ?? 1).toBe(0);
+  });
+
   it('is fully bypassed with SPECPAD_SKIP=1', () => {
     const before = head();
     const local = commit('wip: no job', { 'feature4.ts': 'export const d = 4;\n' });
