@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseDocument, serializeDocument, snapshotDirSegments } from '../localFileApi';
+import { parseDocument, serializeDocument, snapshotDirSegments, classifyDocFilename } from '../localFileApi';
 import type { SrsDoc } from '../shared';
 
 describe('localFileApi serialization', () => {
@@ -19,6 +19,19 @@ describe('localFileApi serialization', () => {
 
   it('parseDocument rejects malformed JSON', () => {
     expect(() => parseDocument('{not json')).toThrow();
+  });
+});
+
+describe('classifyDocFilename', () => {
+  it('recognizes srs/vtp/proj/prd document filenames', () => {
+    expect(classifyDocFilename('Acme.srs.json')).toEqual({ type: 'srs', name: 'Acme', filename: 'Acme.srs.json' });
+    expect(classifyDocFilename('Acme.prd.json')).toEqual({ type: 'prd', name: 'Acme', filename: 'Acme.prd.json' });
+    expect(classifyDocFilename('Acme.proj.json')?.type).toBe('proj');
+  });
+
+  it('returns null for non-document files', () => {
+    expect(classifyDocFilename('Acme.sad.md')).toBeNull();
+    expect(classifyDocFilename('notes.txt')).toBeNull();
   });
 });
 

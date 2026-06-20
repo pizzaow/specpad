@@ -4,7 +4,7 @@
  * Chrome/Edge: full support. Firefox/Safari: fallback upload/download.
  */
 
-import type { ProjectDoc, SrsDoc, VtpDoc, SpecPadDoc, ReleasesDoc, JobDoc, JobsDoc, JobCommit, SidecarDoc } from './shared';
+import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SpecPadDoc, ReleasesDoc, JobDoc, JobsDoc, JobCommit, SidecarDoc } from './shared';
 import { createSrsDoc, createVtpDoc } from './shared';
 
 declare global {
@@ -14,7 +14,7 @@ declare global {
   }
 }
 
-export type DocKind = 'srs' | 'vtp' | 'proj';
+export type DocKind = 'srs' | 'vtp' | 'proj' | 'prd';
 
 export interface DocumentListItem {
   type: DocKind;
@@ -94,7 +94,7 @@ export function parseDocument(text: string): SpecPadDoc {
 
 /** Classify a `[name].[type].json` filename; null for non-document files. */
 export function classifyDocFilename(filename: string): DocumentListItem | null {
-  const m = filename.match(/^(.+?)\.(srs|vtp|proj)\.json$/);
+  const m = filename.match(/^(.+?)\.(srs|vtp|proj|prd)\.json$/);
   if (!m) return null;
   return { type: m[2] as DocKind, name: m[1], filename };
 }
@@ -216,6 +216,11 @@ export async function loadDocument(type: 'srs', name: string): Promise<SrsDoc>;
 export async function loadDocument(type: 'vtp', name: string): Promise<VtpDoc>;
 export async function loadDocument(type: 'srs' | 'vtp', name: string): Promise<SrsDoc | VtpDoc> {
   return (await readJson(`${name}.${type}.json`)) as SrsDoc | VtpDoc;
+}
+
+/** Load the optional PRD register `<name>.prd.json` (caller guards on its presence). */
+export async function loadPrd(name: string): Promise<PrdDoc> {
+  return (await readJson(`${name}.prd.json`)) as PrdDoc;
 }
 
 export async function saveDocument(doc: SrsDoc | VtpDoc | ProjectDoc): Promise<void> {

@@ -42,6 +42,7 @@ vi.mock('../localFileApi', () => ({
   openProjectFromHandle: (...a: unknown[]) => openProjectFromHandle(...(a as [])),
   loadDocument: vi.fn(async (_t: string, _n: string) => srs),
   loadProject: vi.fn(),
+  loadPrd: vi.fn(async () => null),
   openProjectDirectory: vi.fn(),
   openProjectFile: vi.fn(),
   listDocuments: vi.fn(async () => []),

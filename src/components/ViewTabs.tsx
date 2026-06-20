@@ -5,7 +5,7 @@
  */
 import React from 'react';
 
-export type ViewKey = 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'releases';
+export type ViewKey = 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'releases' | 'audit';
 
 const TABS: { key: ViewKey; label: string }[] = [
   { key: 'jobs', label: 'Jobs' },
@@ -14,6 +14,7 @@ const TABS: { key: ViewKey; label: string }[] = [
   { key: 'vtp', label: 'Verification Tests' },
   { key: 'arch', label: 'Architecture' },
   { key: 'testing', label: 'Results' },
+  { key: 'audit', label: 'Auditor' },
 ];
 
 interface ViewTabsProps {

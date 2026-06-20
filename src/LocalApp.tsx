@@ -5,7 +5,7 @@
  * persisted directory handles so return visits reopen without re-picking.
  */
 import React, { useEffect, useRef, useState } from 'react';
-import type { ProjectDoc, SrsDoc, VtpDoc, ReleasesDoc, JobDoc, JobsDoc } from './shared';
+import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, ReleasesDoc, JobDoc, JobsDoc } from './shared';
 import {
   DocumentListItem,
   isFileSystemAccessSupported,
@@ -20,6 +20,7 @@ import {
   listDocuments,
   loadDocument,
   loadProject,
+  loadPrd,
   saveDocument,
   createNewDocument,
   hasOpenDirectory,
@@ -55,10 +56,11 @@ import TestingView from './components/TestingView';
 import JobsView from './components/JobsView';
 import ArchitectureView from './components/ArchitectureView';
 import ReleasesView from './components/ReleasesView';
+import AuditView from './components/AuditView';
 import StatusBar from './components/StatusBar';
 import ViewTabs from './components/ViewTabs';
 
-type ViewMode = 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'releases';
+type ViewMode = 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'releases' | 'audit';
 type OpenResult = { name: string; documents: DocumentListItem[] };
 type JobDiff = { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpItem> };
 export type ArchChange = {
@@ -148,6 +150,7 @@ const LocalApp: React.FC = () => {
   const [projectDoc, setProjectDoc] = useState<ProjectDoc | null>(null);
   const [srsDoc, setSrsDoc] = useState<SrsDoc | null>(null);
   const [vtpDoc, setVtpDoc] = useState<VtpDoc | null>(null);
+  const [prdDoc, setPrdDoc] = useState<PrdDoc | null>(null);
   const [currentView, setCurrentView] = useState<ViewMode>('srs');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -256,9 +259,11 @@ const LocalApp: React.FC = () => {
     const proj = documents.find((d) => d.name === name && d.type === 'proj');
     const srs = documents.find((d) => d.name === name && d.type === 'srs');
     const vtp = documents.find((d) => d.name === name && d.type === 'vtp');
+    const prd = documents.find((d) => d.name === name && d.type === 'prd');
     setProjectDoc(proj ? await loadProject(name) : null);
     setSrsDoc(srs ? await loadDocument('srs', name) : null);
     setVtpDoc(vtp ? await loadDocument('vtp', name) : null);
+    setPrdDoc(prd ? await loadPrd(name) : null);
     setSelectedDocName(name);
     await loadChangeTracking(name);
     setDirtySrs(false);
@@ -270,9 +275,11 @@ const LocalApp: React.FC = () => {
     const proj = docs.find((d) => d.name === name && d.type === 'proj');
     const srs = docs.find((d) => d.name === name && d.type === 'srs');
     const vtp = docs.find((d) => d.name === name && d.type === 'vtp');
+    const prd = docs.find((d) => d.name === name && d.type === 'prd');
     setProjectDoc(proj ? await loadProject(name) : null);
     setSrsDoc(srs ? await loadDocument('srs', name) : null);
     setVtpDoc(vtp ? await loadDocument('vtp', name) : null);
+    setPrdDoc(prd ? await loadPrd(name) : null);
     setSelectedDocName(name);
     await loadChangeTracking(name);
     setDirtySrs(false);
@@ -294,6 +301,7 @@ const LocalApp: React.FC = () => {
       setSelectedDocName('');
       setSrsDoc(null);
       setVtpDoc(null);
+      setPrdDoc(null);
       setProjectDoc(null);
       setReleases(null);
       setJob(null);
@@ -568,7 +576,7 @@ const LocalApp: React.FC = () => {
       {(srsDoc || vtpDoc) && (
         <ViewTabs
           current={currentView}
-          enabled={{ srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl), releases: !!releases }}
+          enabled={{ srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl), releases: !!releases, audit: !!srsDoc }}
           onSelect={setCurrentView}
         />
       )}
@@ -583,6 +591,9 @@ const LocalApp: React.FC = () => {
         {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} onChange={handleChange} />}
         {currentView === 'releases' && isDirectoryOpen && (
           <ReleasesView releases={releases} jobs={jobsDoc?.jobs ?? []} />
+        )}
+        {currentView === 'audit' && srsDoc && (
+          <AuditView prd={prdDoc} srs={srsDoc} vtp={vtpDoc} />
         )}
         {currentView === 'arch' && isDirectoryOpen && (
           <ArchitectureView
@@ -640,7 +651,7 @@ const LocalApp: React.FC = () => {
         <StatusBar
           path={launch.demo ? 'demo (hosted copy of docs/specpad/)' : `docs/specpad/${projectName}`}
           srsDoc={srsDoc} vtpDoc={vtpDoc} projectDoc={projectDoc}
-          jobsDoc={jobsDoc} job={job}
+          prdDoc={prdDoc} jobsDoc={jobsDoc} job={job}
           demo={launch.demo}
         />
       )}

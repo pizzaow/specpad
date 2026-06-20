@@ -207,6 +207,18 @@
       "title": "Product requirements (PRD) register + integrations design addendum",
       "description": "Add an optional product-requirements (PRD) register as an SRS-shaped peer document, with upward SRS→PRD traceability (satisfies, by id) and opt-in governance (prd-referential-integrity, prd-coverage) that costs nothing without a PRD register. Capture the integrations design addendum (Jira/Confluence ingest add-on, import vs baseline routing, multi-repo system-level docs, PRD/validation, usability/interface-spec) as forward design. Dogfooded: SpecPad gains its own PRD register and SRS→PRD links.",
       "status": "open"
+    },
+    {
+      "id": "j_9d5e3b",
+      "code": "JOB-17",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Auditor view — live design-control evidence (coverage, trace matrix, gaps)",
+      "description": "Add an Auditor view (editor tab) that renders a reviewer's-eye picture of the open project: a coverage summary (requirements verified, test results, product-requirement coverage), the PRD→SRS→VTP traceability matrix with per-requirement verification results, and a gap list derived from the shared governance check plus the proposed-PRD roadmap. Load the optional PRD register into the editor so product requirements and upward traces are available. Includes a scope disclaimer (evidence that supports design controls; not a QMS / compliance determination).",
+      "status": "open"
     }
   ]
 }
