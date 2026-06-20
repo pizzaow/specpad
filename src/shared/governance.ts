@@ -62,9 +62,9 @@ export const GOVERNANCE_RULES: GovernanceRule[] = [
   },
   {
     id: 'prd-coverage',
-    title: 'Every product requirement is satisfied',
+    title: 'Every implemented product requirement is satisfied',
     description:
-      'When a PRD register is present, every non-heading PRD item must be referenced by at least one SRS requirement via `satisfies`.',
+      'When a PRD register is present, every non-heading PRD item marked `status: "implemented"` must be referenced by at least one SRS requirement via `satisfies`. Items that are `proposed` (or have no status) are roadmap/vision and exempt.',
   },
 ];
 
@@ -154,11 +154,12 @@ export function checkGovernance(bundle: ProjectBundle): GovernanceViolation[] {
     }
     for (const prd of prdItems) {
       if (prd.heading) continue;
+      if (prd.status !== 'implemented') continue; // proposed/roadmap items are exempt
       if (!satisfied.has(prd.id)) {
         violations.push({
           rule: 'prd-coverage',
           itemId: prd.id,
-          message: `Product requirement ${prd.id} is not satisfied by any SRS requirement.`,
+          message: `Implemented product requirement ${prd.id} is not satisfied by any SRS requirement.`,
         });
       }
     }

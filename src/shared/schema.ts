@@ -66,12 +66,20 @@ export interface VtpDoc {
 // renameable code, text — so it reuses the diff, table, and governance machinery. A PRD entry is
 // product intent, not a code fact; it is the validation/design-control trace anchor. Optional: a
 // project without a PRD register pays no PRD governance.
+
+// A PRD item's lifecycle: 'proposed' = approved product intent not yet allocated to requirements
+// (roadmap/vision; exempt from coverage); 'implemented' = realized in the product and therefore
+// required to trace down to >=1 SRS requirement. Absent is treated as not-yet-implemented (exempt),
+// so capturing a vision baseline never manufactures a false coverage gap.
+export type PrdStatus = 'proposed' | 'implemented';
+
 export interface PrdItem {
   id: string;
   code?: string;
   text: string;
   heading?: boolean;
   level?: number;
+  status?: PrdStatus;
   tags?: string[];
 }
 
@@ -196,6 +204,7 @@ export const prdSchema = {
           text: { type: 'string', description: 'The product requirement / user need statement.' },
           heading: { type: 'boolean', description: 'True when this item is a section heading rather than a product requirement.' },
           level: { type: 'integer', minimum: 0, description: 'Indent depth for hierarchy; absent means 0. Headings form dotted section codes.' },
+          status: { enum: ['proposed', 'implemented'], description: 'Lifecycle: "implemented" (realized — must trace down to >=1 SRS requirement, enforced by prd-coverage) or "proposed" (approved intent not yet allocated; roadmap/vision, exempt from coverage). Absent is treated as not-yet-implemented (exempt).' },
           tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
         },
       },

@@ -47,7 +47,7 @@ export function createPrdDoc(name: string, title: string): PrdDoc {
 }
 
 export function createPrdItem(existingIds: Iterable<string>, level = 0): PrdItem {
-  const item: PrdItem = { id: generateId(ID_PREFIX.product, existingIds), text: '' };
+  const item: PrdItem = { id: generateId(ID_PREFIX.product, existingIds), text: '', status: 'proposed' };
   if (level > 0) item.level = level;
   return item;
 }

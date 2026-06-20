@@ -209,6 +209,10 @@ diff, table, and governance machinery.
   `verifies` targets SRS ids.
 - A PRD entry is *product intent*, not a code fact — derive a draft from the job description (and any
   ingested tracker/PRD context), then surface it for ratification; do not auto-finalize from code.
+- Each item carries an optional **`status`** — `implemented` (realized; must trace down to ≥1 SRS
+  requirement) or `proposed` (approved intent not yet allocated; roadmap/vision). New items default to
+  `proposed`; promote to `implemented` once requirements exist. This lets a **product-vision baseline**
+  hold the full roadmap without manufacturing false coverage gaps.
 - **Opt-in governance:** when a PRD register is present, `prd-referential-integrity` and
   `prd-coverage` apply (see Governance). A project with no PRD register pays nothing.
 
@@ -401,8 +405,10 @@ declaring a task done:
   that lives in the commit-workflow pre-commit check above, not in this data-only rule set.)
 - `prd-referential-integrity`: When a PRD register is present, every SRS `satisfies` entry resolves to
   an existing PRD item id.
-- `prd-coverage`: When a PRD register is present, every non-heading PRD item is satisfied by at least
-  one SRS requirement (via `satisfies`). With no PRD register, neither PRD rule applies — PRD is opt-in.
+- `prd-coverage`: When a PRD register is present, every non-heading PRD item marked
+  `status: "implemented"` is satisfied by at least one SRS requirement (via `satisfies`). `proposed`
+  items (or items with no status) are roadmap/vision and exempt. With no PRD register, neither PRD rule
+  applies — PRD is opt-in.
 
 Also confirm structural validity: required fields present, `result` within its enum,
 `schemaVersion` is "1.0".

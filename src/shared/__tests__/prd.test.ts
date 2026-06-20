@@ -10,8 +10,8 @@ const prd: PrdDoc = {
   name: 'AcmeApp',
   title: 'Product Requirements',
   items: [
-    { id: 'p_aaa111', code: 'PROD-1', text: 'Users can sign in with SSO.' },
-    { id: 'p_bbb222', code: 'PROD-2', text: 'Reports export as PDF.' },
+    { id: 'p_aaa111', code: 'PROD-1', text: 'Users can sign in with SSO.', status: 'implemented' },
+    { id: 'p_bbb222', code: 'PROD-2', text: 'Reports export as PDF.', status: 'implemented' },
   ],
 };
 
@@ -42,11 +42,17 @@ describe('PRD register — structure', () => {
     expect(validate(bad).length).toBeGreaterThan(0);
   });
 
-  it('factories build a PRD doc and p_-prefixed items', () => {
+  it('factories build a PRD doc and p_-prefixed, proposed-by-default items', () => {
     const doc = createPrdDoc('acme', 'Product Requirements');
     expect(doc.type).toBe('prd');
     const item = createPrdItem([]);
     expect(item.id).toMatch(/^p_[0-9a-f]{6}$/);
+    expect(item.status).toBe('proposed');
+  });
+
+  it('accepts a status enum value and rejects one outside it', () => {
+    expect(validate({ ...prd, items: [{ id: 'p_x', text: 'ok', status: 'proposed' }] })).toEqual([]);
+    expect(validate({ ...prd, items: [{ id: 'p_x', text: 'bad', status: 'shipped' }] }).length).toBeGreaterThan(0);
   });
 
   it('lets the project index reference a PRD document', () => {
@@ -72,9 +78,23 @@ describe('PRD register — governance', () => {
     expect(v.some((x) => x.rule === 'prd-referential-integrity' && x.itemId === 'r_001')).toBe(true);
   });
 
-  it('flags a PRD item that no requirement satisfies', () => {
+  it('flags an implemented PRD item that no requirement satisfies', () => {
     const v = checkGovernance({ srs: srs({ r_001: ['p_aaa111'] }), prd });
     expect(v.some((x) => x.rule === 'prd-coverage' && x.itemId === 'p_bbb222')).toBe(true);
+  });
+
+  it('exempts proposed (and status-less) PRD items from coverage', () => {
+    const visionPrd: PrdDoc = {
+      ...prd,
+      items: [
+        { id: 'p_aaa111', code: 'PROD-1', text: 'Built feature.', status: 'implemented' },
+        { id: 'p_road01', code: 'PROD-9', text: 'Future roadmap item.', status: 'proposed' },
+        { id: 'p_road02', code: 'PROD-10', text: 'Captured intent, no status.' },
+      ],
+    };
+    const v = checkGovernance({ srs: srs({ r_001: ['p_aaa111'] }), prd: visionPrd });
+    // Only the implemented item needs coverage (and it has it); roadmap items raise nothing.
+    expect(v.filter((x) => x.rule === 'prd-coverage')).toEqual([]);
   });
 
   it('applies no PRD governance when no PRD register is present', () => {
