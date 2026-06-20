@@ -7,6 +7,8 @@
 import React, { useState } from 'react';
 import type { JobDoc, JobRecord } from '../shared';
 import JobControl from './JobControl';
+import { THEMES } from '../theme';
+import type { ThemeId } from '../theme';
 
 export interface MenuBarProps {
   projectName: string;
@@ -27,10 +29,12 @@ export interface MenuBarProps {
   onSetJob: (ids: string[], title?: string) => void;
   version?: string | null;
   onShowVersions?: () => void;
+  theme: ThemeId;
+  onSetTheme: (id: ThemeId) => void;
   demo?: boolean;
 }
 
-type OpenMenu = null | 'file' | 'project' | 'job';
+type OpenMenu = null | 'file' | 'project' | 'job' | 'theme';
 
 const itemStyle: React.CSSProperties = { display: 'block', padding: '7px 14px', whiteSpace: 'nowrap', cursor: 'pointer' };
 const chip = 'menubar-chip';
@@ -45,7 +49,7 @@ const MenuBar: React.FC<MenuBarProps> = (p) => {
     <div className="menubar">
       {open && <div data-testid="menubar-backdrop" className="menubar-backdrop" onClick={close} />}
 
-      <span className="menubar-brand"><span aria-hidden="true">▣</span> <span>SpecPad</span></span>
+      <span className="menubar-brand"><span className="brand-mark" aria-hidden="true">◆</span> <span>SpecPad</span></span>
 
       {p.isDirectoryOpen && p.projectName && (
         p.projectNames.length > 1 ? (
@@ -113,6 +117,28 @@ const MenuBar: React.FC<MenuBarProps> = (p) => {
       {p.isDirectoryOpen && p.version && (
         <button type="button" className={chip} onClick={() => p.onShowVersions?.()}>{p.version} ▾</button>
       )}
+
+      <span className="menubar-dropdown">
+        <button type="button" className={chip} aria-label="Theme" onClick={() => toggle('theme')}>Theme ▾</button>
+        {open === 'theme' && (
+          <ul className="menubar-menu theme-menu">
+            {THEMES.map((t) => (
+              <li
+                key={t.id}
+                className={`theme-option${t.id === p.theme ? ' is-active' : ''}`}
+                onClick={run(() => p.onSetTheme(t.id))}
+              >
+                <span className={`swatch swatch-${t.id}`} aria-hidden="true" />
+                <span>
+                  <span className="theme-label">{t.label}</span>
+                  <br />
+                  <span className="theme-blurb">{t.blurb}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </span>
     </div>
   );
 };

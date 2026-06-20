@@ -20,6 +20,8 @@ function props(over: Partial<React.ComponentProps<typeof MenuBar>> = {}) {
     onSetJob: vi.fn(),
     version: null as string | null,
     onShowVersions: vi.fn(),
+    theme: 'developer' as const,
+    onSetTheme: vi.fn(),
     ...over,
   };
 }

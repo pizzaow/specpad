@@ -57,10 +57,13 @@ import JobsView from './components/JobsView';
 import ArchitectureView from './components/ArchitectureView';
 import ReleasesView from './components/ReleasesView';
 import AuditView from './components/AuditView';
+import OverviewView from './components/OverviewView';
+import { readStoredTheme, applyTheme } from './theme';
+import type { ThemeId } from './theme';
 import StatusBar from './components/StatusBar';
 import ViewTabs from './components/ViewTabs';
 
-type ViewMode = 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'releases' | 'audit';
+type ViewMode = 'overview' | 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'releases' | 'audit';
 type OpenResult = { name: string; documents: DocumentListItem[] };
 type JobDiff = { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpItem> };
 export type ArchChange = {
@@ -151,7 +154,8 @@ const LocalApp: React.FC = () => {
   const [srsDoc, setSrsDoc] = useState<SrsDoc | null>(null);
   const [vtpDoc, setVtpDoc] = useState<VtpDoc | null>(null);
   const [prdDoc, setPrdDoc] = useState<PrdDoc | null>(null);
-  const [currentView, setCurrentView] = useState<ViewMode>('srs');
+  const [currentView, setCurrentView] = useState<ViewMode>('overview');
+  const [theme, setTheme] = useState<ThemeId>(readStoredTheme);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedDocName, setSelectedDocName] = useState('');
@@ -193,6 +197,11 @@ const LocalApp: React.FC = () => {
 
   // Set the active jobs (one or many). Writes the canonical `jobs` array form;
   // `title` is only kept for a single free-text job with no register.
+  const handleSetTheme = (id: ThemeId) => {
+    setTheme(id);
+    applyTheme(id);
+  };
+
   const handleSetJob = async (ids: string[], title?: string) => {
     const name = selectedDocName || projectName;
     const doc: JobDoc = {
@@ -555,6 +564,8 @@ const LocalApp: React.FC = () => {
         onSetJob={handleSetJob}
         version={releases?.baseline ?? null}
         onShowVersions={() => setShowVersions(true)}
+        theme={theme}
+        onSetTheme={handleSetTheme}
         demo={launch.demo}
       />
 
@@ -573,10 +584,10 @@ const LocalApp: React.FC = () => {
         </div>
       )}
 
-      {(srsDoc || vtpDoc) && (
+      {isDirectoryOpen && (
         <ViewTabs
           current={currentView}
-          enabled={{ srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl), releases: !!releases, audit: !!srsDoc }}
+          enabled={{ overview: true, srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl), releases: !!releases, audit: !!srsDoc }}
           onSelect={setCurrentView}
         />
       )}
@@ -586,6 +597,14 @@ const LocalApp: React.FC = () => {
       <div className="content">
         {/* key={selectedDocName} remounts the table when the open document changes,
             so each table re-seeds its working copy instead of editing the prior doc. */}
+        {currentView === 'overview' && isDirectoryOpen && (
+          <OverviewView
+            projectName={selectedDocName || projectName}
+            prd={prdDoc} srs={srsDoc} vtp={vtpDoc}
+            releases={releases} jobs={jobsDoc?.jobs ?? []}
+            onNavigate={setCurrentView}
+          />
+        )}
         {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onChange={handleChange} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} />}
         {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onChange={handleChange} redline={vtpRedline} attribution={vtpSnapshots.length ? vtpAttribution : undefined} />}
         {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} onChange={handleChange} />}

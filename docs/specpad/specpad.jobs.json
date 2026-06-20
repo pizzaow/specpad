@@ -219,6 +219,18 @@
       "title": "Auditor view — live design-control evidence (coverage, trace matrix, gaps)",
       "description": "Add an Auditor view (editor tab) that renders a reviewer's-eye picture of the open project: a coverage summary (requirements verified, test results, product-requirement coverage), the PRD→SRS→VTP traceability matrix with per-requirement verification results, and a gap list derived from the shared governance check plus the proposed-PRD roadmap. Load the optional PRD register into the editor so product requirements and upward traces are available. Includes a scope disclaimer (evidence that supports design controls; not a QMS / compliance determination).",
       "status": "open"
+    },
+    {
+      "id": "j_2f6a8c",
+      "code": "JOB-18",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Editor visual system: design tokens, themes, Overview landing, tab reorder",
+      "description": "Polish the editor into a cohesive, modern product. Build a CSS design-token system and ship three selectable themes (developer tool, editorial, blueprint) with a menubar switcher persisted to localStorage (applied before first paint, no flash). Add an Overview (Home) landing — an engineer's status home showing in-progress jobs, the latest release, and a coverage/health headline, with quick navigation into the authoring views — and make it the default view. Reorder the document tabs to lead with Overview then the authoring views, grouping the oversight views (Auditor, Releases, Jobs) after; this supersedes JV-4's leftmost-Jobs rule (changed under this job, not JOB-6).",
+      "status": "open"
     }
   ]
 }

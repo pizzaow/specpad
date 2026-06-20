@@ -63,16 +63,20 @@ describe('LocalApp document switching', () => {
     fireEvent.click(screen.getByText('File ▾'));
     fireEvent.click(screen.getByText('Open project directory…'));
 
-    // Two projects — no auto-load. Brand dropdown appears with projectName 'AppA'.
-    // The brand button renders <span>AppA</span> ▾; click the span to open switcher.
-    const brandTrigger = await screen.findByText('AppA');
+    // Two projects — no auto-load (opens on Overview). The brand dropdown shows
+    // projectName 'AppA' (the menubar chip; the Overview also titles 'AppA', so
+    // target the button specifically).
+    const brandTrigger = await screen.findByRole('button', { name: /AppA/ });
     fireEvent.click(brandTrigger);
 
     // Dropdown shows both project names; pick AppB.
     fireEvent.click(await screen.findByText('AppB'));
+    // The editor opens on the Overview; switch to the Requirements tab to see the table.
+    fireEvent.click(await screen.findByText('Requirements'));
     expect(await screen.findByText('Requirement B')).toBeInTheDocument();
 
-    // Switch back: brand still shows AppA (directory name unchanged).
+    // Switch back: brand still shows AppA (directory name unchanged). The Requirements
+    // tab stays selected across the switch, so the table re-seeds with AppA's items.
     fireEvent.click(screen.getByText('AppA'));
     fireEvent.click(await screen.findByText('AppA', { selector: 'li' }));
     expect(await screen.findByText('Requirement A')).toBeInTheDocument();
@@ -81,5 +85,12 @@ describe('LocalApp document switching', () => {
     // Switching between documents with no unsaved edits must never prompt.
     expect(confirmSpy).not.toHaveBeenCalled();
     confirmSpy.mockRestore();
+  });
+
+  it('opens on the Overview by default', async () => {
+    render(<LocalApp />);
+    fireEvent.click(screen.getByText('File ▾'));
+    fireEvent.click(screen.getByText('Open project directory…'));
+    expect(await screen.findByText(/Project overview/i)).toBeInTheDocument();
   });
 });
