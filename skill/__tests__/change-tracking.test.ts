@@ -68,6 +68,21 @@ describe('dogfood closed-job caches', () => {
     }
   });
 
+  it('a release is a full-doc checkpoint that maps to its jobs', () => {
+    const root = (f: string) => fileURLToPath(new URL(`../../docs/specpad/${f}`, import.meta.url));
+    const releases = JSON.parse(readFileSync(root('specpad.releases.json'), 'utf8'));
+    const jobs = JSON.parse(readFileSync(root('specpad.jobs.json'), 'utf8'));
+    // v1.2 release exists and closed jobs map to it via job.version
+    expect(releases.releases.map((r: any) => r.version)).toContain('v1.2');
+    expect(jobs.jobs.some((j: any) => j.version === 'v1.2' && j.status === 'closed')).toBe(true);
+    // the baseline snapshot is a FULL doc set (not just the spec JSON)
+    const base = (f: string) => existsSync(root(`.specpad/baseline/${f}`));
+    expect(base('specpad.srs.json')).toBe(true);
+    expect(base('specpad.sad.md')).toBe(true);
+    expect(base('specpad.context.svg')).toBe(true);
+    expect(skill).toMatch(/all key\s+documents/i);
+  });
+
   it('captures the architecture file change for the job that created the SAD', () => {
     const job = fileURLToPath(new URL('../../docs/specpad/.specpad/jobs/j_e7a2b1/', import.meta.url));
     const before = JSON.parse(readFileSync(`${job}before/arch-files.json`, 'utf8'));

@@ -54,10 +54,11 @@ import VTPTable from './components/VTPTable';
 import TestingView from './components/TestingView';
 import JobsView from './components/JobsView';
 import ArchitectureView from './components/ArchitectureView';
+import ReleasesView from './components/ReleasesView';
 import StatusBar from './components/StatusBar';
 import ViewTabs from './components/ViewTabs';
 
-type ViewMode = 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch';
+type ViewMode = 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'releases';
 type OpenResult = { name: string; documents: DocumentListItem[] };
 type JobDiff = { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpItem> };
 export type ArchChange = {
@@ -567,7 +568,7 @@ const LocalApp: React.FC = () => {
       {(srsDoc || vtpDoc) && (
         <ViewTabs
           current={currentView}
-          enabled={{ srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl) }}
+          enabled={{ srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl), releases: !!releases }}
           onSelect={setCurrentView}
         />
       )}
@@ -580,6 +581,9 @@ const LocalApp: React.FC = () => {
         {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onChange={handleChange} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} />}
         {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onChange={handleChange} redline={vtpRedline} attribution={vtpSnapshots.length ? vtpAttribution : undefined} />}
         {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} onChange={handleChange} />}
+        {currentView === 'releases' && isDirectoryOpen && (
+          <ReleasesView releases={releases} jobs={jobsDoc?.jobs ?? []} />
+        )}
         {currentView === 'arch' && isDirectoryOpen && (
           <ArchitectureView
             sad={sad} dsl={dsl} guide={sadGuide} diagrams={diagrams}

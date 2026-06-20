@@ -147,18 +147,6 @@
     { "id": "r_av004", "code": "AV-4", "text": "Per-job diagram change tracking shall be coarse — that the diagram file changed — not in-diagram deltas.", "tags": ["architecture", "change-tracking"] },
     { "id": "r_dg001", "code": "DGM-1", "text": "Diagrams shall be placed by the arc42 markdown via image references (![caption](name.svg)), so the document defines where each diagram appears — a context overview near the top, plus building block (interfaces), runtime (process), and deployment.", "tags": ["architecture", "editor"] },
     { "id": "r_dg002", "code": "DGM-2", "text": "The Architecture Display shall render each markdown-referenced diagram SVG inline at its place in the document.", "tags": ["architecture", "editor"] },
-    { "id": "r_dg003", "code": "DGM-3", "text": "The Structurizr C4 DSL shall be optional — supported when present (loader kept; the editor shows it only when present) but not included in the default templates or scaffold.", "tags": ["architecture", "editor"] },
-    { "id": "r_ac001", "code": "AC-1", "text": "The closed-job cache shall snapshot the architecture files (sad.md, diagram SVGs, the guide, and the optional workspace.dsl) plus a per-state manifest, so a job's architecture changes are available to the editor.", "tags": ["architecture", "change-tracking"] },
-    { "id": "r_ac002", "code": "AC-2", "text": "A closed job's detail shall present an Architecture changes section listing which architecture files it added, modified, or removed (coarse, file-level), plus an added/removed-line diff for the SAD markdown.", "tags": ["architecture", "editor"] },
-
-    { "id": "h_co000", "heading": true, "text": "Packaging: core vs medical add-on" },
-    { "id": "r_co001", "code": "CORE-1", "text": "SpecPad shall ship as a lean core skill (contract, requirements/tests, jobs, working loop, generic architecture profile, generic evidence export) plus an optional specpad-medical add-on skill; the regulated layer's cost is paid only when opted in.", "tags": ["skill", "packaging"] },
-    { "id": "r_co002", "code": "CORE-2", "text": "The core skill shall not carry medical/regulatory content; the specpad-medical add-on shall provide the medical architecture profile (its template and authoring guide) and the regulatory governance.", "tags": ["skill", "packaging"] },
-    { "id": "r_co003", "code": "CORE-3", "text": "The shared contract and the editor shall remain unified across both skills — the medical add-on adds prose, templates, and governance, never a code fork; the editor activates medical features only when a medical profile is present.", "tags": ["skill", "packaging"] },
-
-    { "id": "h_re000", "heading": true, "text": "Releases" },
-    { "id": "r_re001", "code": "REL-1", "text": "A release shall be a first-class checkpoint — a version with its set of jobs (the closed jobs whose version equals the release) and a full snapshot of all key documentation; the release→jobs mapping is derived from job.version, never stored separately.", "tags": ["change-tracking", "skill"] },
-    { "id": "r_re002", "code": "REL-2", "text": "Refresh shall snapshot all key document types at a release (proj/srs/vtp JSON, the SAD markdown, its diagrams, and the guide), not just the spec JSON, so the release is a complete checkpoint.", "tags": ["change-tracking", "skill"] },
-    { "id": "r_re003", "code": "REL-3", "text": "The editor shall provide a Releases view presenting each release newest-first with its version, date, and author, and the jobs that shipped in it as release notes (grouped Features and Bugfixes); closed jobs not yet in a release appear under Unreleased.", "tags": ["editor", "change-tracking"] }
+    { "id": "r_dg003", "code": "DGM-3", "text": "The Structurizr C4 DSL shall be optional — supported when present (loader kept; the editor shows it only when present) but not included in the default templates or scaffold.", "tags": ["architecture", "editor"] }
   ]
 }

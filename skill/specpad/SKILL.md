@@ -263,11 +263,17 @@ Run at release time or on request:
    - `author`: the author of the tagged commit — `git log -1 --format='%an	%ae' <tag>` →
      `{ "name": ..., "email": ... }`. (This is **release-granularity** "who", not per-item.)
    - `snapshot`: `null` for now (filled in only when cached).
-3. Regenerate `.specpad/baseline/` from the newest matching tag: for each spec file
-   `git show <tag>:docs/specpad/<file>` and write it under `docs/specpad/.specpad/baseline/` mirroring the
-   top-level file names. Set that release's `snapshot` to `".specpad/baseline"` and set the top-level
+3. Regenerate `.specpad/baseline/` from the newest matching tag — a **full snapshot of all key
+   documents** (proj/srs/vtp JSON, the SAD markdown, its diagrams, the guide): for each,
+   `git show <tag>:docs/specpad/<file>` written under `docs/specpad/.specpad/baseline/` mirroring the
+   top-level file names. Set that release's `snapshot` to `".specpad/baseline"` and the top-level
    `baseline` to that version.
 4. Re-validate every JSON file you wrote.
+
+A **release is a first-class checkpoint**: a version + **its set of jobs** (the closed jobs whose derived
+`version` equals that release) + the full-doc snapshot above. The editor's **Releases view** reads this
+as release notes (each release with its jobs, newest first); it is also the checkpoint the eQMS export is
+generated from. The release→jobs mapping is **derived** (from `job.version`), never stored separately.
 
 If there are **no matching tags**, write a manifest with `baseline: null` and `releases: []` (copy
 `templates/starter.releases.json`); the editor degrades gracefully.

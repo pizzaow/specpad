@@ -7,7 +7,10 @@
       "id": "j_4a7f1c",
       "code": "JOB-1",
       "type": "feature",
-      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
       "title": "Jobs register & change-tracking traceability",
       "description": "Add a SpecPad-owned jobs register (jobs.json) with an open/closed lifecycle, the active-job governance rule, the editor Jobs view and active-job picker, and the skill git plumbing so every spec change traces to a job. Baselined at v1.1.",
       "status": "open"
@@ -16,117 +19,181 @@
       "id": "j_9b2e07",
       "code": "JOB-2",
       "type": "feature",
-      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
       "title": "Onboarding: specpad init",
       "description": "One-command setup that scaffolds docs/specpad/, installs the pre-push hook, wires the SpecPad working-loop directive into the project CLAUDE.md, and generates the launcher — so a new user is fully set up on install with no manual configuration. Idempotent and non-destructive.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.2"
     },
     {
       "id": "j_c1a8f3",
       "code": "JOB-3",
       "type": "feature",
-      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
       "title": "Baseline generator (draft a spec from existing code)",
       "description": "An agent procedure that bootstraps a draft v1 SRS/VTP from an existing codebase — surveying modules, public behavior, and existing tests — so SpecPad can be adopted on a project that did not start with it. Output is a draft for human ratification, mapped to existing tests, governance-clean.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.2"
     },
     {
       "id": "j_5d3b29",
       "code": "JOB-4",
       "type": "feature",
-      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
       "title": "Requirement audit (reconcile spec with code)",
       "description": "An agent procedure that reconciles the existing SRS/VTP against the whole codebase, reporting drift both directions — code behavior with no requirement (missing), requirements whose behavior is gone/changed (stale), and requirements/test references with no covering test (coverage). Reports ratifiable proposals; applies nothing destructive. The commit-time audit is its staged-diff form.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.2"
     },
     {
       "id": "j_7e0c84",
       "code": "JOB-5",
       "type": "bugfix",
-      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
       "title": "Spec reconciliation (apply requirement-audit findings)",
       "description": "Apply the ratified findings from the first requirement audit: add the missing recent-projects requirement (EDS-12) mapped to its existing tests, correct the stale ValidationPanel test reference (TEST-22 -> StatusBar), and close two of the four not_tested coverage gaps (TEST-9 id-immutability, TEST-59 records-only) with real tests.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.2"
     },
     {
       "id": "j_a3f7d2",
       "code": "JOB-6",
       "type": "feature",
-      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
       "title": "Jobs view as release notes",
       "description": "Reframe the editor Jobs tab as release notes: group jobs by major version (unversioned under Unreleased), then by type into Features and Bugfixes, with each job's description beneath its title. Clicking a job opens a separate detail view. Adds the job record type and version fields and moves Jobs to the leftmost tab.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.2"
     },
     {
       "id": "j_b8c2e5",
       "code": "JOB-7",
       "type": "feature",
-      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
       "title": "Closed-job change cache, owner, derived version, in-progress vs released views",
       "description": "On close, cache a job's before/after spec snapshots (lockfile-class) so the browser editor can show its SRS/VTP changes; add an owner set from git at creation; derive a job's version from the release tag containing its commits; split the Jobs tab into In progress (open) and Released (closed) views.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.2"
     },
     {
       "id": "j_d4f1a0",
       "code": "JOB-8",
       "type": "feature",
-      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
       "title": "Source-code traceability (job to commits to code)",
       "description": "Cache each closed job's commit list (commits.json, derived from the Job: trailer) so the editor shows a job's commits alongside its SRS/VTP changes, and document the skill's source-traceability export (per-job commits + code diffs from git) that feeds the eQMS evidence package.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.2"
     },
     {
       "id": "j_e7a2b1",
       "code": "JOB-9",
       "type": "feature",
-      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
       "title": "Architecture spec (arc42 + C4) and Architecture view",
       "description": "Add an optional architecture spec — an arc42 software architecture document (markdown) plus a C4 model in Structurizr DSL — tracked under docs/specpad/, job/release coupled (no requirement-level trace matrix). New editor Architecture view renders the arc42 doc and presents the C4 DSL. Dogfooded with SpecPad's own SAD.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.2"
     },
     {
       "id": "j_f1c3d8",
       "code": "JOB-10",
       "type": "feature",
-      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
       "title": "Architecture templates (generic + medical), init path quiz, beefed-up generic SAD",
       "description": "Ship two architecture profiles — a beefed-up generic arc42+C4 template (several diagrams, no safety classification) and a medical template (62304/FDA: per-unit classification, segregation, verification) — each with a soft authoring guide. The init quiz lets the user pick generic vs medical and scaffolds the match. Re-dogfood SpecPad's SAD with the richer generic template. Cybersecurity architecture is a noted coming-soon pillar.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.2"
     },
     {
       "id": "j_2b9e44",
       "code": "JOB-11",
       "type": "feature",
-      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
       "title": "Architecture Edit/Display view: CodeMirror editor, markdown rendering, diagram SVG",
       "description": "Give the Architecture tab Edit/Display sub-tabs: a syntax-highlighting CodeMirror editor for the arc42 markdown and C4 source, and a Display that renders the markdown as HTML (react-markdown) with inline diagram SVGs (draw.io export) and the authoring-guide panel. Diagram change tracking stays coarse (file changed: yes/no). draw.io is the pragmatic diagram source; SVG export is rendered client-side.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.2"
     },
     {
       "id": "j_3c8a17",
       "code": "JOB-12",
       "type": "feature",
-      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
       "title": "Diagram-heavy architecture: markdown-placed inline diagrams; Structurizr DSL optional",
       "description": "Let the arc42 markdown define where diagrams go via image references; the Display renders each referenced SVG inline at its place. Ship several diagrams (Context overview near the top, Building Block interfaces, Runtime process, Deployment) and demote the Structurizr/C4 DSL to an optional alternative (loader kept, editor shows it only when present, removed from default templates + SpecPad's dogfood).",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.2"
     },
     {
       "id": "j_5e1d92",
       "code": "JOB-13",
       "type": "feature",
-      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
       "title": "Architecture changes in the job detail (coarse file-level + SAD line diff)",
       "description": "Snapshot the architecture files (sad.md, diagrams, guide, optional dsl) into the closed-job cache, and show an Architecture changes section in the job detail: which arch files were added/modified/removed (coarse), plus an added/removed-line diff for the SAD markdown. Completes SAD-4. Diagrams stay coarse (no in-diagram deltas).",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.2"
     },
     {
       "id": "j_6f2b40",
       "code": "JOB-14",
       "type": "feature",
-      "owner": { "name": "Geoff Pollard", "email": "geoffpollard@gmail.com" },
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
       "title": "Split into core specpad + optional specpad-medical add-on skill",
       "description": "Extract medical/regulatory content into a separate specpad-medical add-on skill (62304/FDA profile, medical template + guide, regulatory governance), keeping core specpad lean and general (generic profile, contract, jobs, working loop). The contract and editor stay unified (medical features light up only when a medical profile is present). Controls bloat: the regulated layer's token cost is paid only when opted in.",
+      "status": "closed",
+      "version": "v1.2"
+    },
+    {
+      "id": "j_7a3c91",
+      "code": "JOB-15",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Formal Release entity: release-as-jobs view + full-doc release snapshot",
+      "description": "Make a release first-class: a release is its set of jobs at a version, with a guaranteed full snapshot of all key docs and a Releases view that reads as release notes (jobs grouped per release). Core feature. Dogfooded by cutting v1.2.",
       "status": "open"
     }
   ]

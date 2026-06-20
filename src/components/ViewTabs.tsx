@@ -5,10 +5,11 @@
  */
 import React from 'react';
 
-export type ViewKey = 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch';
+export type ViewKey = 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'releases';
 
 const TABS: { key: ViewKey; label: string }[] = [
   { key: 'jobs', label: 'Jobs' },
+  { key: 'releases', label: 'Releases' },
   { key: 'srs', label: 'Requirements' },
   { key: 'vtp', label: 'Verification Tests' },
   { key: 'arch', label: 'Architecture' },
