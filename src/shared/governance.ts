@@ -1,11 +1,13 @@
-import type { ProjectDoc, SrsDoc, VtpDoc, JobsDoc, JobDoc } from './schema';
+import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, JobsDoc, JobDoc } from './schema';
 
 export type GovernanceRuleId =
   | 'traceability'
   | 'referential-integrity'
   | 'missing-expected'
   | 'active-job-open'
-  | 'active-job-known';
+  | 'active-job-known'
+  | 'prd-referential-integrity'
+  | 'prd-coverage';
 
 /** Normalize the active-job marker to a list, tolerating the legacy single `job`. */
 export function activeJobIds(job: JobDoc | null | undefined): string[] {
@@ -52,12 +54,25 @@ export const GOVERNANCE_RULES: GovernanceRule[] = [
     description:
       'When a jobs register exists, every active-job marker entry must resolve to a record in it (no dangling or mistyped ids).',
   },
+  {
+    id: 'prd-referential-integrity',
+    title: 'PRD references resolve',
+    description:
+      'When a PRD register is present, every SRS `satisfies` entry must resolve to an existing PRD item id.',
+  },
+  {
+    id: 'prd-coverage',
+    title: 'Every product requirement is satisfied',
+    description:
+      'When a PRD register is present, every non-heading PRD item must be referenced by at least one SRS requirement via `satisfies`.',
+  },
 ];
 
 export interface ProjectBundle {
   project?: ProjectDoc | null;
   srs?: SrsDoc | null;
   vtp?: VtpDoc | null;
+  prd?: PrdDoc | null;
   jobs?: JobsDoc | null;
   job?: JobDoc | null;
 }
@@ -119,6 +134,36 @@ export function checkGovernance(bundle: ProjectBundle): GovernanceViolation[] {
   // (Pure data — both files are in the working tree, so the editor can evaluate this too.
   // Requiring an active job *for spec changes* needs HEAD and lives in the skill pre-commit gate.
   // With no register, entries are external tracker keys we can't resolve, so we skip the check.)
+  // prd-{referential-integrity,coverage}: only when a PRD register is present (opt-in).
+  // Without a PRD register, `satisfies` entries are unresolvable and PRD governance is skipped.
+  if (bundle.prd) {
+    const prdItems = bundle.prd.items ?? [];
+    const prdIds = new Set(prdItems.map((i) => i.id));
+    const satisfied = new Set<string>();
+    for (const req of srsItems) {
+      for (const ref of req.satisfies ?? []) {
+        satisfied.add(ref);
+        if (!prdIds.has(ref)) {
+          violations.push({
+            rule: 'prd-referential-integrity',
+            itemId: req.id,
+            message: `Requirement ${req.id} satisfies "${ref}", which is not a known PRD item id.`,
+          });
+        }
+      }
+    }
+    for (const prd of prdItems) {
+      if (prd.heading) continue;
+      if (!satisfied.has(prd.id)) {
+        violations.push({
+          rule: 'prd-coverage',
+          itemId: prd.id,
+          message: `Product requirement ${prd.id} is not satisfied by any SRS requirement.`,
+        });
+      }
+    }
+  }
+
   const active = activeJobIds(bundle.job);
   if (active.length && bundle.jobs) {
     const byId = new Map(bundle.jobs.jobs.map((j) => [j.id, j]));

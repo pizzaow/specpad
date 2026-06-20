@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "1.0",
+  "type": "prd",
+  "name": "specpad",
+  "title": "Product Requirements",
+  "items": [
+    { "id": "p_pr001", "code": "PROD-1", "text": "SpecPad shall keep software documentation — requirements, verification tests, and architecture — as a version-controlled digital twin of the codebase, stored as JSON/markdown in the user's own git repository.", "tags": ["product"] },
+    { "id": "p_pr002", "code": "PROD-2", "text": "Every change to product behavior shall be traceable to an authorized unit of work (a job) and the commits that implemented it, so an auditor can answer \"why does this exist and who approved it\".", "tags": ["product"] },
+    { "id": "p_pr003", "code": "PROD-3", "text": "Humans shall be able to edit the same documentation files visually that the skill maintains programmatically, with git as the single history and merge layer.", "tags": ["product"] },
+    { "id": "p_pr004", "code": "PROD-4", "text": "SpecPad shall produce design-control evidence — requirements, tests, architecture, and releases captured at versioned checkpoints — suitable for export to an external quality system.", "tags": ["product"] },
+    { "id": "p_pr005", "code": "PROD-5", "text": "Software requirements shall be able to trace upward to product requirements, supporting the design-controls trace matrix (user need → requirement → verification).", "tags": ["product"] }
+  ]
+}

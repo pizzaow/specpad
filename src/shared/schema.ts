@@ -3,11 +3,11 @@
 
 export const SCHEMA_VERSION = '1.0' as const;
 export type SchemaVersion = typeof SCHEMA_VERSION;
-export type DocType = 'project' | 'srs' | 'vtp';
+export type DocType = 'project' | 'srs' | 'vtp' | 'prd';
 export type TestResult = '' | 'not_tested' | 'passed' | 'failed';
 
 export interface ProjectDocRef {
-  type: 'srs' | 'vtp';
+  type: 'srs' | 'vtp' | 'prd';
   path: string;
   title: string;
 }
@@ -27,6 +27,7 @@ export interface SrsItem {
   text: string;
   heading?: boolean;
   level?: number;
+  satisfies?: string[]; // ids of PRD items this requirement satisfies (upward trace; ids, never codes)
   tags?: string[];
   hazards?: string[];
 }
@@ -60,7 +61,29 @@ export interface VtpDoc {
   items: VtpItem[];
 }
 
-export type SpecPadDoc = ProjectDoc | SrsDoc | VtpDoc;
+// The PRD register: optional, higher-level *product* requirements (user needs / product intent)
+// that SRS requirements trace up to via SrsItem.satisfies. Same item shape as the SRS — stable id,
+// renameable code, text — so it reuses the diff, table, and governance machinery. A PRD entry is
+// product intent, not a code fact; it is the validation/design-control trace anchor. Optional: a
+// project without a PRD register pays no PRD governance.
+export interface PrdItem {
+  id: string;
+  code?: string;
+  text: string;
+  heading?: boolean;
+  level?: number;
+  tags?: string[];
+}
+
+export interface PrdDoc {
+  schemaVersion: SchemaVersion;
+  type: 'prd';
+  name: string;
+  title: string;
+  items: PrdItem[];
+}
+
+export type SpecPadDoc = ProjectDoc | SrsDoc | VtpDoc | PrdDoc;
 
 const stringArray = { type: 'array', items: { type: 'string' } } as const;
 
@@ -81,7 +104,7 @@ export const projectSchema = {
         type: 'object',
         required: ['type', 'path', 'title'],
         properties: {
-          type: { enum: ['srs', 'vtp'], description: 'Which kind of document this entry points at: "srs" or "vtp".' },
+          type: { enum: ['srs', 'vtp', 'prd'], description: 'Which kind of document this entry points at: "srs", "vtp", or "prd".' },
           path: { type: 'string', description: 'Path of the document file, relative to the project index.' },
           title: { type: 'string', description: 'Display title for the document.' },
         },
@@ -111,6 +134,7 @@ export const srsSchema = {
           text: { type: 'string', description: 'The requirement statement.' },
           heading: { type: 'boolean', description: 'True when this item is a section heading rather than a requirement/test.' },
           level: { type: 'integer', minimum: 0, description: 'Indent depth for hierarchy; absent means 0. Headings form dotted section codes.' },
+          satisfies: { ...stringArray, description: 'Ids of the PRD product requirements this requirement satisfies — ids, never codes, so renames cannot break the upward trace. Empty/absent unless a PRD register is in use.' },
           tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
           hazards: { ...stringArray, description: 'Reserved hazard labels (legacy v1 field; the editor no longer surfaces it).' },
         },
@@ -144,6 +168,34 @@ export const vtpSchema = {
           expected: { type: 'string', description: 'The expected result that defines a pass.' },
           result: { enum: ['', 'not_tested', 'passed', 'failed'], description: 'Latest recorded outcome: "", "not_tested", "passed", or "failed". Roll-ups are computed on read, never stored.' },
           notes: { type: 'string', description: 'Evidence and context for the recorded result (e.g. which automated test covers it).' },
+          tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
+        },
+      },
+    },
+  },
+} as const;
+
+export const prdSchema = {
+  $id: 'specpad/v1/prd',
+  type: 'object',
+  required: ['schemaVersion', 'type', 'name', 'title', 'items'],
+  properties: {
+    schemaVersion: { const: '1.0', description: 'Contract version of this file; "1.0" documents open in the pinned editor build at /v01/.' },
+    type: { const: 'prd', description: 'Document discriminator; selects the schema this file is validated against.' },
+    name: { type: 'string', description: 'Short system name; also the filename stem ([name].prd.json).' },
+    title: { type: 'string', description: 'Human-readable document title.' },
+    items: {
+      type: 'array',
+      description: 'Ordered list of product requirements and section headings.',
+      items: {
+        type: 'object',
+        required: ['id', 'text'],
+        properties: {
+          id: { type: 'string', minLength: 1, description: 'Stable machine identifier, generated once and never changed; SRS satisfies references target it.' },
+          code: { type: 'string', description: 'Human-facing label (e.g. "PROD-1"); freely renameable because references never use it.' },
+          text: { type: 'string', description: 'The product requirement / user need statement.' },
+          heading: { type: 'boolean', description: 'True when this item is a section heading rather than a product requirement.' },
+          level: { type: 'integer', minimum: 0, description: 'Indent depth for hierarchy; absent means 0. Headings form dotted section codes.' },
           tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
         },
       },

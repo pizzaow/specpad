@@ -1,6 +1,6 @@
 import Ajv from 'ajv';
 import type { ValidateFunction } from 'ajv';
-import { projectSchema, srsSchema, vtpSchema, releasesSchema, jobSchema, jobsSchema } from './schema';
+import { projectSchema, srsSchema, vtpSchema, prdSchema, releasesSchema, jobSchema, jobsSchema } from './schema';
 
 export interface ValidationError {
   path: string;
@@ -13,6 +13,7 @@ const validators: Record<string, ValidateFunction> = {
   project: ajv.compile(projectSchema as object),
   srs: ajv.compile(srsSchema as object),
   vtp: ajv.compile(vtpSchema as object),
+  prd: ajv.compile(prdSchema as object),
   releases: ajv.compile(releasesSchema as object),
   job: ajv.compile(jobSchema as object),
   jobs: ajv.compile(jobsSchema as object),

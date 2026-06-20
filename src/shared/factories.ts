@@ -1,5 +1,5 @@
 import { SCHEMA_VERSION } from './schema';
-import type { ProjectDoc, SrsDoc, VtpDoc, SrsItem, VtpItem, JobsDoc, JobRecord } from './schema';
+import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SrsItem, VtpItem, PrdItem, JobsDoc, JobRecord } from './schema';
 import { generateId, ID_PREFIX } from './ids';
 
 export function createProjectDoc(name: string, title: string): ProjectDoc {
@@ -38,6 +38,16 @@ export function createVtpItem(existingIds: Iterable<string>, level = 0): VtpItem
     expected: '',
     result: '',
   };
+  if (level > 0) item.level = level;
+  return item;
+}
+
+export function createPrdDoc(name: string, title: string): PrdDoc {
+  return { schemaVersion: SCHEMA_VERSION, type: 'prd', name, title, items: [] };
+}
+
+export function createPrdItem(existingIds: Iterable<string>, level = 0): PrdItem {
+  const item: PrdItem = { id: generateId(ID_PREFIX.product, existingIds), text: '' };
   if (level > 0) item.level = level;
   return item;
 }

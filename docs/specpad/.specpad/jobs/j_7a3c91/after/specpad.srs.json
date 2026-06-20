@@ -5,7 +5,7 @@
   "title": "Requirements",
   "items": [
     { "id": "h_d0c0", "heading": true, "text": "Documents and schema" },
-    { "id": "r_a101", "code": "DOC-1", "text": "The system shall store project documentation as JSON files under docs/specpad/: one project index, one SRS (requirements), and one VTP (verification tests).", "satisfies": ["p_pr001"], "tags": ["schema"] },
+    { "id": "r_a101", "code": "DOC-1", "text": "The system shall store project documentation as JSON files under docs/specpad/: one project index, one SRS (requirements), and one VTP (verification tests).", "tags": ["schema"] },
     { "id": "r_a102", "code": "DOC-2", "text": "Every document file shall carry a schemaVersion of \"1.0\" and a type of \"project\", \"srs\", or \"vtp\".", "tags": ["schema"] },
     { "id": "r_a103", "code": "DOC-3", "text": "Every document shall include a short system name and a human-readable title." },
     { "id": "r_a104", "code": "DOC-4", "text": "Every SRS and VTP item shall have a required, stable id and required text; all other fields are optional." },
@@ -67,7 +67,7 @@
     { "id": "r_ed0a07", "code": "EDA-7", "text": "Requirement rows shall be reorderable by drag-and-drop.", "level": 1, "tags": ["editor"] },
 
     { "id": "h_ed0b00", "heading": true, "code": "Shell", "text": "Editor — application shell" },
-    { "id": "r_ed0b01", "code": "EDS-1", "text": "The editor shall present an application menu bar that consolidates the app brand and primary actions, replacing the former page header and toolbar.", "level": 1, "satisfies": ["p_pr003"], "tags": ["editor"] },
+    { "id": "r_ed0b01", "code": "EDS-1", "text": "The editor shall present an application menu bar that consolidates the app brand and primary actions, replacing the former page header and toolbar.", "level": 1, "tags": ["editor"] },
     { "id": "r_ed0b02", "code": "EDS-2", "text": "The menu bar's File menu shall offer New document, Open project, and Change directory, or an upload/download fallback when the File System Access API is unavailable.", "level": 1, "tags": ["editor"] },
     { "id": "r_ed0b03", "code": "EDS-3", "text": "When the open directory holds several projects, the menu bar brand shall switch between them via a dropdown.", "level": 1, "tags": ["editor"] },
     { "id": "r_ed0b04", "code": "EDS-4", "text": "Document views shall be presented as tabs (Requirements, Verification Tests, Results), extensible to further document types, with a tab disabled when its document is absent.", "level": 1, "tags": ["editor"] },
@@ -83,7 +83,7 @@
     { "id": "r_ed0b11", "code": "EDS-11", "text": "In demo mode the editor shall disable all writes (save, new document, set job) and display a visible read-only indicator.", "level": 2, "tags": ["editor"] },
 
     { "id": "h_jb000", "heading": true, "text": "Jobs and change attribution" },
-    { "id": "r_jb001", "code": "JOBS-1", "text": "The skill shall maintain an owned jobs register (<name>.jobs.json) of job records — each with a stable id, an optional code label, a title, an optional description, and an open/closed status — used when there is no external tracker.", "satisfies": ["p_pr002"], "tags": ["jobs", "change-tracking"] },
+    { "id": "r_jb001", "code": "JOBS-1", "text": "The skill shall maintain an owned jobs register (<name>.jobs.json) of job records — each with a stable id, an optional code label, a title, an optional description, and an open/closed status — used when there is no external tracker.", "tags": ["jobs", "change-tracking"] },
     { "id": "r_jb002", "code": "JOBS-2", "text": "The jobs register shall store records only; a job's change-set (the requirements, tests, and source it touched) shall be derived from git commit trailers on demand and never stored.", "tags": ["jobs", "change-tracking"] },
     { "id": "r_jb003", "code": "JOBS-3", "text": "The active-job marker (<name>.job.json) shall name one or more active jobs as a list (with a legacy single job still read), and the skill shall write one Job: commit trailer per active job, carrying each job record's stable id.", "tags": ["jobs", "change-tracking"] },
     { "id": "r_jb004", "code": "JOBS-4", "text": "When a jobs register exists, governance shall flag any active-job entry that does not resolve to a record in it, and any that points at a closed record.", "tags": ["jobs", "governance"] },
@@ -133,7 +133,7 @@
     { "id": "r_sc003", "code": "SRC-3", "text": "A closed job's detail view shall list its commits (hash, subject, author, date) alongside its SRS/VTP changes.", "tags": ["editor", "jobs"] },
 
     { "id": "h_sa000", "heading": true, "text": "Architecture documentation" },
-    { "id": "r_sa001", "code": "SAD-1", "text": "The system shall support an optional architecture spec — an arc42 software architecture document (<name>.sad.md) plus a C4 model in Structurizr DSL (<name>.workspace.dsl) — tracked under docs/specpad/, separate from the id-keyed JSON requirements contract.", "satisfies": ["p_pr004"], "tags": ["architecture", "skill"] },
+    { "id": "r_sa001", "code": "SAD-1", "text": "The system shall support an optional architecture spec — an arc42 software architecture document (<name>.sad.md) plus a C4 model in Structurizr DSL (<name>.workspace.dsl) — tracked under docs/specpad/, separate from the id-keyed JSON requirements contract.", "tags": ["architecture", "skill"] },
     { "id": "r_sa002", "code": "SAD-2", "text": "The editor shall provide an Architecture view that renders the arc42 document and presents the C4 Structurizr DSL (live C4 diagram rendering is a planned follow-up).", "tags": ["architecture", "editor"] },
     { "id": "r_sa003", "code": "SAD-3", "text": "Architecture shall be job/release-coupled, not requirement-coupled: no requirement-to-architecture trace matrix is maintained; a job's architecture impact comes from diffing snapshots.", "tags": ["architecture", "change-tracking"] },
     { "id": "r_sa004", "code": "SAD-4", "text": "On close/refresh, the architecture docs shall be snapshotted into the per-job and release caches alongside the spec docs, so a job's architecture changes can be shown.", "tags": ["architecture", "change-tracking"] },
@@ -157,13 +157,8 @@
     { "id": "r_co003", "code": "CORE-3", "text": "The shared contract and the editor shall remain unified across both skills — the medical add-on adds prose, templates, and governance, never a code fork; the editor activates medical features only when a medical profile is present.", "tags": ["skill", "packaging"] },
 
     { "id": "h_re000", "heading": true, "text": "Releases" },
-    { "id": "r_re001", "code": "REL-1", "text": "A release shall be a first-class checkpoint — a version with its set of jobs (the closed jobs whose version equals the release) and a full snapshot of all key documentation; the release→jobs mapping is derived from job.version, never stored separately.", "satisfies": ["p_pr004"], "tags": ["change-tracking", "skill"] },
+    { "id": "r_re001", "code": "REL-1", "text": "A release shall be a first-class checkpoint — a version with its set of jobs (the closed jobs whose version equals the release) and a full snapshot of all key documentation; the release→jobs mapping is derived from job.version, never stored separately.", "tags": ["change-tracking", "skill"] },
     { "id": "r_re002", "code": "REL-2", "text": "Refresh shall snapshot all key document types at a release (proj/srs/vtp JSON, the SAD markdown, its diagrams, and the guide), not just the spec JSON, so the release is a complete checkpoint.", "tags": ["change-tracking", "skill"] },
-    { "id": "r_re003", "code": "REL-3", "text": "The editor shall provide a Releases view presenting each release newest-first with its version, date, and author, and the jobs that shipped in it as release notes (grouped Features and Bugfixes); closed jobs not yet in a release appear under Unreleased.", "tags": ["editor", "change-tracking"] },
-
-    { "id": "h_pd000", "heading": true, "text": "Product requirements (PRD)" },
-    { "id": "r_pd001", "code": "PRD-1", "text": "The system shall support an optional product-requirements (PRD) register as a peer document (<name>.prd.json) with the same item shape as the SRS — a stable id, an optional renameable code, and text — for capturing product intent / user needs above the software requirements.", "satisfies": ["p_pr005"], "tags": ["prd", "schema"] },
-    { "id": "r_pd002", "code": "PRD-2", "text": "An SRS requirement shall be able to trace upward to one or more PRD items via an optional satisfies reference that targets PRD item ids, never code labels, so renames cannot break the upward trace.", "satisfies": ["p_pr005"], "tags": ["prd", "schema"] },
-    { "id": "r_pd003", "code": "PRD-3", "text": "When a PRD register is present, governance shall enforce that every satisfies reference resolves to a PRD item (prd-referential-integrity) and that every non-heading PRD item is satisfied by at least one requirement (prd-coverage); a project with no PRD register shall incur no PRD governance.", "satisfies": ["p_pr005"], "tags": ["prd", "governance"] }
+    { "id": "r_re003", "code": "REL-3", "text": "The editor shall provide a Releases view presenting each release newest-first with its version, date, and author, and the jobs that shipped in it as release notes (grouped Features and Bugfixes); closed jobs not yet in a release appear under Unreleased.", "tags": ["editor", "change-tracking"] }
   ]
 }

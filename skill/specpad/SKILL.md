@@ -54,6 +54,8 @@ This loop is the **primary** mechanism. The pre-push gate and requirement audit 
 - `docs/specpad/<name>.proj.json` — project index
 - `docs/specpad/<name>.srs.json` — requirements
 - `docs/specpad/<name>.vtp.json` — verification tests
+- `docs/specpad/<name>.prd.json` — optional product requirements (user needs / product intent) that
+  SRS requirements trace up to via `satisfies` (see Product requirements below)
 - `docs/specpad/<name>.sad.md` — optional architecture document (arc42 skeleton, markdown)
 - `docs/specpad/<name>.<diagram>.svg` — optional diagrams (draw.io SVG exports) the SAD references inline
 - `docs/specpad/<name>.workspace.dsl` — optional C4 model (Structurizr DSL — an alternative to draw.io)
@@ -187,11 +189,28 @@ same over a single staged diff); both **propose, never auto-apply**.
 ## The v1 shape
 
 Shared envelope on every file: `schemaVersion` ("1.0"), `type`
-("project" | "srs" | "vtp"), `name`, `title`.
+("project" | "srs" | "vtp" | "prd"), `name`, `title`.
 
-SRS item — REQUIRED `id`, `text`. Optional `code`, `tags`, `hazards`, `heading`.
+SRS item — REQUIRED `id`, `text`. Optional `code`, `satisfies`, `tags`, `hazards`, `heading`.
 VTP item — REQUIRED `id`, `text`. Optional `code`, `verifies`, `expected`, `result`,
 `notes`, `tags`, `heading`. `result` is one of "" | "not_tested" | "passed" | "failed".
+PRD item — REQUIRED `id`, `text`. Optional `code`, `tags`, `heading`. (PRD is the optional
+product-requirements register; same item shape as the SRS.)
+
+## Product requirements (PRD) — optional upward trace
+
+A project may add an optional **PRD register** (`<name>.prd.json`, `type: "prd"`) holding
+*product* requirements — user needs / product intent that sit above the software requirements.
+It uses the same item shape as the SRS (stable `id`, renameable `code`, `text`), so it reuses the
+diff, table, and governance machinery.
+
+- An SRS requirement traces upward by setting **`satisfies`** to the PRD item **ids** it satisfies
+  (ids, never `code` labels — renames never break the trace). This mirrors how a VTP test's
+  `verifies` targets SRS ids.
+- A PRD entry is *product intent*, not a code fact — derive a draft from the job description (and any
+  ingested tracker/PRD context), then surface it for ratification; do not auto-finalize from code.
+- **Opt-in governance:** when a PRD register is present, `prd-referential-integrity` and
+  `prd-coverage` apply (see Governance). A project with no PRD register pays nothing.
 
 ## Hierarchy (sections and sub-requirements)
 
@@ -380,6 +399,10 @@ declaring a task done:
   record in it (no dangling or mistyped ids). With no register, entries are external tracker keys and
   neither job rule applies. (Requiring an active job *whenever spec/test files change* needs `HEAD`, so
   that lives in the commit-workflow pre-commit check above, not in this data-only rule set.)
+- `prd-referential-integrity`: When a PRD register is present, every SRS `satisfies` entry resolves to
+  an existing PRD item id.
+- `prd-coverage`: When a PRD register is present, every non-heading PRD item is satisfied by at least
+  one SRS requirement (via `satisfies`). With no PRD register, neither PRD rule applies — PRD is opt-in.
 
 Also confirm structural validity: required fields present, `result` within its enum,
 `schemaVersion` is "1.0".

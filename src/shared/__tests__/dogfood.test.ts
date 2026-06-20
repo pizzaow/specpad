@@ -4,10 +4,11 @@ import { checkGovernance, activeJobIds } from '../governance';
 import proj from '../../../docs/specpad/specpad.proj.json';
 import srs from '../../../docs/specpad/specpad.srs.json';
 import vtp from '../../../docs/specpad/specpad.vtp.json';
+import prd from '../../../docs/specpad/specpad.prd.json';
 import releases from '../../../docs/specpad/specpad.releases.json';
 import job from '../../../docs/specpad/specpad.job.json';
 import jobs from '../../../docs/specpad/specpad.jobs.json';
-import type { SrsDoc, VtpDoc, JobsDoc, JobDoc } from '../schema';
+import type { SrsDoc, VtpDoc, PrdDoc, JobsDoc, JobDoc } from '../schema';
 
 // SpecPad documents its own requirements and tests with SpecPad (dogfooding).
 // These must stay structurally valid and governance-clean, exactly like any
@@ -17,6 +18,7 @@ describe('SpecPad self-documentation (dogfood)', () => {
     expect(validate(proj)).toEqual([]);
     expect(validate(srs)).toEqual([]);
     expect(validate(vtp)).toEqual([]);
+    expect(validate(prd)).toEqual([]);
     expect(validate(releases)).toEqual([]);
     expect(validate(job)).toEqual([]);
     expect(validate(jobs)).toEqual([]);
@@ -27,6 +29,7 @@ describe('SpecPad self-documentation (dogfood)', () => {
       checkGovernance({
         srs: srs as SrsDoc,
         vtp: vtp as VtpDoc,
+        prd: prd as PrdDoc,
         jobs: jobs as JobsDoc,
         job: job as JobDoc,
       }),

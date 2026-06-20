@@ -9,7 +9,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import process from 'node:process';
 import {
-  projectSchema, srsSchema, vtpSchema, releasesSchema, jobSchema,
+  projectSchema, srsSchema, vtpSchema, prdSchema, releasesSchema, jobSchema,
 } from '../../src/shared/schema';
 import { GOVERNANCE_RULES } from '../../src/shared/governance';
 
@@ -19,6 +19,7 @@ const DEFAULT_SCHEMAS: Record<string, AnySchema> = {
   project: projectSchema as AnySchema,
   srs: srsSchema as AnySchema,
   vtp: vtpSchema as AnySchema,
+  prd: prdSchema as AnySchema,
   releases: releasesSchema as AnySchema,
   job: jobSchema as AnySchema,
 };

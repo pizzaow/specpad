@@ -1,7 +1,7 @@
 // Pure, id-keyed semantic diff of SpecPad documents. No git, no I/O, no clock.
 // See specpad-change-tracking-design.md §5. Assumes item ids are unique
 // (uniqueness is the validate layer's concern, not this module's).
-import type { SrsDoc, VtpDoc, SrsItem, VtpItem } from './schema';
+import type { SrsDoc, VtpDoc, PrdDoc, SrsItem, VtpItem, PrdItem } from './schema';
 
 export type ChangeStatus = 'added' | 'removed' | 'modified';
 
@@ -68,13 +68,13 @@ export function diffItems<T extends { id: string }>(oldItems: T[], newItems: T[]
 }
 
 export function diffDocs(
-  oldDoc: SrsDoc | VtpDoc,
-  newDoc: SrsDoc | VtpDoc,
-): DocDiff<SrsItem | VtpItem> {
+  oldDoc: SrsDoc | VtpDoc | PrdDoc,
+  newDoc: SrsDoc | VtpDoc | PrdDoc,
+): DocDiff<SrsItem | VtpItem | PrdItem> {
   if (oldDoc.type !== newDoc.type) {
     throw new Error(
       `Cannot diff documents of different types: ${oldDoc.type} vs ${newDoc.type}`,
     );
   }
-  return diffItems<SrsItem | VtpItem>(oldDoc.items, newDoc.items);
+  return diffItems<SrsItem | VtpItem | PrdItem>(oldDoc.items, newDoc.items);
 }

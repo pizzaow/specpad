@@ -194,6 +194,18 @@
       },
       "title": "Formal Release entity: release-as-jobs view + full-doc release snapshot",
       "description": "Make a release first-class: a release is its set of jobs at a version, with a guaranteed full snapshot of all key docs and a Releases view that reads as release notes (jobs grouped per release). Core feature. Dogfooded by cutting v1.2.",
+      "status": "closed"
+    },
+    {
+      "id": "j_8c4d2a",
+      "code": "JOB-16",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Product requirements (PRD) register + integrations design addendum",
+      "description": "Add an optional product-requirements (PRD) register as an SRS-shaped peer document, with upward SRS→PRD traceability (satisfies, by id) and opt-in governance (prd-referential-integrity, prd-coverage) that costs nothing without a PRD register. Capture the integrations design addendum (Jira/Confluence ingest add-on, import vs baseline routing, multi-repo system-level docs, PRD/validation, usability/interface-spec) as forward design. Dogfooded: SpecPad gains its own PRD register and SRS→PRD links.",
       "status": "open"
     }
   ]
