@@ -27,6 +27,8 @@ interface JobsViewProps {
   jobDiffs?: Record<string, JobDiff>;
   jobCommits?: Record<string, JobCommit[]>;
   jobArch?: Record<string, ArchChange>;
+  // Live diff of an active open job's before snapshot vs the working copy (in-progress changes).
+  activeDiffs?: Record<string, JobDiff>;
   onChange: (next: JobsDoc) => void;
   onSetActive: (ids: string[]) => void;
   readOnly?: boolean;
@@ -51,7 +53,7 @@ function groupOrder(a: string, b: string): number {
 const typeOf = (j: JobRecord): JobType => j.type ?? 'feature';
 const ownerOf = (j: JobRecord): string => (j.owner ? j.owner.name : '');
 
-const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDiffs, jobCommits, jobArch, onChange, onSetActive, readOnly }) => {
+const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDiffs, jobCommits, jobArch, activeDiffs, onChange, onSetActive, readOnly }) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const jobs = doc?.jobs ?? [];
@@ -88,6 +90,7 @@ const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDif
   if (selected) {
     const isActive = activeIds.includes(selected.id);
     const diff = jobDiffs?.[selected.id];
+    const activeDiff = activeDiffs?.[selected.id];
     const commits = jobCommits?.[selected.id] ?? [];
     const arch = jobArch?.[selected.id];
     return (
@@ -149,16 +152,27 @@ const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDif
         </div>
 
         <h4 style={{ marginTop: 20 }}>Changes</h4>
-        {selected.status !== 'closed' ? (
-          <p className="text-muted">In progress — this job's SRS/VTP changes are materialized once it is closed.</p>
-        ) : diff && (diff.srs || diff.vtp) ? (
+        {selected.status === 'closed' ? (
+          diff && (diff.srs || diff.vtp) ? (
+            <>
+              <DiffList label="Requirements (SRS)" diff={diff.srs} />
+              <DiffList label="Verification tests (VTP)" diff={diff.vtp} />
+              {isEmptyDiff(diff.srs) && isEmptyDiff(diff.vtp) && <p className="text-muted">No SRS/VTP changes in this job.</p>}
+            </>
+          ) : (
+            <p className="text-muted">No cached changes for this job — run <code>specpad refresh</code>.</p>
+          )
+        ) : isActive && activeDiff && (activeDiff.srs || activeDiff.vtp) ? (
           <>
-            <DiffList label="Requirements (SRS)" diff={diff.srs} />
-            <DiffList label="Verification tests (VTP)" diff={diff.vtp} />
-            {isEmptyDiff(diff.srs) && isEmptyDiff(diff.vtp) && <p className="text-muted">No SRS/VTP changes in this job.</p>}
+            <p className="text-muted">In progress — uncommitted/unreleased changes (the working copy vs this job's starting snapshot).</p>
+            <DiffList label="Requirements (SRS)" diff={activeDiff.srs} />
+            <DiffList label="Verification tests (VTP)" diff={activeDiff.vtp} />
+            {isEmptyDiff(activeDiff.srs) && isEmptyDiff(activeDiff.vtp) && <p className="text-muted">No changes yet for this job.</p>}
           </>
+        ) : isActive ? (
+          <p className="text-muted">In progress — no starting snapshot is cached for this job yet, so its changes can't be shown.</p>
         ) : (
-          <p className="text-muted">No cached changes for this job — run <code>specpad refresh</code>.</p>
+          <p className="text-muted">In progress — make this the active job to see its changes here, or close it to materialize them.</p>
         )}
 
         {selected.status === 'closed' && arch && (

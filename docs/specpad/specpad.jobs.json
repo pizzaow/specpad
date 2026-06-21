@@ -255,6 +255,18 @@
       "title": "Design-control map in the Auditor view; trace matrix moves to its own Traceability tab",
       "description": "Turn the Auditor view into an orientation index for a reviewer: a design-control map listing each formal element (Design Inputs, Outputs, Verification, Validation, Traceability, Design Changes, Design History File, Design Reviews, Risk Management, Configuration Management) with its standard citation (IEC 62304 / 21 CFR 820.30), a plain statement, a status derived live from the project, and a link to the section/tab holding the evidence — so an engineer can answer 'where are your design inputs?' instantly. Move the per-requirement trace matrix (and the coverage summary and gap list) to its own Traceability tab; the Auditor view links to it.",
       "status": "open"
+    },
+    {
+      "id": "j_4b8e60",
+      "code": "JOB-21",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Show the active job's in-progress (uncommitted) changes in the Jobs view",
+      "description": "Make an open job's changes visible before it is closed. Snapshot a job's before spec state into .specpad/jobs/<id>/before/ when the job is created (not only on close), pinning its starting point. The Jobs view then renders the active open job's in-progress changes by diffing that before snapshot against the live working copy (SRS/VTP) — so uncommitted and unreleased work shows up, the same diff the requirements/verification tables already display, attributed to the job.",
+      "status": "open"
     }
   ]
 }

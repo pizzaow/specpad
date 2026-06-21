@@ -92,10 +92,23 @@ describe('JobsView — in progress vs released', () => {
     expect(screen.queryByPlaceholderText(/blank = Unreleased/)).not.toBeInTheDocument();
   });
 
-  it('tells the user an open job\'s changes appear once closed', () => {
-    renderView();
+  it('tells the user when an active open job has no starting snapshot cached', () => {
+    renderView(); // no activeDiffs provided
     fireEvent.click(screen.getByText('SSO'));
-    expect(screen.getByText(/materialized once it is closed/)).toBeInTheDocument();
+    expect(screen.getByText(/no starting snapshot is cached/)).toBeInTheDocument();
+  });
+
+  it('renders the active open job\'s in-progress changes (before vs working copy)', () => {
+    const activeDiffs = {
+      j_open: {
+        srs: { added: [{ id: 'r_9', status: 'added' as const, after: { id: 'r_9', code: 'NEW-1', text: 'In-progress requirement.' } }], removed: [], modified: [] },
+        vtp: { added: [], removed: [], modified: [] },
+      },
+    };
+    renderView({ activeDiffs });
+    fireEvent.click(screen.getByText('SSO'));
+    expect(screen.getByText(/In progress — uncommitted/)).toBeInTheDocument();
+    expect(screen.getByText(/NEW-1 — In-progress requirement\./)).toBeInTheDocument();
   });
 
   it('adds a new feature job and opens its detail', () => {

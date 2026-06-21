@@ -172,6 +172,8 @@ const LocalApp: React.FC = () => {
   const [jobDiffs, setJobDiffs] = useState<Record<string, { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpItem> }>>({});
   const [jobCommits, setJobCommits] = useState<Record<string, JobCommit[]>>({});
   const [jobArch, setJobArch] = useState<Record<string, ArchChange>>({});
+  // Cached `before` snapshots for active OPEN jobs, diffed against the working copy below.
+  const [activeBefore, setActiveBefore] = useState<Record<string, { srs?: SrsDoc; vtp?: VtpDoc }>>({});
   // Architecture spec: arc42 markdown + the C4 Structurizr DSL (both optional, tracked text files).
   const [sad, setSad] = useState<string | null>(null);
   const [dsl, setDsl] = useState<string | null>(null);
@@ -195,6 +197,18 @@ const LocalApp: React.FC = () => {
   );
   const srsAttribution = React.useMemo(() => computeAttribution(srsSnapshots), [srsSnapshots]);
   const vtpAttribution = React.useMemo(() => computeAttribution(vtpSnapshots), [vtpSnapshots]);
+
+  // Live in-progress diff for each active open job: its `before` snapshot vs the working copy.
+  const activeDiffs = React.useMemo(() => {
+    const out: Record<string, JobDiff> = {};
+    for (const [id, before] of Object.entries(activeBefore)) {
+      const entry: JobDiff = {};
+      if (before.srs && srsDoc) entry.srs = diffDocs(before.srs as SrsDoc, srsDoc);
+      if (before.vtp && vtpDoc) entry.vtp = diffDocs(before.vtp as VtpDoc, vtpDoc);
+      if (entry.srs || entry.vtp) out[id] = entry;
+    }
+    return out;
+  }, [activeBefore, srsDoc, vtpDoc]);
 
   // Set the active jobs (one or many). Writes the canonical `jobs` array form;
   // `title` is only kept for a single free-text job with no register.
@@ -232,7 +246,8 @@ const LocalApp: React.FC = () => {
   const loadChangeTracking = async (name: string) => {
     const rel = await loadReleases(name);
     setReleases(rel);
-    setJob(await loadJob(name));
+    const jm = await loadJob(name);
+    setJob(jm);
     const jd = await loadJobs(name);
     setJobsDoc(jd);
     setDirtyJobs(false);
@@ -240,6 +255,22 @@ const LocalApp: React.FC = () => {
     setJobDiffs(caches.diffs);
     setJobCommits(caches.commits);
     setJobArch(caches.arch);
+    // Active open jobs: load each one's `before` snapshot so its in-progress changes
+    // (before vs the working copy) can be shown without git or closing the job.
+    const before: Record<string, { srs?: SrsDoc; vtp?: VtpDoc }> = {};
+    for (const id of activeJobIds(jm)) {
+      const rec = jd?.jobs.find((j) => j.id === id);
+      if (!rec || rec.status !== 'open') continue;
+      const [sb, vb] = await Promise.all([
+        loadJobSnapshot(id, 'before', 'srs', name),
+        loadJobSnapshot(id, 'before', 'vtp', name),
+      ]);
+      const entry: { srs?: SrsDoc; vtp?: VtpDoc } = {};
+      if (sb) entry.srs = sb as SrsDoc;
+      if (vb) entry.vtp = vb as VtpDoc;
+      if (entry.srs || entry.vtp) before[id] = entry;
+    }
+    setActiveBefore(before);
     const sadText = await loadProjectText(`${name}.sad.md`);
     setSad(sadText);
     setDsl(await loadProjectText(`${name}.workspace.dsl`));
@@ -320,6 +351,7 @@ const LocalApp: React.FC = () => {
       setJobDiffs({});
       setJobCommits({});
       setJobArch({});
+      setActiveBefore({});
       setSad(null);
       setDsl(null);
       setSadGuide(null);
@@ -639,6 +671,7 @@ const LocalApp: React.FC = () => {
             jobDiffs={jobDiffs}
             jobCommits={jobCommits}
             jobArch={jobArch}
+            activeDiffs={activeDiffs}
             onChange={handleJobsChange}
             onSetActive={handleSetJob}
             readOnly={launch.demo}

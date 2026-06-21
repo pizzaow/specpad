@@ -276,9 +276,10 @@ all redlines, version diffs, and attribution from the raw snapshots you write us
 - `.specpad/baseline/` — raw snapshot of the spec files at the latest release (always present once
   refreshed).
 - `.specpad/snapshots/<version>/` — raw snapshots of older releases, pulled on demand and then kept.
-- `.specpad/jobs/<id>/{before,after}/` — raw before/after spec snapshots for a **closed** job, written
-  when it is closed so the browser editor can show that job's SRS/VTP changes. Frozen on close (a
-  closed job's change-set never grows), so it can't go stale; regenerable by `refresh`.
+- `.specpad/jobs/<id>/{before,after}/` — raw spec snapshots for a job. `before/` is written **when the
+  job is created** (its starting point) so the editor can show the active open job's in-progress changes
+  (before vs the working copy); `after/` is added **on close**, freezing the job's final change-set.
+  Regenerable by `refresh`.
 
 `.specpad/` is a normal committed directory (deliberately not named `.cache/`, which many global
 gitignores exclude). It holds **only verbatim copies** of past spec files — never diffs.
@@ -325,11 +326,15 @@ Maintain it as authoritative metadata (it is **not** part of the regenerable `.s
 - **Version is derived, not hand-set.** A job's `version` is the release tag whose commits contain the
   job (Unreleased until a release does). Derive it at `refresh`: for each closed job, the earliest tag
   matching the manifest `tagPattern` that contains the job's last commit (`git tag --contains <sha>`).
-- **On close**, snapshot the job's before/after spec into `.specpad/jobs/<id>/{before,after}/` (raw
-  `git show <base>:…` and `<last>:…`, where `<base>` is the parent of the job's first commit and
-  `<last>` its final commit) and commit it. Also write `.specpad/jobs/<id>/commits.json` — the job's
-  commits from `git log --grep='Job: <id>' --format='%H … %s … %an … %cs'` — so the editor can show the
-  commits behind a job's changes. The editor diffs/renders these; you never diff. `refresh` rebuilds
+- **On create**, snapshot the job's **`before`** spec into `.specpad/jobs/<id>/before/` (a verbatim copy
+  of the current `<name>.proj/srs/vtp.json`) and commit it. This pins the job's starting point so the
+  editor can show the **active open job's in-progress changes** — its `before` snapshot diffed against the
+  working copy — before the job is ever closed.
+- **On close**, add the **`after`** snapshot into `.specpad/jobs/<id>/after/` (raw `git show <last>:…`,
+  `<last>` = the job's final commit; for an adopted/older job re-derive `before` from `git show <base>:…`,
+  `<base>` = the parent of the job's first commit). Also write `.specpad/jobs/<id>/commits.json` — the
+  job's commits from `git log --grep='Job: <id>' --format='%H … %s … %an … %cs'` — so the editor can show
+  the commits behind a job's changes. The editor diffs/renders these; you never diff. `refresh` rebuilds
   the caches and re-derives versions.
 
 ### Source-traceability export (job → commits → code)

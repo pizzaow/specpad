@@ -43,29 +43,40 @@ describe('skill documents the change-tracking plumbing', () => {
   });
 });
 
-describe('dogfood closed-job caches', () => {
+describe('dogfood job caches', () => {
   const jobsDir = fileURLToPath(new URL('../../docs/specpad/.specpad/jobs/', import.meta.url));
+  const root = (f: string) => fileURLToPath(new URL(`../../docs/specpad/${f}`, import.meta.url));
+  const statusById = new Map<string, string>(
+    JSON.parse(readFileSync(root('specpad.jobs.json'), 'utf8')).jobs.map((j: any) => [j.id, j.status]),
+  );
 
-  it('has committed before/after spec snapshots for closed jobs that parse and validate', () => {
+  it('caches a before snapshot for every job, and before+after+commits for closed jobs', () => {
     expect(existsSync(jobsDir)).toBe(true);
     const ids = readdirSync(jobsDir);
     expect(ids.length).toBeGreaterThan(0);
     for (const id of ids) {
-      for (const state of ['before', 'after']) {
-        const srs = JSON.parse(readFileSync(`${jobsDir}${id}/${state}/specpad.srs.json`, 'utf8'));
-        expect(validate(srs)).toEqual([]);
-      }
-      // each closed job also caches its commit list
+      // every cached job has a `before` snapshot (written at create) that validates
+      const beforeSrs = JSON.parse(readFileSync(`${jobsDir}${id}/before/specpad.srs.json`, 'utf8'));
+      expect(validate(beforeSrs), `${id} before`).toEqual([]);
+      if (statusById.get(id) !== 'closed') continue; // open jobs have only a before
+      const afterSrs = JSON.parse(readFileSync(`${jobsDir}${id}/after/specpad.srs.json`, 'utf8'));
+      expect(validate(afterSrs), `${id} after`).toEqual([]);
       const commits = JSON.parse(readFileSync(`${jobsDir}${id}/commits.json`, 'utf8'));
-      expect(Array.isArray(commits)).toBe(true);
-      expect(commits.length).toBeGreaterThan(0);
+      expect(Array.isArray(commits) && commits.length > 0, `${id} commits`).toBe(true);
       expect(commits[0]).toHaveProperty('hash');
-      expect(commits[0]).toHaveProperty('subject');
-      // and a per-state architecture manifest
       for (const state of ['before', 'after']) {
         expect(Array.isArray(JSON.parse(readFileSync(`${jobsDir}${id}/${state}/arch-files.json`, 'utf8')))).toBe(true);
       }
     }
+  });
+
+  it('snapshots a job\'s before at creation, so the active open job has one', () => {
+    expect(skill).toMatch(/On create/i);                       // documented: before written at create
+    expect(skill).toMatch(/in-progress changes/i);             // open-job in-progress diff
+    const active = JSON.parse(readFileSync(root('specpad.job.json'), 'utf8'));
+    const id = (active.jobs ?? [active.job]).filter(Boolean)[0];
+    const beforeSrs = JSON.parse(readFileSync(`${jobsDir}${id}/before/specpad.srs.json`, 'utf8'));
+    expect(validate(beforeSrs)).toEqual([]);
   });
 
   it('a release is a full-doc checkpoint that maps to its jobs', () => {
