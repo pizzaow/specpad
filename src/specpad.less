@@ -595,6 +595,21 @@ tr.warning { background-color: var(--warn-weak) !important; }
 
 /* ── auditor view ─────────────────────────────────────────────────────────── */
 .audit-trace .label { margin-right: 4px; }
+.dc-table > tbody > tr > td { vertical-align: top; }
+.dc-name { font-weight: 700; }
+.dc-cite { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.dc-status {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+.dc-status.present { background: var(--ok-weak); color: var(--ok); }
+.dc-status.partial { background: var(--warn-weak); color: var(--warn); }
+.dc-status.gap { background: var(--danger-weak); color: var(--danger); }
 
 /* ── change-tracking bits (token-ised) ────────────────────────────────────── */
 td.ct-changed { box-shadow: inset 3px 0 0 var(--warn); }

@@ -243,6 +243,18 @@
       "title": "On-demand authoring guides (requirements, tests, PRD, architecture)",
       "description": "Add per-document-type authoring guides under skill/specpad/guides/ that the skill reads just-in-time (progressive disclosure) rather than inlining into the always-on prompt. Each guide covers what to capture, how to phrase/structure, and good vs bad examples with the reason each is good or bad. SKILL.md gains a lean routing table that points to each guide at its working-loop touchpoint without duplicating the content. A parity test keeps SKILL.md and the guides in sync (no orphaned or dangling guides). Medical/regulatory authoring overlays remain a future addition in the specpad-medical add-on (opt-in).",
       "status": "open"
+    },
+    {
+      "id": "j_5a9c2e",
+      "code": "JOB-20",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Design-control map in the Auditor view; trace matrix moves to its own Traceability tab",
+      "description": "Turn the Auditor view into an orientation index for a reviewer: a design-control map listing each formal element (Design Inputs, Outputs, Verification, Validation, Traceability, Design Changes, Design History File, Design Reviews, Risk Management, Configuration Management) with its standard citation (IEC 62304 / 21 CFR 820.30), a plain statement, a status derived live from the project, and a link to the section/tab holding the evidence — so an engineer can answer 'where are your design inputs?' instantly. Move the per-requirement trace matrix (and the coverage summary and gap list) to its own Traceability tab; the Auditor view links to it.",
+      "status": "open"
     }
   ]
 }

@@ -57,13 +57,14 @@ import JobsView from './components/JobsView';
 import ArchitectureView from './components/ArchitectureView';
 import ReleasesView from './components/ReleasesView';
 import AuditView from './components/AuditView';
+import TraceabilityView from './components/TraceabilityView';
 import OverviewView from './components/OverviewView';
 import { readStoredTheme, applyTheme } from './theme';
 import type { ThemeId } from './theme';
 import StatusBar from './components/StatusBar';
 import ViewTabs from './components/ViewTabs';
 
-type ViewMode = 'overview' | 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'releases' | 'audit';
+type ViewMode = 'overview' | 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'releases' | 'audit' | 'trace';
 type OpenResult = { name: string; documents: DocumentListItem[] };
 type JobDiff = { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpItem> };
 export type ArchChange = {
@@ -587,7 +588,7 @@ const LocalApp: React.FC = () => {
       {isDirectoryOpen && (
         <ViewTabs
           current={currentView}
-          enabled={{ overview: true, srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl), releases: !!releases, audit: !!srsDoc }}
+          enabled={{ overview: true, srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl), releases: !!releases, audit: !!srsDoc, trace: !!srsDoc }}
           onSelect={setCurrentView}
         />
       )}
@@ -612,7 +613,15 @@ const LocalApp: React.FC = () => {
           <ReleasesView releases={releases} jobs={jobsDoc?.jobs ?? []} />
         )}
         {currentView === 'audit' && srsDoc && (
-          <AuditView prd={prdDoc} srs={srsDoc} vtp={vtpDoc} />
+          <AuditView
+            prd={prdDoc} srs={srsDoc} vtp={vtpDoc}
+            jobs={jobsDoc?.jobs ?? []} releases={releases}
+            hasArchitecture={!!(sad || dsl)}
+            onNavigate={setCurrentView}
+          />
+        )}
+        {currentView === 'trace' && srsDoc && (
+          <TraceabilityView prd={prdDoc} srs={srsDoc} vtp={vtpDoc} />
         )}
         {currentView === 'arch' && isDirectoryOpen && (
           <ArchitectureView

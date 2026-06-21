@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
 import AuditView from '../AuditView';
-import type { PrdDoc, SrsDoc, VtpDoc } from '../../shared';
+import type { PrdDoc, SrsDoc, VtpDoc, ReleasesDoc, JobRecord } from '../../shared';
 
 const prd: PrdDoc = {
   schemaVersion: '1.0', type: 'prd', name: 'Acme', title: 'PRD',
@@ -12,52 +12,51 @@ const prd: PrdDoc = {
 };
 const srs: SrsDoc = {
   schemaVersion: '1.0', type: 'srs', name: 'Acme', title: 'SRS',
-  items: [
-    { id: 'r_1', code: 'R-1', text: 'Verified requirement.', satisfies: ['p_a'] },
-    { id: 'r_2', code: 'R-2', text: 'Unverified requirement.' },
-  ],
+  items: [{ id: 'r_1', code: 'R-1', text: 'A requirement.', satisfies: ['p_a'] }],
 };
 const vtp: VtpDoc = {
   schemaVersion: '1.0', type: 'vtp', name: 'Acme', title: 'VTP',
   items: [{ id: 't_1', code: 'T-1', text: 'Test', verifies: ['r_1'], expected: 'ok', result: 'passed' }],
 };
+const releases: ReleasesDoc = {
+  schemaVersion: '1.0', type: 'releases', name: 'Acme', tagPattern: 'v*', baseline: 'v1',
+  releases: [{ version: 'v1', ref: 'a', date: '2026-01-01', author: { name: 'G', email: 'g@x' }, snapshot: null }],
+};
+const jobs: JobRecord[] = [{ id: 'j1', code: 'JOB-1', title: 'Work', status: 'open' }];
+
+const render_ = (onNavigate = vi.fn()) =>
+  render(<AuditView prd={prd} srs={srs} vtp={vtp} jobs={jobs} releases={releases} hasArchitecture onNavigate={onNavigate} />);
 
 describe('AuditView', () => {
-  it('renders coverage, the trace matrix, gaps, and the scope disclaimer', () => {
-    const { container } = render(<AuditView prd={prd} srs={srs} vtp={vtp} />);
-    const headings = [...container.querySelectorAll('h4')].map((h) => h.textContent);
-    expect(headings.some((h) => /Coverage/.test(h ?? ''))).toBe(true);
-    expect(headings.some((h) => /Traceability matrix/.test(h ?? ''))).toBe(true);
-    expect(headings.some((h) => /Gaps/.test(h ?? ''))).toBe(true);
-    // disclaimer
+  it('shows the scope disclaimer and the design-control map with citations', () => {
+    render_();
     expect(screen.getByText(/not itself a quality-management system/i)).toBeInTheDocument();
-    // trace matrix links PRD and test codes
-    expect(screen.getByText('PROD-1')).toBeInTheDocument();
-    expect(screen.getByText('T-1')).toBeInTheDocument();
+    expect(screen.getByText('Design Inputs')).toBeInTheDocument();
+    expect(screen.getByText('Design Verification')).toBeInTheDocument();
+    expect(screen.getByText(/820\.30\(c\)/)).toBeInTheDocument(); // a formal citation
   });
 
-  it('flags an unverified requirement (no_test row, gap listed)', () => {
-    const { container } = render(<AuditView prd={prd} srs={srs} vtp={vtp} />);
-    // r_2 has no verifying test → its row is marked danger
-    expect(container.querySelector('tr.danger')).toBeTruthy();
-    // and it appears in the gap list as a traceability finding
-    expect(screen.getByText(/has no verifying test/i)).toBeInTheDocument();
+  it('shows a status badge per element (including honest gaps)', () => {
+    const { container } = render_();
+    expect(container.querySelectorAll('.dc-status').length).toBeGreaterThanOrEqual(10);
+    // Design Validation is a known gap
+    expect(container.querySelector('.dc-status.gap')).toBeTruthy();
   });
 
-  it('shows the proposed-PRD roadmap section', () => {
-    render(<AuditView prd={prd} srs={srs} vtp={vtp} />);
+  it('links an element to the tab that holds its evidence', () => {
+    const onNavigate = vi.fn();
+    render_(onNavigate);
+    // The Traceability pointer at the bottom navigates to the trace tab.
+    fireEvent.click(screen.getByRole('button', { name: 'Traceability' }));
+    expect(onNavigate).toHaveBeenCalledWith('trace');
+  });
+
+  it('lists the roadmap (proposed PRD items) but not the trace matrix', () => {
+    render_();
     expect(screen.getByText(/Roadmap \(proposed product requirements\)/i)).toBeInTheDocument();
     expect(screen.getByText('Roadmap need.')).toBeInTheDocument();
-  });
-
-  it('reports governance-clean when there are no violations', () => {
-    const cleanSrs: SrsDoc = { ...srs, items: [{ id: 'r_1', code: 'R-1', text: 'Verified.', satisfies: ['p_a'] }] };
-    render(<AuditView prd={prd} srs={cleanSrs} vtp={vtp} />);
-    expect(screen.getByText(/Governance-clean/i)).toBeInTheDocument();
-  });
-
-  it('works without a PRD register', () => {
-    render(<AuditView prd={null} srs={srs} vtp={vtp} />);
-    expect(screen.getByText(/Requirement → verification \(no PRD register\)/i)).toBeInTheDocument();
+    // The matrix lives in the Traceability tab — the Auditor view has no "Matrix" heading.
+    const headings = [...document.querySelectorAll('h4')].map((h) => h.textContent);
+    expect(headings.some((h) => /Matrix/.test(h ?? ''))).toBe(false);
   });
 });

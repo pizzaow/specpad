@@ -6,7 +6,7 @@
  */
 import React from 'react';
 
-export type ViewKey = 'overview' | 'srs' | 'vtp' | 'testing' | 'arch' | 'audit' | 'releases' | 'jobs';
+export type ViewKey = 'overview' | 'srs' | 'vtp' | 'testing' | 'arch' | 'audit' | 'trace' | 'releases' | 'jobs';
 type Group = 'home' | 'authoring' | 'oversight';
 
 const TABS: { key: ViewKey; label: string; group: Group }[] = [
@@ -16,6 +16,7 @@ const TABS: { key: ViewKey; label: string; group: Group }[] = [
   { key: 'testing', label: 'Results', group: 'authoring' },
   { key: 'arch', label: 'Architecture', group: 'authoring' },
   { key: 'audit', label: 'Auditor', group: 'oversight' },
+  { key: 'trace', label: 'Traceability', group: 'oversight' },
   { key: 'releases', label: 'Releases', group: 'oversight' },
   { key: 'jobs', label: 'Jobs', group: 'oversight' },
 ];
