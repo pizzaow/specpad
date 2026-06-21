@@ -326,10 +326,11 @@ Maintain it as authoritative metadata (it is **not** part of the regenerable `.s
 - **Version is derived, not hand-set.** A job's `version` is the release tag whose commits contain the
   job (Unreleased until a release does). Derive it at `refresh`: for each closed job, the earliest tag
   matching the manifest `tagPattern` that contains the job's last commit (`git tag --contains <sha>`).
-- **On create**, snapshot the job's **`before`** spec into `.specpad/jobs/<id>/before/` (a verbatim copy
-  of the current `<name>.proj/srs/vtp.json`) and commit it. This pins the job's starting point so the
-  editor can show the **active open job's in-progress changes** — its `before` snapshot diffed against the
-  working copy — before the job is ever closed.
+- **On create**, snapshot the job's **`before`** state into `.specpad/jobs/<id>/before/` — the full key
+  doc set (verbatim `<name>.proj/srs/vtp.json` plus the SAD markdown, its diagrams, the guide, and an
+  `arch-files.json` manifest), the same shape as the close cache — and commit it. This pins the job's
+  starting point so the editor can show the **active open job's in-progress changes** (SRS/VTP **and**
+  architecture) — its `before` snapshot diffed against the working copy — before the job is ever closed.
 - **On close**, add the **`after`** snapshot into `.specpad/jobs/<id>/after/` (raw `git show <last>:…`,
   `<last>` = the job's final commit; for an adopted/older job re-derive `before` from `git show <base>:…`,
   `<base>` = the parent of the job's first commit). Also write `.specpad/jobs/<id>/commits.json` — the

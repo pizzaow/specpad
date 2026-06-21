@@ -29,6 +29,7 @@ interface JobsViewProps {
   jobArch?: Record<string, ArchChange>;
   // Live diff of an active open job's before snapshot vs the working copy (in-progress changes).
   activeDiffs?: Record<string, JobDiff>;
+  activeArch?: Record<string, ArchChange>;
   onChange: (next: JobsDoc) => void;
   onSetActive: (ids: string[]) => void;
   readOnly?: boolean;
@@ -53,7 +54,7 @@ function groupOrder(a: string, b: string): number {
 const typeOf = (j: JobRecord): JobType => j.type ?? 'feature';
 const ownerOf = (j: JobRecord): string => (j.owner ? j.owner.name : '');
 
-const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDiffs, jobCommits, jobArch, activeDiffs, onChange, onSetActive, readOnly }) => {
+const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDiffs, jobCommits, jobArch, activeDiffs, activeArch, onChange, onSetActive, readOnly }) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const jobs = doc?.jobs ?? [];
@@ -92,7 +93,8 @@ const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDif
     const diff = jobDiffs?.[selected.id];
     const activeDiff = activeDiffs?.[selected.id];
     const commits = jobCommits?.[selected.id] ?? [];
-    const arch = jobArch?.[selected.id];
+    // Architecture changes: a closed job's frozen cache, or the active open job's live in-progress diff.
+    const arch = selected.status === 'closed' ? jobArch?.[selected.id] : isActive ? activeArch?.[selected.id] : undefined;
     return (
       <div className="jobs-detail">
         <button className="btn btn-link" style={{ paddingLeft: 0 }} onClick={() => setSelectedId(null)}>← All jobs</button>
@@ -175,9 +177,9 @@ const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDif
           <p className="text-muted">In progress — make this the active job to see its changes here, or close it to materialize them.</p>
         )}
 
-        {selected.status === 'closed' && arch && (
+        {arch && (
           <>
-            <h4 style={{ marginTop: 20 }}>Architecture changes</h4>
+            <h4 style={{ marginTop: 20 }}>Architecture changes{selected.status !== 'closed' ? ' (in progress)' : ''}</h4>
             <ul className="list-unstyled" style={{ marginLeft: 8 }}>
               {arch.added.map((f) => <li key={`a${f}`} className="text-success">+ {f}</li>)}
               {arch.modified.map((f) => <li key={`m${f}`} className="text-warning">~ {f}</li>)}

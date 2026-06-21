@@ -111,6 +111,17 @@ describe('JobsView — in progress vs released', () => {
     expect(screen.getByText(/NEW-1 — In-progress requirement\./)).toBeInTheDocument();
   });
 
+  it('renders the active open job\'s in-progress architecture changes', () => {
+    const activeArch = {
+      j_open: { added: ['acme.context.svg'], modified: ['acme.sad.md'], removed: [], sadDiff: { added: ['New SAD line.'], removed: [] } },
+    };
+    renderView({ activeArch });
+    fireEvent.click(screen.getByText('SSO'));
+    expect(screen.getByText(/Architecture changes \(in progress\)/)).toBeInTheDocument();
+    expect(screen.getByText(/acme\.context\.svg/)).toBeInTheDocument();
+    expect(screen.getByText(/New SAD line\./)).toBeInTheDocument();
+  });
+
   it('adds a new feature job and opens its detail', () => {
     const { onChange } = renderView();
     fireEvent.click(screen.getByText('+ New job'));

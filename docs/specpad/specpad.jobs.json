@@ -267,6 +267,18 @@
       "title": "Show the active job's in-progress (uncommitted) changes in the Jobs view",
       "description": "Make an open job's changes visible before it is closed. Snapshot a job's before spec state into .specpad/jobs/<id>/before/ when the job is created (not only on close), pinning its starting point. The Jobs view then renders the active open job's in-progress changes by diffing that before snapshot against the live working copy (SRS/VTP) — so uncommitted and unreleased work shows up, the same diff the requirements/verification tables already display, attributed to the job.",
       "status": "open"
+    },
+    {
+      "id": "j_7c2f15",
+      "code": "JOB-22",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Active job's in-progress architecture (SAD) changes in the Jobs view",
+      "description": "Extend the in-progress change view to architecture. The before snapshot taken at job creation now captures the full key doc set (proj/srs/vtp + SAD markdown, diagrams, guide, and a per-state arch-files manifest), matching the close cache. The Jobs view then shows the active open job's architecture changes (added/modified/removed files, coarse, plus a SAD line diff) by diffing that before snapshot against the working SAD/diagrams — completing the srs/vtp/sad set for in-progress work.",
+      "status": "open"
     }
   ]
 }

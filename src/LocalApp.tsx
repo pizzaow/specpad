@@ -174,6 +174,8 @@ const LocalApp: React.FC = () => {
   const [jobArch, setJobArch] = useState<Record<string, ArchChange>>({});
   // Cached `before` snapshots for active OPEN jobs, diffed against the working copy below.
   const [activeBefore, setActiveBefore] = useState<Record<string, { srs?: SrsDoc; vtp?: VtpDoc }>>({});
+  // Cached `before` architecture (file list + contents) for active OPEN jobs, for the in-progress arch diff.
+  const [activeBeforeArch, setActiveBeforeArch] = useState<Record<string, { files: string[]; contents: Record<string, string> }>>({});
   // Architecture spec: arc42 markdown + the C4 Structurizr DSL (both optional, tracked text files).
   const [sad, setSad] = useState<string | null>(null);
   const [dsl, setDsl] = useState<string | null>(null);
@@ -209,6 +211,35 @@ const LocalApp: React.FC = () => {
     }
     return out;
   }, [activeBefore, srsDoc, vtpDoc]);
+
+  // Live in-progress architecture diff for active open jobs: before arch snapshot vs the working SAD/diagrams.
+  const activeArch = React.useMemo(() => {
+    const out: Record<string, ArchChange> = {};
+    const name = selectedDocName || projectName;
+    for (const [id, before] of Object.entries(activeBeforeArch)) {
+      const working: Record<string, string> = {};
+      if (sad != null) working[`${name}.sad.md`] = sad;
+      if (sadGuide != null) working[`${name}.sad.guide.md`] = sadGuide;
+      if (dsl != null) working[`${name}.workspace.dsl`] = dsl;
+      for (const [k, v] of Object.entries(diagrams)) working[k] = v;
+      const after = Object.keys(working);
+      const bSet = new Set(before.files), aSet = new Set(after);
+      const added = after.filter((f) => !bSet.has(f));
+      const removed = before.files.filter((f) => !aSet.has(f));
+      const modified: string[] = [];
+      let sadDiff: { added: string[]; removed: string[] } | undefined;
+      for (const f of after.filter((x) => bSet.has(x))) {
+        const b = before.contents[f];
+        const a = working[f];
+        if (b !== a) {
+          modified.push(f);
+          if (f.endsWith('.sad.md') && b != null && a != null) sadDiff = lineDiff(b, a);
+        }
+      }
+      if (added.length || removed.length || modified.length) out[id] = { added, removed, modified, sadDiff };
+    }
+    return out;
+  }, [activeBeforeArch, sad, sadGuide, dsl, diagrams, selectedDocName, projectName]);
 
   // Set the active jobs (one or many). Writes the canonical `jobs` array form;
   // `title` is only kept for a single free-text job with no register.
@@ -258,6 +289,7 @@ const LocalApp: React.FC = () => {
     // Active open jobs: load each one's `before` snapshot so its in-progress changes
     // (before vs the working copy) can be shown without git or closing the job.
     const before: Record<string, { srs?: SrsDoc; vtp?: VtpDoc }> = {};
+    const beforeArch: Record<string, { files: string[]; contents: Record<string, string> }> = {};
     for (const id of activeJobIds(jm)) {
       const rec = jd?.jobs.find((j) => j.id === id);
       if (!rec || rec.status !== 'open') continue;
@@ -269,8 +301,21 @@ const LocalApp: React.FC = () => {
       if (sb) entry.srs = sb as SrsDoc;
       if (vb) entry.vtp = vb as VtpDoc;
       if (entry.srs || entry.vtp) before[id] = entry;
+      // Architecture: only when the before snapshot carries an arch-files manifest, so a job
+      // created before the full-doc-set snapshot existed shows no spurious "added" files.
+      const manifest = await loadJobText(id, 'before', 'arch-files.json');
+      if (manifest) {
+        const files: string[] = JSON.parse(manifest);
+        const contents: Record<string, string> = {};
+        for (const f of files) {
+          const c = await loadJobText(id, 'before', f);
+          if (c != null) contents[f] = c;
+        }
+        beforeArch[id] = { files, contents };
+      }
     }
     setActiveBefore(before);
+    setActiveBeforeArch(beforeArch);
     const sadText = await loadProjectText(`${name}.sad.md`);
     setSad(sadText);
     setDsl(await loadProjectText(`${name}.workspace.dsl`));
@@ -352,6 +397,7 @@ const LocalApp: React.FC = () => {
       setJobCommits({});
       setJobArch({});
       setActiveBefore({});
+      setActiveBeforeArch({});
       setSad(null);
       setDsl(null);
       setSadGuide(null);
@@ -672,6 +718,7 @@ const LocalApp: React.FC = () => {
             jobCommits={jobCommits}
             jobArch={jobArch}
             activeDiffs={activeDiffs}
+            activeArch={activeArch}
             onChange={handleJobsChange}
             onSetActive={handleSetJob}
             readOnly={launch.demo}
