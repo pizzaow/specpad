@@ -231,6 +231,18 @@
       "title": "Editor visual system: design tokens, themes, Overview landing, tab reorder",
       "description": "Polish the editor into a cohesive, modern product. Build a CSS design-token system and ship three selectable themes (developer tool, editorial, blueprint) with a menubar switcher persisted to localStorage (applied before first paint, no flash). Add an Overview (Home) landing — an engineer's status home showing in-progress jobs, the latest release, and a coverage/health headline, with quick navigation into the authoring views — and make it the default view. Reorder the document tabs to lead with Overview then the authoring views, grouping the oversight views (Auditor, Releases, Jobs) after; this supersedes JV-4's leftmost-Jobs rule (changed under this job, not JOB-6).",
       "status": "open"
+    },
+    {
+      "id": "j_3e7b1d",
+      "code": "JOB-19",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "On-demand authoring guides (requirements, tests, PRD, architecture)",
+      "description": "Add per-document-type authoring guides under skill/specpad/guides/ that the skill reads just-in-time (progressive disclosure) rather than inlining into the always-on prompt. Each guide covers what to capture, how to phrase/structure, and good vs bad examples with the reason each is good or bad. SKILL.md gains a lean routing table that points to each guide at its working-loop touchpoint without duplicating the content. A parity test keeps SKILL.md and the guides in sync (no orphaned or dangling guides). Medical/regulatory authoring overlays remain a future addition in the specpad-medical add-on (opt-in).",
+      "status": "open"
     }
   ]
 }

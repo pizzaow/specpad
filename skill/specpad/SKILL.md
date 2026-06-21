@@ -49,6 +49,15 @@ If yes, it's a requirement.
 This loop is the **primary** mechanism. The pre-push gate and requirement audit (below) are the
 **backstop** that catches whatever the loop missed or any manual edit — not a substitute for it.
 
+**Authoring guides (read just-in-time — keep this prompt lean).** Before writing or revising each kind of
+entry, read the matching guide for what to capture, how to phrase, and good/bad examples. Do **not** inline
+them here; read the one you need when you reach that step:
+
+- Requirements → `guides/requirements.md`
+- Verification tests → `guides/tests.md`
+- Product requirements (PRD) → `guides/product-requirements.md`
+- Architecture (SAD) → `guides/architecture.md`
+
 ## Files and naming
 
 - `docs/specpad/<name>.proj.json` — project index
