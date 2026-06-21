@@ -1,0 +1,8 @@
+[
+  {
+    "hash": "512215fc908d205c8000f96bd29b2708c7672a95",
+    "subject": "feat: show the active job's in-progress (uncommitted) changes in the Jobs view (JC-5..6, JC-1/4)",
+    "author": "Geoff Pollard",
+    "date": "2026-06-21"
+  }
+]

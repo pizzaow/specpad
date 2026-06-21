@@ -1,0 +1,14 @@
+[
+  {
+    "hash": "7599cae0f1b33cd77335a7c9c7c29c9a4f18974e",
+    "subject": "feat(prd): baseline the full product-vision PRD; add PRD item lifecycle status (PRD-4)",
+    "author": "Geoff Pollard",
+    "date": "2026-06-20"
+  },
+  {
+    "hash": "9b725ff80754184a824b898e604dfb2a97034dd2",
+    "subject": "feat: product requirements (PRD) register + SRS→PRD trace + integrations design (PRD-1..3)",
+    "author": "Geoff Pollard",
+    "date": "2026-06-20"
+  }
+]

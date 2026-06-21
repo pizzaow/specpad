@@ -194,7 +194,8 @@
       },
       "title": "Formal Release entity: release-as-jobs view + full-doc release snapshot",
       "description": "Make a release first-class: a release is its set of jobs at a version, with a guaranteed full snapshot of all key docs and a Releases view that reads as release notes (jobs grouped per release). Core feature. Dogfooded by cutting v1.2.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.3"
     },
     {
       "id": "j_8c4d2a",
@@ -206,7 +207,8 @@
       },
       "title": "Product requirements (PRD) register + integrations design addendum",
       "description": "Add an optional product-requirements (PRD) register as an SRS-shaped peer document, with upward SRS→PRD traceability (satisfies, by id) and opt-in governance (prd-referential-integrity, prd-coverage) that costs nothing without a PRD register. Capture the integrations design addendum (Jira/Confluence ingest add-on, import vs baseline routing, multi-repo system-level docs, PRD/validation, usability/interface-spec) as forward design. Dogfooded: SpecPad gains its own PRD register and SRS→PRD links.",
-      "status": "open"
+      "status": "closed",
+      "version": "v1.3"
     },
     {
       "id": "j_9d5e3b",
@@ -218,7 +220,8 @@
       },
       "title": "Auditor view — live design-control evidence (coverage, trace matrix, gaps)",
       "description": "Add an Auditor view (editor tab) that renders a reviewer's-eye picture of the open project: a coverage summary (requirements verified, test results, product-requirement coverage), the PRD→SRS→VTP traceability matrix with per-requirement verification results, and a gap list derived from the shared governance check plus the proposed-PRD roadmap. Load the optional PRD register into the editor so product requirements and upward traces are available. Includes a scope disclaimer (evidence that supports design controls; not a QMS / compliance determination).",
-      "status": "open"
+      "status": "closed",
+      "version": "v1.3"
     },
     {
       "id": "j_2f6a8c",
@@ -230,7 +233,8 @@
       },
       "title": "Editor visual system: design tokens, themes, Overview landing, tab reorder",
       "description": "Polish the editor into a cohesive, modern product. Build a CSS design-token system and ship three selectable themes (developer tool, editorial, blueprint) with a menubar switcher persisted to localStorage (applied before first paint, no flash). Add an Overview (Home) landing — an engineer's status home showing in-progress jobs, the latest release, and a coverage/health headline, with quick navigation into the authoring views — and make it the default view. Reorder the document tabs to lead with Overview then the authoring views, grouping the oversight views (Auditor, Releases, Jobs) after; this supersedes JV-4's leftmost-Jobs rule (changed under this job, not JOB-6).",
-      "status": "open"
+      "status": "closed",
+      "version": "v1.3"
     },
     {
       "id": "j_3e7b1d",
@@ -242,7 +246,8 @@
       },
       "title": "On-demand authoring guides (requirements, tests, PRD, architecture)",
       "description": "Add per-document-type authoring guides under skill/specpad/guides/ that the skill reads just-in-time (progressive disclosure) rather than inlining into the always-on prompt. Each guide covers what to capture, how to phrase/structure, and good vs bad examples with the reason each is good or bad. SKILL.md gains a lean routing table that points to each guide at its working-loop touchpoint without duplicating the content. A parity test keeps SKILL.md and the guides in sync (no orphaned or dangling guides). Medical/regulatory authoring overlays remain a future addition in the specpad-medical add-on (opt-in).",
-      "status": "open"
+      "status": "closed",
+      "version": "v1.3"
     },
     {
       "id": "j_5a9c2e",
@@ -254,7 +259,8 @@
       },
       "title": "Design-control map in the Auditor view; trace matrix moves to its own Traceability tab",
       "description": "Turn the Auditor view into an orientation index for a reviewer: a design-control map listing each formal element (Design Inputs, Outputs, Verification, Validation, Traceability, Design Changes, Design History File, Design Reviews, Risk Management, Configuration Management) with its standard citation (IEC 62304 / 21 CFR 820.30), a plain statement, a status derived live from the project, and a link to the section/tab holding the evidence — so an engineer can answer 'where are your design inputs?' instantly. Move the per-requirement trace matrix (and the coverage summary and gap list) to its own Traceability tab; the Auditor view links to it.",
-      "status": "open"
+      "status": "closed",
+      "version": "v1.3"
     },
     {
       "id": "j_4b8e60",
@@ -266,7 +272,8 @@
       },
       "title": "Show the active job's in-progress (uncommitted) changes in the Jobs view",
       "description": "Make an open job's changes visible before it is closed. Snapshot a job's before spec state into .specpad/jobs/<id>/before/ when the job is created (not only on close), pinning its starting point. The Jobs view then renders the active open job's in-progress changes by diffing that before snapshot against the live working copy (SRS/VTP) — so uncommitted and unreleased work shows up, the same diff the requirements/verification tables already display, attributed to the job.",
-      "status": "open"
+      "status": "closed",
+      "version": "v1.3"
     },
     {
       "id": "j_7c2f15",
@@ -278,6 +285,19 @@
       },
       "title": "Active job's in-progress architecture (SAD) changes in the Jobs view",
       "description": "Extend the in-progress change view to architecture. The before snapshot taken at job creation now captures the full key doc set (proj/srs/vtp + SAD markdown, diagrams, guide, and a per-state arch-files manifest), matching the close cache. The Jobs view then shows the active open job's architecture changes (added/modified/removed files, coarse, plus a SAD line diff) by diffing that before snapshot against the working SAD/diagrams — completing the srs/vtp/sad set for in-progress work.",
+      "status": "closed",
+      "version": "v1.3"
+    },
+    {
+      "id": "j_6d1a9b",
+      "code": "JOB-23",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Cut release v1.3",
+      "description": "Cut release v1.3: close JOB-15..22 and set their version to v1.3, regenerate their before/after/commit caches, refresh the baseline snapshot (preserving v1.2 as an older snapshot), and add the v1.3 entry to the releases manifest. Release bookkeeping using the existing Release entity (REL-1..3) — no new product behavior.",
       "status": "open"
     }
   ]

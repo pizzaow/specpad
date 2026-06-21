@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="320" viewBox="0 0 720 320" font-family="Helvetica, Arial, sans-serif" font-size="12">
+  <rect width="720" height="320" fill="#ffffff"/>
+  <text x="16" y="24" font-size="15" font-weight="bold">Building Block View (C2) — units &amp; key interfaces</text>
+
+  <rect x="40" y="70" width="160" height="70" rx="6" fill="#dbe7ff" stroke="#4a6fa5"/>
+  <text x="120" y="100" text-anchor="middle" font-weight="bold">Hosted editor</text>
+  <text x="120" y="118" text-anchor="middle" fill="#555">React SPA</text>
+
+  <rect x="40" y="200" width="160" height="70" rx="6" fill="#dbe7ff" stroke="#4a6fa5"/>
+  <text x="120" y="230" text-anchor="middle" font-weight="bold">Claude Code skill</text>
+  <text x="120" y="248" text-anchor="middle" fill="#555">SKILL.md + git</text>
+
+  <rect x="300" y="135" width="150" height="70" rx="6" fill="#fff3cd" stroke="#b8860b"/>
+  <text x="375" y="165" text-anchor="middle" font-weight="bold">Shared contract</text>
+  <text x="375" y="183" text-anchor="middle" fill="#555">schema + governance + diff</text>
+
+  <rect x="540" y="135" width="150" height="70" rx="6" fill="#eaeaea" stroke="#888"/>
+  <text x="615" y="165" text-anchor="middle" font-weight="bold">Spec files + cache</text>
+  <text x="615" y="183" text-anchor="middle" fill="#555">git (docs/specpad)</text>
+
+  <line x1="200" y1="105" x2="300" y2="155" stroke="#555" marker-end="url(#a)"/>
+  <text x="250" y="120" text-anchor="middle" fill="#555">validate/govern</text>
+  <line x1="200" y1="235" x2="300" y2="185" stroke="#555" marker-end="url(#a)"/>
+  <text x="250" y="220" text-anchor="middle" fill="#555">validate/govern</text>
+  <line x1="200" y1="95" x2="538" y2="150" stroke="#999" stroke-dasharray="4" marker-end="url(#a)"/>
+  <text x="370" y="90" text-anchor="middle" fill="#777">File System Access API</text>
+  <line x1="200" y1="245" x2="538" y2="190" stroke="#999" stroke-dasharray="4" marker-end="url(#a)"/>
+  <text x="370" y="280" text-anchor="middle" fill="#777">git plumbing (snapshots, trailers)</text>
+
+  <defs><marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#555"/></marker></defs>
+</svg>
