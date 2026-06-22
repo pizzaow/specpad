@@ -3,30 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SpecPad — requirements that live in your repo</title>
+    <title>SpecPad — specs that live in your repo, and double as design-control evidence</title>
     <meta
       name="description"
-      content="Git-based, regulatory-grade requirements management: traceable SRS and verification tests as schema-validated JSON — synced by a Claude skill, reviewed in a visual editor."
+      content="Specs that live in your repo and double as design-control evidence: a traceable chain — product requirements, software requirements, verification, architecture, releases — as schema-validated JSON in git, maintained by a Claude skill and a visual editor. Regulatory-grade for IEC 62304 / FDA; lightweight for everyone else."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://specpad.com/" />
-    <meta property="og:title" content="SpecPad — requirements that live in your repo" />
+    <meta property="og:title" content="SpecPad — specs that live in your repo, and double as design-control evidence" />
     <meta
       property="og:description"
-      content="Git-based, regulatory-grade requirements management: traceable SRS and verification tests as schema-validated JSON — synced by a Claude skill, reviewed in a visual editor."
+      content="Specs that live in your repo and double as design-control evidence: a traceable chain — product requirements, software requirements, verification, architecture, releases — as schema-validated JSON in git, maintained by a Claude skill and a visual editor. Regulatory-grade for IEC 62304 / FDA; lightweight for everyone else."
     />
     <meta property="og:image" content="https://specpad.com/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="SpecPad — requirements that live in your repo" />
+    <meta property="og:image:alt" content="SpecPad — specs that live in your repo, and double as design-control evidence" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="SpecPad — requirements that live in your repo" />
+    <meta name="twitter:title" content="SpecPad — specs that live in your repo, and double as design-control evidence" />
     <meta
       name="twitter:description"
-      content="Git-based, regulatory-grade requirements management: traceable SRS and verification tests as schema-validated JSON — synced by a Claude skill, reviewed in a visual editor."
+      content="Specs that live in your repo and double as design-control evidence: a traceable chain — product requirements, software requirements, verification, architecture, releases — as schema-validated JSON in git, maintained by a Claude skill and a visual editor. Regulatory-grade for IEC 62304 / FDA; lightweight for everyone else."
     />
     <meta name="twitter:image" content="https://specpad.com/og-image.png" />
-    <meta name="twitter:image:alt" content="SpecPad — requirements that live in your repo" />
+    <meta name="twitter:image:alt" content="SpecPad — specs that live in your repo, and double as design-control evidence" />
     <link rel="canonical" href="https://specpad.com/" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/src/styles.css" />
@@ -56,11 +56,12 @@
         <div class="lp-hero-inner">
           <div class="lp-hero-copy">
             <p class="lp-eyebrow lp-reveal" style="--d: 0s"><span class="lp-prompt">$</span> git log docs/specpad/srs.json</p>
-            <h1 class="lp-h1 lp-reveal" style="--d: 0.08s">Requirements that live in <span class="lp-h1-accent">your repo</span>.</h1>
+            <h1 class="lp-h1 lp-reveal" style="--d: 0.08s">Specs that live in your repo &mdash; <span class="lp-h1-accent">and double as design-control evidence</span>.</h1>
             <p class="lp-lede lp-reveal" style="--d: 0.16s">
-              Regulatory-grade requirements management for engineers: a traceable SRS and
-              verification tests stored as schema-validated JSON in git &mdash; kept in sync with
-              your code by a Claude skill, reviewed and approved by humans in a visual editor.
+              A traceable chain &mdash; product requirements &rarr; software requirements &rarr;
+              verification &rarr; architecture &rarr; releases &mdash; kept as schema-validated JSON in
+              your git repo, maintained by a Claude skill and reviewed by humans in a visual editor.
+              Regulatory-grade for IEC&nbsp;62304 / FDA teams; lightweight for everyone else.
             </p>
             <div class="lp-cta-row lp-reveal" style="--d: 0.24s">
               <a class="lp-btn lp-btn-primary lp-btn-lg" href="/specpad-skill.zip" download>Download the Claude skill</a>
@@ -678,6 +679,30 @@
               </div>
             </article>
           </div>
+        </div>
+      </section>
+
+      <!-- ── The full picture ─────────────────────────────────────── -->
+      <section class="lp-section" id="capabilities">
+        <div class="lp-section-inner">
+          <p class="lp-kicker"><span class="lp-prompt">##</span> The full picture</p>
+          <h2 class="lp-h2">One traceable chain, captured as you build.</h2>
+          <p class="lp-section-lede">
+            Every artifact a design-controls reviewer expects &mdash; and that good engineering wants
+            anyway &mdash; living in your repo, kept current by the working loop.
+          </p>
+          <ul class="lp-caps">
+            <li><span class="lp-cap-name">Product requirements</span><span class="lp-cap-desc">User needs and product intent (PRD) &mdash; the top of the trace matrix, with proposed vs implemented status.</span></li>
+            <li><span class="lp-cap-name">Requirements &amp; verification</span><span class="lp-cap-desc">Testable &ldquo;shall&rdquo; requirements (SRS), each proven by a verification test with a defined expected result (VTP).</span></li>
+            <li><span class="lp-cap-name">Traceability matrix</span><span class="lp-cap-desc">Product requirement &rarr; requirement &rarr; verification, with each requirement&rsquo;s result rolled up and gaps flagged.</span></li>
+            <li><span class="lp-cap-name">Auditor design-control map</span><span class="lp-cap-desc">IEC&nbsp;62304 &amp; 21&nbsp;CFR&nbsp;820.30 elements &rarr; the exact place each piece of evidence lives. Answer &ldquo;where are your design inputs?&rdquo; in one click.</span></li>
+            <li><span class="lp-cap-name">Architecture</span><span class="lp-cap-desc">An arc42 document with draw.io diagrams, co-versioned with the spec and diffed per change.</span></li>
+            <li><span class="lp-cap-name">Change control</span><span class="lp-cap-desc">Every change tied to a job; see a job&rsquo;s in-progress and released SRS/VTP/architecture diffs, derived from git.</span></li>
+            <li><span class="lp-cap-name">Releases</span><span class="lp-cap-desc">Versioned design-control checkpoints &mdash; a full-document snapshot and the jobs that shipped in each.</span></li>
+            <li><span class="lp-cap-name">Governance, enforced twice</span><span class="lp-cap-desc">Structure (JSON Schema) then policy (traceability, coverage) &mdash; the same gates run by the skill and the editor.</span></li>
+            <li><span class="lp-cap-name">Themes</span><span class="lp-cap-desc">Developer, editorial, or blueprint &mdash; pick the look; your choice follows you.</span></li>
+            <li><span class="lp-cap-name">eQMS export <span class="lp-cap-soon">soon</span></span><span class="lp-cap-desc">A versioned evidence package for your external quality system.</span></li>
+          </ul>
         </div>
       </section>
 

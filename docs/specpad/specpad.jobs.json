@@ -299,6 +299,18 @@
       "title": "Cut release v1.3",
       "description": "Cut release v1.3: close JOB-15..22 and set their version to v1.3, regenerate their before/after/commit caches, refresh the baseline snapshot (preserving v1.2 as an older snapshot), and add the v1.3 entry to the releases manifest. Release bookkeeping using the existing Release entity (REL-1..3) — no new product behavior.",
       "status": "open"
+    },
+    {
+      "id": "j_8f3c20",
+      "code": "JOB-24",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Marketing site refresh — vision and feature list",
+      "description": "Refresh specpad.com messaging (keeping the look & feel) to reflect v1.3: a balanced/dual hero (specs that live in your repo AND design-control evidence), and a feature list covering the full chain — product requirements (PRD), software requirements + verification, the traceability matrix and Auditor design-control map (IEC 62304 / 21 CFR 820.30), architecture, change control via jobs (in-progress + released diffs), releases as checkpoints, governance, themes, and the eQMS-export direction. Marketing copy only — non-behavioural.",
+      "status": "open"
     }
   ]
 }
