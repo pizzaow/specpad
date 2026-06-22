@@ -58,13 +58,14 @@ import ArchitectureView from './components/ArchitectureView';
 import ReleasesView from './components/ReleasesView';
 import AuditView from './components/AuditView';
 import TraceabilityView from './components/TraceabilityView';
+import PrdTable from './components/PrdTable';
 import OverviewView from './components/OverviewView';
 import { readStoredTheme, applyTheme } from './theme';
 import type { ThemeId } from './theme';
 import StatusBar from './components/StatusBar';
 import ViewTabs from './components/ViewTabs';
 
-type ViewMode = 'overview' | 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'releases' | 'audit' | 'trace';
+type ViewMode = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'releases' | 'audit' | 'trace';
 type OpenResult = { name: string; documents: DocumentListItem[] };
 // Items of any id-keyed register document (srs/vtp/prd/…); a per-job diff is keyed by doc type,
 // so newly-registered register types are diffed without changing this code.
@@ -158,6 +159,8 @@ const LocalApp: React.FC = () => {
   const [srsDoc, setSrsDoc] = useState<SrsDoc | null>(null);
   const [vtpDoc, setVtpDoc] = useState<VtpDoc | null>(null);
   const [prdDoc, setPrdDoc] = useState<PrdDoc | null>(null);
+  const [prdBaseline, setPrdBaseline] = useState<PrdDoc | null>(null);
+  const [dirtyPrd, setDirtyPrd] = useState(false);
   const [currentView, setCurrentView] = useState<ViewMode>('overview');
   const [theme, setTheme] = useState<ThemeId>(readStoredTheme);
   const [loading, setLoading] = useState(false);
@@ -334,15 +337,20 @@ const LocalApp: React.FC = () => {
     const vtpSnaps: SnapshotInput[] = [];
     let srsBase: SrsDoc | null = null;
     let vtpBase: VtpDoc | null = null;
+    let prdBase: PrdDoc | null = null;
     for (const c of cached) {
       const s = (await loadSnapshot(c.location, 'srs', name)) as SrsDoc | null;
       const v = (await loadSnapshot(c.location, 'vtp', name)) as VtpDoc | null;
       if (s) srsSnaps.push({ version: c.version, author: c.author, doc: s });
       if (v) vtpSnaps.push({ version: c.version, author: c.author, doc: v });
-      if (c.location === 'baseline') { srsBase = s; vtpBase = v; }
+      if (c.location === 'baseline') {
+        srsBase = s; vtpBase = v;
+        prdBase = (await loadSnapshot(c.location, 'prd', name)) as PrdDoc | null;
+      }
     }
     setSrsSnapshots(srsSnaps);
     setVtpSnapshots(vtpSnaps);
+    setPrdBaseline(prdBase);
     setSrsBaseline(srsBase);
     setVtpBaseline(vtpBase);
   };
@@ -360,6 +368,7 @@ const LocalApp: React.FC = () => {
     await loadChangeTracking(name);
     setDirtySrs(false);
     setDirtyVtp(false);
+    setDirtyPrd(false);
   };
 
   // Variant used right after open(), before `documents` state has settled.
@@ -376,6 +385,7 @@ const LocalApp: React.FC = () => {
     await loadChangeTracking(name);
     setDirtySrs(false);
     setDirtyVtp(false);
+    setDirtyPrd(false);
   };
 
   // Apply a freshly-opened project: set state, auto-load a single/requested doc,
@@ -394,6 +404,8 @@ const LocalApp: React.FC = () => {
       setSrsDoc(null);
       setVtpDoc(null);
       setPrdDoc(null);
+      setPrdBaseline(null);
+      setDirtyPrd(false);
       setProjectDoc(null);
       setReleases(null);
       setJob(null);
@@ -557,19 +569,21 @@ const LocalApp: React.FC = () => {
     if (next.type === 'srs') { setSrsDoc(next); setDirtySrs(true); }
     else { setVtpDoc(next); setDirtyVtp(true); }
   };
+  const handlePrdChange = (next: PrdDoc) => { setPrdDoc(next); setDirtyPrd(true); };
 
-  const persist = async (doc: SrsDoc | VtpDoc) => {
+  const persist = async (doc: SrsDoc | VtpDoc | PrdDoc) => {
     if (supportsFileSystemAccess && hasOpenDirectory()) await saveDocument(doc);
     else saveFileFallback(serializeDocument(doc), `${doc.name}.${doc.type}.json`);
   };
 
-  const dirty = dirtySrs || dirtyVtp || dirtyJobs || dirtySad || dirtyDsl;
+  const dirty = dirtySrs || dirtyVtp || dirtyPrd || dirtyJobs || dirtySad || dirtyDsl;
 
   const save = async () => {
     const name = selectedDocName || projectName;
     try {
       if (dirtySrs && srsDoc) { await persist(srsDoc); setDirtySrs(false); }
       if (dirtyVtp && vtpDoc) { await persist(vtpDoc); setDirtyVtp(false); }
+      if (dirtyPrd && prdDoc) { await persist(prdDoc); setDirtyPrd(false); }
       if (dirtyJobs && jobsDoc) { await saveJobs(name, jobsDoc); setDirtyJobs(false); }
       if (dirtySad && sad !== null) { await saveProjectText(`${name}.sad.md`, sad); setDirtySad(false); }
       if (dirtyDsl && dsl !== null) { await saveProjectText(`${name}.workspace.dsl`, dsl); setDirtyDsl(false); }
@@ -672,7 +686,7 @@ const LocalApp: React.FC = () => {
       {isDirectoryOpen && (
         <ViewTabs
           current={currentView}
-          enabled={{ overview: true, srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl), releases: !!releases, audit: !!srsDoc, trace: !!srsDoc }}
+          enabled={{ overview: true, prd: !!prdDoc, srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl), releases: !!releases, audit: !!srsDoc, trace: !!srsDoc }}
           onSelect={setCurrentView}
         />
       )}
@@ -690,6 +704,7 @@ const LocalApp: React.FC = () => {
             onNavigate={setCurrentView}
           />
         )}
+        {currentView === 'prd' && prdDoc && <PrdTable key={selectedDocName} doc={prdDoc} onChange={handlePrdChange} baseline={prdBaseline} readOnly={launch.demo} />}
         {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onChange={handleChange} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} />}
         {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onChange={handleChange} redline={vtpRedline} attribution={vtpSnapshots.length ? vtpAttribution : undefined} />}
         {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} onChange={handleChange} />}

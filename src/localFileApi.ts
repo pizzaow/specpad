@@ -228,7 +228,7 @@ export async function loadPrd(name: string): Promise<PrdDoc> {
   return (await readJson(`${name}.prd.json`)) as PrdDoc;
 }
 
-export async function saveDocument(doc: SrsDoc | VtpDoc | ProjectDoc): Promise<void> {
+export async function saveDocument(doc: SrsDoc | VtpDoc | PrdDoc | ProjectDoc): Promise<void> {
   if (demoBaseUrl) throw new Error(READ_ONLY_DEMO);
   if (!projectDirHandle) throw new Error('No directory selected');
   const permission = await (projectDirHandle as any).requestPermission({ mode: 'readwrite' });

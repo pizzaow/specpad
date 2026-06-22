@@ -323,6 +323,18 @@
       "title": "Document-type registry — single source of truth; snapshot/diff/validation built from it",
       "description": "Introduce src/shared/docTypes.ts as the registry of content document types (srs, vtp, prd; future soup/sdd/cyber) — each with kind (id-keyed register / prose / asset), file naming, schema, baseline membership, and generator scope. Build validation and the schema reference from it. Make snapshot/diff loaders document-type-generic so a newly registered register type flows into release/baseline snapshots, per-job diffs, and the redline with no code changes. Generalize the skill's snapshot/cache prose to 'every document in the project index plus the architecture files'.",
       "status": "open"
+    },
+    {
+      "id": "j_2a7d63",
+      "code": "JOB-26",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "PRD editing tab + redline in the editor",
+      "description": "Add a Product Requirements tab to the editor that edits the PRD register (text/code/status/tags, add/delete) and shows the since-baseline redline (the diff plumbing is registry-generic from JOB-25). PRD status (proposed/implemented) is editable since it drives prd-coverage and the Auditor map. Built on the document-type registry.",
+      "status": "open"
     }
   ]
 }

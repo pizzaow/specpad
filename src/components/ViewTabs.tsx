@@ -6,11 +6,12 @@
  */
 import React from 'react';
 
-export type ViewKey = 'overview' | 'srs' | 'vtp' | 'testing' | 'arch' | 'audit' | 'trace' | 'releases' | 'jobs';
+export type ViewKey = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'arch' | 'audit' | 'trace' | 'releases' | 'jobs';
 type Group = 'home' | 'authoring' | 'oversight';
 
 const TABS: { key: ViewKey; label: string; group: Group }[] = [
   { key: 'overview', label: 'Overview', group: 'home' },
+  { key: 'prd', label: 'Product Requirements', group: 'authoring' },
   { key: 'srs', label: 'Requirements', group: 'authoring' },
   { key: 'vtp', label: 'Verification Tests', group: 'authoring' },
   { key: 'testing', label: 'Results', group: 'authoring' },

@@ -4,12 +4,12 @@
  * "what changed" is identical to the contract's. Attribution is DERIVED from the
  * raw snapshots the skill cached — never stored (see specpad-change-tracking-design.md).
  */
-import type { SrsDoc, VtpDoc, SrsItem, VtpItem, AuthorRef } from './shared';
+import type { SrsDoc, VtpDoc, PrdDoc, SrsItem, VtpItem, PrdItem, AuthorRef } from './shared';
 import { diffDocs, diffItems } from './shared';
 import type { ItemChange } from './shared';
 
-type AnyDoc = SrsDoc | VtpDoc;
-type AnyItem = SrsItem | VtpItem;
+type AnyDoc = SrsDoc | VtpDoc | PrdDoc;
+type AnyItem = SrsItem | VtpItem | PrdItem;
 
 export interface RedlineEntry {
   status: 'added' | 'modified';
