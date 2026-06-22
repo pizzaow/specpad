@@ -32,6 +32,10 @@ try {
   await page.waitForSelector('.status-demo');
   await page.click('.view-tabs >> text=Requirements');
   await page.waitForSelector('.srs-table-container table tbody tr');
+  // Wait out the initial "Loading…" banner (change-tracking caches still fetching).
+  await page
+    .waitForFunction(() => !/Loading…|Loading\.\.\./.test(document.body.textContent || ''), { timeout: 15000 })
+    .catch(() => {});
   await page.waitForTimeout(800); // let the reveal animation and web fonts settle
 
   // fullPage is required whenever the clip lies below the 1400x900 viewport.
@@ -62,10 +66,17 @@ try {
   await page.click('.view-tabs >> text=Verification Tests');
   await page.waitForSelector('.vtp-table-container');
   await page.waitForTimeout(600);
-  const firstAdded = await box('.vtp-table-container tr.success');
-  const docHeight = await page.evaluate(() => document.documentElement.scrollHeight);
-  const redlineY = Math.max(0, Math.min(Math.round(firstAdded.y) - 220, docHeight - 620));
-  await shot('redlines', { x: 0, y: redlineY, width: 1400, height: 620 }, redlineY + 620 > 900);
+  // Redline rows (tr.success) only exist when the working copy differs from the
+  // baseline. Right after a release the demo == baseline, so fall back to the top
+  // of the VTP table when there's nothing to redline.
+  if ((await page.locator('.vtp-table-container tr.success').count()) > 0) {
+    const firstAdded = await box('.vtp-table-container tr.success');
+    const docHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+    const redlineY = Math.max(0, Math.min(Math.round(firstAdded.y) - 220, docHeight - 620));
+    await shot('redlines', { x: 0, y: redlineY, width: 1400, height: 620 }, redlineY + 620 > 900);
+  } else {
+    await shot('redlines', { x: 0, y: 0, width: 1400, height: 620 });
+  }
 
   // 4. Version history dialog (opened from the menubar's version chip — the
   //    chip shows the current baseline version, e.g. v1.3).
