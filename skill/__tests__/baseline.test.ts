@@ -36,4 +36,12 @@ describe('skill documents the baseline generator', () => {
     expect(skill).toMatch(/report coverage/i);
     expect(skill).toMatch(/silently truncating/i);
   });
+
+  it('drafts the full default set — PRD and a starter architecture — by default, registry-aware (BASE-6)', () => {
+    expect(skill).toMatch(/full default (design-control )?set/i);
+    expect(skill).toMatch(/Draft a PRD \(default\)/i);
+    expect(skill).toMatch(/Draft a starter architecture \(default\)/i);
+    expect(skill).toMatch(/registry-aware/i);
+    expect(skill).toMatch(/declined|decline/i); // a type may be declined per project
+  });
 });

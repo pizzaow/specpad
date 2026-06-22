@@ -118,8 +118,11 @@ When a user installs the skill and asks to "set up specpad" / "specpad init" / "
 run this one-time, **idempotent** setup so the project is fully wired — capture loop, enforcement, and
 launcher — with no manual configuration. Re-running it must be a safe no-op.
 
-1. **Scaffold** `docs/specpad/` if absent (see "Scaffolding a new project"): project index, SRS, VTP,
-   and the empty releases manifest, with `PROJECT_NAME` replaced. **Never overwrite** existing documents.
+1. **Scaffold** `docs/specpad/` if absent (see "Scaffolding a new project"): project index, **PRD**, SRS,
+   VTP, and the empty releases manifest, with `PROJECT_NAME` replaced — the **full default set**; list
+   each document in the project index `documents[]`. **Never overwrite** existing documents. (The PRD is
+   optional — a project may delete it; but it is scaffolded by default so user-need traceability is
+   on from the start.)
 2. **Ask the project path (short quiz):** "Is this a **medical** device project (IEC 62304 / FDA), or a
    **generic** project?" For **generic** (the default), scaffold `sad.generic.md` → `<name>.sad.md` and
    `sad.guide.generic.md` → `<name>.sad.guide.md` (replace `PROJECT_NAME`). For **medical**, use the
@@ -145,26 +148,42 @@ After `init`, the working loop is active every session and the pre-push gate enf
 
 ## Baseline generator (draft a spec from existing code)
 
-When adopting SpecPad on an **existing codebase** (no SRS/VTP yet), draft an initial spec from the code
-so there is a baseline to maintain. The output is a **draft for human ratification, never
-authoritative** — deriving requirements from code *proposes* intent; the user confirms it.
+When adopting SpecPad on an **existing codebase** (no SpecPad docs yet), draft the **full default
+design-control set** from the code so there is a baseline to maintain. The output is a
+**draft for human ratification, never authoritative** — deriving requirements from code *proposes*
+intent; the user confirms it.
+
+**By default the generator drafts the project's configured document types** — today **PRD + SRS + VTP + a
+starter SAD** — so adoption produces the full set, not just requirements and tests. It is **registry-aware**:
+a pillar added later (SOUP, cybersecurity, SDD) is drafted the same way once configured. Any type can be
+**declined** for a given project (say so when you surface the draft).
 
 1. **Job first.** Open an adoption job (e.g. "Baseline draft").
 2. **Survey** the codebase: entry points, public API / CLI / UI surfaces, modules and their
    responsibilities, the README/docs, and the **existing tests** (the richest source of intended
    behavior).
-3. **Distill behavioral requirements**, grouped into SRS sections (headings) by feature area, at the
+3. **Distill behavioral requirements** (SRS), grouped into sections (headings) by feature area, at the
    "shall" altitude — one per distinct externally-observable behavior or constraint, **not**
-   implementation detail. Tag every generated item `draft`.
-4. **Map to tests.** For each requirement write a VTP entry. If an existing automated test covers it,
-   name it in `notes` and set `result` to reflect it (`passed` if it passes); for a behavior with **no**
-   test, write the VTP procedure with `result: "not_tested"` — record the gap, never omit the behavior.
-5. **Keep it governance-clean**: every requirement has a verifying VTP entry, every test an `expected`.
-6. **Report coverage** explicitly — what you covered and what you could not (areas too unclear to spec)
-   — rather than silently truncating.
-7. **Surface for ratification.** Say it is a draft, summarize the sections and the `draft` / `not_tested`
-   counts, and invite edits. This is the cold-start form of the requirement audit; the commit-time
-   audit then keeps it in sync as the code evolves.
+   implementation detail. Tag every generated item `draft`. (Read `guides/requirements.md`.)
+4. **Map to tests** (VTP). For each requirement write a VTP entry. If an existing automated test covers
+   it, name it in `notes` and set `result` to reflect it (`passed` if it passes); for a behavior with
+   **no** test, write the VTP procedure with `result: "not_tested"` — record the gap, never omit it.
+5. **Draft a PRD (default).** From the surveyed purpose — the README/docs, product intent, any tracker
+   context — propose **product requirements** at the user-need altitude (`status: "proposed"`,
+   ratifiable), and link the SRS requirements up to them via `satisfies`. Derive the *why* from intent,
+   **not** code (code can't tell you it); mark everything proposed — it needs more human confirmation
+   than the SRS. (Read `guides/product-requirements.md`.)
+6. **Draft a starter architecture (default).** Scaffold an arc42 `<name>.sad.md` with a **context
+   overview** and a **building-block** diagram (draw.io SVG) reflecting the modules and interfaces
+   surveyed in step 2 — load-bearing decisions and contracts, not every class. (Read
+   `guides/architecture.md`; use the architecture profile from `init`.)
+7. **Keep it governance-clean**: every requirement has a verifying VTP entry, every test an `expected`,
+   and (when a PRD exists) every implemented PRD item is satisfied by a requirement.
+8. **Report coverage** explicitly — what you covered and what you could not (areas too unclear to spec),
+   and which document types you drafted vs deferred — rather than silently truncating.
+9. **Surface for ratification.** Say it is a draft, summarize the sections and the `draft` / `not_tested`
+   counts (and the proposed PRD items and the SAD), and invite edits. This is the cold-start form of the
+   requirement audit; the commit-time audit then keeps it in sync as the code evolves.
 
 ## Requirement audit (reconcile the spec with the code)
 

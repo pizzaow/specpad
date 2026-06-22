@@ -335,6 +335,18 @@
       "title": "PRD editing tab + redline in the editor",
       "description": "Add a Product Requirements tab to the editor that edits the PRD register (text/code/status/tags, add/delete) and shows the since-baseline redline (the diff plumbing is registry-generic from JOB-25). PRD status (proposed/implemented) is editable since it drives prd-coverage and the Auditor map. Built on the document-type registry.",
       "status": "open"
+    },
+    {
+      "id": "j_6e2c81",
+      "code": "JOB-27",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Baseline generator + adoption default to PRD and architecture",
+      "description": "Make the full design-control set the default when adopting SpecPad on an existing repo: the baseline generator drafts, by default, a PRD (user needs / product intent, proposed for ratification, with SRS items linked up via satisfies) and a starter arc42 SAD (context + building-block diagram) in addition to SRS/VTP. init/import default to the full set, each proposed for ratification (a project may decline a type). Broaden the demo manifest regex so every content document type is carried, not a fixed list. Skill prose, registry-aware (drafts the project's configured document types).",
+      "status": "open"
     }
   ]
 }

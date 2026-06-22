@@ -1,7 +1,10 @@
 import { SCHEMA_VERSION } from './schema';
-import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SrsItem, VtpItem, PrdItem, JobsDoc, JobRecord } from './schema';
+import type { ProjectDoc, ProjectDocRef, SrsDoc, VtpDoc, PrdDoc, SrsItem, VtpItem, PrdItem, JobsDoc, JobRecord } from './schema';
 import { generateId, ID_PREFIX } from './ids';
+import { REGISTER_TYPES } from './docTypes';
 
+// The default document set is the registry's register types (prd/srs/vtp today), so a new project
+// gets the full design-control set and a future pillar is included by registering it.
 export function createProjectDoc(name: string, title: string): ProjectDoc {
   return {
     schemaVersion: SCHEMA_VERSION,
@@ -9,10 +12,11 @@ export function createProjectDoc(name: string, title: string): ProjectDoc {
     name,
     title,
     description: '',
-    documents: [
-      { type: 'srs', path: `${name}.srs.json`, title: 'Requirements' },
-      { type: 'vtp', path: `${name}.vtp.json`, title: 'Verification Tests' },
-    ],
+    documents: REGISTER_TYPES.map((d) => ({
+      type: d.type as ProjectDocRef['type'],
+      path: `${name}.${d.type}.json`,
+      title: d.label,
+    })),
   };
 }
 

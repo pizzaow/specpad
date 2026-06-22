@@ -5,6 +5,7 @@
   "title": "PROJECT_NAME System",
   "description": "",
   "documents": [
+    { "type": "prd", "path": "PROJECT_NAME.prd.json", "title": "Product Requirements" },
     { "type": "srs", "path": "PROJECT_NAME.srs.json", "title": "Requirements" },
     { "type": "vtp", "path": "PROJECT_NAME.vtp.json", "title": "Verification Tests" }
   ]

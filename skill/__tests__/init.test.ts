@@ -24,6 +24,16 @@ describe('specpad init', () => {
     expect(tpl).toMatch(/active open job/i);
   });
 
+  it('scaffolds the full default document set, including the PRD register (INIT-4)', () => {
+    expect(skill).toMatch(/full default set/i);
+    // the PRD scaffold template ships and is listed in the starter project index
+    const proj = read('templates/starter.proj.json');
+    expect(proj).toMatch(/"type":\s*"prd"/);
+    const prd = JSON.parse(read('templates/starter.prd.json'));
+    expect(prd.type).toBe('prd');
+    expect(Array.isArray(prd.items)).toBe(true);
+  });
+
   it('documents safe, non-destructive re-runs', () => {
     expect(skill).toMatch(/never overwrite/i);     // existing docs / CLAUDE.md
     expect(skill).toMatch(/append/i);              // CLAUDE.md is appended, not replaced
