@@ -14,10 +14,12 @@
  * git-derived, frozen-on-close cache.
  */
 import React, { useState } from 'react';
-import type { JobsDoc, JobRecord, JobType, DocDiff, ItemChange, SrsItem, VtpItem, JobCommit } from '../shared';
-import { createJobsDoc, createJobRecord } from '../shared';
+import type { JobsDoc, JobRecord, JobType, DocDiff, ItemChange, SrsItem, VtpItem, PrdItem, JobCommit } from '../shared';
+import { createJobsDoc, createJobRecord, REGISTER_TYPES, docTypeFor } from '../shared';
 
-type JobDiff = { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpItem> };
+// A per-job diff keyed by document type (srs/vtp/prd/…), rendered generically below.
+type RegisterItem = SrsItem | VtpItem | PrdItem;
+type JobDiff = Record<string, DocDiff<RegisterItem>>;
 type ArchChange = { added: string[]; removed: string[]; modified: string[]; sadDiff?: { added: string[]; removed: string[] } };
 
 interface JobsViewProps {
@@ -155,21 +157,15 @@ const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDif
 
         <h4 style={{ marginTop: 20 }}>Changes</h4>
         {selected.status === 'closed' ? (
-          diff && (diff.srs || diff.vtp) ? (
-            <>
-              <DiffList label="Requirements (SRS)" diff={diff.srs} />
-              <DiffList label="Verification tests (VTP)" diff={diff.vtp} />
-              {isEmptyDiff(diff.srs) && isEmptyDiff(diff.vtp) && <p className="text-muted">No SRS/VTP changes in this job.</p>}
-            </>
+          diff && Object.keys(diff).length ? (
+            hasAnyChange(diff) ? <RegisterDiffs diff={diff} /> : <p className="text-muted">No SRS/VTP changes in this job.</p>
           ) : (
             <p className="text-muted">No cached changes for this job — run <code>specpad refresh</code>.</p>
           )
-        ) : isActive && activeDiff && (activeDiff.srs || activeDiff.vtp) ? (
+        ) : isActive && activeDiff && hasAnyChange(activeDiff) ? (
           <>
             <p className="text-muted">In progress — uncommitted/unreleased changes (the working copy vs this job's starting snapshot).</p>
-            <DiffList label="Requirements (SRS)" diff={activeDiff.srs} />
-            <DiffList label="Verification tests (VTP)" diff={activeDiff.vtp} />
-            {isEmptyDiff(activeDiff.srs) && isEmptyDiff(activeDiff.vtp) && <p className="text-muted">No changes yet for this job.</p>}
+            <RegisterDiffs diff={activeDiff} />
           </>
         ) : isActive ? (
           <p className="text-muted">In progress — no starting snapshot is cached for this job yet, so its changes can't be shown.</p>
@@ -277,9 +273,20 @@ const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDif
   );
 };
 
-const isEmptyDiff = (d?: DocDiff<SrsItem | VtpItem>) => !d || (!d.added.length && !d.modified.length && !d.removed.length);
+const isEmptyDiff = (d?: DocDiff<RegisterItem>) => !d || (!d.added.length && !d.modified.length && !d.removed.length);
+const hasAnyChange = (d: JobDiff) => Object.values(d).some((x) => !isEmptyDiff(x));
 
-type Change = ItemChange<SrsItem | VtpItem>;
+// Render one DiffList per register document type present in the diff, in registry order
+// (so a newly-registered type appears here with no change to this component).
+const RegisterDiffs: React.FC<{ diff: JobDiff }> = ({ diff }) => (
+  <>
+    {REGISTER_TYPES.filter((t) => diff[t.type]).map((t) => (
+      <DiffList key={t.type} label={docTypeFor(t.type)?.label ?? t.type} diff={diff[t.type]} />
+    ))}
+  </>
+);
+
+type Change = ItemChange<RegisterItem>;
 
 const label = (c: Change) => {
   const item = c.after ?? c.before;
@@ -287,7 +294,7 @@ const label = (c: Change) => {
   return item.code ? `${item.code} — ${item.text}` : item.text;
 };
 
-const DiffList: React.FC<{ label: string; diff?: DocDiff<SrsItem | VtpItem> }> = ({ label: heading, diff }) => {
+const DiffList: React.FC<{ label: string; diff?: DocDiff<RegisterItem> }> = ({ label: heading, diff }) => {
   if (isEmptyDiff(diff)) return null;
   const visible = (cs: Change[]) => cs.filter((c) => !(c.after ?? c.before)?.heading);
   const added = visible(diff!.added);

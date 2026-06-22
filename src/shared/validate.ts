@@ -1,6 +1,7 @@
 import Ajv from 'ajv';
 import type { ValidateFunction } from 'ajv';
-import { projectSchema, srsSchema, vtpSchema, prdSchema, releasesSchema, jobSchema, jobsSchema } from './schema';
+import { projectSchema, releasesSchema, jobSchema, jobsSchema } from './schema';
+import { DOC_TYPES } from './docTypes';
 
 export interface ValidationError {
   path: string;
@@ -9,15 +10,16 @@ export interface ValidationError {
 
 const ajv = new Ajv({ allErrors: true, strict: false });
 
+// Content document types come from the registry; the rest are infrastructure sidecars.
 const validators: Record<string, ValidateFunction> = {
   project: ajv.compile(projectSchema as object),
-  srs: ajv.compile(srsSchema as object),
-  vtp: ajv.compile(vtpSchema as object),
-  prd: ajv.compile(prdSchema as object),
   releases: ajv.compile(releasesSchema as object),
   job: ajv.compile(jobSchema as object),
   jobs: ajv.compile(jobsSchema as object),
 };
+for (const d of DOC_TYPES) {
+  if (d.schema) validators[d.type] = ajv.compile(d.schema as object);
+}
 
 /** Structural validation only. Returns [] when the document is well-formed. */
 export function validate(doc: unknown): ValidationError[] {

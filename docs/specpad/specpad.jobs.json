@@ -311,6 +311,18 @@
       "title": "Marketing site refresh — vision and feature list",
       "description": "Refresh specpad.com messaging (keeping the look & feel) to reflect v1.3: a balanced/dual hero (specs that live in your repo AND design-control evidence), and a feature list covering the full chain — product requirements (PRD), software requirements + verification, the traceability matrix and Auditor design-control map (IEC 62304 / 21 CFR 820.30), architecture, change control via jobs (in-progress + released diffs), releases as checkpoints, governance, themes, and the eQMS-export direction. Marketing copy only — non-behavioural.",
       "status": "open"
+    },
+    {
+      "id": "j_1d9f4a",
+      "code": "JOB-25",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Document-type registry — single source of truth; snapshot/diff/validation built from it",
+      "description": "Introduce src/shared/docTypes.ts as the registry of content document types (srs, vtp, prd; future soup/sdd/cyber) — each with kind (id-keyed register / prose / asset), file naming, schema, baseline membership, and generator scope. Build validation and the schema reference from it. Make snapshot/diff loaders document-type-generic so a newly registered register type flows into release/baseline snapshots, per-job diffs, and the redline with no code changes. Generalize the skill's snapshot/cache prose to 'every document in the project index plus the architecture files'.",
+      "status": "open"
     }
   ]
 }

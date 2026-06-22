@@ -5,7 +5,7 @@
  */
 
 import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SpecPadDoc, ReleasesDoc, JobDoc, JobsDoc, JobCommit, SidecarDoc } from './shared';
-import { createSrsDoc, createVtpDoc } from './shared';
+import { createSrsDoc, createVtpDoc, REGISTER_TYPES } from './shared';
 
 declare global {
   interface Window {
@@ -14,7 +14,8 @@ declare global {
   }
 }
 
-export type DocKind = 'srs' | 'vtp' | 'proj' | 'prd';
+// 'proj' (the project index) plus every register document type in the registry.
+export type DocKind = string;
 
 export interface DocumentListItem {
   type: DocKind;
@@ -92,9 +93,13 @@ export function parseDocument(text: string): SpecPadDoc {
   return JSON.parse(text) as SpecPadDoc;
 }
 
+// Project index + every register document type (registry-derived, so a new
+// pillar is recognised without editing this classifier).
+const DOC_FILENAME_RE = new RegExp(`^(.+?)\\.(proj|${REGISTER_TYPES.map((d) => d.type).join('|')})\\.json$`);
+
 /** Classify a `[name].[type].json` filename; null for non-document files. */
 export function classifyDocFilename(filename: string): DocumentListItem | null {
-  const m = filename.match(/^(.+?)\.(srs|vtp|proj|prd)\.json$/);
+  const m = filename.match(DOC_FILENAME_RE);
   if (!m) return null;
   return { type: m[2] as DocKind, name: m[1], filename };
 }
@@ -449,7 +454,7 @@ export async function loadJobCommits(jobId: string): Promise<JobCommit[]> {
 export async function loadJobSnapshot(
   jobId: string,
   state: 'before' | 'after',
-  type: 'srs' | 'vtp' | 'proj',
+  type: string, // any register/content doc type or 'proj' (registry-generic)
   name: string,
 ): Promise<SpecPadDoc | null> {
   const segments = ['.specpad', 'jobs', jobId, state];
@@ -462,7 +467,7 @@ export async function loadJobSnapshot(
 /** Load a cached snapshot doc (`.specpad/baseline/...` or `.specpad/snapshots/<version>/...`). */
 export async function loadSnapshot(
   location: SnapshotLocation,
-  type: 'srs' | 'vtp' | 'proj',
+  type: string, // any register/content doc type or 'proj' (registry-generic)
   name: string,
 ): Promise<SpecPadDoc | null> {
   if (demoBaseUrl) {

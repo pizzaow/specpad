@@ -36,6 +36,11 @@ describe('skill documents the change-tracking plumbing', () => {
     expect(skill).toMatch(/owner.*from git|set `owner`/i); // owner set from git
   });
 
+  it('snapshots/caches every document in the project index, not a fixed list (REG-3)', () => {
+    expect(skill).toMatch(/every document (in|listed in) the project index/i);
+    expect(skill).toMatch(/documents\[\]/);
+  });
+
   it('documents the source-traceability export (job → commits → code) and the commits cache', () => {
     expect(skill).toMatch(/Source-traceability export/i);
     expect(skill).toMatch(/commits\.json/);

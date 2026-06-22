@@ -40,8 +40,8 @@ import {
   loadProjectText,
   saveProjectText,
 } from './localFileApi';
-import { activeJobIds, diffDocs } from './shared';
-import type { DocDiff, SrsItem, VtpItem, JobCommit } from './shared';
+import { activeJobIds, diffItems, REGISTER_TYPES } from './shared';
+import type { DocDiff, SrsItem, VtpItem, PrdItem, SpecPadDoc, JobCommit } from './shared';
 import { buildRedline, computeAttribution } from './changeTracking';
 import type { SnapshotInput } from './changeTracking';
 import { cachedReleases } from './changeTrackingView';
@@ -66,7 +66,11 @@ import ViewTabs from './components/ViewTabs';
 
 type ViewMode = 'overview' | 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'releases' | 'audit' | 'trace';
 type OpenResult = { name: string; documents: DocumentListItem[] };
-type JobDiff = { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpItem> };
+// Items of any id-keyed register document (srs/vtp/prd/…); a per-job diff is keyed by doc type,
+// so newly-registered register types are diffed without changing this code.
+type RegisterItem = SrsItem | VtpItem | PrdItem;
+type JobDiff = Record<string, DocDiff<RegisterItem>>;
+const itemsOf = (doc: SpecPadDoc): RegisterItem[] => (doc as { items?: RegisterItem[] }).items ?? [];
 export type ArchChange = {
   added: string[];
   removed: string[];
@@ -117,18 +121,17 @@ async function loadJobCaches(
   const arch: Record<string, ArchChange> = {};
   for (const j of jd?.jobs ?? []) {
     if (j.status !== 'closed') continue;
-    const [sb, sa, vb, va, cs, ac] = await Promise.all([
-      loadJobSnapshot(j.id, 'before', 'srs', name),
-      loadJobSnapshot(j.id, 'after', 'srs', name),
-      loadJobSnapshot(j.id, 'before', 'vtp', name),
-      loadJobSnapshot(j.id, 'after', 'vtp', name),
-      loadJobCommits(j.id),
-      loadJobArch(j.id),
-    ]);
+    // Diff every register document type the job cached (srs/vtp/prd/…) — new types flow in here.
     const entry: JobDiff = {};
-    if (sb && sa) entry.srs = diffDocs(sb as SrsDoc, sa as SrsDoc);
-    if (vb && va) entry.vtp = diffDocs(vb as VtpDoc, va as VtpDoc);
-    if (entry.srs || entry.vtp) diffs[j.id] = entry;
+    for (const dt of REGISTER_TYPES) {
+      const [b, a] = await Promise.all([
+        loadJobSnapshot(j.id, 'before', dt.type, name),
+        loadJobSnapshot(j.id, 'after', dt.type, name),
+      ]);
+      if (b && a) entry[dt.type] = diffItems<RegisterItem>(itemsOf(b), itemsOf(a));
+    }
+    const [cs, ac] = await Promise.all([loadJobCommits(j.id), loadJobArch(j.id)]);
+    if (Object.keys(entry).length) diffs[j.id] = entry;
     if (cs.length) commits[j.id] = cs;
     if (ac) arch[j.id] = ac;
   }
@@ -172,8 +175,8 @@ const LocalApp: React.FC = () => {
   const [jobDiffs, setJobDiffs] = useState<Record<string, { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpItem> }>>({});
   const [jobCommits, setJobCommits] = useState<Record<string, JobCommit[]>>({});
   const [jobArch, setJobArch] = useState<Record<string, ArchChange>>({});
-  // Cached `before` snapshots for active OPEN jobs, diffed against the working copy below.
-  const [activeBefore, setActiveBefore] = useState<Record<string, { srs?: SrsDoc; vtp?: VtpDoc }>>({});
+  // Cached `before` snapshots for active OPEN jobs (jobId → docType → snapshot), diffed below.
+  const [activeBefore, setActiveBefore] = useState<Record<string, Record<string, SpecPadDoc>>>({});
   // Cached `before` architecture (file list + contents) for active OPEN jobs, for the in-progress arch diff.
   const [activeBeforeArch, setActiveBeforeArch] = useState<Record<string, { files: string[]; contents: Record<string, string> }>>({});
   // Architecture spec: arc42 markdown + the C4 Structurizr DSL (both optional, tracked text files).
@@ -200,17 +203,21 @@ const LocalApp: React.FC = () => {
   const srsAttribution = React.useMemo(() => computeAttribution(srsSnapshots), [srsSnapshots]);
   const vtpAttribution = React.useMemo(() => computeAttribution(vtpSnapshots), [vtpSnapshots]);
 
-  // Live in-progress diff for each active open job: its `before` snapshot vs the working copy.
+  // Live in-progress diff for each active open job: its `before` snapshot vs the working copy,
+  // per register document type (srs/vtp/prd/…) — new types are picked up automatically.
   const activeDiffs = React.useMemo(() => {
+    const working: Record<string, SpecPadDoc | null> = { srs: srsDoc, vtp: vtpDoc, prd: prdDoc };
     const out: Record<string, JobDiff> = {};
     for (const [id, before] of Object.entries(activeBefore)) {
       const entry: JobDiff = {};
-      if (before.srs && srsDoc) entry.srs = diffDocs(before.srs as SrsDoc, srsDoc);
-      if (before.vtp && vtpDoc) entry.vtp = diffDocs(before.vtp as VtpDoc, vtpDoc);
-      if (entry.srs || entry.vtp) out[id] = entry;
+      for (const [t, beforeDoc] of Object.entries(before)) {
+        const w = working[t];
+        if (w) entry[t] = diffItems<RegisterItem>(itemsOf(beforeDoc), itemsOf(w));
+      }
+      if (Object.keys(entry).length) out[id] = entry;
     }
     return out;
-  }, [activeBefore, srsDoc, vtpDoc]);
+  }, [activeBefore, srsDoc, vtpDoc, prdDoc]);
 
   // Live in-progress architecture diff for active open jobs: before arch snapshot vs the working SAD/diagrams.
   const activeArch = React.useMemo(() => {
@@ -288,19 +295,18 @@ const LocalApp: React.FC = () => {
     setJobArch(caches.arch);
     // Active open jobs: load each one's `before` snapshot so its in-progress changes
     // (before vs the working copy) can be shown without git or closing the job.
-    const before: Record<string, { srs?: SrsDoc; vtp?: VtpDoc }> = {};
+    const before: Record<string, Record<string, SpecPadDoc>> = {};
     const beforeArch: Record<string, { files: string[]; contents: Record<string, string> }> = {};
     for (const id of activeJobIds(jm)) {
       const rec = jd?.jobs.find((j) => j.id === id);
       if (!rec || rec.status !== 'open') continue;
-      const [sb, vb] = await Promise.all([
-        loadJobSnapshot(id, 'before', 'srs', name),
-        loadJobSnapshot(id, 'before', 'vtp', name),
-      ]);
-      const entry: { srs?: SrsDoc; vtp?: VtpDoc } = {};
-      if (sb) entry.srs = sb as SrsDoc;
-      if (vb) entry.vtp = vb as VtpDoc;
-      if (entry.srs || entry.vtp) before[id] = entry;
+      // Every register doc type's `before` snapshot, so each shows its in-progress diff.
+      const entry: Record<string, SpecPadDoc> = {};
+      for (const dt of REGISTER_TYPES) {
+        const b = await loadJobSnapshot(id, 'before', dt.type, name);
+        if (b) entry[dt.type] = b;
+      }
+      if (Object.keys(entry).length) before[id] = entry;
       // Architecture: only when the before snapshot carries an arch-files manifest, so a job
       // created before the full-doc-set snapshot existed shows no spurious "added" files.
       const manifest = await loadJobText(id, 'before', 'arch-files.json');

@@ -8,21 +8,19 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs';
 import process from 'node:process';
-import {
-  projectSchema, srsSchema, vtpSchema, prdSchema, releasesSchema, jobSchema,
-} from '../../src/shared/schema';
+import { projectSchema, releasesSchema, jobSchema } from '../../src/shared/schema';
+import { DOC_TYPES } from '../../src/shared/docTypes';
 import { GOVERNANCE_RULES } from '../../src/shared/governance';
 
 type AnySchema = Record<string, unknown>;
 
-const DEFAULT_SCHEMAS: Record<string, AnySchema> = {
-  project: projectSchema as AnySchema,
-  srs: srsSchema as AnySchema,
-  vtp: vtpSchema as AnySchema,
-  prd: prdSchema as AnySchema,
-  releases: releasesSchema as AnySchema,
-  job: jobSchema as AnySchema,
-};
+// project index + the content document types (from the registry) + the sidecars.
+const DEFAULT_SCHEMAS: Record<string, AnySchema> = { project: projectSchema as AnySchema };
+for (const d of DOC_TYPES) {
+  if (d.schema) DEFAULT_SCHEMAS[d.type] = d.schema as AnySchema;
+}
+DEFAULT_SCHEMAS.releases = releasesSchema as AnySchema;
+DEFAULT_SCHEMAS.job = jobSchema as AnySchema;
 
 const esc = (s: string): string =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');

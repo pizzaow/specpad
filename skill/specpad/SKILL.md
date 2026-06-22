@@ -297,10 +297,12 @@ Run at release time or on request:
      `{ "name": ..., "email": ... }`. (This is **release-granularity** "who", not per-item.)
    - `snapshot`: `null` for now (filled in only when cached).
 3. Regenerate `.specpad/baseline/` from the newest matching tag — a **full snapshot of all key
-   documents** (proj/srs/vtp JSON, the SAD markdown, its diagrams, the guide): for each,
-   `git show <tag>:docs/specpad/<file>` written under `docs/specpad/.specpad/baseline/` mirroring the
-   top-level file names. Set that release's `snapshot` to `".specpad/baseline"` and the top-level
-   `baseline` to that version.
+   documents**: **every document listed in the project index** (`<name>.proj.json` `documents[]` — today
+   proj/srs/vtp/prd, and any pillar added later: SOUP, cybersecurity, SDD, …) **plus the architecture
+   files** (the SAD markdown, its diagrams, the guide). For each, `git show <tag>:docs/specpad/<file>`
+   written under `docs/specpad/.specpad/baseline/` mirroring the top-level file names. Iterate the index
+   rather than a fixed list, so a newly-registered document type is captured automatically. Set that
+   release's `snapshot` to `".specpad/baseline"` and the top-level `baseline` to that version.
 4. Re-validate every JSON file you wrote.
 
 A **release is a first-class checkpoint**: a version + **its set of jobs** (the closed jobs whose derived
@@ -327,10 +329,12 @@ Maintain it as authoritative metadata (it is **not** part of the regenerable `.s
   job (Unreleased until a release does). Derive it at `refresh`: for each closed job, the earliest tag
   matching the manifest `tagPattern` that contains the job's last commit (`git tag --contains <sha>`).
 - **On create**, snapshot the job's **`before`** state into `.specpad/jobs/<id>/before/` — the full key
-  doc set (verbatim `<name>.proj/srs/vtp.json` plus the SAD markdown, its diagrams, the guide, and an
-  `arch-files.json` manifest), the same shape as the close cache — and commit it. This pins the job's
-  starting point so the editor can show the **active open job's in-progress changes** (SRS/VTP **and**
-  architecture) — its `before` snapshot diffed against the working copy — before the job is ever closed.
+  doc set: **every document in the project index** (`<name>.proj.json` `documents[]` — proj/srs/vtp/prd
+  and any later pillar) plus the architecture files (the SAD markdown, its diagrams, the guide, and an
+  `arch-files.json` manifest), the same shape as the close cache — and commit it. Iterate the index, not
+  a fixed list. This pins the job's starting point so the editor can show the **active open job's
+  in-progress changes** (every register document **and** architecture) — its `before` snapshot diffed
+  against the working copy — before the job is ever closed.
 - **On close**, add the **`after`** snapshot into `.specpad/jobs/<id>/after/` (raw `git show <last>:…`,
   `<last>` = the job's final commit; for an adopted/older job re-derive `before` from `git show <base>:…`,
   `<base>` = the parent of the job's first commit). Also write `.specpad/jobs/<id>/commits.json` — the

@@ -1,4 +1,5 @@
 export * from './schema';
+export * from './docTypes';
 export * from './ids';
 export * from './validate';
 export * from './governance';
