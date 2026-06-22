@@ -6,7 +6,7 @@
  * from the latest-release baseline via the shared buildRedlineRows.
  */
 import React, { useMemo, useState } from 'react';
-import type { PrdDoc, PrdItem, PrdStatus } from '../shared';
+import type { PrdDoc, PrdItem, PrdStatus, SrsDoc, SrsItem } from '../shared';
 import { createPrdItem, generateId, ID_PREFIX } from '../shared';
 import { buildRedlineRows } from '../changeTracking';
 import type { RedlineEntry } from '../changeTracking';
@@ -16,17 +16,30 @@ interface PrdTableProps {
   doc: PrdDoc;
   onChange: (doc: PrdDoc) => void;
   baseline?: PrdDoc | null;
+  srs?: SrsDoc | null; // to show each item's downward trace (the requirements that satisfy it)
   readOnly?: boolean;
 }
 
 type EditField = 'code' | 'text' | 'tags';
 type EditTarget = { index: number; field: EditField } | null;
 
-const PrdTable: React.FC<PrdTableProps> = ({ doc, onChange, baseline, readOnly }) => {
+const PrdTable: React.FC<PrdTableProps> = ({ doc, onChange, baseline, srs, readOnly }) => {
   const [editing, setEditing] = useState<EditTarget>(null);
   const [editValue, setEditValue] = useState('');
 
   const redlineRows = useMemo(() => buildRedlineRows(baseline ?? null, doc), [baseline, doc]);
+  // Downward trace: the software requirements that satisfy each product requirement.
+  const satisfiedBy = useMemo(() => {
+    const m = new Map<string, SrsItem[]>();
+    for (const r of srs?.items ?? []) {
+      for (const pid of r.satisfies ?? []) {
+        const list = m.get(pid) ?? [];
+        list.push(r);
+        m.set(pid, list);
+      }
+    }
+    return m;
+  }, [srs]);
   const indexById = useMemo(() => {
     const m = new Map<string, number>();
     doc.items.forEach((it, i) => m.set(it.id, i));
@@ -117,10 +130,11 @@ const PrdTable: React.FC<PrdTableProps> = ({ doc, onChange, baseline, readOnly }
       <table className="table table-bordered table-striped prd-table">
         <thead>
           <tr>
-            <th style={{ width: 160 }}>Code</th>
+            <th style={{ width: 150 }}>Code</th>
             <th>Text</th>
-            <th style={{ width: 140 }}>Status</th>
-            <th style={{ width: 150 }}>Tags</th>
+            <th style={{ width: 130 }}>Status</th>
+            <th style={{ width: 200 }}>Satisfied by</th>
+            <th style={{ width: 130 }}>Tags</th>
             <th style={{ width: 44 }} />
           </tr>
         </thead>
@@ -131,7 +145,7 @@ const PrdTable: React.FC<PrdTableProps> = ({ doc, onChange, baseline, readOnly }
               return (
                 <tr key={`removed-${item.id}`} className="ct-removed-row">
                   <td><del>{item.code || item.id}</del></td>
-                  <td colSpan={4}><del>{item.text}</del></td>
+                  <td colSpan={5}><del>{item.text}</del></td>
                 </tr>
               );
             }
@@ -155,6 +169,14 @@ const PrdTable: React.FC<PrdTableProps> = ({ doc, onChange, baseline, readOnly }
                       <option value="implemented">implemented</option>
                     </select>
                   )}
+                </td>
+                <td className="prd-satisfied">
+                  {item.heading ? '' : (() => {
+                    const reqs = satisfiedBy.get(item.id) ?? [];
+                    if (reqs.length) return reqs.map((r) => <span key={r.id} className="label label-default" style={{ marginRight: 4 }}>{r.code ?? r.id}</span>);
+                    if ((item.status ?? 'proposed') === 'implemented') return <span className="text-danger" title="implemented but no requirement satisfies it">✗ gap</span>;
+                    return <span className="text-muted">— roadmap</span>;
+                  })()}
                 </td>
                 <td className={isCellChanged(entry, 'tags') ? 'ct-changed' : undefined}>
                   {item.heading ? '' : renderCell(index, 'tags')}

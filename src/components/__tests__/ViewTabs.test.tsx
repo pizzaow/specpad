@@ -2,36 +2,30 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ViewTabs from '../ViewTabs';
 
-describe('ViewTabs', () => {
-  const enabled = { overview: true, prd: true, srs: true, vtp: true, testing: true, jobs: true, arch: true, releases: true, audit: true, trace: true };
+const enabled = { overview: true, prd: true, srs: true, vtp: true, testing: true, jobs: true, arch: true, releases: true, audit: true, trace: true };
 
-  it('renders the three labels and marks the active one', () => {
+describe('ViewTabs', () => {
+  it('renders the tabs and marks the active one', () => {
     const { container } = render(<ViewTabs current="srs" enabled={enabled} onSelect={vi.fn()} />);
     expect(screen.getByText('Requirements')).toBeInTheDocument();
     expect(screen.getByText('Verification Tests')).toBeInTheDocument();
-    expect(screen.getByText('Results')).toBeInTheDocument();
-    expect(container.querySelector('li.active')?.textContent).toBe('Requirements');
+    expect(screen.getByText('Auditor')).toBeInTheDocument();
+    expect(container.querySelector('.view-tab.active')?.textContent).toBe('Requirements');
   });
 
-  it('leads with Overview and separates the tab groups', () => {
+  it('leads with Overview, then Product Requirements, in order', () => {
     const { container } = render(<ViewTabs current="overview" enabled={enabled} onSelect={vi.fn()} />);
-    // Overview is the leftmost tab; Jobs is no longer first.
-    expect(container.querySelector('li:first-child')?.textContent).toBe('Overview');
-    // Two separators divide home | authoring | oversight.
-    expect(container.querySelectorAll('li.tab-sep').length).toBe(2);
-    // Jobs sits in the oversight group, after the authoring views.
-    const labels = [...container.querySelectorAll('li:not(.tab-sep) > a')].map((a) => a.textContent);
+    const labels = [...container.querySelectorAll('.view-tab')].map((a) => a.textContent);
     expect(labels).toEqual(['Overview', 'Product Requirements', 'Requirements', 'Verification Tests', 'Results', 'Architecture', 'Auditor', 'Traceability', 'Releases', 'Jobs']);
   });
 
-  it('includes an Architecture tab', () => {
-    render(<ViewTabs current="srs" enabled={enabled} onSelect={vi.fn()} />);
-    expect(screen.getByText('Architecture')).toBeInTheDocument();
-  });
-
-  it('includes an Auditor tab', () => {
-    render(<ViewTabs current="srs" enabled={enabled} onSelect={vi.fn()} />);
-    expect(screen.getByText('Auditor')).toBeInTheDocument();
+  it('labels each design-control phase with a band (Design Inputs spans the requirements tabs)', () => {
+    const { container } = render(<ViewTabs current="overview" enabled={enabled} onSelect={vi.fn()} />);
+    const bands = [...container.querySelectorAll('.phase-band')].map((b) => b.textContent);
+    expect(bands).toEqual(['Design Inputs', 'Design Verification', 'Design Outputs', 'Design Controls', 'Traceability', 'Design History', 'Design Changes']);
+    // "Design Inputs" spans Product Requirements + Requirements (columns 2–3).
+    const inputs = [...container.querySelectorAll('.phase-band')].find((b) => b.textContent === 'Design Inputs') as HTMLElement;
+    expect(inputs.style.gridColumn).toBe('2 / span 2');
   });
 
   it('selects a tab on click', () => {
@@ -46,9 +40,9 @@ describe('ViewTabs', () => {
     render(
       <ViewTabs current="srs" enabled={{ overview: true, prd: false, srs: true, vtp: false, testing: false, jobs: false, arch: false, releases: false, audit: false, trace: false }} onSelect={onSelect} />,
     );
-    const vtpTab = screen.getByText('Verification Tests').closest('li');
-    expect(vtpTab?.className).toContain('disabled');
-    fireEvent.click(screen.getByText('Verification Tests'));
+    const vtpTab = screen.getByText('Verification Tests');
+    expect(vtpTab.className).toContain('disabled');
+    fireEvent.click(vtpTab);
     expect(onSelect).not.toHaveBeenCalled();
   });
 });

@@ -15,7 +15,9 @@ function demoContent(): Plugin {
     try {
       if (url === '/manifest.json') {
         const entries = await fs.readdir(root);
-        const documents = entries.filter((f) => /\.(srs|vtp|proj)\.json$/.test(f));
+        // Every content document (project index + register types: srs/vtp/prd and any later pillar),
+        // excluding the infrastructure sidecars — matches the deploy manifest. Registry-extensible.
+        const documents = entries.filter((f) => /\.[a-z]+\.json$/.test(f) && !/\.(job|jobs|releases)\.json$/.test(f) && f !== 'manifest.json');
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({ documents }));
         return;

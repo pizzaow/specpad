@@ -347,6 +347,18 @@
       "title": "Baseline generator + adoption default to PRD and architecture",
       "description": "Make the full design-control set the default when adopting SpecPad on an existing repo: the baseline generator drafts, by default, a PRD (user needs / product intent, proposed for ratification, with SRS items linked up via satisfies) and a starter arc42 SAD (context + building-block diagram) in addition to SRS/VTP. init/import default to the full set, each proposed for ratification (a project may decline a type). Broaden the demo manifest regex so every content document type is carried, not a fixed list. Skill prose, registry-aware (drafts the project's configured document types).",
       "status": "open"
+    },
+    {
+      "id": "j_3f8b22",
+      "code": "JOB-28",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "PRD tab downward trace + design-control phase bands under the tabs",
+      "description": "In the Product Requirements tab, show each item's downward trace — the software requirements that satisfy it (a Satisfied-by column), flagging an implemented PRD item with no satisfying requirement. And render a thin band below the document tabs labelling each design-control phase, spanning the tabs it covers (Design Inputs across Product Requirements + Requirements; Design Verification across Verification Tests + Results; Design Outputs = Architecture; Traceability; Design History = Releases; Design Changes = Jobs).",
+      "status": "open"
     }
   ]
 }

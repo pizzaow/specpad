@@ -1,7 +1,12 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import PrdTable from '../PrdTable';
-import type { PrdDoc } from '../../shared';
+import type { PrdDoc, SrsDoc } from '../../shared';
+
+const srs: SrsDoc = {
+  schemaVersion: '1.0', type: 'srs', name: 'Acme', title: 'SRS',
+  items: [{ id: 'r_1', code: 'R-1', text: 'Realizes the built need.', satisfies: ['p_a'] }],
+};
 
 const doc: PrdDoc = {
   schemaVersion: '1.0', type: 'prd', name: 'Acme', title: 'Product Requirements',
@@ -43,6 +48,19 @@ describe('PrdTable', () => {
     // the added row carries the redline 'added' row class
     expect(container.querySelector('tr.success, tr.ct-added, .ct-changed')).toBeTruthy();
     expect(screen.getByText('Roadmap need.')).toBeInTheDocument();
+  });
+
+  it('shows each item\'s downward trace (the requirements that satisfy it)', () => {
+    render(<PrdTable doc={doc} srs={srs} onChange={vi.fn()} />);
+    // p_a (implemented) is satisfied by R-1; p_b (proposed) reads as roadmap.
+    expect(screen.getByText('R-1')).toBeInTheDocument();
+    expect(screen.getByText(/roadmap/)).toBeInTheDocument();
+  });
+
+  it('flags an implemented PRD item with no satisfying requirement as a gap', () => {
+    const gapDoc: PrdDoc = { ...doc, items: [{ id: 'p_c', code: 'PROD-9', text: 'Built but untraced.', status: 'implemented' }] };
+    render(<PrdTable doc={gapDoc} srs={srs} onChange={vi.fn()} />);
+    expect(screen.getByText(/gap/)).toBeInTheDocument();
   });
 
   it('is read-only in demo mode (no add/edit controls)', () => {

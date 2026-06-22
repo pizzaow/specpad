@@ -704,7 +704,7 @@ const LocalApp: React.FC = () => {
             onNavigate={setCurrentView}
           />
         )}
-        {currentView === 'prd' && prdDoc && <PrdTable key={selectedDocName} doc={prdDoc} onChange={handlePrdChange} baseline={prdBaseline} readOnly={launch.demo} />}
+        {currentView === 'prd' && prdDoc && <PrdTable key={selectedDocName} doc={prdDoc} srs={srsDoc} onChange={handlePrdChange} baseline={prdBaseline} readOnly={launch.demo} />}
         {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onChange={handleChange} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} />}
         {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onChange={handleChange} redline={vtpRedline} attribution={vtpSnapshots.length ? vtpAttribution : undefined} />}
         {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} onChange={handleChange} />}
