@@ -20,6 +20,13 @@ describe('document-type registry', () => {
     expect(isRegisterType('proj')).toBe(false);
   });
 
+  it('registers architecture as a prose (non-register) document type a job can impact', () => {
+    const sad = docTypeFor('sad');
+    expect(sad?.kind).toBe('prose');
+    expect(sad?.schema).toBeUndefined();
+    expect(REGISTER_TYPES.map((d) => d.type)).not.toContain('sad'); // not diffed as an id-keyed register
+  });
+
   it('validation is built from the registry — every register type validates, alongside the sidecars (REG-2)', () => {
     // Driven by DOC_TYPES: registering a new register type makes validate() accept it with no edit here.
     for (const d of REGISTER_TYPES) {

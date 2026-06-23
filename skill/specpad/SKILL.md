@@ -29,15 +29,27 @@ into the SRS/VTP **spec-first**, attributed to a job, alongside the code. For ea
 
 1. **Job first.** Ensure an active open job exists (`<name>.jobs.json` + `<name>.job.json`); create one
    if needed. It groups this unit's commits and pushes.
-2. **Distill intent → requirement, before you implement.** When the user settles what to build or
-   change, write the durable behavioral rule(s) as SRS requirement(s) *first*, each with a verifying
-   VTP test (procedure + expected result). Capture **intent, not transcript**.
+2. **Evaluate impact across every registered document type — before you implement.** A job can touch any
+   of the project's document types, not just requirements. Go through each one the project tracks (its
+   project index plus the architecture, i.e. the document-type registry) and decide whether this job
+   changes it; update the affected ones *spec-first*, in the same job:
+   - **Requirements (SRS)** — the durable behavioral rule(s), at the "shall" altitude (see below).
+   - **Verification (VTP)** — a verifying test per requirement (next step).
+   - **Product requirements (PRD)** — when the job changes user-facing intent / a user need.
+   - **Architecture (SAD)** — when the job adds or changes a component, module, interface, or contract
+     (e.g. a new view, a new shared module, a new pillar): update `<name>.sad.md` and its diagrams. Most
+     within-a-component tweaks don't; structural changes do. Don't let the SAD drift.
+   - **Any other registered pillar** (SOUP, cybersecurity, SDD, …) — same question, same rule.
+
+   Capture **intent, not transcript**. Most jobs touch SRS+VTP; surface which document types you judged
+   this job affects so the user can correct.
 3. **Author the test chain.** requirement → VTP entry → the actual automated test where automatable
    (e.g. vitest), named in the VTP `notes` → code. No requirement should ship without a test.
 4. **Implement against the spec**, keeping ids/refs stable and governance clean.
-5. **Autonomous but visible.** Write the requirements/tests without waiting for line-by-line approval,
-   then tell the user what you captured (the codes + one line each) so they can **edit after** and
-   correct granularity. Wrong granularity is the main risk; surfacing it is the cheap fix.
+5. **Autonomous but visible.** Write the requirements/tests (and any architecture/PRD updates) without
+   waiting for line-by-line approval, then tell the user what you captured (the codes + one line each,
+   and which document types you touched) so they can **edit after** and correct granularity. Wrong
+   granularity — or a missed document type — is the main risk; surfacing it is the cheap fix.
 
 **What rises to a requirement (distillation — the hard part):** a testable statement about
 externally-observable behavior or a governing constraint — "what the system *shall* do." NOT incidental

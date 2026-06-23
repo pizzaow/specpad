@@ -26,10 +26,15 @@ export interface DocTypeSpec {
 }
 
 // The content document types. Order is the default editor/authoring order.
+// This is also the set a job evaluates its impact against (see the working loop):
+// adding a pillar here makes it part of per-job impact evaluation, snapshots, and diffs.
 export const DOC_TYPES: DocTypeSpec[] = [
   { type: 'prd', label: 'Product Requirements', kind: 'register', optional: true, inBaseline: true, generate: 'optional', schema: prdSchema as Record<string, unknown> },
   { type: 'srs', label: 'Requirements', kind: 'register', optional: false, inBaseline: true, generate: 'always', schema: srsSchema as Record<string, unknown> },
   { type: 'vtp', label: 'Verification Tests', kind: 'register', optional: false, inBaseline: true, generate: 'always', schema: vtpSchema as Record<string, unknown> },
+  // Architecture is prose (arc42 markdown + draw.io diagrams), not an id-keyed register — it has no
+  // JSON schema and is diffed by line/coarse, but it IS a registered document type a job can impact.
+  { type: 'sad', label: 'Architecture', kind: 'prose', optional: true, inBaseline: true, generate: 'optional' },
 ];
 
 /** All id-keyed register types (srs, vtp, prd, …) — the diffable/redline-able docs. */

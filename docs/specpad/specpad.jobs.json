@@ -359,6 +359,18 @@
       "title": "PRD tab downward trace + design-control phase bands under the tabs",
       "description": "In the Product Requirements tab, show each item's downward trace — the software requirements that satisfy it (a Satisfied-by column), flagging an implemented PRD item with no satisfying requirement. And render a thin band below the document tabs labelling each design-control phase, spanning the tabs it covers (Design Inputs across Product Requirements + Requirements; Design Verification across Verification Tests + Results; Design Outputs = Architecture; Traceability; Design History = Releases; Design Changes = Jobs).",
       "status": "open"
+    },
+    {
+      "id": "j_9a4e17",
+      "code": "JOB-29",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Per-job impact evaluation across every registered document type (+ bring the SAD current)",
+      "description": "Generalize the working loop so a job evaluates its impact on EVERY registered document type — not just SRS/VTP. Register architecture (the SAD) as a document type so the registry is the complete list of impactable docs; the working loop (SKILL.md + CLAUDE.specpad.md) iterates the project's registered types (product requirements, requirements, verification, architecture, and any future pillar) and updates each affected one in the same job, spec-first — the same registry-generic approach used for the diffs. Apply it by bringing SpecPad's own SAD current (it had drifted since v1.2: no PRD, registry, Auditor, themes).",
+      "status": "open"
     }
   ]
 }
