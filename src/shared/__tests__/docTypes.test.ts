@@ -18,6 +18,8 @@ describe('document-type registry', () => {
     expect(REGISTER_TYPES.every((d) => d.kind === 'register')).toBe(true);
     expect(isRegisterType('srs')).toBe(true);
     expect(isRegisterType('proj')).toBe(false);
+    // the srs view is labelled "Software Requirements" to distinguish it from the PRD (AVC-4)
+    expect(docTypeFor('srs')!.label).toBe('Software Requirements');
   });
 
   it('registers architecture as a prose (non-register) document type a job can impact', () => {

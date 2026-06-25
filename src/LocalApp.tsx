@@ -45,6 +45,8 @@ import type { DocDiff, SrsItem, VtpItem, PrdItem, SpecPadDoc, JobCommit } from '
 import { buildRedline, computeAttribution } from './changeTracking';
 import type { SnapshotInput } from './changeTracking';
 import { cachedReleases } from './changeTrackingView';
+import { mdSectionDiff } from './archDiff';
+import type { MdFileDiff } from './archDiff';
 import MenuBar from './components/MenuBar';
 import VersionHistoryDialog from './components/VersionHistoryDialog';
 import * as recentStore from './handleStore';
@@ -76,21 +78,11 @@ export type ArchChange = {
   added: string[];
   removed: string[];
   modified: string[];
-  sadDiff?: { added: string[]; removed: string[] };
+  mdDiffs?: MdFileDiff[]; // section-level diffs for each modified markdown file
 };
 
-// Coarse line diff (added/removed non-empty lines) for the SAD markdown.
-function lineDiff(before: string, after: string): { added: string[]; removed: string[] } {
-  const b = before.split('\n'), a = after.split('\n');
-  const bSet = new Set(b), aSet = new Set(a);
-  return {
-    added: a.filter((l) => !bSet.has(l) && l.trim()),
-    removed: b.filter((l) => !aSet.has(l) && l.trim()),
-  };
-}
-
 // For a closed job, compute which architecture files it added/modified/removed
-// (coarse, file-level) plus an added/removed-line diff for the SAD markdown.
+// (coarse, file-level) plus a section-level diff for each modified markdown file.
 async function loadJobArch(jobId: string): Promise<ArchChange | undefined> {
   const before: string[] = JSON.parse((await loadJobText(jobId, 'before', 'arch-files.json')) ?? '[]');
   const after: string[] = JSON.parse((await loadJobText(jobId, 'after', 'arch-files.json')) ?? '[]');
@@ -98,15 +90,18 @@ async function loadJobArch(jobId: string): Promise<ArchChange | undefined> {
   const added = after.filter((f) => !bSet.has(f));
   const removed = before.filter((f) => !aSet.has(f));
   const modified: string[] = [];
-  let sadDiff: { added: string[]; removed: string[] } | undefined;
+  const mdDiffs: MdFileDiff[] = [];
   for (const f of after.filter((x) => bSet.has(x))) {
     const [b, a] = await Promise.all([loadJobText(jobId, 'before', f), loadJobText(jobId, 'after', f)]);
     if (b !== a) {
       modified.push(f);
-      if (f.endsWith('.sad.md') && b != null && a != null) sadDiff = lineDiff(b, a);
+      if (f.endsWith('.md') && b != null && a != null) {
+        const sections = mdSectionDiff(b, a);
+        if (sections.length) mdDiffs.push({ file: f, sections });
+      }
     }
   }
-  if (added.length || removed.length || modified.length) return { added, removed, modified, sadDiff };
+  if (added.length || removed.length || modified.length) return { added, removed, modified, mdDiffs: mdDiffs.length ? mdDiffs : undefined };
   return undefined;
 }
 
@@ -193,6 +188,7 @@ const LocalApp: React.FC = () => {
   const [vtpBaseline, setVtpBaseline] = useState<VtpDoc | null>(null);
   const [srsSnapshots, setSrsSnapshots] = useState<SnapshotInput[]>([]);
   const [vtpSnapshots, setVtpSnapshots] = useState<SnapshotInput[]>([]);
+  const [prdSnapshots, setPrdSnapshots] = useState<SnapshotInput[]>([]);
   const [dirtySrs, setDirtySrs] = useState(false);
   const [dirtyVtp, setDirtyVtp] = useState(false);
   const [showVersions, setShowVersions] = useState(false);
@@ -205,6 +201,7 @@ const LocalApp: React.FC = () => {
   );
   const srsAttribution = React.useMemo(() => computeAttribution(srsSnapshots), [srsSnapshots]);
   const vtpAttribution = React.useMemo(() => computeAttribution(vtpSnapshots), [vtpSnapshots]);
+  const prdAttribution = React.useMemo(() => computeAttribution(prdSnapshots), [prdSnapshots]);
 
   // Live in-progress diff for each active open job: its `before` snapshot vs the working copy,
   // per register document type (srs/vtp/prd/…) — new types are picked up automatically.
@@ -237,16 +234,19 @@ const LocalApp: React.FC = () => {
       const added = after.filter((f) => !bSet.has(f));
       const removed = before.files.filter((f) => !aSet.has(f));
       const modified: string[] = [];
-      let sadDiff: { added: string[]; removed: string[] } | undefined;
+      const mdDiffs: MdFileDiff[] = [];
       for (const f of after.filter((x) => bSet.has(x))) {
         const b = before.contents[f];
         const a = working[f];
         if (b !== a) {
           modified.push(f);
-          if (f.endsWith('.sad.md') && b != null && a != null) sadDiff = lineDiff(b, a);
+          if (f.endsWith('.md') && b != null && a != null) {
+            const sections = mdSectionDiff(b, a);
+            if (sections.length) mdDiffs.push({ file: f, sections });
+          }
         }
       }
-      if (added.length || removed.length || modified.length) out[id] = { added, removed, modified, sadDiff };
+      if (added.length || removed.length || modified.length) out[id] = { added, removed, modified, mdDiffs: mdDiffs.length ? mdDiffs : undefined };
     }
     return out;
   }, [activeBeforeArch, sad, sadGuide, dsl, diagrams, selectedDocName, projectName]);
@@ -335,21 +335,24 @@ const LocalApp: React.FC = () => {
     const cached = cachedReleases(rel);
     const srsSnaps: SnapshotInput[] = [];
     const vtpSnaps: SnapshotInput[] = [];
+    const prdSnaps: SnapshotInput[] = [];
     let srsBase: SrsDoc | null = null;
     let vtpBase: VtpDoc | null = null;
     let prdBase: PrdDoc | null = null;
     for (const c of cached) {
       const s = (await loadSnapshot(c.location, 'srs', name)) as SrsDoc | null;
       const v = (await loadSnapshot(c.location, 'vtp', name)) as VtpDoc | null;
+      const p = (await loadSnapshot(c.location, 'prd', name)) as PrdDoc | null;
       if (s) srsSnaps.push({ version: c.version, author: c.author, doc: s });
       if (v) vtpSnaps.push({ version: c.version, author: c.author, doc: v });
+      if (p) prdSnaps.push({ version: c.version, author: c.author, doc: p });
       if (c.location === 'baseline') {
-        srsBase = s; vtpBase = v;
-        prdBase = (await loadSnapshot(c.location, 'prd', name)) as PrdDoc | null;
+        srsBase = s; vtpBase = v; prdBase = p;
       }
     }
     setSrsSnapshots(srsSnaps);
     setVtpSnapshots(vtpSnaps);
+    setPrdSnapshots(prdSnaps);
     setPrdBaseline(prdBase);
     setSrsBaseline(srsBase);
     setVtpBaseline(vtpBase);
@@ -426,6 +429,7 @@ const LocalApp: React.FC = () => {
       setVtpBaseline(null);
       setSrsSnapshots([]);
       setVtpSnapshots([]);
+      setPrdSnapshots([]);
     }
     if (recentStore.isSupported()) {
       const dh = getDirHandle();
@@ -550,7 +554,7 @@ const LocalApp: React.FC = () => {
     if (!hasOpenDirectory()) { setError('Open a project directory first'); return; }
     const name = prompt('Document name:', getCurrentProjectName() || 'mydoc');
     if (!name) return;
-    const title = prompt('Document title:', 'Requirements');
+    const title = prompt('Document title:', 'Software Requirements');
     if (!title) return;
     const type = confirm('Create SRS? (Cancel for VTP)') ? 'srs' : 'vtp';
     try {
@@ -704,7 +708,7 @@ const LocalApp: React.FC = () => {
             onNavigate={setCurrentView}
           />
         )}
-        {currentView === 'prd' && prdDoc && <PrdTable key={selectedDocName} doc={prdDoc} srs={srsDoc} onChange={handlePrdChange} baseline={prdBaseline} readOnly={launch.demo} />}
+        {currentView === 'prd' && prdDoc && <PrdTable key={selectedDocName} doc={prdDoc} srs={srsDoc} onChange={handlePrdChange} baseline={prdBaseline} attribution={prdSnapshots.length ? prdAttribution : undefined} readOnly={launch.demo} />}
         {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onChange={handleChange} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} />}
         {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onChange={handleChange} redline={vtpRedline} attribution={vtpSnapshots.length ? vtpAttribution : undefined} />}
         {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} onChange={handleChange} />}

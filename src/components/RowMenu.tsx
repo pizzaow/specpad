@@ -15,6 +15,7 @@ export interface RowMenuProps {
   onDelete: () => void;
   onViewInfo: () => void;
   canOutdent?: boolean; // default true; false disables Outdent (already at level 0)
+  noun?: string; // what's being added (default 'requirement'); e.g. 'product requirement', 'test'
 }
 
 const RowMenu: React.FC<RowMenuProps> = (props) => {
@@ -46,7 +47,7 @@ const RowMenu: React.FC<RowMenuProps> = (props) => {
             style={{ position: 'fixed', inset: 0, zIndex: 1 }}
           />
           <ul className="dropdown-menu" style={{ display: 'block', left: 'auto', right: 0, zIndex: 2 }}>
-            <li className="dropdown-header">Add requirement</li>
+            <li className="dropdown-header">Add {props.noun ?? 'requirement'}</li>
             <li><a href="#" onClick={pick(props.onAddAbove)}>Above</a></li>
             <li><a href="#" onClick={pick(props.onAddBelow)}>Below</a></li>
             <li><a href="#" onClick={pick(props.onAddChild)}>Child</a></li>

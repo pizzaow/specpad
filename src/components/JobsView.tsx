@@ -16,11 +16,15 @@
 import React, { useState } from 'react';
 import type { JobsDoc, JobRecord, JobType, DocDiff, ItemChange, SrsItem, VtpItem, PrdItem, JobCommit } from '../shared';
 import { createJobsDoc, createJobRecord, REGISTER_TYPES, docTypeFor } from '../shared';
+import type { MdFileDiff } from '../archDiff';
 
 // A per-job diff keyed by document type (srs/vtp/prd/…), rendered generically below.
 type RegisterItem = SrsItem | VtpItem | PrdItem;
 type JobDiff = Record<string, DocDiff<RegisterItem>>;
-type ArchChange = { added: string[]; removed: string[]; modified: string[]; sadDiff?: { added: string[]; removed: string[] } };
+type ArchChange = { added: string[]; removed: string[]; modified: string[]; mdDiffs?: MdFileDiff[] };
+
+// Architecture files we can't text-diff (we report them coarsely).
+const isDiagram = (f: string) => /\.(svg|png|drawio|dsl)$/i.test(f);
 
 interface JobsViewProps {
   doc: JobsDoc | null;
@@ -177,19 +181,33 @@ const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDif
           <>
             <h4 style={{ marginTop: 20 }}>Architecture changes{selected.status !== 'closed' ? ' (in progress)' : ''}</h4>
             <ul className="list-unstyled" style={{ marginLeft: 8 }}>
-              {arch.added.map((f) => <li key={`a${f}`} className="text-success">+ {f}</li>)}
-              {arch.modified.map((f) => <li key={`m${f}`} className="text-warning">~ {f}</li>)}
+              {arch.added.map((f) => <li key={`a${f}`} className="text-success">+ {f}{isDiagram(f) ? ' (diagram added)' : ''}</li>)}
+              {arch.modified.map((f) => <li key={`m${f}`} className="text-warning">~ {f}{isDiagram(f) ? ' — diagram changed' : ''}</li>)}
               {arch.removed.map((f) => <li key={`r${f}`} className="text-danger" style={{ textDecoration: 'line-through' }}>− {f}</li>)}
             </ul>
-            {arch.sadDiff && (arch.sadDiff.added.length > 0 || arch.sadDiff.removed.length > 0) && (
-              <details style={{ marginLeft: 8 }}>
-                <summary style={{ cursor: 'pointer' }}>SAD text changes</summary>
-                <pre style={{ maxHeight: 280, overflow: 'auto', marginTop: 6 }}>
-                  {arch.sadDiff.removed.map((l, i) => <div key={`-${i}`} className="text-danger">- {l}</div>)}
-                  {arch.sadDiff.added.map((l, i) => <div key={`+${i}`} className="text-success">+ {l}</div>)}
-                </pre>
+            {arch.mdDiffs?.map((md) => (
+              <details key={md.file} style={{ marginLeft: 8 }} open>
+                <summary style={{ cursor: 'pointer' }}>
+                  {md.file} — {md.sections.length} section{md.sections.length === 1 ? '' : 's'} changed
+                </summary>
+                <div style={{ marginTop: 6 }}>
+                  {md.sections.map((s, i) => (
+                    <div key={`${md.file}-${i}`} style={{ marginBottom: 8 }}>
+                      <div>
+                        <span className={`label label-${s.status === 'added' ? 'success' : s.status === 'removed' ? 'danger' : 'warning'}`} style={{ marginRight: 6 }}>{s.status}</span>
+                        <strong>{s.heading}</strong>
+                      </div>
+                      {(s.removed.length > 0 || s.added.length > 0) && (
+                        <pre style={{ maxHeight: 240, overflow: 'auto', marginTop: 4, marginBottom: 0 }}>
+                          {s.removed.map((l, j) => <div key={`-${j}`} className="text-danger">- {l}</div>)}
+                          {s.added.map((l, j) => <div key={`+${j}`} className="text-success">+ {l}</div>)}
+                        </pre>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </details>
-            )}
+            ))}
           </>
         )}
 

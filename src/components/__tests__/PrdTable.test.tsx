@@ -18,54 +18,57 @@ const doc: PrdDoc = {
 };
 
 describe('PrdTable', () => {
-  it('renders PRD items with an inline status control', () => {
+  it('renders PRD items but hides the Status and Tags columns', () => {
     render(<PrdTable doc={doc} onChange={vi.fn()} />);
     expect(screen.getByText('PROD-1')).toBeInTheDocument();
     expect(screen.getByText('Roadmap need.')).toBeInTheDocument();
-    // status dropdown reflects the item's status
-    const sel = screen.getByLabelText('Status for PROD-1') as HTMLSelectElement;
-    expect(sel.value).toBe('implemented');
+    // status is assumed implemented — no inline status control
+    expect(screen.queryByLabelText('Status for PROD-1')).not.toBeInTheDocument();
+    // no Tags column header
+    expect(screen.queryByText('Tags')).not.toBeInTheDocument();
   });
 
-  it('edits status inline via onChange', () => {
-    const onChange = vi.fn();
-    render(<PrdTable doc={doc} onChange={onChange} />);
-    fireEvent.change(screen.getByLabelText('Status for PROD-2'), { target: { value: 'implemented' } });
-    const next = onChange.mock.calls.at(-1)![0] as PrdDoc;
-    expect(next.items.find((i) => i.id === 'p_b')!.status).toBe('implemented');
+  it('flags a proposed item with a bold PROPOSED note (implemented items have none)', () => {
+    render(<PrdTable doc={doc} onChange={vi.fn()} />);
+    const notes = screen.getAllByText('PROPOSED');
+    expect(notes).toHaveLength(1); // only PROD-2 is proposed
   });
 
-  it('adds and removes items', () => {
-    const onChange = vi.fn();
-    render(<PrdTable doc={doc} onChange={onChange} />);
-    fireEvent.click(screen.getByText('+ Product requirement'));
-    expect((onChange.mock.calls.at(-1)![0] as PrdDoc).items).toHaveLength(4);
+  it('offers row actions (add/move/delete/view info) via the hamburger', () => {
+    render(<PrdTable doc={doc} onChange={vi.fn()} />);
+    // one row menu per non-removed row (3 items)
+    expect(screen.getAllByLabelText('Row actions')).toHaveLength(3);
+    fireEvent.click(screen.getAllByLabelText('Row actions')[1]);
+    expect(screen.getByText('View information')).toBeInTheDocument();
+    expect(screen.getByText('Above')).toBeInTheDocument();
   });
 
   it('shows the since-baseline redline (added rows highlighted)', () => {
     const baseline: PrdDoc = { ...doc, items: [doc.items[0], doc.items[1]] }; // p_b is new since baseline
     const { container } = render(<PrdTable doc={doc} onChange={vi.fn()} baseline={baseline} />);
-    // the added row carries the redline 'added' row class
     expect(container.querySelector('tr.success, tr.ct-added, .ct-changed')).toBeTruthy();
     expect(screen.getByText('Roadmap need.')).toBeInTheDocument();
   });
 
-  it('shows each item\'s downward trace (the requirements that satisfy it)', () => {
+  it('shows each item\'s downward trace as an expandable Satisfied-by toggle', () => {
     render(<PrdTable doc={doc} srs={srs} onChange={vi.fn()} />);
-    // p_a (implemented) is satisfied by R-1; p_b (proposed) reads as roadmap.
+    // p_a (implemented) is satisfied by R-1 — expand its toggle to see it
+    fireEvent.click(screen.getByLabelText('Show requirements satisfying p_a'));
     expect(screen.getByText('R-1')).toBeInTheDocument();
+    // p_b (proposed) reads as roadmap when expanded
+    fireEvent.click(screen.getByLabelText('Show requirements satisfying p_b'));
     expect(screen.getByText(/roadmap/)).toBeInTheDocument();
   });
 
   it('flags an implemented PRD item with no satisfying requirement as a gap', () => {
     const gapDoc: PrdDoc = { ...doc, items: [{ id: 'p_c', code: 'PROD-9', text: 'Built but untraced.', status: 'implemented' }] };
     render(<PrdTable doc={gapDoc} srs={srs} onChange={vi.fn()} />);
+    fireEvent.click(screen.getByLabelText('Show requirements satisfying p_c'));
     expect(screen.getByText(/gap/)).toBeInTheDocument();
   });
 
-  it('is read-only in demo mode (no add/edit controls)', () => {
+  it('is read-only in demo mode (no row actions)', () => {
     render(<PrdTable doc={doc} onChange={vi.fn()} readOnly />);
-    expect(screen.queryByText('+ Product requirement')).not.toBeInTheDocument();
-    expect((screen.getByLabelText('Status for PROD-1') as HTMLSelectElement).disabled).toBe(true);
+    expect(screen.queryByLabelText('Row actions')).not.toBeInTheDocument();
   });
 });

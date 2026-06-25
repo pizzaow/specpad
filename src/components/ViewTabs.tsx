@@ -11,13 +11,15 @@ export type ViewKey = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'arch' | 
 
 // `phase` is the design-control element this tab contributes evidence to; tabs with
 // the same adjacent phase share one band. Overview has none (it's the home view).
+// Ordered chronologically through the design-control phases: Inputs → Outputs →
+// Verification → Controls → Traceability → History → Changes.
 const TABS: { key: ViewKey; label: string; phase?: string }[] = [
   { key: 'overview', label: 'Overview' },
   { key: 'prd', label: 'Product Requirements', phase: 'Design Inputs' },
-  { key: 'srs', label: 'Requirements', phase: 'Design Inputs' },
+  { key: 'srs', label: 'Software Requirements', phase: 'Design Inputs' },
+  { key: 'arch', label: 'Architecture', phase: 'Design Outputs' },
   { key: 'vtp', label: 'Verification Tests', phase: 'Design Verification' },
   { key: 'testing', label: 'Results', phase: 'Design Verification' },
-  { key: 'arch', label: 'Architecture', phase: 'Design Outputs' },
   { key: 'audit', label: 'Auditor', phase: 'Design Controls' },
   { key: 'trace', label: 'Traceability', phase: 'Traceability' },
   { key: 'releases', label: 'Releases', phase: 'Design History' },

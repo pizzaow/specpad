@@ -159,7 +159,7 @@ const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onChange, baseline, at
   return (
     <div className="srs-table-container">
       <div style={{ marginBottom: 10 }}>
-        <h2>{data.title || 'Requirements'}</h2>
+        <h2>{data.title || 'Software Requirements'}</h2>
         <strong>Document:</strong> {data.name}
       </div>
       <table className="table table-bordered table-striped srs-table">
@@ -264,6 +264,7 @@ const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onChange, baseline, at
       {infoIndex !== null && data.items[infoIndex] && (
         <ItemInfo
           item={data.items[infoIndex]}
+          noun="Software requirement"
           code={data.items[infoIndex].heading ? (headingCodes.get(data.items[infoIndex].id) ?? '') : (data.items[infoIndex].code ?? '')}
           testCount={testsByReq.get(data.items[infoIndex].id)?.length ?? 0}
           attribution={attribution?.get(data.items[infoIndex].id)}

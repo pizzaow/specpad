@@ -24,7 +24,7 @@
         "email": "geoffpollard@gmail.com"
       },
       "title": "Onboarding: specpad init",
-      "description": "One-command setup that scaffolds docs/specpad/, installs the pre-push hook, wires the SpecPad working-loop directive into the project CLAUDE.md, and generates the launcher — so a new user is fully set up on install with no manual configuration. Idempotent and non-destructive.",
+      "description": "One-command setup that scaffolds docs/specpad/, installs the pre-push hook, wires the SpecPad working-loop directive into the project CLAUDE.md, and generates the launcher \u2014 so a new user is fully set up on install with no manual configuration. Idempotent and non-destructive.",
       "status": "closed",
       "version": "v1.2"
     },
@@ -37,7 +37,7 @@
         "email": "geoffpollard@gmail.com"
       },
       "title": "Baseline generator (draft a spec from existing code)",
-      "description": "An agent procedure that bootstraps a draft v1 SRS/VTP from an existing codebase — surveying modules, public behavior, and existing tests — so SpecPad can be adopted on a project that did not start with it. Output is a draft for human ratification, mapped to existing tests, governance-clean.",
+      "description": "An agent procedure that bootstraps a draft v1 SRS/VTP from an existing codebase \u2014 surveying modules, public behavior, and existing tests \u2014 so SpecPad can be adopted on a project that did not start with it. Output is a draft for human ratification, mapped to existing tests, governance-clean.",
       "status": "closed",
       "version": "v1.2"
     },
@@ -50,7 +50,7 @@
         "email": "geoffpollard@gmail.com"
       },
       "title": "Requirement audit (reconcile spec with code)",
-      "description": "An agent procedure that reconciles the existing SRS/VTP against the whole codebase, reporting drift both directions — code behavior with no requirement (missing), requirements whose behavior is gone/changed (stale), and requirements/test references with no covering test (coverage). Reports ratifiable proposals; applies nothing destructive. The commit-time audit is its staged-diff form.",
+      "description": "An agent procedure that reconciles the existing SRS/VTP against the whole codebase, reporting drift both directions \u2014 code behavior with no requirement (missing), requirements whose behavior is gone/changed (stale), and requirements/test references with no covering test (coverage). Reports ratifiable proposals; applies nothing destructive. The commit-time audit is its staged-diff form.",
       "status": "closed",
       "version": "v1.2"
     },
@@ -115,7 +115,7 @@
         "email": "geoffpollard@gmail.com"
       },
       "title": "Architecture spec (arc42 + C4) and Architecture view",
-      "description": "Add an optional architecture spec — an arc42 software architecture document (markdown) plus a C4 model in Structurizr DSL — tracked under docs/specpad/, job/release coupled (no requirement-level trace matrix). New editor Architecture view renders the arc42 doc and presents the C4 DSL. Dogfooded with SpecPad's own SAD.",
+      "description": "Add an optional architecture spec \u2014 an arc42 software architecture document (markdown) plus a C4 model in Structurizr DSL \u2014 tracked under docs/specpad/, job/release coupled (no requirement-level trace matrix). New editor Architecture view renders the arc42 doc and presents the C4 DSL. Dogfooded with SpecPad's own SAD.",
       "status": "closed",
       "version": "v1.2"
     },
@@ -128,7 +128,7 @@
         "email": "geoffpollard@gmail.com"
       },
       "title": "Architecture templates (generic + medical), init path quiz, beefed-up generic SAD",
-      "description": "Ship two architecture profiles — a beefed-up generic arc42+C4 template (several diagrams, no safety classification) and a medical template (62304/FDA: per-unit classification, segregation, verification) — each with a soft authoring guide. The init quiz lets the user pick generic vs medical and scaffolds the match. Re-dogfood SpecPad's SAD with the richer generic template. Cybersecurity architecture is a noted coming-soon pillar.",
+      "description": "Ship two architecture profiles \u2014 a beefed-up generic arc42+C4 template (several diagrams, no safety classification) and a medical template (62304/FDA: per-unit classification, segregation, verification) \u2014 each with a soft authoring guide. The init quiz lets the user pick generic vs medical and scaffolds the match. Re-dogfood SpecPad's SAD with the richer generic template. Cybersecurity architecture is a noted coming-soon pillar.",
       "status": "closed",
       "version": "v1.2"
     },
@@ -206,7 +206,7 @@
         "email": "geoffpollard@gmail.com"
       },
       "title": "Product requirements (PRD) register + integrations design addendum",
-      "description": "Add an optional product-requirements (PRD) register as an SRS-shaped peer document, with upward SRS→PRD traceability (satisfies, by id) and opt-in governance (prd-referential-integrity, prd-coverage) that costs nothing without a PRD register. Capture the integrations design addendum (Jira/Confluence ingest add-on, import vs baseline routing, multi-repo system-level docs, PRD/validation, usability/interface-spec) as forward design. Dogfooded: SpecPad gains its own PRD register and SRS→PRD links.",
+      "description": "Add an optional product-requirements (PRD) register as an SRS-shaped peer document, with upward SRS\u2192PRD traceability (satisfies, by id) and opt-in governance (prd-referential-integrity, prd-coverage) that costs nothing without a PRD register. Capture the integrations design addendum (Jira/Confluence ingest add-on, import vs baseline routing, multi-repo system-level docs, PRD/validation, usability/interface-spec) as forward design. Dogfooded: SpecPad gains its own PRD register and SRS\u2192PRD links.",
       "status": "closed",
       "version": "v1.3"
     },
@@ -218,8 +218,8 @@
         "name": "Geoff Pollard",
         "email": "geoffpollard@gmail.com"
       },
-      "title": "Auditor view — live design-control evidence (coverage, trace matrix, gaps)",
-      "description": "Add an Auditor view (editor tab) that renders a reviewer's-eye picture of the open project: a coverage summary (requirements verified, test results, product-requirement coverage), the PRD→SRS→VTP traceability matrix with per-requirement verification results, and a gap list derived from the shared governance check plus the proposed-PRD roadmap. Load the optional PRD register into the editor so product requirements and upward traces are available. Includes a scope disclaimer (evidence that supports design controls; not a QMS / compliance determination).",
+      "title": "Auditor view \u2014 live design-control evidence (coverage, trace matrix, gaps)",
+      "description": "Add an Auditor view (editor tab) that renders a reviewer's-eye picture of the open project: a coverage summary (requirements verified, test results, product-requirement coverage), the PRD\u2192SRS\u2192VTP traceability matrix with per-requirement verification results, and a gap list derived from the shared governance check plus the proposed-PRD roadmap. Load the optional PRD register into the editor so product requirements and upward traces are available. Includes a scope disclaimer (evidence that supports design controls; not a QMS / compliance determination).",
       "status": "closed",
       "version": "v1.3"
     },
@@ -232,7 +232,7 @@
         "email": "geoffpollard@gmail.com"
       },
       "title": "Editor visual system: design tokens, themes, Overview landing, tab reorder",
-      "description": "Polish the editor into a cohesive, modern product. Build a CSS design-token system and ship three selectable themes (developer tool, editorial, blueprint) with a menubar switcher persisted to localStorage (applied before first paint, no flash). Add an Overview (Home) landing — an engineer's status home showing in-progress jobs, the latest release, and a coverage/health headline, with quick navigation into the authoring views — and make it the default view. Reorder the document tabs to lead with Overview then the authoring views, grouping the oversight views (Auditor, Releases, Jobs) after; this supersedes JV-4's leftmost-Jobs rule (changed under this job, not JOB-6).",
+      "description": "Polish the editor into a cohesive, modern product. Build a CSS design-token system and ship three selectable themes (developer tool, editorial, blueprint) with a menubar switcher persisted to localStorage (applied before first paint, no flash). Add an Overview (Home) landing \u2014 an engineer's status home showing in-progress jobs, the latest release, and a coverage/health headline, with quick navigation into the authoring views \u2014 and make it the default view. Reorder the document tabs to lead with Overview then the authoring views, grouping the oversight views (Auditor, Releases, Jobs) after; this supersedes JV-4's leftmost-Jobs rule (changed under this job, not JOB-6).",
       "status": "closed",
       "version": "v1.3"
     },
@@ -258,7 +258,7 @@
         "email": "geoffpollard@gmail.com"
       },
       "title": "Design-control map in the Auditor view; trace matrix moves to its own Traceability tab",
-      "description": "Turn the Auditor view into an orientation index for a reviewer: a design-control map listing each formal element (Design Inputs, Outputs, Verification, Validation, Traceability, Design Changes, Design History File, Design Reviews, Risk Management, Configuration Management) with its standard citation (IEC 62304 / 21 CFR 820.30), a plain statement, a status derived live from the project, and a link to the section/tab holding the evidence — so an engineer can answer 'where are your design inputs?' instantly. Move the per-requirement trace matrix (and the coverage summary and gap list) to its own Traceability tab; the Auditor view links to it.",
+      "description": "Turn the Auditor view into an orientation index for a reviewer: a design-control map listing each formal element (Design Inputs, Outputs, Verification, Validation, Traceability, Design Changes, Design History File, Design Reviews, Risk Management, Configuration Management) with its standard citation (IEC 62304 / 21 CFR 820.30), a plain statement, a status derived live from the project, and a link to the section/tab holding the evidence \u2014 so an engineer can answer 'where are your design inputs?' instantly. Move the per-requirement trace matrix (and the coverage summary and gap list) to its own Traceability tab; the Auditor view links to it.",
       "status": "closed",
       "version": "v1.3"
     },
@@ -271,7 +271,7 @@
         "email": "geoffpollard@gmail.com"
       },
       "title": "Show the active job's in-progress (uncommitted) changes in the Jobs view",
-      "description": "Make an open job's changes visible before it is closed. Snapshot a job's before spec state into .specpad/jobs/<id>/before/ when the job is created (not only on close), pinning its starting point. The Jobs view then renders the active open job's in-progress changes by diffing that before snapshot against the live working copy (SRS/VTP) — so uncommitted and unreleased work shows up, the same diff the requirements/verification tables already display, attributed to the job.",
+      "description": "Make an open job's changes visible before it is closed. Snapshot a job's before spec state into .specpad/jobs/<id>/before/ when the job is created (not only on close), pinning its starting point. The Jobs view then renders the active open job's in-progress changes by diffing that before snapshot against the live working copy (SRS/VTP) \u2014 so uncommitted and unreleased work shows up, the same diff the requirements/verification tables already display, attributed to the job.",
       "status": "closed",
       "version": "v1.3"
     },
@@ -284,7 +284,7 @@
         "email": "geoffpollard@gmail.com"
       },
       "title": "Active job's in-progress architecture (SAD) changes in the Jobs view",
-      "description": "Extend the in-progress change view to architecture. The before snapshot taken at job creation now captures the full key doc set (proj/srs/vtp + SAD markdown, diagrams, guide, and a per-state arch-files manifest), matching the close cache. The Jobs view then shows the active open job's architecture changes (added/modified/removed files, coarse, plus a SAD line diff) by diffing that before snapshot against the working SAD/diagrams — completing the srs/vtp/sad set for in-progress work.",
+      "description": "Extend the in-progress change view to architecture. The before snapshot taken at job creation now captures the full key doc set (proj/srs/vtp + SAD markdown, diagrams, guide, and a per-state arch-files manifest), matching the close cache. The Jobs view then shows the active open job's architecture changes (added/modified/removed files, coarse, plus a SAD line diff) by diffing that before snapshot against the working SAD/diagrams \u2014 completing the srs/vtp/sad set for in-progress work.",
       "status": "closed",
       "version": "v1.3"
     },
@@ -297,7 +297,7 @@
         "email": "geoffpollard@gmail.com"
       },
       "title": "Cut release v1.3",
-      "description": "Cut release v1.3: close JOB-15..22 and set their version to v1.3, regenerate their before/after/commit caches, refresh the baseline snapshot (preserving v1.2 as an older snapshot), and add the v1.3 entry to the releases manifest. Release bookkeeping using the existing Release entity (REL-1..3) — no new product behavior.",
+      "description": "Cut release v1.3: close JOB-15..22 and set their version to v1.3, regenerate their before/after/commit caches, refresh the baseline snapshot (preserving v1.2 as an older snapshot), and add the v1.3 entry to the releases manifest. Release bookkeeping using the existing Release entity (REL-1..3) \u2014 no new product behavior.",
       "status": "open"
     },
     {
@@ -308,8 +308,8 @@
         "name": "Geoff Pollard",
         "email": "geoffpollard@gmail.com"
       },
-      "title": "Marketing site refresh — vision and feature list",
-      "description": "Refresh specpad.com messaging (keeping the look & feel) to reflect v1.3: a balanced/dual hero (specs that live in your repo AND design-control evidence), and a feature list covering the full chain — product requirements (PRD), software requirements + verification, the traceability matrix and Auditor design-control map (IEC 62304 / 21 CFR 820.30), architecture, change control via jobs (in-progress + released diffs), releases as checkpoints, governance, themes, and the eQMS-export direction. Marketing copy only — non-behavioural.",
+      "title": "Marketing site refresh \u2014 vision and feature list",
+      "description": "Refresh specpad.com messaging (keeping the look & feel) to reflect v1.3: a balanced/dual hero (specs that live in your repo AND design-control evidence), and a feature list covering the full chain \u2014 product requirements (PRD), software requirements + verification, the traceability matrix and Auditor design-control map (IEC 62304 / 21 CFR 820.30), architecture, change control via jobs (in-progress + released diffs), releases as checkpoints, governance, themes, and the eQMS-export direction. Marketing copy only \u2014 non-behavioural.",
       "status": "open"
     },
     {
@@ -320,8 +320,8 @@
         "name": "Geoff Pollard",
         "email": "geoffpollard@gmail.com"
       },
-      "title": "Document-type registry — single source of truth; snapshot/diff/validation built from it",
-      "description": "Introduce src/shared/docTypes.ts as the registry of content document types (srs, vtp, prd; future soup/sdd/cyber) — each with kind (id-keyed register / prose / asset), file naming, schema, baseline membership, and generator scope. Build validation and the schema reference from it. Make snapshot/diff loaders document-type-generic so a newly registered register type flows into release/baseline snapshots, per-job diffs, and the redline with no code changes. Generalize the skill's snapshot/cache prose to 'every document in the project index plus the architecture files'.",
+      "title": "Document-type registry \u2014 single source of truth; snapshot/diff/validation built from it",
+      "description": "Introduce src/shared/docTypes.ts as the registry of content document types (srs, vtp, prd; future soup/sdd/cyber) \u2014 each with kind (id-keyed register / prose / asset), file naming, schema, baseline membership, and generator scope. Build validation and the schema reference from it. Make snapshot/diff loaders document-type-generic so a newly registered register type flows into release/baseline snapshots, per-job diffs, and the redline with no code changes. Generalize the skill's snapshot/cache prose to 'every document in the project index plus the architecture files'.",
       "status": "open"
     },
     {
@@ -357,7 +357,7 @@
         "email": "geoffpollard@gmail.com"
       },
       "title": "PRD tab downward trace + design-control phase bands under the tabs",
-      "description": "In the Product Requirements tab, show each item's downward trace — the software requirements that satisfy it (a Satisfied-by column), flagging an implemented PRD item with no satisfying requirement. And render a thin band below the document tabs labelling each design-control phase, spanning the tabs it covers (Design Inputs across Product Requirements + Requirements; Design Verification across Verification Tests + Results; Design Outputs = Architecture; Traceability; Design History = Releases; Design Changes = Jobs).",
+      "description": "In the Product Requirements tab, show each item's downward trace \u2014 the software requirements that satisfy it (a Satisfied-by column), flagging an implemented PRD item with no satisfying requirement. And render a thin band below the document tabs labelling each design-control phase, spanning the tabs it covers (Design Inputs across Product Requirements + Requirements; Design Verification across Verification Tests + Results; Design Outputs = Architecture; Traceability; Design History = Releases; Design Changes = Jobs).",
       "status": "open"
     },
     {
@@ -369,7 +369,19 @@
         "email": "geoffpollard@gmail.com"
       },
       "title": "Per-job impact evaluation across every registered document type (+ bring the SAD current)",
-      "description": "Generalize the working loop so a job evaluates its impact on EVERY registered document type — not just SRS/VTP. Register architecture (the SAD) as a document type so the registry is the complete list of impactable docs; the working loop (SKILL.md + CLAUDE.specpad.md) iterates the project's registered types (product requirements, requirements, verification, architecture, and any future pillar) and updates each affected one in the same job, spec-first — the same registry-generic approach used for the diffs. Apply it by bringing SpecPad's own SAD current (it had drifted since v1.2: no PRD, registry, Auditor, themes).",
+      "description": "Generalize the working loop so a job evaluates its impact on EVERY registered document type \u2014 not just SRS/VTP. Register architecture (the SAD) as a document type so the registry is the complete list of impactable docs; the working loop (SKILL.md + CLAUDE.specpad.md) iterates the project's registered types (product requirements, requirements, verification, architecture, and any future pillar) and updates each affected one in the same job, spec-first \u2014 the same registry-generic approach used for the diffs. Apply it by bringing SpecPad's own SAD current (it had drifted since v1.2: no PRD, registry, Auditor, themes).",
+      "status": "closed"
+    },
+    {
+      "id": "j_045bdb",
+      "code": "JOB-30",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Editor authoring-view consistency (PRD/VTP parity, SRS rename, chronological tabs) + section-aware architecture diffs",
+      "description": "Make the PRD and VTP tables consistent with the SRS table: PRD hides Tags/Status (assume implemented; flag proposed in red under the code + italic text), uses the row hamburger (add/move/delete/view info), and shows Satisfied-by as an expandable Tests-style toggle; VTP hides Result (this is the plan, not the results), uses the row hamburger, moves history into the info dialog, and shows Verifies as an expandable Tests-style toggle. Rename the SRS view to Software Requirements (it was just 'Requirements', confusing next to Product Requirements). Order the tabs chronologically through the design-control phases (Inputs -> Outputs -> Verification -> Controls -> Traceability -> History -> Changes). Make architecture diffs section-aware: markdown files report what changed per heading; diagrams report 'Diagram changed'.",
       "status": "open"
     }
   ]

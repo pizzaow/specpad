@@ -28,10 +28,10 @@ const jobCommits = {
 
 const jobArch = {
   j_feat: {
-    added: ['acme.context.svg'],
-    modified: ['acme.sad.md'],
+    added: [],
+    modified: ['acme.sad.md', 'acme.context.svg'],
     removed: ['acme.workspace.dsl'],
-    sadDiff: { added: ['New architecture note.'], removed: ['Old note.'] },
+    mdDiffs: [{ file: 'acme.sad.md', sections: [{ heading: '9. Architecture Decisions', status: 'modified' as const, added: ['New architecture note.'], removed: ['Old note.'] }] }],
   },
 };
 
@@ -64,15 +64,19 @@ describe('JobsView — in progress vs released', () => {
     expect(screen.getByText('Released')).toBeInTheDocument();
   });
 
-  it('shows a closed job\'s architecture changes (coarse files + SAD line diff)', () => {
+  it('shows a closed job\'s architecture changes (coarse files + section-level SAD diff)', () => {
     renderView();
     fireEvent.click(screen.getByText('Login'));
     expect(screen.getByText('Architecture changes')).toBeInTheDocument();
     expect(screen.getByText(/acme\.context\.svg/)).toBeInTheDocument();
-    expect(screen.getByText(/acme\.sad\.md/)).toBeInTheDocument();
+    // acme.sad.md appears in both the modified-file list and the diff summary
+    expect(screen.getAllByText(/acme\.sad\.md/).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/acme\.workspace\.dsl/)).toBeInTheDocument();
-    expect(screen.getByText('SAD text changes')).toBeInTheDocument();
+    // section-aware: the changed section heading and its +/- lines are shown
+    expect(screen.getByText('9. Architecture Decisions')).toBeInTheDocument();
     expect(screen.getByText(/New architecture note\./)).toBeInTheDocument();
+    // a changed diagram is reported coarsely (no text diff)
+    expect(screen.getByText(/diagram changed/)).toBeInTheDocument();
   });
 
   it('lists a closed job\'s commits in its detail', () => {
@@ -113,7 +117,7 @@ describe('JobsView — in progress vs released', () => {
 
   it('renders the active open job\'s in-progress architecture changes', () => {
     const activeArch = {
-      j_open: { added: ['acme.context.svg'], modified: ['acme.sad.md'], removed: [], sadDiff: { added: ['New SAD line.'], removed: [] } },
+      j_open: { added: ['acme.context.svg'], modified: ['acme.sad.md'], removed: [], mdDiffs: [{ file: 'acme.sad.md', sections: [{ heading: '4. Solution Strategy', status: 'modified' as const, added: ['New SAD line.'], removed: [] }] }] },
     };
     renderView({ activeArch });
     fireEvent.click(screen.getByText('SSO'));

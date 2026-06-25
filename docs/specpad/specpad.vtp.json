@@ -4,187 +4,1743 @@
   "name": "specpad",
   "title": "Verification Tests",
   "items": [
-    { "id": "t_c001", "code": "TEST-1", "text": "Confirm docs/specpad/ holds specpad.proj.json, specpad.srs.json, and specpad.vtp.json, and that each parses as JSON.", "verifies": ["r_a101"], "expected": "All three files exist under docs/specpad/ and parse without error.", "result": "passed", "notes": "src/shared/__tests__/dogfood.test.ts" },
-    { "id": "t_c002", "code": "TEST-2", "text": "Run validate() on a document missing schemaVersion and on one with an unknown type.", "verifies": ["r_a102"], "expected": "Each is reported as structurally invalid (non-empty error list).", "result": "passed", "notes": "src/shared/__tests__/validate.test.ts" },
-    { "id": "t_c003", "code": "TEST-3", "text": "Run validate() on a project document that has name and title.", "verifies": ["r_a103"], "expected": "validate() returns no errors.", "result": "passed", "notes": "src/shared/__tests__/validate.test.ts" },
-    { "id": "t_c004", "code": "TEST-4", "text": "Run validate() on an SRS item missing text, and on one missing id.", "verifies": ["r_a104"], "expected": "Both are reported invalid, each error naming the missing required field.", "result": "passed", "notes": "src/shared/__tests__/validate.test.ts" },
-    { "id": "t_c005", "code": "TEST-5", "text": "Run validate() on a VTP item with result \"maybe\" and one with result \"passed\".", "verifies": ["r_a105"], "expected": "The \"maybe\" item is invalid (result enum); the \"passed\" item is valid.", "result": "passed", "notes": "src/shared/__tests__/validate.test.ts" },
-    { "id": "t_c006", "code": "TEST-6", "text": "Create an item with the factory, then serialize and parse a document; compare item ids before and after.", "verifies": ["r_a201"], "expected": "createSrsItem assigns an id, and the load/save round-trip preserves every id unchanged.", "result": "passed", "notes": "src/shared/__tests__/factories.test.ts; src/__tests__/localFileApi.test.ts" },
-    { "id": "t_c007", "code": "TEST-7", "text": "Generate ids with generateId and inspect ID_PREFIX.", "verifies": ["r_a202"], "expected": "Each id matches prefix_<6 hex>, and ID_PREFIX maps requirement→r, test→t, heading→h.", "result": "passed", "notes": "src/shared/__tests__/ids.test.ts" },
-    { "id": "t_c008", "code": "TEST-8", "text": "In the VTP editor, set a test's verifies to a requirement and inspect the stored value.", "verifies": ["r_a203"], "expected": "The verifies entry equals the requirement's id, not its code label.", "result": "passed", "notes": "src/components/__tests__/VTPTable.test.tsx" },
-    { "id": "t_c009", "code": "TEST-9", "text": "Rename a requirement's code label and re-run governance on a test that verifies its id.", "verifies": ["r_a204"], "expected": "The id is unchanged and referential integrity still holds (verifies targets the id, not the code).", "result": "passed", "notes": "src/shared/__tests__/governance.test.ts (code-rename / id-immutability case)" },
-    { "id": "t_c010", "code": "TEST-10", "text": "Render the SRS table for a requirement with one, then two, verifying tests and inspect the saved file.", "verifies": ["r_a301"], "expected": "The displayed count is computed from verifies (1, then 2); no numTests field is written to disk.", "result": "passed", "notes": "src/components/__tests__/SRSTable.test.tsx" },
-    { "id": "t_c011", "code": "TEST-11", "text": "Inspect a saved SpecPad document for history fields.", "verifies": ["r_a302"], "expected": "No modifiedUser, modifiedDate, or change-list keys are present; the file validates.", "result": "passed", "notes": "src/shared/__tests__/dogfood.test.ts (validate)" },
-    { "id": "t_c012", "code": "TEST-12", "text": "Call validate() with documents of each type.", "verifies": ["r_a401"], "expected": "validate() selects the schema by doc.type and returns [] for each valid document.", "result": "passed", "notes": "src/shared/__tests__/validate.test.ts" },
-    { "id": "t_c013", "code": "TEST-13", "text": "Validate a structurally-correct SRS+VTP pair that has an untested requirement.", "verifies": ["r_a402"], "expected": "validate() returns no errors (policy is not its concern); the traceability gap is found only by governance.", "result": "passed", "notes": "src/shared/__tests__/validate.test.ts + governance.test.ts separation" },
-    { "id": "t_c014", "code": "TEST-14", "text": "Run checkGovernance on an SRS+VTP pair where one requirement has no verifying test.", "verifies": ["r_a403"], "expected": "A traceability violation is reported for the untested requirement.", "result": "passed", "notes": "src/shared/__tests__/governance.test.ts" },
-    { "id": "t_c015", "code": "TEST-15", "text": "Run checkGovernance where a test verifies a non-existent requirement id.", "verifies": ["r_a404"], "expected": "A referential-integrity violation is reported for that test.", "result": "passed", "notes": "src/shared/__tests__/governance.test.ts" },
-    { "id": "t_c016", "code": "TEST-16", "text": "Run checkGovernance on a non-heading test whose expected value is empty.", "verifies": ["r_a405"], "expected": "A missing-expected violation is reported for that test.", "result": "passed", "notes": "src/shared/__tests__/governance.test.ts" },
-    { "id": "t_c017", "code": "TEST-17", "text": "Run checkGovernance on a bundle whose only untested requirement is a heading.", "verifies": ["r_a406"], "expected": "No traceability violation is reported for the heading.", "result": "passed", "notes": "src/shared/__tests__/governance.test.ts" },
-    { "id": "t_c018", "code": "TEST-18", "text": "Compare the shared module's GOVERNANCE_RULES ids against the skill's SKILL.md.", "verifies": ["r_a407"], "expected": "Every governance rule id appears in SKILL.md (parity); drift fails the test.", "result": "passed", "notes": "skill/__tests__/parity.test.ts" },
-    { "id": "t_c019", "code": "TEST-19", "text": "Round-trip an SRS document through serialize/parse and exercise the fallback download path.", "verifies": ["r_a501"], "expected": "The document round-trips with a trailing newline; a fallback open/download path exists for unsupported browsers.", "result": "passed", "notes": "src/__tests__/localFileApi.test.ts" },
-    { "id": "t_c020", "code": "TEST-20", "text": "Render the SRS table with a VTP that verifies a requirement and read the Tests column.", "verifies": ["r_a502"], "expected": "The verifying-test count is shown and updates as more tests verify the requirement.", "result": "passed", "notes": "src/components/__tests__/SRSTable.test.tsx" },
-    { "id": "t_c021", "code": "TEST-21", "text": "In the Testing view, change a test's result and save.", "verifies": ["r_a503"], "expected": "onSave receives a VTP document with the updated result on the correct item.", "result": "passed", "notes": "src/components/__tests__/TestingView.test.tsx" },
-    { "id": "t_c022", "code": "TEST-22", "text": "Render the footer status bar for a clean bundle and for one with an untested requirement.", "verifies": ["r_a504"], "expected": "The status bar shows \"No problems found\" when clean and a traceability message when a requirement is untested.", "result": "passed", "notes": "src/components/__tests__/StatusBar.test.tsx (validation surfacing moved from the former ValidationPanel to the StatusBar)" },
-    { "id": "t_c023", "code": "TEST-23", "text": "Render the VTP table with a test whose verifies points at an unknown id.", "verifies": ["r_a505"], "expected": "The offending row is visually flagged (danger styling).", "result": "passed", "notes": "src/components/__tests__/VTPTable.test.tsx" },
-    { "id": "t_c024", "code": "TEST-24", "text": "Open a project with two documents and switch between them in the picker.", "verifies": ["r_a506"], "expected": "The editor re-seeds the table for the newly selected document; it does not write the prior document's content.", "result": "passed", "notes": "src/__tests__/LocalApp.test.tsx" },
-    { "id": "t_c025", "code": "TEST-25", "text": "Follow SKILL.md to scaffold docs/specpad/ from the templates and add items.", "verifies": ["r_a601"], "expected": "The folder is scaffolded with PROJECT_NAME replaced and newly added items receive unique stable ids.", "result": "passed", "notes": "Manual dogfood; this project's docs/specpad/ was produced this way." },
-    { "id": "t_c026", "code": "TEST-26", "text": "Run validate() and checkGovernance() over SpecPad's own SpecPad documents.", "verifies": ["r_a602"], "expected": "validate() returns no errors and checkGovernance() returns no violations for the SpecPad docs.", "result": "passed", "notes": "src/shared/__tests__/dogfood.test.ts" },
-    { "id": "t_c027", "code": "TEST-27", "text": "Inspect the generated launcher index.html.", "verifies": ["r_a603"], "expected": "It redirects to https://specpad.com/v01/?name=...&open=... using the project name.", "result": "passed", "notes": "docs/specpad/index.html; template at skill/specpad/templates/index.html" },
-
-    { "id": "t_ce201", "code": "TEST-28", "text": "Compute buildRedline(baseline, working) with an added and a modified item, then render the SRS table with the resulting redline.", "verifies": ["r_ce101"], "expected": "Added rows are flagged, modified rows are flagged with the changed cell highlighted, and removed items are listed in a panel.", "result": "passed", "notes": "src/__tests__/changeTracking.test.ts; src/components/__tests__/SRSTable.test.tsx" },
-    { "id": "t_ce202", "code": "TEST-29", "text": "Diff two document versions where a code label is renamed and items are reordered.", "verifies": ["r_ce102"], "expected": "No spurious add/remove; a renamed code is a single modified entry; pure reordering yields no change.", "result": "passed", "notes": "src/shared/__tests__/diff.test.ts" },
-    { "id": "t_ce203", "code": "TEST-30", "text": "Inspect SKILL.md for the change-tracking section.", "verifies": ["r_ce103"], "expected": "It states the skill never computes diffs and that the editor computes all change views (one diff implementation).", "result": "passed", "notes": "skill/__tests__/change-tracking.test.ts" },
-    { "id": "t_ce204", "code": "TEST-31", "text": "Run the skill refresh against a tagged repo and inspect docs/specpad/.specpad/.", "verifies": ["r_ce104"], "expected": "The cache holds verbatim snapshot copies plus a release manifest; no computed-diff files are written.", "result": "passed", "notes": "Manual dogfood: docs/specpad/.specpad/ (baseline + snapshots); skill/__tests__/change-tracking.test.ts" },
-    { "id": "t_ce205", "code": "TEST-32", "text": "Run validate() on a releases manifest and exercise cachedReleases().", "verifies": ["r_ce105"], "expected": "The manifest validates with each release carrying version, ref, date, and an author {name,email}; cachedReleases maps the baseline release to the baseline location.", "result": "passed", "notes": "src/shared/__tests__/sidecars.test.ts; src/__tests__/changeTrackingView.test.ts" },
-    { "id": "t_ce206", "code": "TEST-33", "text": "Run computeAttribution over ordered snapshots, then format with attributionLabel.", "verifies": ["r_ce106"], "expected": "Each item resolves addedIn/lastChangedIn with the release author, and the oldest cached snapshot is marked as a boundary.", "result": "passed", "notes": "src/__tests__/changeTracking.test.ts; src/__tests__/changeTrackingView.test.ts" },
-    { "id": "t_ce207", "code": "TEST-34", "text": "Render VersionTimeline with a manifest of two releases.", "verifies": ["r_ce107"], "expected": "Both versions render with their dates and authors, and the baseline release is flagged.", "result": "passed", "notes": "src/components/__tests__/VersionTimeline.test.tsx" },
-    { "id": "t_ce208", "code": "TEST-35", "text": "Set a job in JobControl and inspect SKILL.md for the trailer convention.", "verifies": ["r_ce108"], "expected": "JobControl reports the entered job id and title to its handler; SKILL.md documents folding the current job into a Job: commit trailer; no job field is stored on items.", "result": "passed", "notes": "src/components/__tests__/JobControl.test.tsx; skill/__tests__/change-tracking.test.ts" },
-    { "id": "t_ce209", "code": "TEST-36", "text": "Open a project whose change-tracking cache is absent (loaders return null).", "verifies": ["r_ce109"], "expected": "The editor renders and remains editable, showing a \"history unavailable — run specpad refresh\" note instead of redline/attribution.", "result": "not_tested", "notes": "LocalApp degraded path: loaders return null when the cache is absent (src/__tests__/LocalApp.test.tsx mocks them null); an explicit banner assertion is still pending." },
-    { "id": "t_ce210", "code": "TEST-37", "text": "Refresh a tagged repo, then pull an older version's snapshot on demand.", "verifies": ["r_ce110"], "expected": "Refresh caches the latest release snapshot; an older snapshot is written to the cache only when explicitly pulled.", "result": "passed", "notes": "Manual dogfood: baseline cached by refresh, v0.1 pulled on demand; skill/__tests__/change-tracking.test.ts documents pull." },
-
-    { "id": "t_ed0a01", "code": "TEST-38", "text": "Open a requirement's hamburger menu and choose Add ▸ Child.", "verifies": ["r_ed0a01"], "expected": "A new requirement is inserted directly below at level + 1.", "result": "passed", "notes": "src/components/__tests__/SRSTable.test.tsx; src/shared/__tests__/level.test.ts" },
-    { "id": "t_ed0a02", "code": "TEST-39", "text": "Render the SRS table containing a heading that has a code segment.", "verifies": ["r_ed0a02"], "expected": "The heading's Code cell shows the derived dotted path; the literal word \"heading\" never appears.", "result": "passed", "notes": "src/__tests__/outline.test.ts; src/components/__tests__/SRSTable.test.tsx" },
-    { "id": "t_ed0a03", "code": "TEST-40", "text": "Open a row's hamburger menu.", "verifies": ["r_ed0a03"], "expected": "It lists add (above/below/child), add heading, indent/outdent, delete, and view information; delete confirms; outdent is disabled at level 0.", "result": "passed", "notes": "src/components/__tests__/RowMenu.test.tsx; src/components/__tests__/SRSTable.test.tsx" },
-    { "id": "t_ed0a04", "code": "TEST-41", "text": "Click the show-tests toggle on a requirement that has a verifying test.", "verifies": ["r_ed0a04"], "expected": "The verifying VTP tests are listed inline beneath the requirement.", "result": "passed", "notes": "src/components/__tests__/SRSTable.test.tsx" },
-    { "id": "t_ed0a05", "code": "TEST-42", "text": "Render the SRS table and open a requirement's information modal.", "verifies": ["r_ed0a05"], "expected": "No Hazards column is present in the table; the info modal shows the item's hazards.", "result": "passed", "notes": "src/components/__tests__/SRSTable.test.tsx; src/components/__tests__/ItemInfo.test.tsx" },
-    { "id": "t_ed0a06", "code": "TEST-43", "text": "Build the redline rows for a baseline vs a working doc with an added, a modified, and a removed item.", "verifies": ["r_ed0a06"], "expected": "Added/modified rows are flagged and the removed row renders inline struck-through at its baseline position; no separate removed panel.", "result": "passed", "notes": "src/__tests__/changeTracking.test.ts (buildRedlineRows); src/components/__tests__/SRSTable.test.tsx" },
-    { "id": "t_ed0a07", "code": "TEST-44", "text": "Drag a requirement row onto another position.", "verifies": ["r_ed0a07"], "expected": "The items reorder to reflect the drop position.", "result": "not_tested", "notes": "Manual; HTML5 draggable rows in SRSTable; the reorder index math was reviewed but has no DOM drag test." },
-
-    { "id": "t_ed0b01", "code": "TEST-45", "text": "Render the editor menu bar with a project open.", "verifies": ["r_ed0b01"], "expected": "It shows the SpecPad brand and the primary controls (File, Save, Job, version) in one bar; no separate page header/toolbar.", "result": "passed", "notes": "src/components/__tests__/MenuBar.test.tsx" },
-    { "id": "t_ed0b02", "code": "TEST-46", "text": "Open the File menu and choose New document; render with FS access unavailable.", "verifies": ["r_ed0b02"], "expected": "New document fires; with no FS access the menu offers the upload/download fallback open.", "result": "passed", "notes": "src/components/__tests__/MenuBar.test.tsx" },
-    { "id": "t_ed0b03", "code": "TEST-47", "text": "With two projects in the directory, pick the other from the brand dropdown.", "verifies": ["r_ed0b03"], "expected": "The chosen project's documents load.", "result": "passed", "notes": "src/components/__tests__/MenuBar.test.tsx; src/__tests__/LocalApp.test.tsx" },
-    { "id": "t_ed0b04", "code": "TEST-48", "text": "Render the view tabs with only an SRS document present.", "verifies": ["r_ed0b04"], "expected": "Requirements is active; tabs for absent documents are disabled and do not switch when clicked.", "result": "passed", "notes": "src/components/__tests__/ViewTabs.test.tsx" },
-    { "id": "t_ed0b05", "code": "TEST-49", "text": "Render the status bar for a clean bundle and for one with a governance violation.", "verifies": ["r_ed0b05"], "expected": "Clean shows \"No problems found\"; a violation shows an error/warning count that expands to the detail messages on click.", "result": "passed", "notes": "src/components/__tests__/StatusBar.test.tsx" },
-    { "id": "t_ed0b06", "code": "TEST-50", "text": "Click the menu-bar version chip and render the version-history dialog.", "verifies": ["r_ed0b06"], "expected": "The chip triggers the dialog; the dialog lists releases, or shows an empty state prompting specpad refresh.", "result": "passed", "notes": "src/components/__tests__/MenuBar.test.tsx; src/components/__tests__/VersionHistoryDialog.test.tsx" },
-    { "id": "t_ed0b07", "code": "TEST-51", "text": "Edit a row in each table and inspect the change callback.", "verifies": ["r_ed0b07"], "expected": "Each table calls onChange with the updated document and renders no internal Save button.", "result": "passed", "notes": "src/components/__tests__/SRSTable.test.tsx; VTPTable.test.tsx; TestingView.test.tsx" },
-    { "id": "t_ed0b08", "code": "TEST-52", "text": "Render the menu bar clean and then dirty.", "verifies": ["r_ed0b08"], "expected": "Save is disabled when clean and enabled with an unsaved indicator when dirty; clicking it saves.", "result": "passed", "notes": "src/components/__tests__/MenuBar.test.tsx (Ctrl/Cmd-S wired via the LocalApp keydown effect)" },
-    { "id": "t_ed0b09", "code": "TEST-53", "text": "Switch documents with no pending edits.", "verifies": ["r_ed0b09"], "expected": "No prompt appears on a clean switch; a dirty switch prompts before discarding (beforeunload guard exercised manually).", "result": "passed", "notes": "src/__tests__/LocalApp.test.tsx (asserts no confirm on a clean switch)" },
-    { "id": "t_ed0b10", "code": "TEST-54", "text": "Open the editor with ?demo and confirm the SpecPad demo project loads with no folder picker, the SRS/VTP/Testing views are populated, and version history opens.", "verifies": ["r_ed0b10"], "expected": "The demo project loads read-only over HTTP from /demo/; all read views (tables, testing, validation, version history, redlines, job chip) function.", "result": "passed", "notes": "src/__tests__/LocalApp.demo.test.tsx; src/__tests__/localFileApi.demo.test.ts; testing view, version history, and redlines exercised manually in the dev server" },
-    { "id": "t_ed0b11", "code": "TEST-55", "text": "In demo mode, confirm no Save button or File menu is offered, Ctrl+S does nothing, and the read-only indicator is shown.", "verifies": ["r_ed0b11"], "expected": "All write affordances are absent or inert and a \"Demo — read-only\" indicator is visible.", "result": "passed", "notes": "src/__tests__/LocalApp.demo.test.tsx" },
-
-    { "id": "t_ms001", "code": "TEST-56", "text": "Run the site build and test suite; confirm every schema field carries a description and the reference HTML includes every field and governance rule.", "verifies": ["r_ms001"], "expected": "site/src/__tests__/generate-reference.test.ts and src/shared/__tests__/schema-descriptions.test.ts both pass; the build fails if any schema property lacks a description.", "result": "passed", "notes": "site/src/__tests__/generate-reference.test.ts; src/shared/__tests__/schema-descriptions.test.ts — automated coverage confirmed in the marketing-site branch test run" },
-    { "id": "t_ms002", "code": "TEST-57", "text": "After a deploy, fetch https://specpad.com/specpad-skill.zip and confirm it is a valid zip containing the skill directory rebuilt from the repository.", "verifies": ["r_ms002"], "expected": "The URL returns a non-empty zip archive whose contents match the skill/ directory at that commit; infra/deploy.sh step rebuilds dist-site/specpad-skill.zip from the repo on every ship.", "result": "passed", "notes": "Manual verification 2026-06-10: fetched https://specpad.com/specpad-skill.zip after shipping (application/zip); unzipped cleanly to specpad/SKILL.md + 5 template files matching skill/specpad/. The zip is rebuilt fresh by infra/deploy.sh Ship 4/5 on every deploy." },
-
-    { "id": "t_jb001", "code": "TEST-58", "text": "Run validate() on a jobs register and on records missing required fields.", "verifies": ["r_jb001"], "expected": "A well-formed jobs doc validates; a record missing status or title, or with a status outside open/closed, is reported invalid.", "result": "passed", "notes": "src/shared/__tests__/sidecars.test.ts" },
-    { "id": "t_jb002", "code": "TEST-59", "text": "Assert the jobs-register record schema exposes only record fields, no change associations.", "verifies": ["r_jb002"], "expected": "A job record's schema properties are exactly id/code/title/description/status — no field listing changed items or commits; SKILL.md documents deriving job → SRS → VTP → source from git.", "result": "passed", "notes": "src/shared/__tests__/sidecars.test.ts (records-only assertion); docs/design §13.1; SKILL.md on-demand reports." },
-    { "id": "t_jb003", "code": "TEST-60", "text": "Normalize markers via activeJobIds (jobs array and legacy job) and inspect SKILL.md trailer guidance.", "verifies": ["r_jb003"], "expected": "activeJobIds returns the jobs array when present, falls back to a single job, else []; SKILL.md states one Job: trailer is written per active id, carrying the record id.", "result": "passed", "notes": "src/shared/__tests__/governance.test.ts (activeJobIds); sidecars.test.ts (jobs array); skill/__tests__/change-tracking.test.ts (Job: trailer)" },
-    { "id": "t_jb004", "code": "TEST-61", "text": "Run checkGovernance with an active marker pointing at a closed record and at an id absent from the register.", "verifies": ["r_jb004"], "expected": "active-job-open is reported for the closed entry and active-job-known for the dangling entry; open, known entries produce no violation; with no register, neither rule fires.", "result": "passed", "notes": "src/shared/__tests__/governance.test.ts" },
-    { "id": "t_jb005", "code": "TEST-62", "text": "Render the Jobs view and the active-job picker; add a job, edit it, toggle the active set, and inspect closed records.", "verifies": ["r_jb005"], "expected": "The view lists/creates/edits records and multi-selects active jobs; a closed job is never offered for activation; a closed-but-active job can be removed.", "result": "passed", "notes": "src/components/__tests__/JobsView.test.tsx; src/components/__tests__/JobControl.test.tsx" },
-    { "id": "t_jb006", "code": "TEST-63", "text": "Select a closed job in the Jobs view and attempt to activate it.", "verifies": ["r_jb006"], "expected": "No activation control is offered for a closed, non-active job; the guidance directs creating a new job; the skill follows the same rule.", "result": "passed", "notes": "src/components/__tests__/JobsView.test.tsx (closed job offers no activation)" },
-    { "id": "t_jb007", "code": "TEST-64", "text": "Push a commit that has no Job: trailer through the pre-push hook.", "verifies": ["r_jb007"], "expected": "The hook exits non-zero and blocks the push, naming the offending commit; a commit carrying a Job: trailer passes.", "result": "passed", "notes": ".githooks/pre-push (installed via core.hooksPath); skill/specpad/templates/hooks/pre-push; skill/__tests__/pre-push.test.ts" },
-    { "id": "t_jb008", "code": "TEST-65", "text": "Push a commit that changes code but touches no SRS/VTP, with and without a Spec: none trailer.", "verifies": ["r_jb008"], "expected": "The hook warns (without blocking) and recommends a requirement audit; a Spec: none trailer suppresses the warning. When committing via Claude, the agent proposes a requirement derived from the diff for ratification.", "result": "passed", "notes": "skill/__tests__/pre-push.test.ts (warn + Spec: none cases); SKILL.md commit workflow Layer 2 (requirement audit)" },
-    { "id": "t_jb009", "code": "TEST-66", "text": "Run the pre-push hook over synthetic commits in a throwaway repo: no-trailer, trailer+spec, code-without-spec, Spec: none, tag push, and SPECPAD_SKIP.", "verifies": ["r_jb009"], "expected": "Block on the no-trailer commit; pass on trailer+spec; warn on code-without-spec; no warning with Spec: none; tag pushes (refs/tags/*) are skipped; full bypass with SPECPAD_SKIP=1. Merge commits and pre-adoption history are not policed.", "result": "passed", "notes": "skill/__tests__/pre-push.test.ts" },
-
-    { "id": "t_jb010", "code": "TEST-67", "text": "Inspect SKILL.md for the SpecPad working-loop section.", "verifies": ["r_jb010"], "expected": "It documents capturing requirements as you build, spec-first, with the job → requirement → test → code chain attributed to the active job.", "result": "passed", "notes": "skill/__tests__/working-loop.test.ts" },
-    { "id": "t_jb011", "code": "TEST-68", "text": "Inspect SKILL.md for the distillation guidance.", "verifies": ["r_jb011"], "expected": "It states 'intent, not transcript', defines what rises to a requirement (testable behavioral 'shall' statements, not implementation detail), and gives the regression-test litmus.", "result": "passed", "notes": "skill/__tests__/working-loop.test.ts" },
-    { "id": "t_jb012", "code": "TEST-69", "text": "Inspect SKILL.md for the autonomous-but-visible capture rule, and confirm this feature was itself captured that way.", "verifies": ["r_jb012"], "expected": "SKILL.md states requirements are written autonomously then surfaced for the user to edit; JOBS-10..12 were drafted spec-first under JOB-1 with verifying tests (self-dogfood).", "result": "passed", "notes": "skill/__tests__/working-loop.test.ts; this feature was captured via the loop it defines." },
-
-    { "id": "t_in001", "code": "TEST-70", "text": "Inspect SKILL.md for the init procedure and confirm the artifacts it installs exist.", "verifies": ["r_in001"], "expected": "SKILL.md documents the four init steps (scaffold, launcher, hook via core.hooksPath, CLAUDE.md wiring); templates/hooks/pre-push and templates/CLAUDE.specpad.md both exist in the skill.", "result": "passed", "notes": "skill/__tests__/init.test.ts" },
-    { "id": "t_in002", "code": "TEST-71", "text": "Check the CLAUDE directive template for an idempotency sentinel and SKILL.md for the safe-rerun rules.", "verifies": ["r_in002"], "expected": "templates/CLAUDE.specpad.md carries the <!-- specpad:working-loop --> sentinel; SKILL.md says to append only when the sentinel is absent and not to overwrite existing docs or clobber an existing core.hooksPath.", "result": "passed", "notes": "skill/__tests__/init.test.ts" },
-    { "id": "t_in003", "code": "TEST-72", "text": "Inspect SKILL.md for how init handles an existing CLAUDE.md.", "verifies": ["r_in003"], "expected": "SKILL.md states init appends the directive and never overwrites CLAUDE.md, creating it only if absent.", "result": "passed", "notes": "skill/__tests__/init.test.ts" },
-
-    { "id": "t_bg001", "code": "TEST-73", "text": "Inspect SKILL.md for the baseline-generator procedure.", "verifies": ["r_bg001"], "expected": "It documents drafting an initial SRS/VTP from an existing codebase, surveying public surfaces, modules, docs, and existing tests.", "result": "passed", "notes": "skill/__tests__/baseline.test.ts" },
-    { "id": "t_bg002", "code": "TEST-74", "text": "Inspect SKILL.md for the draft/ratification rule.", "verifies": ["r_bg002"], "expected": "It states output is a draft for human ratification, never authoritative; generated items are tagged `draft`; deriving from code does not bypass user confirmation.", "result": "passed", "notes": "skill/__tests__/baseline.test.ts" },
-    { "id": "t_bg003", "code": "TEST-75", "text": "Inspect SKILL.md for the distillation altitude and governance-clean rule.", "verifies": ["r_bg003"], "expected": "It states requirements are at the \"shall\" altitude (not implementation detail) and the output is governance-clean (verifying VTP entry + expected per requirement).", "result": "passed", "notes": "skill/__tests__/baseline.test.ts" },
-    { "id": "t_bg004", "code": "TEST-76", "text": "Inspect SKILL.md for test mapping and gap handling.", "verifies": ["r_bg004"], "expected": "It states requirements map to existing tests (named in notes, result reflecting them) and a behavior with no test is recorded as not_tested rather than omitted.", "result": "passed", "notes": "skill/__tests__/baseline.test.ts" },
-    { "id": "t_bg005", "code": "TEST-77", "text": "Inspect SKILL.md for the coverage-reporting rule.", "verifies": ["r_bg005"], "expected": "It states the generator reports what it covered and could not cover, with no silent truncation.", "result": "passed", "notes": "skill/__tests__/baseline.test.ts" },
-
-    { "id": "t_au001", "code": "TEST-78", "text": "Inspect SKILL.md for the requirement-audit procedure.", "verifies": ["r_au001"], "expected": "It documents reconciling the SRS/VTP against the whole codebase in both directions, and notes the commit-time audit is the staged-diff form.", "result": "passed", "notes": "skill/__tests__/audit.test.ts" },
-    { "id": "t_au002", "code": "TEST-79", "text": "Inspect SKILL.md for the missing-requirement finding.", "verifies": ["r_au002"], "expected": "It states code behavior with no requirement is flagged (missing) and a draft requirement plus test is proposed, derived from the code, for ratification.", "result": "passed", "notes": "skill/__tests__/audit.test.ts" },
-    { "id": "t_au003", "code": "TEST-80", "text": "Inspect SKILL.md for the stale-requirement finding.", "verifies": ["r_au003"], "expected": "It states a requirement whose behavior is gone/changed is flagged stale for update/removal and never silently deleted.", "result": "passed", "notes": "skill/__tests__/audit.test.ts" },
-    { "id": "t_au004", "code": "TEST-81", "text": "Inspect SKILL.md for the coverage-gap finding.", "verifies": ["r_au004"], "expected": "It states a requirement with no covering test, or a VTP notes reference to a test that no longer resolves, is flagged.", "result": "passed", "notes": "skill/__tests__/audit.test.ts" },
-    { "id": "t_au005", "code": "TEST-82", "text": "Inspect SKILL.md for the report/non-destructive rule.", "verifies": ["r_au005"], "expected": "It states findings are categorized proposals to ratify, nothing destructive is applied automatically, and coverage/confidence is reported (no silent truncation).", "result": "passed", "notes": "skill/__tests__/audit.test.ts" },
-
-    { "id": "t_ed0b12", "code": "TEST-83", "text": "Open a project, reopen it from the Recent projects list without re-picking, and forget it.", "verifies": ["r_ed0b12"], "expected": "A previously opened folder is listed and reopens via its persisted directory handle with no folder picker; Forget removes it from the list.", "result": "passed", "notes": "src/__tests__/handleStore.test.ts; src/__tests__/LocalApp.recent.test.tsx" },
-
-    { "id": "t_jv001", "code": "TEST-84", "text": "Validate a job record carrying type and version, and one with a bad type.", "verifies": ["r_jv001"], "expected": "A record with type feature/bugfix and a version validates; a record with an out-of-enum type is rejected; the record schema exposes type and version alongside the existing fields.", "result": "passed", "notes": "src/shared/__tests__/sidecars.test.ts" },
-    { "id": "t_jv002", "code": "TEST-85", "text": "Render the Jobs view with jobs across versions and types.", "verifies": ["r_jv002"], "expected": "Jobs are grouped by major version (unversioned under Unreleased) with Features and Bugfixes subheadings, and each job's description shows beneath its title.", "result": "passed", "notes": "src/components/__tests__/JobsView.test.tsx" },
-    { "id": "t_jv003", "code": "TEST-86", "text": "Click a job in the Jobs list and then go back.", "verifies": ["r_jv003"], "expected": "Clicking a job opens a separate detail view (record editor, no list groups); a back control returns to the list.", "result": "passed", "notes": "src/components/__tests__/JobsView.test.tsx" },
-    { "id": "t_jv004", "code": "TEST-87", "text": "Render the view tabs.", "verifies": ["r_jv004"], "expected": "Jobs renders in the oversight group (with Releases and Auditor), to the right of Overview and the authoring views — not leftmost.", "result": "passed", "notes": "src/components/__tests__/ViewTabs.test.tsx" },
-
-    { "id": "t_jc001", "code": "TEST-88", "text": "Confirm job caches exist and the skill documents before-at-create / after-at-close.", "verifies": ["r_jc001"], "expected": "SKILL.md documents the .specpad/jobs/<id>/{before,after} cache (before written at job create, after at close); committed before/after SRS snapshots exist and validate.", "result": "passed", "notes": "skill/__tests__/change-tracking.test.ts (docs + dogfood cache existence/validation)" },
-    { "id": "t_jc002", "code": "TEST-89", "text": "Validate a job record carrying an owner, and confirm owner is part of the record schema.", "verifies": ["r_jc002"], "expected": "A record with owner {name,email} validates; the record schema exposes owner alongside the other record fields.", "result": "passed", "notes": "src/shared/__tests__/sidecars.test.ts" },
-    { "id": "t_jc003", "code": "TEST-90", "text": "Confirm the skill documents deriving version from the release tag containing the job.", "verifies": ["r_jc003"], "expected": "SKILL.md states version is derived (not hand-set) via git tag --contains at refresh; Unreleased until a release contains the job.", "result": "passed", "notes": "skill/__tests__/change-tracking.test.ts" },
-    { "id": "t_jc004", "code": "TEST-91", "text": "Render the Jobs view and open a closed job's detail.", "verifies": ["r_jc004"], "expected": "Open jobs appear under In progress and closed under Released; a closed job's detail renders its cached SRS/VTP changes; the active open job's detail renders its in-progress diff.", "result": "passed", "notes": "src/components/__tests__/JobsView.test.tsx" },
-
-    { "id": "t_sc001", "code": "TEST-92", "text": "Confirm the skill documents the source-traceability export.", "verifies": ["r_sc001"], "expected": "SKILL.md documents deriving a job's commits + code changes from git (git log --grep on the Job: trailer), generated on demand, with no maintained matrix.", "result": "passed", "notes": "skill/__tests__/change-tracking.test.ts" },
-    { "id": "t_sc002", "code": "TEST-93", "text": "Confirm closed-job commit lists are cached and documented.", "verifies": ["r_sc002"], "expected": "SKILL.md documents writing .specpad/jobs/<id>/commits.json on close; committed commits.json files exist for closed jobs and parse as a list of {hash,subject,author,date}.", "result": "passed", "notes": "skill/__tests__/change-tracking.test.ts" },
-    { "id": "t_sc003", "code": "TEST-94", "text": "Open a closed job's detail with cached commits.", "verifies": ["r_sc003"], "expected": "The detail lists the job's commits (hash, subject, author, date) under a Commits heading.", "result": "passed", "notes": "src/components/__tests__/JobsView.test.tsx" },
-
-    { "id": "t_sa001", "code": "TEST-95", "text": "Confirm the architecture spec is documented and present.", "verifies": ["r_sa001"], "expected": "SKILL.md documents the <name>.sad.md (arc42) and <name>.workspace.dsl (C4) tracked files; SpecPad's own specpad.sad.md and specpad.workspace.dsl exist and are non-empty.", "result": "passed", "notes": "skill/__tests__/architecture.test.ts" },
-    { "id": "t_sa002", "code": "TEST-96", "text": "Render the Architecture view with an arc42 doc and a C4 DSL.", "verifies": ["r_sa002"], "expected": "The arc42 headings/content render, and the C4 Structurizr DSL is presented with a link to render it; an empty state shows when absent.", "result": "passed", "notes": "src/components/__tests__/ArchitectureView.test.tsx" },
-    { "id": "t_sa003", "code": "TEST-97", "text": "Confirm the skill documents job/release coupling for architecture.", "verifies": ["r_sa003"], "expected": "SKILL.md states architecture is job/release-coupled and that no requirement-to-architecture trace matrix is maintained.", "result": "passed", "notes": "skill/__tests__/architecture.test.ts" },
-    { "id": "t_sa004", "code": "TEST-98", "text": "Confirm the skill documents snapshotting architecture into the caches on close.", "verifies": ["r_sa004"], "expected": "SKILL.md states the SAD/DSL are snapshotted into the release baseline and per-job cache on close/refresh.", "result": "passed", "notes": "skill/__tests__/architecture.test.ts" },
-
-    { "id": "t_sa005", "code": "TEST-99", "text": "Confirm both architecture profile templates ship.", "verifies": ["r_sa005"], "expected": "templates/sad.generic.md and templates/sad.medical.md both exist; the medical one has Safety classification & segregation and Architecture Verification sections, the generic one does not.", "result": "passed", "notes": "skill/__tests__/architecture.test.ts" },
-    { "id": "t_sa006", "code": "TEST-100", "text": "Confirm the init quiz is documented.", "verifies": ["r_sa006"], "expected": "SKILL.md's init procedure asks medical vs generic and scaffolds the matching sad/workspace/guide; generic is the default.", "result": "passed", "notes": "skill/__tests__/architecture.test.ts" },
-    { "id": "t_sa007", "code": "TEST-101", "text": "Confirm the generic template is fuller with multiple views and no classification.", "verifies": ["r_sa007"], "expected": "The generic SAD has the arc42 sections and no safety classification; the workspace template defines multiple C4 views (systemContext + container).", "result": "passed", "notes": "skill/__tests__/architecture.test.ts" },
-    { "id": "t_sa008", "code": "TEST-102", "text": "Confirm per-profile authoring guides ship, are read by the skill, and render in the editor.", "verifies": ["r_sa008"], "expected": "templates/sad.guide.generic.md and sad.guide.medical.md exist; SKILL.md says the skill reads the guide before editing; the Architecture view renders a provided guide in a panel.", "result": "passed", "notes": "skill/__tests__/architecture.test.ts; src/components/__tests__/ArchitectureView.test.tsx" },
-
-    { "id": "t_av001", "code": "TEST-103", "text": "Render the Architecture view with and without edit callbacks.", "verifies": ["r_av001"], "expected": "Edit/Display sub-tabs appear when editing is enabled; no sub-tabs (display only) when read-only.", "result": "passed", "notes": "src/components/__tests__/ArchitectureView.test.tsx" },
-    { "id": "t_av002", "code": "TEST-104", "text": "Render Display with arc42 markdown and a diagram SVG.", "verifies": ["r_av002"], "expected": "The markdown renders as HTML headings/content (react-markdown) and the diagram SVG renders inline.", "result": "passed", "notes": "src/components/__tests__/ArchitectureView.test.tsx" },
-    { "id": "t_av003", "code": "TEST-105", "text": "Edit the arc42 markdown in the Edit tab and save.", "verifies": ["r_av003"], "expected": "The CodeMirror editor emits changes via onChange; the shell marks the SAD dirty and writes it via saveProjectText on save.", "result": "passed", "notes": "src/components/__tests__/ArchitectureView.test.tsx (onChange); src/LocalApp.tsx save path (saveProjectText)" },
-    { "id": "t_av004", "code": "TEST-106", "text": "Inspect the skill docs for diagram change-tracking granularity.", "verifies": ["r_av004"], "expected": "SKILL.md states diagram change tracking is coarse (file changed), not in-diagram deltas, with draw.io SVG as the diagram source.", "result": "passed", "notes": "skill/__tests__/architecture.test.ts" },
-
-    { "id": "t_dg001", "code": "TEST-107", "text": "Confirm the SAD places multiple diagrams via image references.", "verifies": ["r_dg001"], "expected": "SpecPad's specpad.sad.md references at least four diagrams (context, building block, runtime, deployment) via ![..](*.svg), and those SVG files exist.", "result": "passed", "notes": "skill/__tests__/architecture.test.ts" },
-    { "id": "t_dg002", "code": "TEST-108", "text": "Render the Architecture Display with a markdown-placed diagram and a diagrams map.", "verifies": ["r_dg002"], "expected": "The referenced diagram SVG renders inline at its position in the document.", "result": "passed", "notes": "src/components/__tests__/ArchitectureView.test.tsx" },
-    { "id": "t_dg003", "code": "TEST-109", "text": "Confirm the C4 DSL is optional in the editor and absent from the dogfood/default.", "verifies": ["r_dg003"], "expected": "The Architecture view shows the C4 DSL section only when a DSL is present; SpecPad's docs/specpad has no workspace.dsl while the template keeps one for opt-in.", "result": "passed", "notes": "src/components/__tests__/ArchitectureView.test.tsx; skill/__tests__/architecture.test.ts" },
-
-    { "id": "t_ac001", "code": "TEST-110", "text": "Confirm closed-job caches snapshot the architecture files and a per-state manifest.", "verifies": ["r_ac001"], "expected": "Each closed job has before/after arch-files.json; a job that created the SAD (JOB-9) shows it added (before manifest empty, after lists specpad.sad.md).", "result": "passed", "notes": "skill/__tests__/change-tracking.test.ts" },
-    { "id": "t_ac002", "code": "TEST-111", "text": "Open a closed job that changed architecture and view its detail.", "verifies": ["r_ac002"], "expected": "An Architecture changes section lists added/modified/removed arch files; an SAD markdown change shows an added/removed-line diff.", "result": "passed", "notes": "src/components/__tests__/JobsView.test.tsx" },
-
-    { "id": "t_co001", "code": "TEST-112", "text": "Confirm both skills ship — core specpad and the specpad-medical add-on.", "verifies": ["r_co001"], "expected": "skill/specpad/SKILL.md and skill/specpad-medical/SKILL.md both exist; the add-on declares it extends core and is opt-in.", "result": "passed", "notes": "skill/__tests__/architecture.test.ts" },
-    { "id": "t_co002", "code": "TEST-113", "text": "Confirm core carries no medical content and the add-on carries the medical profile.", "verifies": ["r_co002"], "expected": "Core's init points the medical path at specpad-medical (not a core medical template); the medical SAD template + guide live under skill/specpad-medical/templates; core's generic template has no classification sections.", "result": "passed", "notes": "skill/__tests__/architecture.test.ts" },
-    { "id": "t_co003", "code": "TEST-114", "text": "Confirm the add-on does not fork the contract or editor.", "verifies": ["r_co003"], "expected": "The specpad-medical skill is prose + templates (no src/); its SKILL.md states the contract and editor are one shared codebase, never a code fork.", "result": "passed", "notes": "skill/__tests__/architecture.test.ts" },
-
-    { "id": "t_re001", "code": "TEST-115", "text": "Confirm a release maps to its jobs and the skill documents it.", "verifies": ["r_re001"], "expected": "releases.json lists v1.2; the closed jobs carry version v1.2 (so the release groups them); SKILL.md states the release→jobs mapping is derived from job.version.", "result": "passed", "notes": "skill/__tests__/change-tracking.test.ts" },
-    { "id": "t_re002", "code": "TEST-116", "text": "Confirm the release baseline snapshots all key doc types.", "verifies": ["r_re002"], "expected": "The .specpad/baseline snapshot contains not only proj/srs/vtp JSON but also the SAD (specpad.sad.md) and a diagram SVG; SKILL.md's refresh says to snapshot all key documents.", "result": "passed", "notes": "skill/__tests__/change-tracking.test.ts" },
-    { "id": "t_re003", "code": "TEST-117", "text": "Render the Releases view with releases and versioned jobs.", "verifies": ["r_re003"], "expected": "Each release shows newest-first with version/date/author and its jobs grouped Features/Bugfixes; closed jobs with no version appear under Unreleased; open jobs are excluded.", "result": "passed", "notes": "src/components/__tests__/ReleasesView.test.tsx" },
-
-    { "id": "t_pd001", "code": "TEST-118", "text": "Confirm an optional PRD register is supported as an SRS-shaped peer document.", "verifies": ["r_pd001"], "expected": "validate() accepts a well-formed prd document (type \"prd\", id/text-required items) and rejects one missing items; the project index accepts a prd document reference; createPrdDoc/createPrdItem build a prd doc and p_-prefixed items.", "result": "passed", "notes": "src/shared/__tests__/prd.test.ts" },
-    { "id": "t_pd002", "code": "TEST-119", "text": "Confirm an SRS requirement traces upward to PRD items via satisfies (by id).", "verifies": ["r_pd002"], "expected": "SrsItem carries an optional satisfies string array; the srs schema documents it; governance flags a satisfies entry that does not resolve to a PRD item id (prd-referential-integrity).", "result": "passed", "notes": "src/shared/__tests__/prd.test.ts" },
-    { "id": "t_pd003", "code": "TEST-120", "text": "Confirm PRD governance is enforced only when a PRD register is present.", "verifies": ["r_pd003"], "expected": "With a PRD register, an unresolved satisfies raises prd-referential-integrity and an unsatisfied implemented PRD item raises prd-coverage; with no PRD register, no prd-* violations are raised even when SRS items carry satisfies.", "result": "passed", "notes": "src/shared/__tests__/prd.test.ts" },
-    { "id": "t_pd004", "code": "TEST-121", "text": "Confirm PRD item status gates coverage (proposed/roadmap is exempt).", "verifies": ["r_pd004"], "expected": "A PRD item with status \"implemented\" and no satisfier raises prd-coverage; items with status \"proposed\" or no status raise nothing; createPrdItem defaults new items to \"proposed\"; the status enum rejects values outside {proposed, implemented}.", "result": "passed", "notes": "src/shared/__tests__/prd.test.ts" },
-
-    { "id": "t_ad001", "code": "TEST-122", "text": "Render the Auditor view as an orientation index.", "verifies": ["r_ad001"], "expected": "The Auditor tab renders the scope statement, the design-control map, and the roadmap, with links into the relevant tabs; it does not itself render the trace matrix.", "result": "passed", "notes": "src/components/__tests__/AuditView.test.tsx" },
-    { "id": "t_ad002", "code": "TEST-123", "text": "Confirm the Traceability view reports requirements, test results, and PRD coverage.", "verifies": ["r_ad002"], "expected": "buildAuditReport returns verified/total requirements, passed/failed/not-tested test counts, and implemented-vs-satisfied plus proposed PRD counts; the Traceability view shows them.", "result": "passed", "notes": "src/__tests__/auditReport.test.ts; src/components/__tests__/TraceabilityView.test.tsx" },
-    { "id": "t_ad003", "code": "TEST-124", "text": "Confirm the Traceability matrix links PRD→requirement→test with results and flags unverified requirements.", "verifies": ["r_ad003"], "expected": "Each trace row resolves a requirement's satisfied PRDs and verifying tests with a result rollup; a requirement with no verifying test is rolled up as no_test and visibly flagged in the Traceability tab.", "result": "passed", "notes": "src/__tests__/auditReport.test.ts; src/components/__tests__/TraceabilityView.test.tsx" },
-    { "id": "t_ad004", "code": "TEST-125", "text": "Confirm the gap list (Traceability) and the roadmap (Auditor).", "verifies": ["r_ad004"], "expected": "The Traceability view lists checkGovernance violations (and shows governance-clean when none); the Auditor view lists the proposed PRD items as roadmap.", "result": "passed", "notes": "src/components/__tests__/TraceabilityView.test.tsx; src/components/__tests__/AuditView.test.tsx" },
-    { "id": "t_ad005", "code": "TEST-126", "text": "Confirm the Auditor view shows the scope disclaimer.", "verifies": ["r_ad005"], "expected": "The view renders text stating SpecPad produces evidence supporting design controls and is not a QMS / compliance determination.", "result": "passed", "notes": "src/components/__tests__/AuditView.test.tsx" },
-    { "id": "t_ad006", "code": "TEST-127", "text": "Confirm the editor classifies and loads a PRD register.", "verifies": ["r_ad006"], "expected": "classifyDocFilename recognizes <name>.prd.json as a prd document; loadPrd reads it; the Auditor tab is available when an SRS is open.", "result": "passed", "notes": "src/__tests__/localFileApi.test.ts; src/components/__tests__/ViewTabs.test.tsx" },
-
-    { "id": "t_dc001", "code": "TEST-136", "text": "Render the design-control map with citations, statuses, and links.", "verifies": ["r_dc001"], "expected": "The Auditor view lists the formal elements (Design Inputs, Outputs, Verification, Validation, Traceability, Design Changes, Design History File, Design Reviews, Risk Management, Configuration Management), each with an IEC 62304 / 21 CFR 820.30 citation, a statement, a status badge, and a navigation link where applicable.", "result": "passed", "notes": "src/__tests__/designControls.test.ts; src/components/__tests__/AuditView.test.tsx" },
-    { "id": "t_dc002", "code": "TEST-137", "text": "Confirm element status is derived from the project.", "verifies": ["r_dc002"], "expected": "buildDesignControls marks Design Inputs present when requirements exist, Design Verification by coverage, Design Changes present when jobs exist, Design History present when releases exist, and Design Validation / Risk Management as gaps.", "result": "passed", "notes": "src/__tests__/designControls.test.ts" },
-
-    { "id": "t_vs001", "code": "TEST-128", "text": "Confirm the visual system is token-based.", "verifies": ["r_vs001"], "expected": "specpad.less defines CSS custom properties (design tokens) on :root for color/surface/type/spacing, and components reference var(--token) rather than hard-coded values; each theme overrides the same token set.", "result": "passed", "notes": "src/__tests__/theme.assets.test.ts" },
-    { "id": "t_vs002", "code": "TEST-129", "text": "Confirm theme selection persists and applies without flash.", "verifies": ["r_vs002"], "expected": "applyTheme sets data-theme on the document root and writes localStorage; readStoredTheme returns the saved value (default when unset); the three themes are offered; index.html sets the saved theme before the app mounts.", "result": "passed", "notes": "src/__tests__/theme.test.ts" },
-    { "id": "t_vs003", "code": "TEST-130", "text": "Confirm the grouped tab order leads with Overview.", "verifies": ["r_vs003"], "expected": "ViewTabs renders Overview first, then the authoring group (Requirements, Verification Tests, Results, Architecture), then the oversight group (Auditor, Releases, Jobs), with a separator between groups.", "result": "passed", "notes": "src/components/__tests__/ViewTabs.test.tsx" },
-    { "id": "t_vs004", "code": "TEST-131", "text": "Render the Overview with status, latest release, and coverage headline.", "verifies": ["r_vs004"], "expected": "OverviewView shows the open jobs, the latest release, and a coverage/health headline (verified count and governance findings), with buttons that navigate to the authoring views.", "result": "passed", "notes": "src/components/__tests__/OverviewView.test.tsx" },
-    { "id": "t_vs005", "code": "TEST-132", "text": "Confirm Overview is the default view on open.", "verifies": ["r_vs005"], "expected": "After opening a project, the active view is Overview (the editor's currentView initializes to overview).", "result": "passed", "notes": "src/components/__tests__/OverviewView.test.tsx; src/__tests__/LocalApp.test.tsx" },
-
-    { "id": "t_gd001", "code": "TEST-133", "text": "Confirm per-doc-type authoring guides ship and are referenced, not inlined.", "verifies": ["r_gd001"], "expected": "skill/specpad/guides/{requirements,tests,product-requirements,architecture}.md exist; SKILL.md references each by path; SKILL.md does not inline a guide body (it stays a routing pointer).", "result": "passed", "notes": "skill/__tests__/guides.test.ts" },
-    { "id": "t_gd002", "code": "TEST-134", "text": "Confirm each guide covers what-to-capture and good/bad examples.", "verifies": ["r_gd002"], "expected": "Each guide file contains a what-to-capture section and clearly-marked good and bad examples (e.g. ✅/❌ or Good/Bad headings).", "result": "passed", "notes": "skill/__tests__/guides.test.ts" },
-    { "id": "t_gd003", "code": "TEST-135", "text": "Confirm SKILL.md and the guides stay in sync.", "verifies": ["r_gd003"], "expected": "The set of guide files under skill/specpad/guides/ equals the set referenced by SKILL.md — no guide is unreferenced and no referenced guide is missing.", "result": "passed", "notes": "skill/__tests__/guides.test.ts" },
-
-    { "id": "t_jc005", "code": "TEST-138", "text": "Confirm the skill snapshots before at job creation.", "verifies": ["r_jc005"], "expected": "SKILL.md's job procedure states that the before snapshot (.specpad/jobs/<id>/before/) is written when a job is created, not only on close; the active job's before snapshot exists and validates.", "result": "passed", "notes": "skill/__tests__/change-tracking.test.ts" },
-    { "id": "t_jc006", "code": "TEST-139", "text": "Render the active open job's in-progress changes.", "verifies": ["r_jc006"], "expected": "Given an activeDiffs entry for the active open job (before vs working), the Jobs view detail renders its in-progress SRS/VTP changes instead of the 'materialized once closed' message.", "result": "passed", "notes": "src/components/__tests__/JobsView.test.tsx" },
-    { "id": "t_jc007", "code": "TEST-140", "text": "Render the active open job's in-progress architecture changes.", "verifies": ["r_jc007"], "expected": "Given an activeArch entry for the active open job, the Jobs view detail renders an Architecture changes section (added/modified/removed files + SAD line diff) for the open job, not only for closed jobs.", "result": "passed", "notes": "src/components/__tests__/JobsView.test.tsx" },
-
-    { "id": "t_rg001", "code": "TEST-141", "text": "Confirm the document-type registry describes each content type.", "verifies": ["r_rg001"], "expected": "DOC_TYPES includes srs, vtp, and prd as register kinds, each with a schema, a label, optional/inBaseline flags, and a generate setting; REGISTER_TYPES filters to register kinds.", "result": "passed", "notes": "src/shared/__tests__/docTypes.test.ts" },
-    { "id": "t_rg002", "code": "TEST-142", "text": "Confirm validation and the schema reference are built from the registry.", "verifies": ["r_rg002"], "expected": "validate() accepts every register type in DOC_TYPES plus the sidecars (project/releases/job/jobs); the generated reference includes each registry type. Adding a type to the registry makes validate() accept it with no edit to validate.ts.", "result": "passed", "notes": "src/shared/__tests__/docTypes.test.ts" },
-    { "id": "t_rg003", "code": "TEST-143", "text": "Confirm the skill snapshots/caches every document in the project index.", "verifies": ["r_rg003"], "expected": "SKILL.md's refresh and job-cache prose say to snapshot every document in the project index (documents[]) plus the architecture files, iterating the index rather than a fixed list.", "result": "passed", "notes": "skill/__tests__/change-tracking.test.ts" },
-    { "id": "t_rg004", "code": "TEST-144", "text": "Confirm snapshot/diff are document-type-generic (extensibility).", "verifies": ["r_rg004"], "expected": "classifyDocFilename recognizes a register type from the registry; a synthetic register type added to the registry is diffed by the shared diffItems and flows through the per-job diff path with no code change; the Jobs view renders a DiffList per register type present.", "result": "passed", "notes": "src/shared/__tests__/docTypes.test.ts; src/components/__tests__/JobsView.test.tsx" },
-
-    { "id": "t_pd005", "code": "TEST-145", "text": "Render and edit the Product Requirements tab with status and redline.", "verifies": ["r_pd005"], "expected": "PrdTable renders the PRD items with an inline status dropdown; changing status/text/tags calls onChange with the updated doc; added/modified rows since the baseline are highlighted (redline); add/delete controls add and remove items; the tab is enabled only when a PRD register is present.", "result": "passed", "notes": "src/components/__tests__/PrdTable.test.tsx; src/components/__tests__/ViewTabs.test.tsx" },
-
-    { "id": "t_bg006", "code": "TEST-146", "text": "Confirm the baseline generator drafts PRD + a starter SAD by default (registry-aware).", "verifies": ["r_bg006"], "expected": "SKILL.md's baseline generator states it drafts the full default set — a PRD (proposed, with SRS linked via satisfies) and a starter arc42 architecture — in addition to SRS/VTP, is registry-aware, and that a type may be declined.", "result": "passed", "notes": "skill/__tests__/baseline.test.ts" },
-    { "id": "t_in004", "code": "TEST-147", "text": "Confirm init scaffolds the full default set including the PRD.", "verifies": ["r_in004"], "expected": "SKILL.md's init scaffolds the full default set; starter.proj.json lists a prd document; a starter.prd.json template ships and is a valid empty PRD; createProjectDoc's default documents are prd/srs/vtp.", "result": "passed", "notes": "skill/__tests__/init.test.ts; src/shared/__tests__/factories.test.ts" },
-
-    { "id": "t_pd006", "code": "TEST-148", "text": "Confirm the PRD tab shows each item's downward trace and flags gaps.", "verifies": ["r_pd006"], "expected": "PrdTable's Satisfied-by column lists the SRS codes that satisfy each PRD item; a proposed item reads as roadmap; an implemented item with no satisfier is flagged as a gap.", "result": "passed", "notes": "src/components/__tests__/PrdTable.test.tsx" },
-    { "id": "t_vs006", "code": "TEST-149", "text": "Confirm a design-control phase band spans the right tabs.", "verifies": ["r_vs006"], "expected": "ViewTabs renders a phase band per design-control phase; the Design Inputs band spans the Product Requirements + Requirements columns (grid-column 2 / span 2); bands cover Design Verification, Outputs, Controls, Traceability, History, Changes.", "result": "passed", "notes": "src/components/__tests__/ViewTabs.test.tsx" },
-
-    { "id": "t_rg005", "code": "TEST-150", "text": "Confirm the working loop directs a job to evaluate impact across every registered document type (not just SRS/VTP).", "verifies": ["r_rg005"], "expected": "SKILL.md and the CLAUDE.specpad.md template both instruct evaluating the job's impact on every registered document type — naming the PRD (user-facing intent) and the architecture/SAD (structural changes) alongside SRS/VTP — before implementing, spec-first.", "result": "passed", "notes": "skill/__tests__/working-loop.test.ts; skill/__tests__/change-tracking.test.ts" },
-    { "id": "t_rg006", "code": "TEST-151", "text": "Confirm architecture is a registered (prose) document type.", "verifies": ["r_rg006"], "expected": "docTypeFor('sad') is defined with kind 'prose' and no schema; 'sad' is absent from REGISTER_TYPES (not diffed as an id-keyed register) yet present in DOC_TYPES (an impactable type).", "result": "passed", "notes": "src/shared/__tests__/docTypes.test.ts" }
+    {
+      "id": "t_c001",
+      "code": "TEST-1",
+      "text": "Confirm docs/specpad/ holds specpad.proj.json, specpad.srs.json, and specpad.vtp.json, and that each parses as JSON.",
+      "verifies": [
+        "r_a101"
+      ],
+      "expected": "All three files exist under docs/specpad/ and parse without error.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/dogfood.test.ts"
+    },
+    {
+      "id": "t_c002",
+      "code": "TEST-2",
+      "text": "Run validate() on a document missing schemaVersion and on one with an unknown type.",
+      "verifies": [
+        "r_a102"
+      ],
+      "expected": "Each is reported as structurally invalid (non-empty error list).",
+      "result": "passed",
+      "notes": "src/shared/__tests__/validate.test.ts"
+    },
+    {
+      "id": "t_c003",
+      "code": "TEST-3",
+      "text": "Run validate() on a project document that has name and title.",
+      "verifies": [
+        "r_a103"
+      ],
+      "expected": "validate() returns no errors.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/validate.test.ts"
+    },
+    {
+      "id": "t_c004",
+      "code": "TEST-4",
+      "text": "Run validate() on an SRS item missing text, and on one missing id.",
+      "verifies": [
+        "r_a104"
+      ],
+      "expected": "Both are reported invalid, each error naming the missing required field.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/validate.test.ts"
+    },
+    {
+      "id": "t_c005",
+      "code": "TEST-5",
+      "text": "Run validate() on a VTP item with result \"maybe\" and one with result \"passed\".",
+      "verifies": [
+        "r_a105"
+      ],
+      "expected": "The \"maybe\" item is invalid (result enum); the \"passed\" item is valid.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/validate.test.ts"
+    },
+    {
+      "id": "t_c006",
+      "code": "TEST-6",
+      "text": "Create an item with the factory, then serialize and parse a document; compare item ids before and after.",
+      "verifies": [
+        "r_a201"
+      ],
+      "expected": "createSrsItem assigns an id, and the load/save round-trip preserves every id unchanged.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/factories.test.ts; src/__tests__/localFileApi.test.ts"
+    },
+    {
+      "id": "t_c007",
+      "code": "TEST-7",
+      "text": "Generate ids with generateId and inspect ID_PREFIX.",
+      "verifies": [
+        "r_a202"
+      ],
+      "expected": "Each id matches prefix_<6 hex>, and ID_PREFIX maps requirement\u2192r, test\u2192t, heading\u2192h.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/ids.test.ts"
+    },
+    {
+      "id": "t_c008",
+      "code": "TEST-8",
+      "text": "In the VTP editor, set a test's verifies to a requirement and inspect the stored value.",
+      "verifies": [
+        "r_a203"
+      ],
+      "expected": "The verifies entry equals the requirement's id, not its code label.",
+      "result": "passed",
+      "notes": "src/components/__tests__/VTPTable.test.tsx"
+    },
+    {
+      "id": "t_c009",
+      "code": "TEST-9",
+      "text": "Rename a requirement's code label and re-run governance on a test that verifies its id.",
+      "verifies": [
+        "r_a204"
+      ],
+      "expected": "The id is unchanged and referential integrity still holds (verifies targets the id, not the code).",
+      "result": "passed",
+      "notes": "src/shared/__tests__/governance.test.ts (code-rename / id-immutability case)"
+    },
+    {
+      "id": "t_c010",
+      "code": "TEST-10",
+      "text": "Render the SRS table for a requirement with one, then two, verifying tests and inspect the saved file.",
+      "verifies": [
+        "r_a301"
+      ],
+      "expected": "The displayed count is computed from verifies (1, then 2); no numTests field is written to disk.",
+      "result": "passed",
+      "notes": "src/components/__tests__/SRSTable.test.tsx"
+    },
+    {
+      "id": "t_c011",
+      "code": "TEST-11",
+      "text": "Inspect a saved SpecPad document for history fields.",
+      "verifies": [
+        "r_a302"
+      ],
+      "expected": "No modifiedUser, modifiedDate, or change-list keys are present; the file validates.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/dogfood.test.ts (validate)"
+    },
+    {
+      "id": "t_c012",
+      "code": "TEST-12",
+      "text": "Call validate() with documents of each type.",
+      "verifies": [
+        "r_a401"
+      ],
+      "expected": "validate() selects the schema by doc.type and returns [] for each valid document.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/validate.test.ts"
+    },
+    {
+      "id": "t_c013",
+      "code": "TEST-13",
+      "text": "Validate a structurally-correct SRS+VTP pair that has an untested requirement.",
+      "verifies": [
+        "r_a402"
+      ],
+      "expected": "validate() returns no errors (policy is not its concern); the traceability gap is found only by governance.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/validate.test.ts + governance.test.ts separation"
+    },
+    {
+      "id": "t_c014",
+      "code": "TEST-14",
+      "text": "Run checkGovernance on an SRS+VTP pair where one requirement has no verifying test.",
+      "verifies": [
+        "r_a403"
+      ],
+      "expected": "A traceability violation is reported for the untested requirement.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/governance.test.ts"
+    },
+    {
+      "id": "t_c015",
+      "code": "TEST-15",
+      "text": "Run checkGovernance where a test verifies a non-existent requirement id.",
+      "verifies": [
+        "r_a404"
+      ],
+      "expected": "A referential-integrity violation is reported for that test.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/governance.test.ts"
+    },
+    {
+      "id": "t_c016",
+      "code": "TEST-16",
+      "text": "Run checkGovernance on a non-heading test whose expected value is empty.",
+      "verifies": [
+        "r_a405"
+      ],
+      "expected": "A missing-expected violation is reported for that test.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/governance.test.ts"
+    },
+    {
+      "id": "t_c017",
+      "code": "TEST-17",
+      "text": "Run checkGovernance on a bundle whose only untested requirement is a heading.",
+      "verifies": [
+        "r_a406"
+      ],
+      "expected": "No traceability violation is reported for the heading.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/governance.test.ts"
+    },
+    {
+      "id": "t_c018",
+      "code": "TEST-18",
+      "text": "Compare the shared module's GOVERNANCE_RULES ids against the skill's SKILL.md.",
+      "verifies": [
+        "r_a407"
+      ],
+      "expected": "Every governance rule id appears in SKILL.md (parity); drift fails the test.",
+      "result": "passed",
+      "notes": "skill/__tests__/parity.test.ts"
+    },
+    {
+      "id": "t_c019",
+      "code": "TEST-19",
+      "text": "Round-trip an SRS document through serialize/parse and exercise the fallback download path.",
+      "verifies": [
+        "r_a501"
+      ],
+      "expected": "The document round-trips with a trailing newline; a fallback open/download path exists for unsupported browsers.",
+      "result": "passed",
+      "notes": "src/__tests__/localFileApi.test.ts"
+    },
+    {
+      "id": "t_c020",
+      "code": "TEST-20",
+      "text": "Render the SRS table with a VTP that verifies a requirement and read the Tests column.",
+      "verifies": [
+        "r_a502"
+      ],
+      "expected": "The verifying-test count is shown and updates as more tests verify the requirement.",
+      "result": "passed",
+      "notes": "src/components/__tests__/SRSTable.test.tsx"
+    },
+    {
+      "id": "t_c021",
+      "code": "TEST-21",
+      "text": "In the Testing view, change a test's result and save.",
+      "verifies": [
+        "r_a503"
+      ],
+      "expected": "onSave receives a VTP document with the updated result on the correct item.",
+      "result": "passed",
+      "notes": "src/components/__tests__/TestingView.test.tsx"
+    },
+    {
+      "id": "t_c022",
+      "code": "TEST-22",
+      "text": "Render the footer status bar for a clean bundle and for one with an untested requirement.",
+      "verifies": [
+        "r_a504"
+      ],
+      "expected": "The status bar shows \"No problems found\" when clean and a traceability message when a requirement is untested.",
+      "result": "passed",
+      "notes": "src/components/__tests__/StatusBar.test.tsx (validation surfacing moved from the former ValidationPanel to the StatusBar)"
+    },
+    {
+      "id": "t_c023",
+      "code": "TEST-23",
+      "text": "Render the VTP table with a test whose verifies points at an unknown id.",
+      "verifies": [
+        "r_a505"
+      ],
+      "expected": "The offending row is visually flagged (danger styling).",
+      "result": "passed",
+      "notes": "src/components/__tests__/VTPTable.test.tsx"
+    },
+    {
+      "id": "t_c024",
+      "code": "TEST-24",
+      "text": "Open a project with two documents and switch between them in the picker.",
+      "verifies": [
+        "r_a506"
+      ],
+      "expected": "The editor re-seeds the table for the newly selected document; it does not write the prior document's content.",
+      "result": "passed",
+      "notes": "src/__tests__/LocalApp.test.tsx"
+    },
+    {
+      "id": "t_c025",
+      "code": "TEST-25",
+      "text": "Follow SKILL.md to scaffold docs/specpad/ from the templates and add items.",
+      "verifies": [
+        "r_a601"
+      ],
+      "expected": "The folder is scaffolded with PROJECT_NAME replaced and newly added items receive unique stable ids.",
+      "result": "passed",
+      "notes": "Manual dogfood; this project's docs/specpad/ was produced this way."
+    },
+    {
+      "id": "t_c026",
+      "code": "TEST-26",
+      "text": "Run validate() and checkGovernance() over SpecPad's own SpecPad documents.",
+      "verifies": [
+        "r_a602"
+      ],
+      "expected": "validate() returns no errors and checkGovernance() returns no violations for the SpecPad docs.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/dogfood.test.ts"
+    },
+    {
+      "id": "t_c027",
+      "code": "TEST-27",
+      "text": "Inspect the generated launcher index.html.",
+      "verifies": [
+        "r_a603"
+      ],
+      "expected": "It redirects to https://specpad.com/v01/?name=...&open=... using the project name.",
+      "result": "passed",
+      "notes": "docs/specpad/index.html; template at skill/specpad/templates/index.html"
+    },
+    {
+      "id": "t_ce201",
+      "code": "TEST-28",
+      "text": "Compute buildRedline(baseline, working) with an added and a modified item, then render the SRS table with the resulting redline.",
+      "verifies": [
+        "r_ce101"
+      ],
+      "expected": "Added rows are flagged, modified rows are flagged with the changed cell highlighted, and removed items are listed in a panel.",
+      "result": "passed",
+      "notes": "src/__tests__/changeTracking.test.ts; src/components/__tests__/SRSTable.test.tsx"
+    },
+    {
+      "id": "t_ce202",
+      "code": "TEST-29",
+      "text": "Diff two document versions where a code label is renamed and items are reordered.",
+      "verifies": [
+        "r_ce102"
+      ],
+      "expected": "No spurious add/remove; a renamed code is a single modified entry; pure reordering yields no change.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/diff.test.ts"
+    },
+    {
+      "id": "t_ce203",
+      "code": "TEST-30",
+      "text": "Inspect SKILL.md for the change-tracking section.",
+      "verifies": [
+        "r_ce103"
+      ],
+      "expected": "It states the skill never computes diffs and that the editor computes all change views (one diff implementation).",
+      "result": "passed",
+      "notes": "skill/__tests__/change-tracking.test.ts"
+    },
+    {
+      "id": "t_ce204",
+      "code": "TEST-31",
+      "text": "Run the skill refresh against a tagged repo and inspect docs/specpad/.specpad/.",
+      "verifies": [
+        "r_ce104"
+      ],
+      "expected": "The cache holds verbatim snapshot copies plus a release manifest; no computed-diff files are written.",
+      "result": "passed",
+      "notes": "Manual dogfood: docs/specpad/.specpad/ (baseline + snapshots); skill/__tests__/change-tracking.test.ts"
+    },
+    {
+      "id": "t_ce205",
+      "code": "TEST-32",
+      "text": "Run validate() on a releases manifest and exercise cachedReleases().",
+      "verifies": [
+        "r_ce105"
+      ],
+      "expected": "The manifest validates with each release carrying version, ref, date, and an author {name,email}; cachedReleases maps the baseline release to the baseline location.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/sidecars.test.ts; src/__tests__/changeTrackingView.test.ts"
+    },
+    {
+      "id": "t_ce206",
+      "code": "TEST-33",
+      "text": "Run computeAttribution over ordered snapshots, then format with attributionLabel.",
+      "verifies": [
+        "r_ce106"
+      ],
+      "expected": "Each item resolves addedIn/lastChangedIn with the release author, and the oldest cached snapshot is marked as a boundary.",
+      "result": "passed",
+      "notes": "src/__tests__/changeTracking.test.ts; src/__tests__/changeTrackingView.test.ts"
+    },
+    {
+      "id": "t_ce207",
+      "code": "TEST-34",
+      "text": "Render VersionTimeline with a manifest of two releases.",
+      "verifies": [
+        "r_ce107"
+      ],
+      "expected": "Both versions render with their dates and authors, and the baseline release is flagged.",
+      "result": "passed",
+      "notes": "src/components/__tests__/VersionTimeline.test.tsx"
+    },
+    {
+      "id": "t_ce208",
+      "code": "TEST-35",
+      "text": "Set a job in JobControl and inspect SKILL.md for the trailer convention.",
+      "verifies": [
+        "r_ce108"
+      ],
+      "expected": "JobControl reports the entered job id and title to its handler; SKILL.md documents folding the current job into a Job: commit trailer; no job field is stored on items.",
+      "result": "passed",
+      "notes": "src/components/__tests__/JobControl.test.tsx; skill/__tests__/change-tracking.test.ts"
+    },
+    {
+      "id": "t_ce209",
+      "code": "TEST-36",
+      "text": "Open a project whose change-tracking cache is absent (loaders return null).",
+      "verifies": [
+        "r_ce109"
+      ],
+      "expected": "The editor renders and remains editable, showing a \"history unavailable \u2014 run specpad refresh\" note instead of redline/attribution.",
+      "result": "not_tested",
+      "notes": "LocalApp degraded path: loaders return null when the cache is absent (src/__tests__/LocalApp.test.tsx mocks them null); an explicit banner assertion is still pending."
+    },
+    {
+      "id": "t_ce210",
+      "code": "TEST-37",
+      "text": "Refresh a tagged repo, then pull an older version's snapshot on demand.",
+      "verifies": [
+        "r_ce110"
+      ],
+      "expected": "Refresh caches the latest release snapshot; an older snapshot is written to the cache only when explicitly pulled.",
+      "result": "passed",
+      "notes": "Manual dogfood: baseline cached by refresh, v0.1 pulled on demand; skill/__tests__/change-tracking.test.ts documents pull."
+    },
+    {
+      "id": "t_ed0a01",
+      "code": "TEST-38",
+      "text": "Open a requirement's hamburger menu and choose Add \u25b8 Child.",
+      "verifies": [
+        "r_ed0a01"
+      ],
+      "expected": "A new requirement is inserted directly below at level + 1.",
+      "result": "passed",
+      "notes": "src/components/__tests__/SRSTable.test.tsx; src/shared/__tests__/level.test.ts"
+    },
+    {
+      "id": "t_ed0a02",
+      "code": "TEST-39",
+      "text": "Render the SRS table containing a heading that has a code segment.",
+      "verifies": [
+        "r_ed0a02"
+      ],
+      "expected": "The heading's Code cell shows the derived dotted path; the literal word \"heading\" never appears.",
+      "result": "passed",
+      "notes": "src/__tests__/outline.test.ts; src/components/__tests__/SRSTable.test.tsx"
+    },
+    {
+      "id": "t_ed0a03",
+      "code": "TEST-40",
+      "text": "Open a row's hamburger menu.",
+      "verifies": [
+        "r_ed0a03"
+      ],
+      "expected": "It lists add (above/below/child), add heading, indent/outdent, delete, and view information; delete confirms; outdent is disabled at level 0.",
+      "result": "passed",
+      "notes": "src/components/__tests__/RowMenu.test.tsx; src/components/__tests__/SRSTable.test.tsx"
+    },
+    {
+      "id": "t_ed0a04",
+      "code": "TEST-41",
+      "text": "Click the show-tests toggle on a requirement that has a verifying test.",
+      "verifies": [
+        "r_ed0a04"
+      ],
+      "expected": "The verifying VTP tests are listed inline beneath the requirement.",
+      "result": "passed",
+      "notes": "src/components/__tests__/SRSTable.test.tsx"
+    },
+    {
+      "id": "t_ed0a05",
+      "code": "TEST-42",
+      "text": "Render the SRS table and open a requirement's information modal.",
+      "verifies": [
+        "r_ed0a05"
+      ],
+      "expected": "No Hazards column is present in the table; the info modal shows the item's hazards.",
+      "result": "passed",
+      "notes": "src/components/__tests__/SRSTable.test.tsx; src/components/__tests__/ItemInfo.test.tsx"
+    },
+    {
+      "id": "t_ed0a06",
+      "code": "TEST-43",
+      "text": "Build the redline rows for a baseline vs a working doc with an added, a modified, and a removed item.",
+      "verifies": [
+        "r_ed0a06"
+      ],
+      "expected": "Added/modified rows are flagged and the removed row renders inline struck-through at its baseline position; no separate removed panel.",
+      "result": "passed",
+      "notes": "src/__tests__/changeTracking.test.ts (buildRedlineRows); src/components/__tests__/SRSTable.test.tsx"
+    },
+    {
+      "id": "t_ed0a07",
+      "code": "TEST-44",
+      "text": "Drag a requirement row onto another position.",
+      "verifies": [
+        "r_ed0a07"
+      ],
+      "expected": "The items reorder to reflect the drop position.",
+      "result": "not_tested",
+      "notes": "Manual; HTML5 draggable rows in SRSTable; the reorder index math was reviewed but has no DOM drag test."
+    },
+    {
+      "id": "t_ed0b01",
+      "code": "TEST-45",
+      "text": "Render the editor menu bar with a project open.",
+      "verifies": [
+        "r_ed0b01"
+      ],
+      "expected": "It shows the SpecPad brand and the primary controls (File, Save, Job, version) in one bar; no separate page header/toolbar.",
+      "result": "passed",
+      "notes": "src/components/__tests__/MenuBar.test.tsx"
+    },
+    {
+      "id": "t_ed0b02",
+      "code": "TEST-46",
+      "text": "Open the File menu and choose New document; render with FS access unavailable.",
+      "verifies": [
+        "r_ed0b02"
+      ],
+      "expected": "New document fires; with no FS access the menu offers the upload/download fallback open.",
+      "result": "passed",
+      "notes": "src/components/__tests__/MenuBar.test.tsx"
+    },
+    {
+      "id": "t_ed0b03",
+      "code": "TEST-47",
+      "text": "With two projects in the directory, pick the other from the brand dropdown.",
+      "verifies": [
+        "r_ed0b03"
+      ],
+      "expected": "The chosen project's documents load.",
+      "result": "passed",
+      "notes": "src/components/__tests__/MenuBar.test.tsx; src/__tests__/LocalApp.test.tsx"
+    },
+    {
+      "id": "t_ed0b04",
+      "code": "TEST-48",
+      "text": "Render the view tabs with only an SRS document present.",
+      "verifies": [
+        "r_ed0b04"
+      ],
+      "expected": "Requirements is active; tabs for absent documents are disabled and do not switch when clicked.",
+      "result": "passed",
+      "notes": "src/components/__tests__/ViewTabs.test.tsx"
+    },
+    {
+      "id": "t_ed0b05",
+      "code": "TEST-49",
+      "text": "Render the status bar for a clean bundle and for one with a governance violation.",
+      "verifies": [
+        "r_ed0b05"
+      ],
+      "expected": "Clean shows \"No problems found\"; a violation shows an error/warning count that expands to the detail messages on click.",
+      "result": "passed",
+      "notes": "src/components/__tests__/StatusBar.test.tsx"
+    },
+    {
+      "id": "t_ed0b06",
+      "code": "TEST-50",
+      "text": "Click the menu-bar version chip and render the version-history dialog.",
+      "verifies": [
+        "r_ed0b06"
+      ],
+      "expected": "The chip triggers the dialog; the dialog lists releases, or shows an empty state prompting specpad refresh.",
+      "result": "passed",
+      "notes": "src/components/__tests__/MenuBar.test.tsx; src/components/__tests__/VersionHistoryDialog.test.tsx"
+    },
+    {
+      "id": "t_ed0b07",
+      "code": "TEST-51",
+      "text": "Edit a row in each table and inspect the change callback.",
+      "verifies": [
+        "r_ed0b07"
+      ],
+      "expected": "Each table calls onChange with the updated document and renders no internal Save button.",
+      "result": "passed",
+      "notes": "src/components/__tests__/SRSTable.test.tsx; VTPTable.test.tsx; TestingView.test.tsx"
+    },
+    {
+      "id": "t_ed0b08",
+      "code": "TEST-52",
+      "text": "Render the menu bar clean and then dirty.",
+      "verifies": [
+        "r_ed0b08"
+      ],
+      "expected": "Save is disabled when clean and enabled with an unsaved indicator when dirty; clicking it saves.",
+      "result": "passed",
+      "notes": "src/components/__tests__/MenuBar.test.tsx (Ctrl/Cmd-S wired via the LocalApp keydown effect)"
+    },
+    {
+      "id": "t_ed0b09",
+      "code": "TEST-53",
+      "text": "Switch documents with no pending edits.",
+      "verifies": [
+        "r_ed0b09"
+      ],
+      "expected": "No prompt appears on a clean switch; a dirty switch prompts before discarding (beforeunload guard exercised manually).",
+      "result": "passed",
+      "notes": "src/__tests__/LocalApp.test.tsx (asserts no confirm on a clean switch)"
+    },
+    {
+      "id": "t_ed0b10",
+      "code": "TEST-54",
+      "text": "Open the editor with ?demo and confirm the SpecPad demo project loads with no folder picker, the SRS/VTP/Testing views are populated, and version history opens.",
+      "verifies": [
+        "r_ed0b10"
+      ],
+      "expected": "The demo project loads read-only over HTTP from /demo/; all read views (tables, testing, validation, version history, redlines, job chip) function.",
+      "result": "passed",
+      "notes": "src/__tests__/LocalApp.demo.test.tsx; src/__tests__/localFileApi.demo.test.ts; testing view, version history, and redlines exercised manually in the dev server"
+    },
+    {
+      "id": "t_ed0b11",
+      "code": "TEST-55",
+      "text": "In demo mode, confirm no Save button or File menu is offered, Ctrl+S does nothing, and the read-only indicator is shown.",
+      "verifies": [
+        "r_ed0b11"
+      ],
+      "expected": "All write affordances are absent or inert and a \"Demo \u2014 read-only\" indicator is visible.",
+      "result": "passed",
+      "notes": "src/__tests__/LocalApp.demo.test.tsx"
+    },
+    {
+      "id": "t_ms001",
+      "code": "TEST-56",
+      "text": "Run the site build and test suite; confirm every schema field carries a description and the reference HTML includes every field and governance rule.",
+      "verifies": [
+        "r_ms001"
+      ],
+      "expected": "site/src/__tests__/generate-reference.test.ts and src/shared/__tests__/schema-descriptions.test.ts both pass; the build fails if any schema property lacks a description.",
+      "result": "passed",
+      "notes": "site/src/__tests__/generate-reference.test.ts; src/shared/__tests__/schema-descriptions.test.ts \u2014 automated coverage confirmed in the marketing-site branch test run"
+    },
+    {
+      "id": "t_ms002",
+      "code": "TEST-57",
+      "text": "After a deploy, fetch https://specpad.com/specpad-skill.zip and confirm it is a valid zip containing the skill directory rebuilt from the repository.",
+      "verifies": [
+        "r_ms002"
+      ],
+      "expected": "The URL returns a non-empty zip archive whose contents match the skill/ directory at that commit; infra/deploy.sh step rebuilds dist-site/specpad-skill.zip from the repo on every ship.",
+      "result": "passed",
+      "notes": "Manual verification 2026-06-10: fetched https://specpad.com/specpad-skill.zip after shipping (application/zip); unzipped cleanly to specpad/SKILL.md + 5 template files matching skill/specpad/. The zip is rebuilt fresh by infra/deploy.sh Ship 4/5 on every deploy."
+    },
+    {
+      "id": "t_jb001",
+      "code": "TEST-58",
+      "text": "Run validate() on a jobs register and on records missing required fields.",
+      "verifies": [
+        "r_jb001"
+      ],
+      "expected": "A well-formed jobs doc validates; a record missing status or title, or with a status outside open/closed, is reported invalid.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/sidecars.test.ts"
+    },
+    {
+      "id": "t_jb002",
+      "code": "TEST-59",
+      "text": "Assert the jobs-register record schema exposes only record fields, no change associations.",
+      "verifies": [
+        "r_jb002"
+      ],
+      "expected": "A job record's schema properties are exactly id/code/title/description/status \u2014 no field listing changed items or commits; SKILL.md documents deriving job \u2192 SRS \u2192 VTP \u2192 source from git.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/sidecars.test.ts (records-only assertion); docs/design \u00a713.1; SKILL.md on-demand reports."
+    },
+    {
+      "id": "t_jb003",
+      "code": "TEST-60",
+      "text": "Normalize markers via activeJobIds (jobs array and legacy job) and inspect SKILL.md trailer guidance.",
+      "verifies": [
+        "r_jb003"
+      ],
+      "expected": "activeJobIds returns the jobs array when present, falls back to a single job, else []; SKILL.md states one Job: trailer is written per active id, carrying the record id.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/governance.test.ts (activeJobIds); sidecars.test.ts (jobs array); skill/__tests__/change-tracking.test.ts (Job: trailer)"
+    },
+    {
+      "id": "t_jb004",
+      "code": "TEST-61",
+      "text": "Run checkGovernance with an active marker pointing at a closed record and at an id absent from the register.",
+      "verifies": [
+        "r_jb004"
+      ],
+      "expected": "active-job-open is reported for the closed entry and active-job-known for the dangling entry; open, known entries produce no violation; with no register, neither rule fires.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/governance.test.ts"
+    },
+    {
+      "id": "t_jb005",
+      "code": "TEST-62",
+      "text": "Render the Jobs view and the active-job picker; add a job, edit it, toggle the active set, and inspect closed records.",
+      "verifies": [
+        "r_jb005"
+      ],
+      "expected": "The view lists/creates/edits records and multi-selects active jobs; a closed job is never offered for activation; a closed-but-active job can be removed.",
+      "result": "passed",
+      "notes": "src/components/__tests__/JobsView.test.tsx; src/components/__tests__/JobControl.test.tsx"
+    },
+    {
+      "id": "t_jb006",
+      "code": "TEST-63",
+      "text": "Select a closed job in the Jobs view and attempt to activate it.",
+      "verifies": [
+        "r_jb006"
+      ],
+      "expected": "No activation control is offered for a closed, non-active job; the guidance directs creating a new job; the skill follows the same rule.",
+      "result": "passed",
+      "notes": "src/components/__tests__/JobsView.test.tsx (closed job offers no activation)"
+    },
+    {
+      "id": "t_jb007",
+      "code": "TEST-64",
+      "text": "Push a commit that has no Job: trailer through the pre-push hook.",
+      "verifies": [
+        "r_jb007"
+      ],
+      "expected": "The hook exits non-zero and blocks the push, naming the offending commit; a commit carrying a Job: trailer passes.",
+      "result": "passed",
+      "notes": ".githooks/pre-push (installed via core.hooksPath); skill/specpad/templates/hooks/pre-push; skill/__tests__/pre-push.test.ts"
+    },
+    {
+      "id": "t_jb008",
+      "code": "TEST-65",
+      "text": "Push a commit that changes code but touches no SRS/VTP, with and without a Spec: none trailer.",
+      "verifies": [
+        "r_jb008"
+      ],
+      "expected": "The hook warns (without blocking) and recommends a requirement audit; a Spec: none trailer suppresses the warning. When committing via Claude, the agent proposes a requirement derived from the diff for ratification.",
+      "result": "passed",
+      "notes": "skill/__tests__/pre-push.test.ts (warn + Spec: none cases); SKILL.md commit workflow Layer 2 (requirement audit)"
+    },
+    {
+      "id": "t_jb009",
+      "code": "TEST-66",
+      "text": "Run the pre-push hook over synthetic commits in a throwaway repo: no-trailer, trailer+spec, code-without-spec, Spec: none, tag push, and SPECPAD_SKIP.",
+      "verifies": [
+        "r_jb009"
+      ],
+      "expected": "Block on the no-trailer commit; pass on trailer+spec; warn on code-without-spec; no warning with Spec: none; tag pushes (refs/tags/*) are skipped; full bypass with SPECPAD_SKIP=1. Merge commits and pre-adoption history are not policed.",
+      "result": "passed",
+      "notes": "skill/__tests__/pre-push.test.ts"
+    },
+    {
+      "id": "t_jb010",
+      "code": "TEST-67",
+      "text": "Inspect SKILL.md for the SpecPad working-loop section.",
+      "verifies": [
+        "r_jb010"
+      ],
+      "expected": "It documents capturing requirements as you build, spec-first, with the job \u2192 requirement \u2192 test \u2192 code chain attributed to the active job.",
+      "result": "passed",
+      "notes": "skill/__tests__/working-loop.test.ts"
+    },
+    {
+      "id": "t_jb011",
+      "code": "TEST-68",
+      "text": "Inspect SKILL.md for the distillation guidance.",
+      "verifies": [
+        "r_jb011"
+      ],
+      "expected": "It states 'intent, not transcript', defines what rises to a requirement (testable behavioral 'shall' statements, not implementation detail), and gives the regression-test litmus.",
+      "result": "passed",
+      "notes": "skill/__tests__/working-loop.test.ts"
+    },
+    {
+      "id": "t_jb012",
+      "code": "TEST-69",
+      "text": "Inspect SKILL.md for the autonomous-but-visible capture rule, and confirm this feature was itself captured that way.",
+      "verifies": [
+        "r_jb012"
+      ],
+      "expected": "SKILL.md states requirements are written autonomously then surfaced for the user to edit; JOBS-10..12 were drafted spec-first under JOB-1 with verifying tests (self-dogfood).",
+      "result": "passed",
+      "notes": "skill/__tests__/working-loop.test.ts; this feature was captured via the loop it defines."
+    },
+    {
+      "id": "t_in001",
+      "code": "TEST-70",
+      "text": "Inspect SKILL.md for the init procedure and confirm the artifacts it installs exist.",
+      "verifies": [
+        "r_in001"
+      ],
+      "expected": "SKILL.md documents the four init steps (scaffold, launcher, hook via core.hooksPath, CLAUDE.md wiring); templates/hooks/pre-push and templates/CLAUDE.specpad.md both exist in the skill.",
+      "result": "passed",
+      "notes": "skill/__tests__/init.test.ts"
+    },
+    {
+      "id": "t_in002",
+      "code": "TEST-71",
+      "text": "Check the CLAUDE directive template for an idempotency sentinel and SKILL.md for the safe-rerun rules.",
+      "verifies": [
+        "r_in002"
+      ],
+      "expected": "templates/CLAUDE.specpad.md carries the <!-- specpad:working-loop --> sentinel; SKILL.md says to append only when the sentinel is absent and not to overwrite existing docs or clobber an existing core.hooksPath.",
+      "result": "passed",
+      "notes": "skill/__tests__/init.test.ts"
+    },
+    {
+      "id": "t_in003",
+      "code": "TEST-72",
+      "text": "Inspect SKILL.md for how init handles an existing CLAUDE.md.",
+      "verifies": [
+        "r_in003"
+      ],
+      "expected": "SKILL.md states init appends the directive and never overwrites CLAUDE.md, creating it only if absent.",
+      "result": "passed",
+      "notes": "skill/__tests__/init.test.ts"
+    },
+    {
+      "id": "t_bg001",
+      "code": "TEST-73",
+      "text": "Inspect SKILL.md for the baseline-generator procedure.",
+      "verifies": [
+        "r_bg001"
+      ],
+      "expected": "It documents drafting an initial SRS/VTP from an existing codebase, surveying public surfaces, modules, docs, and existing tests.",
+      "result": "passed",
+      "notes": "skill/__tests__/baseline.test.ts"
+    },
+    {
+      "id": "t_bg002",
+      "code": "TEST-74",
+      "text": "Inspect SKILL.md for the draft/ratification rule.",
+      "verifies": [
+        "r_bg002"
+      ],
+      "expected": "It states output is a draft for human ratification, never authoritative; generated items are tagged `draft`; deriving from code does not bypass user confirmation.",
+      "result": "passed",
+      "notes": "skill/__tests__/baseline.test.ts"
+    },
+    {
+      "id": "t_bg003",
+      "code": "TEST-75",
+      "text": "Inspect SKILL.md for the distillation altitude and governance-clean rule.",
+      "verifies": [
+        "r_bg003"
+      ],
+      "expected": "It states requirements are at the \"shall\" altitude (not implementation detail) and the output is governance-clean (verifying VTP entry + expected per requirement).",
+      "result": "passed",
+      "notes": "skill/__tests__/baseline.test.ts"
+    },
+    {
+      "id": "t_bg004",
+      "code": "TEST-76",
+      "text": "Inspect SKILL.md for test mapping and gap handling.",
+      "verifies": [
+        "r_bg004"
+      ],
+      "expected": "It states requirements map to existing tests (named in notes, result reflecting them) and a behavior with no test is recorded as not_tested rather than omitted.",
+      "result": "passed",
+      "notes": "skill/__tests__/baseline.test.ts"
+    },
+    {
+      "id": "t_bg005",
+      "code": "TEST-77",
+      "text": "Inspect SKILL.md for the coverage-reporting rule.",
+      "verifies": [
+        "r_bg005"
+      ],
+      "expected": "It states the generator reports what it covered and could not cover, with no silent truncation.",
+      "result": "passed",
+      "notes": "skill/__tests__/baseline.test.ts"
+    },
+    {
+      "id": "t_au001",
+      "code": "TEST-78",
+      "text": "Inspect SKILL.md for the requirement-audit procedure.",
+      "verifies": [
+        "r_au001"
+      ],
+      "expected": "It documents reconciling the SRS/VTP against the whole codebase in both directions, and notes the commit-time audit is the staged-diff form.",
+      "result": "passed",
+      "notes": "skill/__tests__/audit.test.ts"
+    },
+    {
+      "id": "t_au002",
+      "code": "TEST-79",
+      "text": "Inspect SKILL.md for the missing-requirement finding.",
+      "verifies": [
+        "r_au002"
+      ],
+      "expected": "It states code behavior with no requirement is flagged (missing) and a draft requirement plus test is proposed, derived from the code, for ratification.",
+      "result": "passed",
+      "notes": "skill/__tests__/audit.test.ts"
+    },
+    {
+      "id": "t_au003",
+      "code": "TEST-80",
+      "text": "Inspect SKILL.md for the stale-requirement finding.",
+      "verifies": [
+        "r_au003"
+      ],
+      "expected": "It states a requirement whose behavior is gone/changed is flagged stale for update/removal and never silently deleted.",
+      "result": "passed",
+      "notes": "skill/__tests__/audit.test.ts"
+    },
+    {
+      "id": "t_au004",
+      "code": "TEST-81",
+      "text": "Inspect SKILL.md for the coverage-gap finding.",
+      "verifies": [
+        "r_au004"
+      ],
+      "expected": "It states a requirement with no covering test, or a VTP notes reference to a test that no longer resolves, is flagged.",
+      "result": "passed",
+      "notes": "skill/__tests__/audit.test.ts"
+    },
+    {
+      "id": "t_au005",
+      "code": "TEST-82",
+      "text": "Inspect SKILL.md for the report/non-destructive rule.",
+      "verifies": [
+        "r_au005"
+      ],
+      "expected": "It states findings are categorized proposals to ratify, nothing destructive is applied automatically, and coverage/confidence is reported (no silent truncation).",
+      "result": "passed",
+      "notes": "skill/__tests__/audit.test.ts"
+    },
+    {
+      "id": "t_ed0b12",
+      "code": "TEST-83",
+      "text": "Open a project, reopen it from the Recent projects list without re-picking, and forget it.",
+      "verifies": [
+        "r_ed0b12"
+      ],
+      "expected": "A previously opened folder is listed and reopens via its persisted directory handle with no folder picker; Forget removes it from the list.",
+      "result": "passed",
+      "notes": "src/__tests__/handleStore.test.ts; src/__tests__/LocalApp.recent.test.tsx"
+    },
+    {
+      "id": "t_jv001",
+      "code": "TEST-84",
+      "text": "Validate a job record carrying type and version, and one with a bad type.",
+      "verifies": [
+        "r_jv001"
+      ],
+      "expected": "A record with type feature/bugfix and a version validates; a record with an out-of-enum type is rejected; the record schema exposes type and version alongside the existing fields.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/sidecars.test.ts"
+    },
+    {
+      "id": "t_jv002",
+      "code": "TEST-85",
+      "text": "Render the Jobs view with jobs across versions and types.",
+      "verifies": [
+        "r_jv002"
+      ],
+      "expected": "Jobs are grouped by major version (unversioned under Unreleased) with Features and Bugfixes subheadings, and each job's description shows beneath its title.",
+      "result": "passed",
+      "notes": "src/components/__tests__/JobsView.test.tsx"
+    },
+    {
+      "id": "t_jv003",
+      "code": "TEST-86",
+      "text": "Click a job in the Jobs list and then go back.",
+      "verifies": [
+        "r_jv003"
+      ],
+      "expected": "Clicking a job opens a separate detail view (record editor, no list groups); a back control returns to the list.",
+      "result": "passed",
+      "notes": "src/components/__tests__/JobsView.test.tsx"
+    },
+    {
+      "id": "t_jv004",
+      "code": "TEST-87",
+      "text": "Render the view tabs.",
+      "verifies": [
+        "r_jv004"
+      ],
+      "expected": "Jobs renders in the oversight group (with Releases and Auditor), to the right of Overview and the authoring views \u2014 not leftmost.",
+      "result": "passed",
+      "notes": "src/components/__tests__/ViewTabs.test.tsx"
+    },
+    {
+      "id": "t_jc001",
+      "code": "TEST-88",
+      "text": "Confirm job caches exist and the skill documents before-at-create / after-at-close.",
+      "verifies": [
+        "r_jc001"
+      ],
+      "expected": "SKILL.md documents the .specpad/jobs/<id>/{before,after} cache (before written at job create, after at close); committed before/after SRS snapshots exist and validate.",
+      "result": "passed",
+      "notes": "skill/__tests__/change-tracking.test.ts (docs + dogfood cache existence/validation)"
+    },
+    {
+      "id": "t_jc002",
+      "code": "TEST-89",
+      "text": "Validate a job record carrying an owner, and confirm owner is part of the record schema.",
+      "verifies": [
+        "r_jc002"
+      ],
+      "expected": "A record with owner {name,email} validates; the record schema exposes owner alongside the other record fields.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/sidecars.test.ts"
+    },
+    {
+      "id": "t_jc003",
+      "code": "TEST-90",
+      "text": "Confirm the skill documents deriving version from the release tag containing the job.",
+      "verifies": [
+        "r_jc003"
+      ],
+      "expected": "SKILL.md states version is derived (not hand-set) via git tag --contains at refresh; Unreleased until a release contains the job.",
+      "result": "passed",
+      "notes": "skill/__tests__/change-tracking.test.ts"
+    },
+    {
+      "id": "t_jc004",
+      "code": "TEST-91",
+      "text": "Render the Jobs view and open a closed job's detail.",
+      "verifies": [
+        "r_jc004"
+      ],
+      "expected": "Open jobs appear under In progress and closed under Released; a closed job's detail renders its cached SRS/VTP changes; the active open job's detail renders its in-progress diff.",
+      "result": "passed",
+      "notes": "src/components/__tests__/JobsView.test.tsx"
+    },
+    {
+      "id": "t_sc001",
+      "code": "TEST-92",
+      "text": "Confirm the skill documents the source-traceability export.",
+      "verifies": [
+        "r_sc001"
+      ],
+      "expected": "SKILL.md documents deriving a job's commits + code changes from git (git log --grep on the Job: trailer), generated on demand, with no maintained matrix.",
+      "result": "passed",
+      "notes": "skill/__tests__/change-tracking.test.ts"
+    },
+    {
+      "id": "t_sc002",
+      "code": "TEST-93",
+      "text": "Confirm closed-job commit lists are cached and documented.",
+      "verifies": [
+        "r_sc002"
+      ],
+      "expected": "SKILL.md documents writing .specpad/jobs/<id>/commits.json on close; committed commits.json files exist for closed jobs and parse as a list of {hash,subject,author,date}.",
+      "result": "passed",
+      "notes": "skill/__tests__/change-tracking.test.ts"
+    },
+    {
+      "id": "t_sc003",
+      "code": "TEST-94",
+      "text": "Open a closed job's detail with cached commits.",
+      "verifies": [
+        "r_sc003"
+      ],
+      "expected": "The detail lists the job's commits (hash, subject, author, date) under a Commits heading.",
+      "result": "passed",
+      "notes": "src/components/__tests__/JobsView.test.tsx"
+    },
+    {
+      "id": "t_sa001",
+      "code": "TEST-95",
+      "text": "Confirm the architecture spec is documented and present.",
+      "verifies": [
+        "r_sa001"
+      ],
+      "expected": "SKILL.md documents the <name>.sad.md (arc42) and <name>.workspace.dsl (C4) tracked files; SpecPad's own specpad.sad.md and specpad.workspace.dsl exist and are non-empty.",
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
+    },
+    {
+      "id": "t_sa002",
+      "code": "TEST-96",
+      "text": "Render the Architecture view with an arc42 doc and a C4 DSL.",
+      "verifies": [
+        "r_sa002"
+      ],
+      "expected": "The arc42 headings/content render, and the C4 Structurizr DSL is presented with a link to render it; an empty state shows when absent.",
+      "result": "passed",
+      "notes": "src/components/__tests__/ArchitectureView.test.tsx"
+    },
+    {
+      "id": "t_sa003",
+      "code": "TEST-97",
+      "text": "Confirm the skill documents job/release coupling for architecture.",
+      "verifies": [
+        "r_sa003"
+      ],
+      "expected": "SKILL.md states architecture is job/release-coupled and that no requirement-to-architecture trace matrix is maintained.",
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
+    },
+    {
+      "id": "t_sa004",
+      "code": "TEST-98",
+      "text": "Confirm the skill documents snapshotting architecture into the caches on close.",
+      "verifies": [
+        "r_sa004"
+      ],
+      "expected": "SKILL.md states the SAD/DSL are snapshotted into the release baseline and per-job cache on close/refresh.",
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
+    },
+    {
+      "id": "t_sa005",
+      "code": "TEST-99",
+      "text": "Confirm both architecture profile templates ship.",
+      "verifies": [
+        "r_sa005"
+      ],
+      "expected": "templates/sad.generic.md and templates/sad.medical.md both exist; the medical one has Safety classification & segregation and Architecture Verification sections, the generic one does not.",
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
+    },
+    {
+      "id": "t_sa006",
+      "code": "TEST-100",
+      "text": "Confirm the init quiz is documented.",
+      "verifies": [
+        "r_sa006"
+      ],
+      "expected": "SKILL.md's init procedure asks medical vs generic and scaffolds the matching sad/workspace/guide; generic is the default.",
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
+    },
+    {
+      "id": "t_sa007",
+      "code": "TEST-101",
+      "text": "Confirm the generic template is fuller with multiple views and no classification.",
+      "verifies": [
+        "r_sa007"
+      ],
+      "expected": "The generic SAD has the arc42 sections and no safety classification; the workspace template defines multiple C4 views (systemContext + container).",
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
+    },
+    {
+      "id": "t_sa008",
+      "code": "TEST-102",
+      "text": "Confirm per-profile authoring guides ship, are read by the skill, and render in the editor.",
+      "verifies": [
+        "r_sa008"
+      ],
+      "expected": "templates/sad.guide.generic.md and sad.guide.medical.md exist; SKILL.md says the skill reads the guide before editing; the Architecture view renders a provided guide in a panel.",
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts; src/components/__tests__/ArchitectureView.test.tsx"
+    },
+    {
+      "id": "t_av001",
+      "code": "TEST-103",
+      "text": "Render the Architecture view with and without edit callbacks.",
+      "verifies": [
+        "r_av001"
+      ],
+      "expected": "Edit/Display sub-tabs appear when editing is enabled; no sub-tabs (display only) when read-only.",
+      "result": "passed",
+      "notes": "src/components/__tests__/ArchitectureView.test.tsx"
+    },
+    {
+      "id": "t_av002",
+      "code": "TEST-104",
+      "text": "Render Display with arc42 markdown and a diagram SVG.",
+      "verifies": [
+        "r_av002"
+      ],
+      "expected": "The markdown renders as HTML headings/content (react-markdown) and the diagram SVG renders inline.",
+      "result": "passed",
+      "notes": "src/components/__tests__/ArchitectureView.test.tsx"
+    },
+    {
+      "id": "t_av003",
+      "code": "TEST-105",
+      "text": "Edit the arc42 markdown in the Edit tab and save.",
+      "verifies": [
+        "r_av003"
+      ],
+      "expected": "The CodeMirror editor emits changes via onChange; the shell marks the SAD dirty and writes it via saveProjectText on save.",
+      "result": "passed",
+      "notes": "src/components/__tests__/ArchitectureView.test.tsx (onChange); src/LocalApp.tsx save path (saveProjectText)"
+    },
+    {
+      "id": "t_av004",
+      "code": "TEST-106",
+      "text": "Inspect the skill docs for diagram change-tracking granularity.",
+      "verifies": [
+        "r_av004"
+      ],
+      "expected": "SKILL.md states diagram change tracking is coarse (file changed), not in-diagram deltas, with draw.io SVG as the diagram source.",
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
+    },
+    {
+      "id": "t_dg001",
+      "code": "TEST-107",
+      "text": "Confirm the SAD places multiple diagrams via image references.",
+      "verifies": [
+        "r_dg001"
+      ],
+      "expected": "SpecPad's specpad.sad.md references at least four diagrams (context, building block, runtime, deployment) via ![..](*.svg), and those SVG files exist.",
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
+    },
+    {
+      "id": "t_dg002",
+      "code": "TEST-108",
+      "text": "Render the Architecture Display with a markdown-placed diagram and a diagrams map.",
+      "verifies": [
+        "r_dg002"
+      ],
+      "expected": "The referenced diagram SVG renders inline at its position in the document.",
+      "result": "passed",
+      "notes": "src/components/__tests__/ArchitectureView.test.tsx"
+    },
+    {
+      "id": "t_dg003",
+      "code": "TEST-109",
+      "text": "Confirm the C4 DSL is optional in the editor and absent from the dogfood/default.",
+      "verifies": [
+        "r_dg003"
+      ],
+      "expected": "The Architecture view shows the C4 DSL section only when a DSL is present; SpecPad's docs/specpad has no workspace.dsl while the template keeps one for opt-in.",
+      "result": "passed",
+      "notes": "src/components/__tests__/ArchitectureView.test.tsx; skill/__tests__/architecture.test.ts"
+    },
+    {
+      "id": "t_ac001",
+      "code": "TEST-110",
+      "text": "Confirm closed-job caches snapshot the architecture files and a per-state manifest.",
+      "verifies": [
+        "r_ac001"
+      ],
+      "expected": "Each closed job has before/after arch-files.json; a job that created the SAD (JOB-9) shows it added (before manifest empty, after lists specpad.sad.md).",
+      "result": "passed",
+      "notes": "skill/__tests__/change-tracking.test.ts"
+    },
+    {
+      "id": "t_ac002",
+      "code": "TEST-111",
+      "text": "Open a closed job that changed architecture and view its detail.",
+      "verifies": [
+        "r_ac002"
+      ],
+      "expected": "An Architecture changes section lists added/modified/removed arch files; an SAD markdown change shows an added/removed-line diff.",
+      "result": "passed",
+      "notes": "src/components/__tests__/JobsView.test.tsx"
+    },
+    {
+      "id": "t_co001",
+      "code": "TEST-112",
+      "text": "Confirm both skills ship \u2014 core specpad and the specpad-medical add-on.",
+      "verifies": [
+        "r_co001"
+      ],
+      "expected": "skill/specpad/SKILL.md and skill/specpad-medical/SKILL.md both exist; the add-on declares it extends core and is opt-in.",
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
+    },
+    {
+      "id": "t_co002",
+      "code": "TEST-113",
+      "text": "Confirm core carries no medical content and the add-on carries the medical profile.",
+      "verifies": [
+        "r_co002"
+      ],
+      "expected": "Core's init points the medical path at specpad-medical (not a core medical template); the medical SAD template + guide live under skill/specpad-medical/templates; core's generic template has no classification sections.",
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
+    },
+    {
+      "id": "t_co003",
+      "code": "TEST-114",
+      "text": "Confirm the add-on does not fork the contract or editor.",
+      "verifies": [
+        "r_co003"
+      ],
+      "expected": "The specpad-medical skill is prose + templates (no src/); its SKILL.md states the contract and editor are one shared codebase, never a code fork.",
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
+    },
+    {
+      "id": "t_re001",
+      "code": "TEST-115",
+      "text": "Confirm a release maps to its jobs and the skill documents it.",
+      "verifies": [
+        "r_re001"
+      ],
+      "expected": "releases.json lists v1.2; the closed jobs carry version v1.2 (so the release groups them); SKILL.md states the release\u2192jobs mapping is derived from job.version.",
+      "result": "passed",
+      "notes": "skill/__tests__/change-tracking.test.ts"
+    },
+    {
+      "id": "t_re002",
+      "code": "TEST-116",
+      "text": "Confirm the release baseline snapshots all key doc types.",
+      "verifies": [
+        "r_re002"
+      ],
+      "expected": "The .specpad/baseline snapshot contains not only proj/srs/vtp JSON but also the SAD (specpad.sad.md) and a diagram SVG; SKILL.md's refresh says to snapshot all key documents.",
+      "result": "passed",
+      "notes": "skill/__tests__/change-tracking.test.ts"
+    },
+    {
+      "id": "t_re003",
+      "code": "TEST-117",
+      "text": "Render the Releases view with releases and versioned jobs.",
+      "verifies": [
+        "r_re003"
+      ],
+      "expected": "Each release shows newest-first with version/date/author and its jobs grouped Features/Bugfixes; closed jobs with no version appear under Unreleased; open jobs are excluded.",
+      "result": "passed",
+      "notes": "src/components/__tests__/ReleasesView.test.tsx"
+    },
+    {
+      "id": "t_pd001",
+      "code": "TEST-118",
+      "text": "Confirm an optional PRD register is supported as an SRS-shaped peer document.",
+      "verifies": [
+        "r_pd001"
+      ],
+      "expected": "validate() accepts a well-formed prd document (type \"prd\", id/text-required items) and rejects one missing items; the project index accepts a prd document reference; createPrdDoc/createPrdItem build a prd doc and p_-prefixed items.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/prd.test.ts"
+    },
+    {
+      "id": "t_pd002",
+      "code": "TEST-119",
+      "text": "Confirm an SRS requirement traces upward to PRD items via satisfies (by id).",
+      "verifies": [
+        "r_pd002"
+      ],
+      "expected": "SrsItem carries an optional satisfies string array; the srs schema documents it; governance flags a satisfies entry that does not resolve to a PRD item id (prd-referential-integrity).",
+      "result": "passed",
+      "notes": "src/shared/__tests__/prd.test.ts"
+    },
+    {
+      "id": "t_pd003",
+      "code": "TEST-120",
+      "text": "Confirm PRD governance is enforced only when a PRD register is present.",
+      "verifies": [
+        "r_pd003"
+      ],
+      "expected": "With a PRD register, an unresolved satisfies raises prd-referential-integrity and an unsatisfied implemented PRD item raises prd-coverage; with no PRD register, no prd-* violations are raised even when SRS items carry satisfies.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/prd.test.ts"
+    },
+    {
+      "id": "t_pd004",
+      "code": "TEST-121",
+      "text": "Confirm PRD item status gates coverage (proposed/roadmap is exempt).",
+      "verifies": [
+        "r_pd004"
+      ],
+      "expected": "A PRD item with status \"implemented\" and no satisfier raises prd-coverage; items with status \"proposed\" or no status raise nothing; createPrdItem defaults new items to \"proposed\"; the status enum rejects values outside {proposed, implemented}.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/prd.test.ts"
+    },
+    {
+      "id": "t_ad001",
+      "code": "TEST-122",
+      "text": "Render the Auditor view as an orientation index.",
+      "verifies": [
+        "r_ad001"
+      ],
+      "expected": "The Auditor tab renders the scope statement, the design-control map, and the roadmap, with links into the relevant tabs; it does not itself render the trace matrix.",
+      "result": "passed",
+      "notes": "src/components/__tests__/AuditView.test.tsx"
+    },
+    {
+      "id": "t_ad002",
+      "code": "TEST-123",
+      "text": "Confirm the Traceability view reports requirements, test results, and PRD coverage.",
+      "verifies": [
+        "r_ad002"
+      ],
+      "expected": "buildAuditReport returns verified/total requirements, passed/failed/not-tested test counts, and implemented-vs-satisfied plus proposed PRD counts; the Traceability view shows them.",
+      "result": "passed",
+      "notes": "src/__tests__/auditReport.test.ts; src/components/__tests__/TraceabilityView.test.tsx"
+    },
+    {
+      "id": "t_ad003",
+      "code": "TEST-124",
+      "text": "Confirm the Traceability matrix links PRD\u2192requirement\u2192test with results and flags unverified requirements.",
+      "verifies": [
+        "r_ad003"
+      ],
+      "expected": "Each trace row resolves a requirement's satisfied PRDs and verifying tests with a result rollup; a requirement with no verifying test is rolled up as no_test and visibly flagged in the Traceability tab.",
+      "result": "passed",
+      "notes": "src/__tests__/auditReport.test.ts; src/components/__tests__/TraceabilityView.test.tsx"
+    },
+    {
+      "id": "t_ad004",
+      "code": "TEST-125",
+      "text": "Confirm the gap list (Traceability) and the roadmap (Auditor).",
+      "verifies": [
+        "r_ad004"
+      ],
+      "expected": "The Traceability view lists checkGovernance violations (and shows governance-clean when none); the Auditor view lists the proposed PRD items as roadmap.",
+      "result": "passed",
+      "notes": "src/components/__tests__/TraceabilityView.test.tsx; src/components/__tests__/AuditView.test.tsx"
+    },
+    {
+      "id": "t_ad005",
+      "code": "TEST-126",
+      "text": "Confirm the Auditor view shows the scope disclaimer.",
+      "verifies": [
+        "r_ad005"
+      ],
+      "expected": "The view renders text stating SpecPad produces evidence supporting design controls and is not a QMS / compliance determination.",
+      "result": "passed",
+      "notes": "src/components/__tests__/AuditView.test.tsx"
+    },
+    {
+      "id": "t_ad006",
+      "code": "TEST-127",
+      "text": "Confirm the editor classifies and loads a PRD register.",
+      "verifies": [
+        "r_ad006"
+      ],
+      "expected": "classifyDocFilename recognizes <name>.prd.json as a prd document; loadPrd reads it; the Auditor tab is available when an SRS is open.",
+      "result": "passed",
+      "notes": "src/__tests__/localFileApi.test.ts; src/components/__tests__/ViewTabs.test.tsx"
+    },
+    {
+      "id": "t_dc001",
+      "code": "TEST-136",
+      "text": "Render the design-control map with citations, statuses, and links.",
+      "verifies": [
+        "r_dc001"
+      ],
+      "expected": "The Auditor view lists the formal elements (Design Inputs, Outputs, Verification, Validation, Traceability, Design Changes, Design History File, Design Reviews, Risk Management, Configuration Management), each with an IEC 62304 / 21 CFR 820.30 citation, a statement, a status badge, and a navigation link where applicable.",
+      "result": "passed",
+      "notes": "src/__tests__/designControls.test.ts; src/components/__tests__/AuditView.test.tsx"
+    },
+    {
+      "id": "t_dc002",
+      "code": "TEST-137",
+      "text": "Confirm element status is derived from the project.",
+      "verifies": [
+        "r_dc002"
+      ],
+      "expected": "buildDesignControls marks Design Inputs present when requirements exist, Design Verification by coverage, Design Changes present when jobs exist, Design History present when releases exist, and Design Validation / Risk Management as gaps.",
+      "result": "passed",
+      "notes": "src/__tests__/designControls.test.ts"
+    },
+    {
+      "id": "t_vs001",
+      "code": "TEST-128",
+      "text": "Confirm the visual system is token-based.",
+      "verifies": [
+        "r_vs001"
+      ],
+      "expected": "specpad.less defines CSS custom properties (design tokens) on :root for color/surface/type/spacing, and components reference var(--token) rather than hard-coded values; each theme overrides the same token set.",
+      "result": "passed",
+      "notes": "src/__tests__/theme.assets.test.ts"
+    },
+    {
+      "id": "t_vs002",
+      "code": "TEST-129",
+      "text": "Confirm theme selection persists and applies without flash.",
+      "verifies": [
+        "r_vs002"
+      ],
+      "expected": "applyTheme sets data-theme on the document root and writes localStorage; readStoredTheme returns the saved value (default when unset); the three themes are offered; index.html sets the saved theme before the app mounts.",
+      "result": "passed",
+      "notes": "src/__tests__/theme.test.ts"
+    },
+    {
+      "id": "t_vs003",
+      "code": "TEST-130",
+      "text": "Confirm the grouped tab order leads with Overview.",
+      "verifies": [
+        "r_vs003"
+      ],
+      "expected": "ViewTabs renders Overview first, then the authoring group (Requirements, Verification Tests, Results, Architecture), then the oversight group (Auditor, Releases, Jobs), with a separator between groups.",
+      "result": "passed",
+      "notes": "src/components/__tests__/ViewTabs.test.tsx"
+    },
+    {
+      "id": "t_vs004",
+      "code": "TEST-131",
+      "text": "Render the Overview with status, latest release, and coverage headline.",
+      "verifies": [
+        "r_vs004"
+      ],
+      "expected": "OverviewView shows the open jobs, the latest release, and a coverage/health headline (verified count and governance findings), with buttons that navigate to the authoring views.",
+      "result": "passed",
+      "notes": "src/components/__tests__/OverviewView.test.tsx"
+    },
+    {
+      "id": "t_vs005",
+      "code": "TEST-132",
+      "text": "Confirm Overview is the default view on open.",
+      "verifies": [
+        "r_vs005"
+      ],
+      "expected": "After opening a project, the active view is Overview (the editor's currentView initializes to overview).",
+      "result": "passed",
+      "notes": "src/components/__tests__/OverviewView.test.tsx; src/__tests__/LocalApp.test.tsx"
+    },
+    {
+      "id": "t_gd001",
+      "code": "TEST-133",
+      "text": "Confirm per-doc-type authoring guides ship and are referenced, not inlined.",
+      "verifies": [
+        "r_gd001"
+      ],
+      "expected": "skill/specpad/guides/{requirements,tests,product-requirements,architecture}.md exist; SKILL.md references each by path; SKILL.md does not inline a guide body (it stays a routing pointer).",
+      "result": "passed",
+      "notes": "skill/__tests__/guides.test.ts"
+    },
+    {
+      "id": "t_gd002",
+      "code": "TEST-134",
+      "text": "Confirm each guide covers what-to-capture and good/bad examples.",
+      "verifies": [
+        "r_gd002"
+      ],
+      "expected": "Each guide file contains a what-to-capture section and clearly-marked good and bad examples (e.g. \u2705/\u274c or Good/Bad headings).",
+      "result": "passed",
+      "notes": "skill/__tests__/guides.test.ts"
+    },
+    {
+      "id": "t_gd003",
+      "code": "TEST-135",
+      "text": "Confirm SKILL.md and the guides stay in sync.",
+      "verifies": [
+        "r_gd003"
+      ],
+      "expected": "The set of guide files under skill/specpad/guides/ equals the set referenced by SKILL.md \u2014 no guide is unreferenced and no referenced guide is missing.",
+      "result": "passed",
+      "notes": "skill/__tests__/guides.test.ts"
+    },
+    {
+      "id": "t_jc005",
+      "code": "TEST-138",
+      "text": "Confirm the skill snapshots before at job creation.",
+      "verifies": [
+        "r_jc005"
+      ],
+      "expected": "SKILL.md's job procedure states that the before snapshot (.specpad/jobs/<id>/before/) is written when a job is created, not only on close; the active job's before snapshot exists and validates.",
+      "result": "passed",
+      "notes": "skill/__tests__/change-tracking.test.ts"
+    },
+    {
+      "id": "t_jc006",
+      "code": "TEST-139",
+      "text": "Render the active open job's in-progress changes.",
+      "verifies": [
+        "r_jc006"
+      ],
+      "expected": "Given an activeDiffs entry for the active open job (before vs working), the Jobs view detail renders its in-progress SRS/VTP changes instead of the 'materialized once closed' message.",
+      "result": "passed",
+      "notes": "src/components/__tests__/JobsView.test.tsx"
+    },
+    {
+      "id": "t_jc007",
+      "code": "TEST-140",
+      "text": "Render the active open job's in-progress architecture changes.",
+      "verifies": [
+        "r_jc007"
+      ],
+      "expected": "Given an activeArch entry for the active open job, the Jobs view detail renders an Architecture changes section (added/modified/removed files + SAD line diff) for the open job, not only for closed jobs.",
+      "result": "passed",
+      "notes": "src/components/__tests__/JobsView.test.tsx"
+    },
+    {
+      "id": "t_rg001",
+      "code": "TEST-141",
+      "text": "Confirm the document-type registry describes each content type.",
+      "verifies": [
+        "r_rg001"
+      ],
+      "expected": "DOC_TYPES includes srs, vtp, and prd as register kinds, each with a schema, a label, optional/inBaseline flags, and a generate setting; REGISTER_TYPES filters to register kinds.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/docTypes.test.ts"
+    },
+    {
+      "id": "t_rg002",
+      "code": "TEST-142",
+      "text": "Confirm validation and the schema reference are built from the registry.",
+      "verifies": [
+        "r_rg002"
+      ],
+      "expected": "validate() accepts every register type in DOC_TYPES plus the sidecars (project/releases/job/jobs); the generated reference includes each registry type. Adding a type to the registry makes validate() accept it with no edit to validate.ts.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/docTypes.test.ts"
+    },
+    {
+      "id": "t_rg003",
+      "code": "TEST-143",
+      "text": "Confirm the skill snapshots/caches every document in the project index.",
+      "verifies": [
+        "r_rg003"
+      ],
+      "expected": "SKILL.md's refresh and job-cache prose say to snapshot every document in the project index (documents[]) plus the architecture files, iterating the index rather than a fixed list.",
+      "result": "passed",
+      "notes": "skill/__tests__/change-tracking.test.ts"
+    },
+    {
+      "id": "t_rg004",
+      "code": "TEST-144",
+      "text": "Confirm snapshot/diff are document-type-generic (extensibility).",
+      "verifies": [
+        "r_rg004"
+      ],
+      "expected": "classifyDocFilename recognizes a register type from the registry; a synthetic register type added to the registry is diffed by the shared diffItems and flows through the per-job diff path with no code change; the Jobs view renders a DiffList per register type present.",
+      "result": "passed",
+      "notes": "src/shared/__tests__/docTypes.test.ts; src/components/__tests__/JobsView.test.tsx"
+    },
+    {
+      "id": "t_pd005",
+      "code": "TEST-145",
+      "text": "Render and edit the Product Requirements tab with status and redline.",
+      "verifies": [
+        "r_pd005"
+      ],
+      "expected": "PrdTable renders the PRD items with an inline status dropdown; changing status/text/tags calls onChange with the updated doc; added/modified rows since the baseline are highlighted (redline); add/delete controls add and remove items; the tab is enabled only when a PRD register is present.",
+      "result": "passed",
+      "notes": "src/components/__tests__/PrdTable.test.tsx; src/components/__tests__/ViewTabs.test.tsx"
+    },
+    {
+      "id": "t_bg006",
+      "code": "TEST-146",
+      "text": "Confirm the baseline generator drafts PRD + a starter SAD by default (registry-aware).",
+      "verifies": [
+        "r_bg006"
+      ],
+      "expected": "SKILL.md's baseline generator states it drafts the full default set \u2014 a PRD (proposed, with SRS linked via satisfies) and a starter arc42 architecture \u2014 in addition to SRS/VTP, is registry-aware, and that a type may be declined.",
+      "result": "passed",
+      "notes": "skill/__tests__/baseline.test.ts"
+    },
+    {
+      "id": "t_in004",
+      "code": "TEST-147",
+      "text": "Confirm init scaffolds the full default set including the PRD.",
+      "verifies": [
+        "r_in004"
+      ],
+      "expected": "SKILL.md's init scaffolds the full default set; starter.proj.json lists a prd document; a starter.prd.json template ships and is a valid empty PRD; createProjectDoc's default documents are prd/srs/vtp.",
+      "result": "passed",
+      "notes": "skill/__tests__/init.test.ts; src/shared/__tests__/factories.test.ts"
+    },
+    {
+      "id": "t_pd006",
+      "code": "TEST-148",
+      "text": "Confirm the PRD tab shows each item's downward trace and flags gaps.",
+      "verifies": [
+        "r_pd006"
+      ],
+      "expected": "PrdTable's Satisfied-by column lists the SRS codes that satisfy each PRD item; a proposed item reads as roadmap; an implemented item with no satisfier is flagged as a gap.",
+      "result": "passed",
+      "notes": "src/components/__tests__/PrdTable.test.tsx"
+    },
+    {
+      "id": "t_vs006",
+      "code": "TEST-149",
+      "text": "Confirm a design-control phase band spans the right tabs.",
+      "verifies": [
+        "r_vs006"
+      ],
+      "expected": "ViewTabs renders a phase band per design-control phase; the Design Inputs band spans the Product Requirements + Requirements columns (grid-column 2 / span 2); bands cover Design Verification, Outputs, Controls, Traceability, History, Changes.",
+      "result": "passed",
+      "notes": "src/components/__tests__/ViewTabs.test.tsx"
+    },
+    {
+      "id": "t_rg005",
+      "code": "TEST-150",
+      "text": "Confirm the working loop directs a job to evaluate impact across every registered document type (not just SRS/VTP).",
+      "verifies": [
+        "r_rg005"
+      ],
+      "expected": "SKILL.md and the CLAUDE.specpad.md template both instruct evaluating the job's impact on every registered document type \u2014 naming the PRD (user-facing intent) and the architecture/SAD (structural changes) alongside SRS/VTP \u2014 before implementing, spec-first.",
+      "result": "passed",
+      "notes": "skill/__tests__/working-loop.test.ts; skill/__tests__/change-tracking.test.ts"
+    },
+    {
+      "id": "t_rg006",
+      "code": "TEST-151",
+      "text": "Confirm architecture is a registered (prose) document type.",
+      "verifies": [
+        "r_rg006"
+      ],
+      "expected": "docTypeFor('sad') is defined with kind 'prose' and no schema; 'sad' is absent from REGISTER_TYPES (not diffed as an id-keyed register) yet present in DOC_TYPES (an impactable type).",
+      "result": "passed",
+      "notes": "src/shared/__tests__/docTypes.test.ts"
+    },
+    {
+      "id": "t_avc1",
+      "code": "TEST-152",
+      "text": "Confirm PRD and VTP tables use the SRS interaction model (hamburger + expandable relationship toggle + info-dialog history).",
+      "verifies": [
+        "r_avc1"
+      ],
+      "expected": "PrdTable and VTPTable each render a per-row 'Row actions' hamburger; PRD shows an expandable 'Satisfied by' toggle and VTP an expandable 'Verifies' toggle (collapsed by default); VTP per-item history (attribution) appears in the info dialog, not a column.",
+      "result": "passed",
+      "notes": "src/components/__tests__/PrdTable.test.tsx; src/components/__tests__/VTPTable.test.tsx"
+    },
+    {
+      "id": "t_avc2",
+      "code": "TEST-153",
+      "text": "Confirm the PRD table hides Status/Tags and flags proposed items.",
+      "verifies": [
+        "r_avc2"
+      ],
+      "expected": "PrdTable renders no Status control and no Tags column; a proposed item shows a single bold 'PROPOSED' note and its text is italicised; implemented items show no such note.",
+      "result": "passed",
+      "notes": "src/components/__tests__/PrdTable.test.tsx"
+    },
+    {
+      "id": "t_avc3",
+      "code": "TEST-154",
+      "text": "Confirm the Verification Tests view shows no execution Result.",
+      "verifies": [
+        "r_avc3"
+      ],
+      "expected": "VTPTable renders no 'Result' column/control; results remain editable only on the Results (TestingView) tab.",
+      "result": "passed",
+      "notes": "src/components/__tests__/VTPTable.test.tsx"
+    },
+    {
+      "id": "t_avc4",
+      "code": "TEST-155",
+      "text": "Confirm the software-requirements view is labelled 'Software Requirements'.",
+      "verifies": [
+        "r_avc4"
+      ],
+      "expected": "ViewTabs renders the tab as 'Software Requirements'; the doc-type registry label for srs is 'Software Requirements'; SRSTable's heading falls back to 'Software Requirements'.",
+      "result": "passed",
+      "notes": "src/components/__tests__/ViewTabs.test.tsx; src/shared/__tests__/docTypes.test.ts"
+    },
+    {
+      "id": "t_vs003b",
+      "code": "TEST-156",
+      "text": "Confirm the document tabs are ordered chronologically by design-control phase.",
+      "verifies": [
+        "r_vs003"
+      ],
+      "expected": "ViewTabs renders tabs in the order Overview, Product Requirements, Software Requirements, Architecture, Verification Tests, Results, Auditor, Traceability, Releases, Jobs.",
+      "result": "passed",
+      "notes": "src/components/__tests__/ViewTabs.test.tsx"
+    },
+    {
+      "id": "t_ac002b",
+      "code": "TEST-157",
+      "text": "Confirm a modified markdown architecture file gets a section-aware diff and diagrams are coarse.",
+      "verifies": [
+        "r_ac002"
+      ],
+      "expected": "mdSectionDiff reports only changed sections by heading with added/removed lines; the Jobs view renders each modified .md file's changed section headings, and reports a changed diagram coarsely as 'diagram changed'.",
+      "result": "passed",
+      "notes": "src/__tests__/archDiff.test.ts; src/components/__tests__/JobsView.test.tsx"
+    },
+    {
+      "id": "t_jc007b",
+      "code": "TEST-158",
+      "text": "Confirm the active job's in-progress architecture diff is section-aware for markdown.",
+      "verifies": [
+        "r_jc007"
+      ],
+      "expected": "The active open job's in-progress architecture changes render the modified SAD's changed section headings and their added/removed lines (section-aware), built from mdSectionDiff over the before snapshot vs the working SAD.",
+      "result": "passed",
+      "notes": "src/components/__tests__/JobsView.test.tsx; src/__tests__/archDiff.test.ts"
+    }
   ]
 }

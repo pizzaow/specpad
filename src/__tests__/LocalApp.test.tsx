@@ -71,8 +71,8 @@ describe('LocalApp document switching', () => {
 
     // Dropdown shows both project names; pick AppB.
     fireEvent.click(await screen.findByText('AppB'));
-    // The editor opens on the Overview; switch to the Requirements tab to see the table.
-    fireEvent.click(await screen.findByText('Requirements'));
+    // The editor opens on the Overview; switch to the Software Requirements tab to see the table.
+    fireEvent.click(await screen.findByText('Software Requirements'));
     expect(await screen.findByText('Requirement B')).toBeInTheDocument();
 
     // Switch back: brand still shows AppA (directory name unchanged). The Requirements
