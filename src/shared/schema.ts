@@ -40,6 +40,16 @@ export interface SrsDoc {
   items: SrsItem[];
 }
 
+// A framework-agnostic link from a verification test to the automated test that
+// executes it. `runner` and `selector` are opaque to the SpecPad core: a runner
+// adapter (or CI emitting a normalized RunRecord) interprets them. References are
+// to test *code* (file + selector), so they're matched against a run's results.
+export interface AutomationLink {
+  runner: string; // opaque runner id, e.g. "vitest", "playwright", "pytest"
+  file: string; // path to the test file (tracked in git)
+  selector?: string; // runner-interpreted: test name, grep, "#15", …; absent = the whole file
+}
+
 export interface VtpItem {
   id: string;
   code?: string;
@@ -51,6 +61,7 @@ export interface VtpItem {
   result?: TestResult;
   notes?: string;
   tags?: string[];
+  automation?: AutomationLink[]; // the automated test(s) that execute this verification (empty = manual)
 }
 
 export interface VtpDoc {
@@ -174,9 +185,22 @@ export const vtpSchema = {
           level: { type: 'integer', minimum: 0, description: 'Indent depth for hierarchy; absent means 0. Headings form dotted section codes.' },
           verifies: { ...stringArray, description: 'Ids of the SRS requirements this test verifies — ids, never codes, so renames cannot break traceability.' },
           expected: { type: 'string', description: 'The expected result that defines a pass.' },
-          result: { enum: ['', 'not_tested', 'passed', 'failed'], description: 'Latest recorded outcome: "", "not_tested", "passed", or "failed". Roll-ups are computed on read, never stored.' },
-          notes: { type: 'string', description: 'Evidence and context for the recorded result (e.g. which automated test covers it).' },
+          result: { enum: ['', 'not_tested', 'passed', 'failed'], description: 'Latest recorded outcome for a MANUAL test: "", "not_tested", "passed", or "failed". For automated tests the outcome is derived from a captured run, not stored here. Roll-ups are computed on read.' },
+          notes: { type: 'string', description: 'Evidence and context for the recorded result (free text; the machine link lives in automation).' },
           tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
+          automation: {
+            type: 'array',
+            description: 'Framework-agnostic links to the automated test(s) that execute this verification. Absent/empty means the test is manual. The result for an automated test is derived from a captured run, never hand-set.',
+            items: {
+              type: 'object',
+              required: ['runner', 'file'],
+              properties: {
+                runner: { type: 'string', description: 'Opaque test-runner id (e.g. "vitest", "playwright", "pytest"); interpreted by a runner adapter or CI, never by the SpecPad core.' },
+                file: { type: 'string', description: 'Path to the test file (tracked in git), relative to the repo root.' },
+                selector: { type: 'string', description: 'Runner-interpreted identifier for the specific test within the file (test name, grep, "#15", …); absent matches the whole file.' },
+              },
+            },
+          },
         },
       },
     },
@@ -217,7 +241,7 @@ export const prdSchema = {
 // JSON Schema validates STRUCTURE ONLY, exactly like the core docs.
 // The skill writes these; it never computes diffs. The editor diffs the snapshots.
 
-export type SidecarType = 'releases' | 'job' | 'jobs';
+export type SidecarType = 'releases' | 'job' | 'jobs' | 'run';
 
 export type JobStatus = 'open' | 'closed';
 
@@ -286,7 +310,32 @@ export interface JobCommit {
   date: string;
 }
 
-export type SidecarDoc = ReleasesDoc | JobDoc | JobsDoc;
+// A captured test-run record — normalized, framework-agnostic verification evidence.
+// The skill (or CI) runs a suite, parses the runner's machine report, and writes one
+// RunRecord per runner, stamped with the commit it ran against. Frozen into the
+// release baseline and each closed job's cache (the "key deliverables"). Regenerable
+// by re-running, so it lives under .specpad/ like the other captured snapshots.
+export type RunStatus = 'passed' | 'failed' | 'skipped';
+
+export interface RunResult {
+  file: string;
+  selector?: string;
+  status: RunStatus;
+  durationMs?: number;
+}
+
+export interface RunRecord {
+  schemaVersion: SchemaVersion;
+  type: 'run';
+  name: string;
+  runner: string; // which runner produced this record (opaque)
+  ref: string; // commit SHA the run executed against
+  ranAt: string; // YYYY-MM-DD
+  summary: { total: number; passed: number; failed: number; skipped: number };
+  results: RunResult[];
+}
+
+export type SidecarDoc = ReleasesDoc | JobDoc | JobsDoc | RunRecord;
 
 const nullableString = { type: ['string', 'null'] } as const;
 
@@ -363,6 +412,45 @@ export const jobsSchema = {
           title: { type: 'string', description: 'Short human-readable summary of the job.' },
           description: { type: 'string', description: 'Optional longer description of the work the job covers.' },
           status: { enum: ['open', 'closed'], description: 'Lifecycle state: "open" (may accrue more commits) or "closed" (scope sealed; further work spawns a new job).' },
+        },
+      },
+    },
+  },
+} as const;
+
+export const runSchema = {
+  $id: 'specpad/v1/run',
+  type: 'object',
+  required: ['schemaVersion', 'type', 'name', 'runner', 'ref', 'ranAt', 'summary', 'results'],
+  properties: {
+    schemaVersion: { const: '1.0', description: 'Contract version of this file; "1.0" documents open in the pinned editor build at /v01/.' },
+    type: { const: 'run', description: 'Document discriminator; selects the schema this file is validated against.' },
+    name: { type: 'string', description: 'Project name this run belongs to.' },
+    runner: { type: 'string', description: 'Opaque test-runner id that produced this record (e.g. "vitest", "playwright"). One record per runner.' },
+    ref: { type: 'string', description: 'Commit SHA the run executed against (the build under test, in SpecPad terms).' },
+    ranAt: { type: 'string', description: 'Date the run was captured (YYYY-MM-DD).' },
+    summary: {
+      type: 'object',
+      description: 'Roll-up counts for the whole run.',
+      required: ['total', 'passed', 'failed', 'skipped'],
+      properties: {
+        total: { type: 'integer', minimum: 0, description: 'Total tests in the run.' },
+        passed: { type: 'integer', minimum: 0, description: 'Count of passing tests.' },
+        failed: { type: 'integer', minimum: 0, description: 'Count of failing tests.' },
+        skipped: { type: 'integer', minimum: 0, description: 'Count of skipped/pending tests.' },
+      },
+    },
+    results: {
+      type: 'array',
+      description: 'Per-test outcomes, matched to VTP automation links by file (+ selector).',
+      items: {
+        type: 'object',
+        required: ['file', 'status'],
+        properties: {
+          file: { type: 'string', description: 'Test file path relative to the repo root.' },
+          selector: { type: 'string', description: 'Runner-interpreted identifier for the specific test (e.g. its full name); absent for file-level results.' },
+          status: { enum: ['passed', 'failed', 'skipped'], description: 'Outcome of this test in the run.' },
+          durationMs: { type: 'number', minimum: 0, description: 'Execution time in milliseconds, when reported.' },
         },
       },
     },

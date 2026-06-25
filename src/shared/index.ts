@@ -5,3 +5,4 @@ export * from './validate';
 export * from './governance';
 export * from './factories';
 export * from './diff';
+export * from './verification';

@@ -12,13 +12,8 @@
         "r_a101"
       ],
       "expected": "All three files exist under docs/specpad/ and parse without error.",
-      "notes": "src/shared/__tests__/dogfood.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/dogfood.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/dogfood.test.ts"
     },
     {
       "id": "t_c002",
@@ -28,13 +23,8 @@
         "r_a102"
       ],
       "expected": "Each is reported as structurally invalid (non-empty error list).",
-      "notes": "src/shared/__tests__/validate.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/validate.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/validate.test.ts"
     },
     {
       "id": "t_c003",
@@ -44,13 +34,8 @@
         "r_a103"
       ],
       "expected": "validate() returns no errors.",
-      "notes": "src/shared/__tests__/validate.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/validate.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/validate.test.ts"
     },
     {
       "id": "t_c004",
@@ -60,13 +45,8 @@
         "r_a104"
       ],
       "expected": "Both are reported invalid, each error naming the missing required field.",
-      "notes": "src/shared/__tests__/validate.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/validate.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/validate.test.ts"
     },
     {
       "id": "t_c005",
@@ -76,13 +56,8 @@
         "r_a105"
       ],
       "expected": "The \"maybe\" item is invalid (result enum); the \"passed\" item is valid.",
-      "notes": "src/shared/__tests__/validate.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/validate.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/validate.test.ts"
     },
     {
       "id": "t_c006",
@@ -92,17 +67,8 @@
         "r_a201"
       ],
       "expected": "createSrsItem assigns an id, and the load/save round-trip preserves every id unchanged.",
-      "notes": "src/shared/__tests__/factories.test.ts; src/__tests__/localFileApi.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/factories.test.ts"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/localFileApi.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/factories.test.ts; src/__tests__/localFileApi.test.ts"
     },
     {
       "id": "t_c007",
@@ -112,13 +78,8 @@
         "r_a202"
       ],
       "expected": "Each id matches prefix_<6 hex>, and ID_PREFIX maps requirement\u2192r, test\u2192t, heading\u2192h.",
-      "notes": "src/shared/__tests__/ids.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/ids.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/ids.test.ts"
     },
     {
       "id": "t_c008",
@@ -128,13 +89,8 @@
         "r_a203"
       ],
       "expected": "The verifies entry equals the requirement's id, not its code label.",
-      "notes": "src/components/__tests__/VTPTable.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/VTPTable.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/VTPTable.test.tsx"
     },
     {
       "id": "t_c009",
@@ -144,13 +100,8 @@
         "r_a204"
       ],
       "expected": "The id is unchanged and referential integrity still holds (verifies targets the id, not the code).",
-      "notes": "src/shared/__tests__/governance.test.ts (code-rename / id-immutability case)",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/governance.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/governance.test.ts (code-rename / id-immutability case)"
     },
     {
       "id": "t_c010",
@@ -160,13 +111,8 @@
         "r_a301"
       ],
       "expected": "The displayed count is computed from verifies (1, then 2); no numTests field is written to disk.",
-      "notes": "src/components/__tests__/SRSTable.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/SRSTable.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/SRSTable.test.tsx"
     },
     {
       "id": "t_c011",
@@ -176,13 +122,8 @@
         "r_a302"
       ],
       "expected": "No modifiedUser, modifiedDate, or change-list keys are present; the file validates.",
-      "notes": "src/shared/__tests__/dogfood.test.ts (validate)",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/dogfood.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/dogfood.test.ts (validate)"
     },
     {
       "id": "t_c012",
@@ -192,13 +133,8 @@
         "r_a401"
       ],
       "expected": "validate() selects the schema by doc.type and returns [] for each valid document.",
-      "notes": "src/shared/__tests__/validate.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/validate.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/validate.test.ts"
     },
     {
       "id": "t_c013",
@@ -208,13 +144,8 @@
         "r_a402"
       ],
       "expected": "validate() returns no errors (policy is not its concern); the traceability gap is found only by governance.",
-      "notes": "src/shared/__tests__/validate.test.ts + governance.test.ts separation",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/validate.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/validate.test.ts + governance.test.ts separation"
     },
     {
       "id": "t_c014",
@@ -224,13 +155,8 @@
         "r_a403"
       ],
       "expected": "A traceability violation is reported for the untested requirement.",
-      "notes": "src/shared/__tests__/governance.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/governance.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/governance.test.ts"
     },
     {
       "id": "t_c015",
@@ -240,13 +166,8 @@
         "r_a404"
       ],
       "expected": "A referential-integrity violation is reported for that test.",
-      "notes": "src/shared/__tests__/governance.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/governance.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/governance.test.ts"
     },
     {
       "id": "t_c016",
@@ -256,13 +177,8 @@
         "r_a405"
       ],
       "expected": "A missing-expected violation is reported for that test.",
-      "notes": "src/shared/__tests__/governance.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/governance.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/governance.test.ts"
     },
     {
       "id": "t_c017",
@@ -272,13 +188,8 @@
         "r_a406"
       ],
       "expected": "No traceability violation is reported for the heading.",
-      "notes": "src/shared/__tests__/governance.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/governance.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/governance.test.ts"
     },
     {
       "id": "t_c018",
@@ -288,13 +199,8 @@
         "r_a407"
       ],
       "expected": "Every governance rule id appears in SKILL.md (parity); drift fails the test.",
-      "notes": "skill/__tests__/parity.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/parity.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/parity.test.ts"
     },
     {
       "id": "t_c019",
@@ -304,13 +210,8 @@
         "r_a501"
       ],
       "expected": "The document round-trips with a trailing newline; a fallback open/download path exists for unsupported browsers.",
-      "notes": "src/__tests__/localFileApi.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/localFileApi.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/__tests__/localFileApi.test.ts"
     },
     {
       "id": "t_c020",
@@ -320,13 +221,8 @@
         "r_a502"
       ],
       "expected": "The verifying-test count is shown and updates as more tests verify the requirement.",
-      "notes": "src/components/__tests__/SRSTable.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/SRSTable.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/SRSTable.test.tsx"
     },
     {
       "id": "t_c021",
@@ -336,13 +232,8 @@
         "r_a503"
       ],
       "expected": "onSave receives a VTP document with the updated result on the correct item.",
-      "notes": "src/components/__tests__/TestingView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/TestingView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/TestingView.test.tsx"
     },
     {
       "id": "t_c022",
@@ -352,13 +243,8 @@
         "r_a504"
       ],
       "expected": "The status bar shows \"No problems found\" when clean and a traceability message when a requirement is untested.",
-      "notes": "src/components/__tests__/StatusBar.test.tsx (validation surfacing moved from the former ValidationPanel to the StatusBar)",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/StatusBar.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/StatusBar.test.tsx (validation surfacing moved from the former ValidationPanel to the StatusBar)"
     },
     {
       "id": "t_c023",
@@ -368,13 +254,8 @@
         "r_a505"
       ],
       "expected": "The offending row is visually flagged (danger styling).",
-      "notes": "src/components/__tests__/VTPTable.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/VTPTable.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/VTPTable.test.tsx"
     },
     {
       "id": "t_c024",
@@ -384,13 +265,8 @@
         "r_a506"
       ],
       "expected": "The editor re-seeds the table for the newly selected document; it does not write the prior document's content.",
-      "notes": "src/__tests__/LocalApp.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/LocalApp.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/__tests__/LocalApp.test.tsx"
     },
     {
       "id": "t_c025",
@@ -411,13 +287,8 @@
         "r_a602"
       ],
       "expected": "validate() returns no errors and checkGovernance() returns no violations for the SpecPad docs.",
-      "notes": "src/shared/__tests__/dogfood.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/dogfood.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/dogfood.test.ts"
     },
     {
       "id": "t_c027",
@@ -438,17 +309,8 @@
         "r_ce101"
       ],
       "expected": "Added rows are flagged, modified rows are flagged with the changed cell highlighted, and removed items are listed in a panel.",
-      "notes": "src/__tests__/changeTracking.test.ts; src/components/__tests__/SRSTable.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/changeTracking.test.ts"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/SRSTable.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/__tests__/changeTracking.test.ts; src/components/__tests__/SRSTable.test.tsx"
     },
     {
       "id": "t_ce202",
@@ -458,13 +320,8 @@
         "r_ce102"
       ],
       "expected": "No spurious add/remove; a renamed code is a single modified entry; pure reordering yields no change.",
-      "notes": "src/shared/__tests__/diff.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/diff.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/diff.test.ts"
     },
     {
       "id": "t_ce203",
@@ -474,13 +331,8 @@
         "r_ce103"
       ],
       "expected": "It states the skill never computes diffs and that the editor computes all change views (one diff implementation).",
-      "notes": "skill/__tests__/change-tracking.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/change-tracking.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/change-tracking.test.ts"
     },
     {
       "id": "t_ce204",
@@ -490,13 +342,8 @@
         "r_ce104"
       ],
       "expected": "The cache holds verbatim snapshot copies plus a release manifest; no computed-diff files are written.",
-      "notes": "Manual dogfood: docs/specpad/.specpad/ (baseline + snapshots); skill/__tests__/change-tracking.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/change-tracking.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "Manual dogfood: docs/specpad/.specpad/ (baseline + snapshots); skill/__tests__/change-tracking.test.ts"
     },
     {
       "id": "t_ce205",
@@ -506,17 +353,8 @@
         "r_ce105"
       ],
       "expected": "The manifest validates with each release carrying version, ref, date, and an author {name,email}; cachedReleases maps the baseline release to the baseline location.",
-      "notes": "src/shared/__tests__/sidecars.test.ts; src/__tests__/changeTrackingView.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/sidecars.test.ts"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/changeTrackingView.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/sidecars.test.ts; src/__tests__/changeTrackingView.test.ts"
     },
     {
       "id": "t_ce206",
@@ -526,17 +364,8 @@
         "r_ce106"
       ],
       "expected": "Each item resolves addedIn/lastChangedIn with the release author, and the oldest cached snapshot is marked as a boundary.",
-      "notes": "src/__tests__/changeTracking.test.ts; src/__tests__/changeTrackingView.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/changeTracking.test.ts"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/changeTrackingView.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/__tests__/changeTracking.test.ts; src/__tests__/changeTrackingView.test.ts"
     },
     {
       "id": "t_ce207",
@@ -546,13 +375,8 @@
         "r_ce107"
       ],
       "expected": "Both versions render with their dates and authors, and the baseline release is flagged.",
-      "notes": "src/components/__tests__/VersionTimeline.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/VersionTimeline.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/VersionTimeline.test.tsx"
     },
     {
       "id": "t_ce208",
@@ -562,17 +386,8 @@
         "r_ce108"
       ],
       "expected": "JobControl reports the entered job id and title to its handler; SKILL.md documents folding the current job into a Job: commit trailer; no job field is stored on items.",
-      "notes": "src/components/__tests__/JobControl.test.tsx; skill/__tests__/change-tracking.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/JobControl.test.tsx"
-        },
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/change-tracking.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/JobControl.test.tsx; skill/__tests__/change-tracking.test.ts"
     },
     {
       "id": "t_ce209",
@@ -582,13 +397,8 @@
         "r_ce109"
       ],
       "expected": "The editor renders and remains editable, showing a \"history unavailable \u2014 run specpad refresh\" note instead of redline/attribution.",
-      "notes": "LocalApp degraded path: loaders return null when the cache is absent (src/__tests__/LocalApp.test.tsx mocks them null); an explicit banner assertion is still pending.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/LocalApp.test.tsx"
-        }
-      ]
+      "result": "not_tested",
+      "notes": "LocalApp degraded path: loaders return null when the cache is absent (src/__tests__/LocalApp.test.tsx mocks them null); an explicit banner assertion is still pending."
     },
     {
       "id": "t_ce210",
@@ -598,13 +408,8 @@
         "r_ce110"
       ],
       "expected": "Refresh caches the latest release snapshot; an older snapshot is written to the cache only when explicitly pulled.",
-      "notes": "Manual dogfood: baseline cached by refresh, v0.1 pulled on demand; skill/__tests__/change-tracking.test.ts documents pull.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/change-tracking.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "Manual dogfood: baseline cached by refresh, v0.1 pulled on demand; skill/__tests__/change-tracking.test.ts documents pull."
     },
     {
       "id": "t_ed0a01",
@@ -614,17 +419,8 @@
         "r_ed0a01"
       ],
       "expected": "A new requirement is inserted directly below at level + 1.",
-      "notes": "src/components/__tests__/SRSTable.test.tsx; src/shared/__tests__/level.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/SRSTable.test.tsx"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/level.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/SRSTable.test.tsx; src/shared/__tests__/level.test.ts"
     },
     {
       "id": "t_ed0a02",
@@ -634,17 +430,8 @@
         "r_ed0a02"
       ],
       "expected": "The heading's Code cell shows the derived dotted path; the literal word \"heading\" never appears.",
-      "notes": "src/__tests__/outline.test.ts; src/components/__tests__/SRSTable.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/outline.test.ts"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/SRSTable.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/__tests__/outline.test.ts; src/components/__tests__/SRSTable.test.tsx"
     },
     {
       "id": "t_ed0a03",
@@ -654,17 +441,8 @@
         "r_ed0a03"
       ],
       "expected": "It lists add (above/below/child), add heading, indent/outdent, delete, and view information; delete confirms; outdent is disabled at level 0.",
-      "notes": "src/components/__tests__/RowMenu.test.tsx; src/components/__tests__/SRSTable.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/RowMenu.test.tsx"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/SRSTable.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/RowMenu.test.tsx; src/components/__tests__/SRSTable.test.tsx"
     },
     {
       "id": "t_ed0a04",
@@ -674,13 +452,8 @@
         "r_ed0a04"
       ],
       "expected": "The verifying VTP tests are listed inline beneath the requirement.",
-      "notes": "src/components/__tests__/SRSTable.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/SRSTable.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/SRSTable.test.tsx"
     },
     {
       "id": "t_ed0a05",
@@ -690,17 +463,8 @@
         "r_ed0a05"
       ],
       "expected": "No Hazards column is present in the table; the info modal shows the item's hazards.",
-      "notes": "src/components/__tests__/SRSTable.test.tsx; src/components/__tests__/ItemInfo.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/SRSTable.test.tsx"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/ItemInfo.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/SRSTable.test.tsx; src/components/__tests__/ItemInfo.test.tsx"
     },
     {
       "id": "t_ed0a06",
@@ -710,17 +474,8 @@
         "r_ed0a06"
       ],
       "expected": "Added/modified rows are flagged and the removed row renders inline struck-through at its baseline position; no separate removed panel.",
-      "notes": "src/__tests__/changeTracking.test.ts (buildRedlineRows); src/components/__tests__/SRSTable.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/changeTracking.test.ts"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/SRSTable.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/__tests__/changeTracking.test.ts (buildRedlineRows); src/components/__tests__/SRSTable.test.tsx"
     },
     {
       "id": "t_ed0a07",
@@ -741,13 +496,8 @@
         "r_ed0b01"
       ],
       "expected": "It shows the SpecPad brand and the primary controls (File, Save, Job, version) in one bar; no separate page header/toolbar.",
-      "notes": "src/components/__tests__/MenuBar.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/MenuBar.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/MenuBar.test.tsx"
     },
     {
       "id": "t_ed0b02",
@@ -757,13 +507,8 @@
         "r_ed0b02"
       ],
       "expected": "New document fires; with no FS access the menu offers the upload/download fallback open.",
-      "notes": "src/components/__tests__/MenuBar.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/MenuBar.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/MenuBar.test.tsx"
     },
     {
       "id": "t_ed0b03",
@@ -773,17 +518,8 @@
         "r_ed0b03"
       ],
       "expected": "The chosen project's documents load.",
-      "notes": "src/components/__tests__/MenuBar.test.tsx; src/__tests__/LocalApp.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/MenuBar.test.tsx"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/LocalApp.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/MenuBar.test.tsx; src/__tests__/LocalApp.test.tsx"
     },
     {
       "id": "t_ed0b04",
@@ -793,13 +529,8 @@
         "r_ed0b04"
       ],
       "expected": "Requirements is active; tabs for absent documents are disabled and do not switch when clicked.",
-      "notes": "src/components/__tests__/ViewTabs.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/ViewTabs.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/ViewTabs.test.tsx"
     },
     {
       "id": "t_ed0b05",
@@ -809,13 +540,8 @@
         "r_ed0b05"
       ],
       "expected": "Clean shows \"No problems found\"; a violation shows an error/warning count that expands to the detail messages on click.",
-      "notes": "src/components/__tests__/StatusBar.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/StatusBar.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/StatusBar.test.tsx"
     },
     {
       "id": "t_ed0b06",
@@ -825,17 +551,8 @@
         "r_ed0b06"
       ],
       "expected": "The chip triggers the dialog; the dialog lists releases, or shows an empty state prompting specpad refresh.",
-      "notes": "src/components/__tests__/MenuBar.test.tsx; src/components/__tests__/VersionHistoryDialog.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/MenuBar.test.tsx"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/VersionHistoryDialog.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/MenuBar.test.tsx; src/components/__tests__/VersionHistoryDialog.test.tsx"
     },
     {
       "id": "t_ed0b07",
@@ -845,13 +562,8 @@
         "r_ed0b07"
       ],
       "expected": "Each table calls onChange with the updated document and renders no internal Save button.",
-      "notes": "src/components/__tests__/SRSTable.test.tsx; VTPTable.test.tsx; TestingView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/SRSTable.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/SRSTable.test.tsx; VTPTable.test.tsx; TestingView.test.tsx"
     },
     {
       "id": "t_ed0b08",
@@ -861,13 +573,8 @@
         "r_ed0b08"
       ],
       "expected": "Save is disabled when clean and enabled with an unsaved indicator when dirty; clicking it saves.",
-      "notes": "src/components/__tests__/MenuBar.test.tsx (Ctrl/Cmd-S wired via the LocalApp keydown effect)",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/MenuBar.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/MenuBar.test.tsx (Ctrl/Cmd-S wired via the LocalApp keydown effect)"
     },
     {
       "id": "t_ed0b09",
@@ -877,13 +584,8 @@
         "r_ed0b09"
       ],
       "expected": "No prompt appears on a clean switch; a dirty switch prompts before discarding (beforeunload guard exercised manually).",
-      "notes": "src/__tests__/LocalApp.test.tsx (asserts no confirm on a clean switch)",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/LocalApp.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/__tests__/LocalApp.test.tsx (asserts no confirm on a clean switch)"
     },
     {
       "id": "t_ed0b10",
@@ -893,17 +595,8 @@
         "r_ed0b10"
       ],
       "expected": "The demo project loads read-only over HTTP from /demo/; all read views (tables, testing, validation, version history, redlines, job chip) function.",
-      "notes": "src/__tests__/LocalApp.demo.test.tsx; src/__tests__/localFileApi.demo.test.ts; testing view, version history, and redlines exercised manually in the dev server",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/LocalApp.demo.test.tsx"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/localFileApi.demo.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/__tests__/LocalApp.demo.test.tsx; src/__tests__/localFileApi.demo.test.ts; testing view, version history, and redlines exercised manually in the dev server"
     },
     {
       "id": "t_ed0b11",
@@ -913,13 +606,8 @@
         "r_ed0b11"
       ],
       "expected": "All write affordances are absent or inert and a \"Demo \u2014 read-only\" indicator is visible.",
-      "notes": "src/__tests__/LocalApp.demo.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/LocalApp.demo.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/__tests__/LocalApp.demo.test.tsx"
     },
     {
       "id": "t_ms001",
@@ -929,17 +617,8 @@
         "r_ms001"
       ],
       "expected": "site/src/__tests__/generate-reference.test.ts and src/shared/__tests__/schema-descriptions.test.ts both pass; the build fails if any schema property lacks a description.",
-      "notes": "site/src/__tests__/generate-reference.test.ts; src/shared/__tests__/schema-descriptions.test.ts \u2014 automated coverage confirmed in the marketing-site branch test run",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "site/src/__tests__/generate-reference.test.ts"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/schema-descriptions.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "site/src/__tests__/generate-reference.test.ts; src/shared/__tests__/schema-descriptions.test.ts \u2014 automated coverage confirmed in the marketing-site branch test run"
     },
     {
       "id": "t_ms002",
@@ -960,13 +639,8 @@
         "r_jb001"
       ],
       "expected": "A well-formed jobs doc validates; a record missing status or title, or with a status outside open/closed, is reported invalid.",
-      "notes": "src/shared/__tests__/sidecars.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/sidecars.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/sidecars.test.ts"
     },
     {
       "id": "t_jb002",
@@ -976,13 +650,8 @@
         "r_jb002"
       ],
       "expected": "A job record's schema properties are exactly id/code/title/description/status \u2014 no field listing changed items or commits; SKILL.md documents deriving job \u2192 SRS \u2192 VTP \u2192 source from git.",
-      "notes": "src/shared/__tests__/sidecars.test.ts (records-only assertion); docs/design \u00a713.1; SKILL.md on-demand reports.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/sidecars.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/sidecars.test.ts (records-only assertion); docs/design \u00a713.1; SKILL.md on-demand reports."
     },
     {
       "id": "t_jb003",
@@ -992,17 +661,8 @@
         "r_jb003"
       ],
       "expected": "activeJobIds returns the jobs array when present, falls back to a single job, else []; SKILL.md states one Job: trailer is written per active id, carrying the record id.",
-      "notes": "src/shared/__tests__/governance.test.ts (activeJobIds); sidecars.test.ts (jobs array); skill/__tests__/change-tracking.test.ts (Job: trailer)",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/governance.test.ts"
-        },
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/change-tracking.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/governance.test.ts (activeJobIds); sidecars.test.ts (jobs array); skill/__tests__/change-tracking.test.ts (Job: trailer)"
     },
     {
       "id": "t_jb004",
@@ -1012,13 +672,8 @@
         "r_jb004"
       ],
       "expected": "active-job-open is reported for the closed entry and active-job-known for the dangling entry; open, known entries produce no violation; with no register, neither rule fires.",
-      "notes": "src/shared/__tests__/governance.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/governance.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/governance.test.ts"
     },
     {
       "id": "t_jb005",
@@ -1028,17 +683,8 @@
         "r_jb005"
       ],
       "expected": "The view lists/creates/edits records and multi-selects active jobs; a closed job is never offered for activation; a closed-but-active job can be removed.",
-      "notes": "src/components/__tests__/JobsView.test.tsx; src/components/__tests__/JobControl.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/JobsView.test.tsx"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/JobControl.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/JobsView.test.tsx; src/components/__tests__/JobControl.test.tsx"
     },
     {
       "id": "t_jb006",
@@ -1048,13 +694,8 @@
         "r_jb006"
       ],
       "expected": "No activation control is offered for a closed, non-active job; the guidance directs creating a new job; the skill follows the same rule.",
-      "notes": "src/components/__tests__/JobsView.test.tsx (closed job offers no activation)",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/JobsView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/JobsView.test.tsx (closed job offers no activation)"
     },
     {
       "id": "t_jb007",
@@ -1064,13 +705,8 @@
         "r_jb007"
       ],
       "expected": "The hook exits non-zero and blocks the push, naming the offending commit; a commit carrying a Job: trailer passes.",
-      "notes": ".githooks/pre-push (installed via core.hooksPath); skill/specpad/templates/hooks/pre-push; skill/__tests__/pre-push.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/pre-push.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": ".githooks/pre-push (installed via core.hooksPath); skill/specpad/templates/hooks/pre-push; skill/__tests__/pre-push.test.ts"
     },
     {
       "id": "t_jb008",
@@ -1080,13 +716,8 @@
         "r_jb008"
       ],
       "expected": "The hook warns (without blocking) and recommends a requirement audit; a Spec: none trailer suppresses the warning. When committing via Claude, the agent proposes a requirement derived from the diff for ratification.",
-      "notes": "skill/__tests__/pre-push.test.ts (warn + Spec: none cases); SKILL.md commit workflow Layer 2 (requirement audit)",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/pre-push.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/pre-push.test.ts (warn + Spec: none cases); SKILL.md commit workflow Layer 2 (requirement audit)"
     },
     {
       "id": "t_jb009",
@@ -1096,13 +727,8 @@
         "r_jb009"
       ],
       "expected": "Block on the no-trailer commit; pass on trailer+spec; warn on code-without-spec; no warning with Spec: none; tag pushes (refs/tags/*) are skipped; full bypass with SPECPAD_SKIP=1. Merge commits and pre-adoption history are not policed.",
-      "notes": "skill/__tests__/pre-push.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/pre-push.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/pre-push.test.ts"
     },
     {
       "id": "t_jb010",
@@ -1112,13 +738,8 @@
         "r_jb010"
       ],
       "expected": "It documents capturing requirements as you build, spec-first, with the job \u2192 requirement \u2192 test \u2192 code chain attributed to the active job.",
-      "notes": "skill/__tests__/working-loop.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/working-loop.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/working-loop.test.ts"
     },
     {
       "id": "t_jb011",
@@ -1128,13 +749,8 @@
         "r_jb011"
       ],
       "expected": "It states 'intent, not transcript', defines what rises to a requirement (testable behavioral 'shall' statements, not implementation detail), and gives the regression-test litmus.",
-      "notes": "skill/__tests__/working-loop.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/working-loop.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/working-loop.test.ts"
     },
     {
       "id": "t_jb012",
@@ -1144,13 +760,8 @@
         "r_jb012"
       ],
       "expected": "SKILL.md states requirements are written autonomously then surfaced for the user to edit; JOBS-10..12 were drafted spec-first under JOB-1 with verifying tests (self-dogfood).",
-      "notes": "skill/__tests__/working-loop.test.ts; this feature was captured via the loop it defines.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/working-loop.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/working-loop.test.ts; this feature was captured via the loop it defines."
     },
     {
       "id": "t_in001",
@@ -1160,13 +771,8 @@
         "r_in001"
       ],
       "expected": "SKILL.md documents the four init steps (scaffold, launcher, hook via core.hooksPath, CLAUDE.md wiring); templates/hooks/pre-push and templates/CLAUDE.specpad.md both exist in the skill.",
-      "notes": "skill/__tests__/init.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/init.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/init.test.ts"
     },
     {
       "id": "t_in002",
@@ -1176,13 +782,8 @@
         "r_in002"
       ],
       "expected": "templates/CLAUDE.specpad.md carries the <!-- specpad:working-loop --> sentinel; SKILL.md says to append only when the sentinel is absent and not to overwrite existing docs or clobber an existing core.hooksPath.",
-      "notes": "skill/__tests__/init.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/init.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/init.test.ts"
     },
     {
       "id": "t_in003",
@@ -1192,13 +793,8 @@
         "r_in003"
       ],
       "expected": "SKILL.md states init appends the directive and never overwrites CLAUDE.md, creating it only if absent.",
-      "notes": "skill/__tests__/init.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/init.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/init.test.ts"
     },
     {
       "id": "t_bg001",
@@ -1208,13 +804,8 @@
         "r_bg001"
       ],
       "expected": "It documents drafting an initial SRS/VTP from an existing codebase, surveying public surfaces, modules, docs, and existing tests.",
-      "notes": "skill/__tests__/baseline.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/baseline.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/baseline.test.ts"
     },
     {
       "id": "t_bg002",
@@ -1224,13 +815,8 @@
         "r_bg002"
       ],
       "expected": "It states output is a draft for human ratification, never authoritative; generated items are tagged `draft`; deriving from code does not bypass user confirmation.",
-      "notes": "skill/__tests__/baseline.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/baseline.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/baseline.test.ts"
     },
     {
       "id": "t_bg003",
@@ -1240,13 +826,8 @@
         "r_bg003"
       ],
       "expected": "It states requirements are at the \"shall\" altitude (not implementation detail) and the output is governance-clean (verifying VTP entry + expected per requirement).",
-      "notes": "skill/__tests__/baseline.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/baseline.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/baseline.test.ts"
     },
     {
       "id": "t_bg004",
@@ -1256,13 +837,8 @@
         "r_bg004"
       ],
       "expected": "It states requirements map to existing tests (named in notes, result reflecting them) and a behavior with no test is recorded as not_tested rather than omitted.",
-      "notes": "skill/__tests__/baseline.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/baseline.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/baseline.test.ts"
     },
     {
       "id": "t_bg005",
@@ -1272,13 +848,8 @@
         "r_bg005"
       ],
       "expected": "It states the generator reports what it covered and could not cover, with no silent truncation.",
-      "notes": "skill/__tests__/baseline.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/baseline.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/baseline.test.ts"
     },
     {
       "id": "t_au001",
@@ -1288,13 +859,8 @@
         "r_au001"
       ],
       "expected": "It documents reconciling the SRS/VTP against the whole codebase in both directions, and notes the commit-time audit is the staged-diff form.",
-      "notes": "skill/__tests__/audit.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/audit.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/audit.test.ts"
     },
     {
       "id": "t_au002",
@@ -1304,13 +870,8 @@
         "r_au002"
       ],
       "expected": "It states code behavior with no requirement is flagged (missing) and a draft requirement plus test is proposed, derived from the code, for ratification.",
-      "notes": "skill/__tests__/audit.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/audit.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/audit.test.ts"
     },
     {
       "id": "t_au003",
@@ -1320,13 +881,8 @@
         "r_au003"
       ],
       "expected": "It states a requirement whose behavior is gone/changed is flagged stale for update/removal and never silently deleted.",
-      "notes": "skill/__tests__/audit.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/audit.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/audit.test.ts"
     },
     {
       "id": "t_au004",
@@ -1336,13 +892,8 @@
         "r_au004"
       ],
       "expected": "It states a requirement with no covering test, or a VTP notes reference to a test that no longer resolves, is flagged.",
-      "notes": "skill/__tests__/audit.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/audit.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/audit.test.ts"
     },
     {
       "id": "t_au005",
@@ -1352,13 +903,8 @@
         "r_au005"
       ],
       "expected": "It states findings are categorized proposals to ratify, nothing destructive is applied automatically, and coverage/confidence is reported (no silent truncation).",
-      "notes": "skill/__tests__/audit.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/audit.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/audit.test.ts"
     },
     {
       "id": "t_ed0b12",
@@ -1368,17 +914,8 @@
         "r_ed0b12"
       ],
       "expected": "A previously opened folder is listed and reopens via its persisted directory handle with no folder picker; Forget removes it from the list.",
-      "notes": "src/__tests__/handleStore.test.ts; src/__tests__/LocalApp.recent.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/handleStore.test.ts"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/LocalApp.recent.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/__tests__/handleStore.test.ts; src/__tests__/LocalApp.recent.test.tsx"
     },
     {
       "id": "t_jv001",
@@ -1388,13 +925,8 @@
         "r_jv001"
       ],
       "expected": "A record with type feature/bugfix and a version validates; a record with an out-of-enum type is rejected; the record schema exposes type and version alongside the existing fields.",
-      "notes": "src/shared/__tests__/sidecars.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/sidecars.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/sidecars.test.ts"
     },
     {
       "id": "t_jv002",
@@ -1404,13 +936,8 @@
         "r_jv002"
       ],
       "expected": "Jobs are grouped by major version (unversioned under Unreleased) with Features and Bugfixes subheadings, and each job's description shows beneath its title.",
-      "notes": "src/components/__tests__/JobsView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/JobsView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/JobsView.test.tsx"
     },
     {
       "id": "t_jv003",
@@ -1420,13 +947,8 @@
         "r_jv003"
       ],
       "expected": "Clicking a job opens a separate detail view (record editor, no list groups); a back control returns to the list.",
-      "notes": "src/components/__tests__/JobsView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/JobsView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/JobsView.test.tsx"
     },
     {
       "id": "t_jv004",
@@ -1436,13 +958,8 @@
         "r_jv004"
       ],
       "expected": "Jobs renders in the oversight group (with Releases and Auditor), to the right of Overview and the authoring views \u2014 not leftmost.",
-      "notes": "src/components/__tests__/ViewTabs.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/ViewTabs.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/ViewTabs.test.tsx"
     },
     {
       "id": "t_jc001",
@@ -1452,13 +969,8 @@
         "r_jc001"
       ],
       "expected": "SKILL.md documents the .specpad/jobs/<id>/{before,after} cache (before written at job create, after at close); committed before/after SRS snapshots exist and validate.",
-      "notes": "skill/__tests__/change-tracking.test.ts (docs + dogfood cache existence/validation)",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/change-tracking.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/change-tracking.test.ts (docs + dogfood cache existence/validation)"
     },
     {
       "id": "t_jc002",
@@ -1468,13 +980,8 @@
         "r_jc002"
       ],
       "expected": "A record with owner {name,email} validates; the record schema exposes owner alongside the other record fields.",
-      "notes": "src/shared/__tests__/sidecars.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/sidecars.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/sidecars.test.ts"
     },
     {
       "id": "t_jc003",
@@ -1484,13 +991,8 @@
         "r_jc003"
       ],
       "expected": "SKILL.md states version is derived (not hand-set) via git tag --contains at refresh; Unreleased until a release contains the job.",
-      "notes": "skill/__tests__/change-tracking.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/change-tracking.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/change-tracking.test.ts"
     },
     {
       "id": "t_jc004",
@@ -1500,13 +1002,8 @@
         "r_jc004"
       ],
       "expected": "Open jobs appear under In progress and closed under Released; a closed job's detail renders its cached SRS/VTP changes; the active open job's detail renders its in-progress diff.",
-      "notes": "src/components/__tests__/JobsView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/JobsView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/JobsView.test.tsx"
     },
     {
       "id": "t_sc001",
@@ -1516,13 +1013,8 @@
         "r_sc001"
       ],
       "expected": "SKILL.md documents deriving a job's commits + code changes from git (git log --grep on the Job: trailer), generated on demand, with no maintained matrix.",
-      "notes": "skill/__tests__/change-tracking.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/change-tracking.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/change-tracking.test.ts"
     },
     {
       "id": "t_sc002",
@@ -1532,13 +1024,8 @@
         "r_sc002"
       ],
       "expected": "SKILL.md documents writing .specpad/jobs/<id>/commits.json on close; committed commits.json files exist for closed jobs and parse as a list of {hash,subject,author,date}.",
-      "notes": "skill/__tests__/change-tracking.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/change-tracking.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/change-tracking.test.ts"
     },
     {
       "id": "t_sc003",
@@ -1548,13 +1035,8 @@
         "r_sc003"
       ],
       "expected": "The detail lists the job's commits (hash, subject, author, date) under a Commits heading.",
-      "notes": "src/components/__tests__/JobsView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/JobsView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/JobsView.test.tsx"
     },
     {
       "id": "t_sa001",
@@ -1564,13 +1046,8 @@
         "r_sa001"
       ],
       "expected": "SKILL.md documents the <name>.sad.md (arc42) and <name>.workspace.dsl (C4) tracked files; SpecPad's own specpad.sad.md and specpad.workspace.dsl exist and are non-empty.",
-      "notes": "skill/__tests__/architecture.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/architecture.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
     },
     {
       "id": "t_sa002",
@@ -1580,13 +1057,8 @@
         "r_sa002"
       ],
       "expected": "The arc42 headings/content render, and the C4 Structurizr DSL is presented with a link to render it; an empty state shows when absent.",
-      "notes": "src/components/__tests__/ArchitectureView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/ArchitectureView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/ArchitectureView.test.tsx"
     },
     {
       "id": "t_sa003",
@@ -1596,13 +1068,8 @@
         "r_sa003"
       ],
       "expected": "SKILL.md states architecture is job/release-coupled and that no requirement-to-architecture trace matrix is maintained.",
-      "notes": "skill/__tests__/architecture.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/architecture.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
     },
     {
       "id": "t_sa004",
@@ -1612,13 +1079,8 @@
         "r_sa004"
       ],
       "expected": "SKILL.md states the SAD/DSL are snapshotted into the release baseline and per-job cache on close/refresh.",
-      "notes": "skill/__tests__/architecture.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/architecture.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
     },
     {
       "id": "t_sa005",
@@ -1628,13 +1090,8 @@
         "r_sa005"
       ],
       "expected": "templates/sad.generic.md and templates/sad.medical.md both exist; the medical one has Safety classification & segregation and Architecture Verification sections, the generic one does not.",
-      "notes": "skill/__tests__/architecture.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/architecture.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
     },
     {
       "id": "t_sa006",
@@ -1644,13 +1101,8 @@
         "r_sa006"
       ],
       "expected": "SKILL.md's init procedure asks medical vs generic and scaffolds the matching sad/workspace/guide; generic is the default.",
-      "notes": "skill/__tests__/architecture.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/architecture.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
     },
     {
       "id": "t_sa007",
@@ -1660,13 +1112,8 @@
         "r_sa007"
       ],
       "expected": "The generic SAD has the arc42 sections and no safety classification; the workspace template defines multiple C4 views (systemContext + container).",
-      "notes": "skill/__tests__/architecture.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/architecture.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
     },
     {
       "id": "t_sa008",
@@ -1676,17 +1123,8 @@
         "r_sa008"
       ],
       "expected": "templates/sad.guide.generic.md and sad.guide.medical.md exist; SKILL.md says the skill reads the guide before editing; the Architecture view renders a provided guide in a panel.",
-      "notes": "skill/__tests__/architecture.test.ts; src/components/__tests__/ArchitectureView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/architecture.test.ts"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/ArchitectureView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts; src/components/__tests__/ArchitectureView.test.tsx"
     },
     {
       "id": "t_av001",
@@ -1696,13 +1134,8 @@
         "r_av001"
       ],
       "expected": "Edit/Display sub-tabs appear when editing is enabled; no sub-tabs (display only) when read-only.",
-      "notes": "src/components/__tests__/ArchitectureView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/ArchitectureView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/ArchitectureView.test.tsx"
     },
     {
       "id": "t_av002",
@@ -1712,13 +1145,8 @@
         "r_av002"
       ],
       "expected": "The markdown renders as HTML headings/content (react-markdown) and the diagram SVG renders inline.",
-      "notes": "src/components/__tests__/ArchitectureView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/ArchitectureView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/ArchitectureView.test.tsx"
     },
     {
       "id": "t_av003",
@@ -1728,13 +1156,8 @@
         "r_av003"
       ],
       "expected": "The CodeMirror editor emits changes via onChange; the shell marks the SAD dirty and writes it via saveProjectText on save.",
-      "notes": "src/components/__tests__/ArchitectureView.test.tsx (onChange); src/LocalApp.tsx save path (saveProjectText)",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/ArchitectureView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/ArchitectureView.test.tsx (onChange); src/LocalApp.tsx save path (saveProjectText)"
     },
     {
       "id": "t_av004",
@@ -1744,13 +1167,8 @@
         "r_av004"
       ],
       "expected": "SKILL.md states diagram change tracking is coarse (file changed), not in-diagram deltas, with draw.io SVG as the diagram source.",
-      "notes": "skill/__tests__/architecture.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/architecture.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
     },
     {
       "id": "t_dg001",
@@ -1760,13 +1178,8 @@
         "r_dg001"
       ],
       "expected": "SpecPad's specpad.sad.md references at least four diagrams (context, building block, runtime, deployment) via ![..](*.svg), and those SVG files exist.",
-      "notes": "skill/__tests__/architecture.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/architecture.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
     },
     {
       "id": "t_dg002",
@@ -1776,13 +1189,8 @@
         "r_dg002"
       ],
       "expected": "The referenced diagram SVG renders inline at its position in the document.",
-      "notes": "src/components/__tests__/ArchitectureView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/ArchitectureView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/ArchitectureView.test.tsx"
     },
     {
       "id": "t_dg003",
@@ -1792,17 +1200,8 @@
         "r_dg003"
       ],
       "expected": "The Architecture view shows the C4 DSL section only when a DSL is present; SpecPad's docs/specpad has no workspace.dsl while the template keeps one for opt-in.",
-      "notes": "src/components/__tests__/ArchitectureView.test.tsx; skill/__tests__/architecture.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/ArchitectureView.test.tsx"
-        },
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/architecture.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/ArchitectureView.test.tsx; skill/__tests__/architecture.test.ts"
     },
     {
       "id": "t_ac001",
@@ -1812,13 +1211,8 @@
         "r_ac001"
       ],
       "expected": "Each closed job has before/after arch-files.json; a job that created the SAD (JOB-9) shows it added (before manifest empty, after lists specpad.sad.md).",
-      "notes": "skill/__tests__/change-tracking.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/change-tracking.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/change-tracking.test.ts"
     },
     {
       "id": "t_ac002",
@@ -1828,13 +1222,8 @@
         "r_ac002"
       ],
       "expected": "An Architecture changes section lists added/modified/removed arch files; an SAD markdown change shows an added/removed-line diff.",
-      "notes": "src/components/__tests__/JobsView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/JobsView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/JobsView.test.tsx"
     },
     {
       "id": "t_co001",
@@ -1844,13 +1233,8 @@
         "r_co001"
       ],
       "expected": "skill/specpad/SKILL.md and skill/specpad-medical/SKILL.md both exist; the add-on declares it extends core and is opt-in.",
-      "notes": "skill/__tests__/architecture.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/architecture.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
     },
     {
       "id": "t_co002",
@@ -1860,13 +1244,8 @@
         "r_co002"
       ],
       "expected": "Core's init points the medical path at specpad-medical (not a core medical template); the medical SAD template + guide live under skill/specpad-medical/templates; core's generic template has no classification sections.",
-      "notes": "skill/__tests__/architecture.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/architecture.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
     },
     {
       "id": "t_co003",
@@ -1876,13 +1255,8 @@
         "r_co003"
       ],
       "expected": "The specpad-medical skill is prose + templates (no src/); its SKILL.md states the contract and editor are one shared codebase, never a code fork.",
-      "notes": "skill/__tests__/architecture.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/architecture.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/architecture.test.ts"
     },
     {
       "id": "t_re001",
@@ -1892,13 +1266,8 @@
         "r_re001"
       ],
       "expected": "releases.json lists v1.2; the closed jobs carry version v1.2 (so the release groups them); SKILL.md states the release\u2192jobs mapping is derived from job.version.",
-      "notes": "skill/__tests__/change-tracking.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/change-tracking.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/change-tracking.test.ts"
     },
     {
       "id": "t_re002",
@@ -1908,13 +1277,8 @@
         "r_re002"
       ],
       "expected": "The .specpad/baseline snapshot contains not only proj/srs/vtp JSON but also the SAD (specpad.sad.md) and a diagram SVG; SKILL.md's refresh says to snapshot all key documents.",
-      "notes": "skill/__tests__/change-tracking.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/change-tracking.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/change-tracking.test.ts"
     },
     {
       "id": "t_re003",
@@ -1924,13 +1288,8 @@
         "r_re003"
       ],
       "expected": "Each release shows newest-first with version/date/author and its jobs grouped Features/Bugfixes; closed jobs with no version appear under Unreleased; open jobs are excluded.",
-      "notes": "src/components/__tests__/ReleasesView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/ReleasesView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/ReleasesView.test.tsx"
     },
     {
       "id": "t_pd001",
@@ -1940,13 +1299,8 @@
         "r_pd001"
       ],
       "expected": "validate() accepts a well-formed prd document (type \"prd\", id/text-required items) and rejects one missing items; the project index accepts a prd document reference; createPrdDoc/createPrdItem build a prd doc and p_-prefixed items.",
-      "notes": "src/shared/__tests__/prd.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/prd.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/prd.test.ts"
     },
     {
       "id": "t_pd002",
@@ -1956,13 +1310,8 @@
         "r_pd002"
       ],
       "expected": "SrsItem carries an optional satisfies string array; the srs schema documents it; governance flags a satisfies entry that does not resolve to a PRD item id (prd-referential-integrity).",
-      "notes": "src/shared/__tests__/prd.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/prd.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/prd.test.ts"
     },
     {
       "id": "t_pd003",
@@ -1972,13 +1321,8 @@
         "r_pd003"
       ],
       "expected": "With a PRD register, an unresolved satisfies raises prd-referential-integrity and an unsatisfied implemented PRD item raises prd-coverage; with no PRD register, no prd-* violations are raised even when SRS items carry satisfies.",
-      "notes": "src/shared/__tests__/prd.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/prd.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/prd.test.ts"
     },
     {
       "id": "t_pd004",
@@ -1988,13 +1332,8 @@
         "r_pd004"
       ],
       "expected": "A PRD item with status \"implemented\" and no satisfier raises prd-coverage; items with status \"proposed\" or no status raise nothing; createPrdItem defaults new items to \"proposed\"; the status enum rejects values outside {proposed, implemented}.",
-      "notes": "src/shared/__tests__/prd.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/prd.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/prd.test.ts"
     },
     {
       "id": "t_ad001",
@@ -2004,13 +1343,8 @@
         "r_ad001"
       ],
       "expected": "The Auditor tab renders the scope statement, the design-control map, and the roadmap, with links into the relevant tabs; it does not itself render the trace matrix.",
-      "notes": "src/components/__tests__/AuditView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/AuditView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/AuditView.test.tsx"
     },
     {
       "id": "t_ad002",
@@ -2020,17 +1354,8 @@
         "r_ad002"
       ],
       "expected": "buildAuditReport returns verified/total requirements, passed/failed/not-tested test counts, and implemented-vs-satisfied plus proposed PRD counts; the Traceability view shows them.",
-      "notes": "src/__tests__/auditReport.test.ts; src/components/__tests__/TraceabilityView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/auditReport.test.ts"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/TraceabilityView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/__tests__/auditReport.test.ts; src/components/__tests__/TraceabilityView.test.tsx"
     },
     {
       "id": "t_ad003",
@@ -2040,17 +1365,8 @@
         "r_ad003"
       ],
       "expected": "Each trace row resolves a requirement's satisfied PRDs and verifying tests with a result rollup; a requirement with no verifying test is rolled up as no_test and visibly flagged in the Traceability tab.",
-      "notes": "src/__tests__/auditReport.test.ts; src/components/__tests__/TraceabilityView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/auditReport.test.ts"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/TraceabilityView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/__tests__/auditReport.test.ts; src/components/__tests__/TraceabilityView.test.tsx"
     },
     {
       "id": "t_ad004",
@@ -2060,17 +1376,8 @@
         "r_ad004"
       ],
       "expected": "The Traceability view lists checkGovernance violations (and shows governance-clean when none); the Auditor view lists the proposed PRD items as roadmap.",
-      "notes": "src/components/__tests__/TraceabilityView.test.tsx; src/components/__tests__/AuditView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/TraceabilityView.test.tsx"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/AuditView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/TraceabilityView.test.tsx; src/components/__tests__/AuditView.test.tsx"
     },
     {
       "id": "t_ad005",
@@ -2080,13 +1387,8 @@
         "r_ad005"
       ],
       "expected": "The view renders text stating SpecPad produces evidence supporting design controls and is not a QMS / compliance determination.",
-      "notes": "src/components/__tests__/AuditView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/AuditView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/AuditView.test.tsx"
     },
     {
       "id": "t_ad006",
@@ -2096,17 +1398,8 @@
         "r_ad006"
       ],
       "expected": "classifyDocFilename recognizes <name>.prd.json as a prd document; loadPrd reads it; the Auditor tab is available when an SRS is open.",
-      "notes": "src/__tests__/localFileApi.test.ts; src/components/__tests__/ViewTabs.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/localFileApi.test.ts"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/ViewTabs.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/__tests__/localFileApi.test.ts; src/components/__tests__/ViewTabs.test.tsx"
     },
     {
       "id": "t_dc001",
@@ -2116,17 +1409,8 @@
         "r_dc001"
       ],
       "expected": "The Auditor view lists the formal elements (Design Inputs, Outputs, Verification, Validation, Traceability, Design Changes, Design History File, Design Reviews, Risk Management, Configuration Management), each with an IEC 62304 / 21 CFR 820.30 citation, a statement, a status badge, and a navigation link where applicable.",
-      "notes": "src/__tests__/designControls.test.ts; src/components/__tests__/AuditView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/designControls.test.ts"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/AuditView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/__tests__/designControls.test.ts; src/components/__tests__/AuditView.test.tsx"
     },
     {
       "id": "t_dc002",
@@ -2136,13 +1420,8 @@
         "r_dc002"
       ],
       "expected": "buildDesignControls marks Design Inputs present when requirements exist, Design Verification by coverage, Design Changes present when jobs exist, Design History present when releases exist, and Design Validation / Risk Management as gaps.",
-      "notes": "src/__tests__/designControls.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/designControls.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/__tests__/designControls.test.ts"
     },
     {
       "id": "t_vs001",
@@ -2152,13 +1431,8 @@
         "r_vs001"
       ],
       "expected": "specpad.less defines CSS custom properties (design tokens) on :root for color/surface/type/spacing, and components reference var(--token) rather than hard-coded values; each theme overrides the same token set.",
-      "notes": "src/__tests__/theme.assets.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/theme.assets.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/__tests__/theme.assets.test.ts"
     },
     {
       "id": "t_vs002",
@@ -2168,13 +1442,8 @@
         "r_vs002"
       ],
       "expected": "applyTheme sets data-theme on the document root and writes localStorage; readStoredTheme returns the saved value (default when unset); the three themes are offered; index.html sets the saved theme before the app mounts.",
-      "notes": "src/__tests__/theme.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/theme.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/__tests__/theme.test.ts"
     },
     {
       "id": "t_vs003",
@@ -2184,13 +1453,8 @@
         "r_vs003"
       ],
       "expected": "ViewTabs renders Overview first, then the authoring group (Requirements, Verification Tests, Results, Architecture), then the oversight group (Auditor, Releases, Jobs), with a separator between groups.",
-      "notes": "src/components/__tests__/ViewTabs.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/ViewTabs.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/ViewTabs.test.tsx"
     },
     {
       "id": "t_vs004",
@@ -2200,13 +1464,8 @@
         "r_vs004"
       ],
       "expected": "OverviewView shows the open jobs, the latest release, and a coverage/health headline (verified count and governance findings), with buttons that navigate to the authoring views.",
-      "notes": "src/components/__tests__/OverviewView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/OverviewView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/OverviewView.test.tsx"
     },
     {
       "id": "t_vs005",
@@ -2216,17 +1475,8 @@
         "r_vs005"
       ],
       "expected": "After opening a project, the active view is Overview (the editor's currentView initializes to overview).",
-      "notes": "src/components/__tests__/OverviewView.test.tsx; src/__tests__/LocalApp.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/OverviewView.test.tsx"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/LocalApp.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/OverviewView.test.tsx; src/__tests__/LocalApp.test.tsx"
     },
     {
       "id": "t_gd001",
@@ -2236,13 +1486,8 @@
         "r_gd001"
       ],
       "expected": "skill/specpad/guides/{requirements,tests,product-requirements,architecture}.md exist; SKILL.md references each by path; SKILL.md does not inline a guide body (it stays a routing pointer).",
-      "notes": "skill/__tests__/guides.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/guides.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/guides.test.ts"
     },
     {
       "id": "t_gd002",
@@ -2252,13 +1497,8 @@
         "r_gd002"
       ],
       "expected": "Each guide file contains a what-to-capture section and clearly-marked good and bad examples (e.g. \u2705/\u274c or Good/Bad headings).",
-      "notes": "skill/__tests__/guides.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/guides.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/guides.test.ts"
     },
     {
       "id": "t_gd003",
@@ -2268,13 +1508,8 @@
         "r_gd003"
       ],
       "expected": "The set of guide files under skill/specpad/guides/ equals the set referenced by SKILL.md \u2014 no guide is unreferenced and no referenced guide is missing.",
-      "notes": "skill/__tests__/guides.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/guides.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/guides.test.ts"
     },
     {
       "id": "t_jc005",
@@ -2284,13 +1519,8 @@
         "r_jc005"
       ],
       "expected": "SKILL.md's job procedure states that the before snapshot (.specpad/jobs/<id>/before/) is written when a job is created, not only on close; the active job's before snapshot exists and validates.",
-      "notes": "skill/__tests__/change-tracking.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/change-tracking.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/change-tracking.test.ts"
     },
     {
       "id": "t_jc006",
@@ -2300,13 +1530,8 @@
         "r_jc006"
       ],
       "expected": "Given an activeDiffs entry for the active open job (before vs working), the Jobs view detail renders its in-progress SRS/VTP changes instead of the 'materialized once closed' message.",
-      "notes": "src/components/__tests__/JobsView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/JobsView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/JobsView.test.tsx"
     },
     {
       "id": "t_jc007",
@@ -2316,13 +1541,8 @@
         "r_jc007"
       ],
       "expected": "Given an activeArch entry for the active open job, the Jobs view detail renders an Architecture changes section (added/modified/removed files + SAD line diff) for the open job, not only for closed jobs.",
-      "notes": "src/components/__tests__/JobsView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/JobsView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/JobsView.test.tsx"
     },
     {
       "id": "t_rg001",
@@ -2332,13 +1552,8 @@
         "r_rg001"
       ],
       "expected": "DOC_TYPES includes srs, vtp, and prd as register kinds, each with a schema, a label, optional/inBaseline flags, and a generate setting; REGISTER_TYPES filters to register kinds.",
-      "notes": "src/shared/__tests__/docTypes.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/docTypes.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/docTypes.test.ts"
     },
     {
       "id": "t_rg002",
@@ -2348,13 +1563,8 @@
         "r_rg002"
       ],
       "expected": "validate() accepts every register type in DOC_TYPES plus the sidecars (project/releases/job/jobs); the generated reference includes each registry type. Adding a type to the registry makes validate() accept it with no edit to validate.ts.",
-      "notes": "src/shared/__tests__/docTypes.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/docTypes.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/docTypes.test.ts"
     },
     {
       "id": "t_rg003",
@@ -2364,13 +1574,8 @@
         "r_rg003"
       ],
       "expected": "SKILL.md's refresh and job-cache prose say to snapshot every document in the project index (documents[]) plus the architecture files, iterating the index rather than a fixed list.",
-      "notes": "skill/__tests__/change-tracking.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/change-tracking.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/change-tracking.test.ts"
     },
     {
       "id": "t_rg004",
@@ -2380,17 +1585,8 @@
         "r_rg004"
       ],
       "expected": "classifyDocFilename recognizes a register type from the registry; a synthetic register type added to the registry is diffed by the shared diffItems and flows through the per-job diff path with no code change; the Jobs view renders a DiffList per register type present.",
-      "notes": "src/shared/__tests__/docTypes.test.ts; src/components/__tests__/JobsView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/docTypes.test.ts"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/JobsView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/docTypes.test.ts; src/components/__tests__/JobsView.test.tsx"
     },
     {
       "id": "t_pd005",
@@ -2400,17 +1596,8 @@
         "r_pd005"
       ],
       "expected": "PrdTable renders the PRD items with an inline status dropdown; changing status/text/tags calls onChange with the updated doc; added/modified rows since the baseline are highlighted (redline); add/delete controls add and remove items; the tab is enabled only when a PRD register is present.",
-      "notes": "src/components/__tests__/PrdTable.test.tsx; src/components/__tests__/ViewTabs.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/PrdTable.test.tsx"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/ViewTabs.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/PrdTable.test.tsx; src/components/__tests__/ViewTabs.test.tsx"
     },
     {
       "id": "t_bg006",
@@ -2420,13 +1607,8 @@
         "r_bg006"
       ],
       "expected": "SKILL.md's baseline generator states it drafts the full default set \u2014 a PRD (proposed, with SRS linked via satisfies) and a starter arc42 architecture \u2014 in addition to SRS/VTP, is registry-aware, and that a type may be declined.",
-      "notes": "skill/__tests__/baseline.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/baseline.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/baseline.test.ts"
     },
     {
       "id": "t_in004",
@@ -2436,17 +1618,8 @@
         "r_in004"
       ],
       "expected": "SKILL.md's init scaffolds the full default set; starter.proj.json lists a prd document; a starter.prd.json template ships and is a valid empty PRD; createProjectDoc's default documents are prd/srs/vtp.",
-      "notes": "skill/__tests__/init.test.ts; src/shared/__tests__/factories.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/init.test.ts"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/factories.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/init.test.ts; src/shared/__tests__/factories.test.ts"
     },
     {
       "id": "t_pd006",
@@ -2456,13 +1629,8 @@
         "r_pd006"
       ],
       "expected": "PrdTable's Satisfied-by column lists the SRS codes that satisfy each PRD item; a proposed item reads as roadmap; an implemented item with no satisfier is flagged as a gap.",
-      "notes": "src/components/__tests__/PrdTable.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/PrdTable.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/PrdTable.test.tsx"
     },
     {
       "id": "t_vs006",
@@ -2472,13 +1640,8 @@
         "r_vs006"
       ],
       "expected": "ViewTabs renders a phase band per design-control phase; the Design Inputs band spans the Product Requirements + Requirements columns (grid-column 2 / span 2); bands cover Design Verification, Outputs, Controls, Traceability, History, Changes.",
-      "notes": "src/components/__tests__/ViewTabs.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/ViewTabs.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/ViewTabs.test.tsx"
     },
     {
       "id": "t_rg005",
@@ -2488,17 +1651,8 @@
         "r_rg005"
       ],
       "expected": "SKILL.md and the CLAUDE.specpad.md template both instruct evaluating the job's impact on every registered document type \u2014 naming the PRD (user-facing intent) and the architecture/SAD (structural changes) alongside SRS/VTP \u2014 before implementing, spec-first.",
-      "notes": "skill/__tests__/working-loop.test.ts; skill/__tests__/change-tracking.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/working-loop.test.ts"
-        },
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/change-tracking.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/working-loop.test.ts; skill/__tests__/change-tracking.test.ts"
     },
     {
       "id": "t_rg006",
@@ -2508,13 +1662,8 @@
         "r_rg006"
       ],
       "expected": "docTypeFor('sad') is defined with kind 'prose' and no schema; 'sad' is absent from REGISTER_TYPES (not diffed as an id-keyed register) yet present in DOC_TYPES (an impactable type).",
-      "notes": "src/shared/__tests__/docTypes.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/docTypes.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/shared/__tests__/docTypes.test.ts"
     },
     {
       "id": "t_avc1",
@@ -2524,17 +1673,8 @@
         "r_avc1"
       ],
       "expected": "PrdTable and VTPTable each render a per-row 'Row actions' hamburger; PRD shows an expandable 'Satisfied by' toggle and VTP an expandable 'Verifies' toggle (collapsed by default); VTP per-item history (attribution) appears in the info dialog, not a column.",
-      "notes": "src/components/__tests__/PrdTable.test.tsx; src/components/__tests__/VTPTable.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/PrdTable.test.tsx"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/VTPTable.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/PrdTable.test.tsx; src/components/__tests__/VTPTable.test.tsx"
     },
     {
       "id": "t_avc2",
@@ -2544,13 +1684,8 @@
         "r_avc2"
       ],
       "expected": "PrdTable renders no Status control and no Tags column; a proposed item shows a single bold 'PROPOSED' note and its text is italicised; implemented items show no such note.",
-      "notes": "src/components/__tests__/PrdTable.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/PrdTable.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/PrdTable.test.tsx"
     },
     {
       "id": "t_avc3",
@@ -2560,13 +1695,8 @@
         "r_avc3"
       ],
       "expected": "VTPTable renders no 'Result' column/control; results remain editable only on the Results (TestingView) tab.",
-      "notes": "src/components/__tests__/VTPTable.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/VTPTable.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/VTPTable.test.tsx"
     },
     {
       "id": "t_avc4",
@@ -2576,17 +1706,8 @@
         "r_avc4"
       ],
       "expected": "ViewTabs renders the tab as 'Software Requirements'; the doc-type registry label for srs is 'Software Requirements'; SRSTable's heading falls back to 'Software Requirements'.",
-      "notes": "src/components/__tests__/ViewTabs.test.tsx; src/shared/__tests__/docTypes.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/ViewTabs.test.tsx"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/docTypes.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/ViewTabs.test.tsx; src/shared/__tests__/docTypes.test.ts"
     },
     {
       "id": "t_vs003b",
@@ -2596,13 +1717,8 @@
         "r_vs003"
       ],
       "expected": "ViewTabs renders tabs in the order Overview, Product Requirements, Software Requirements, Architecture, Verification Tests, Results, Auditor, Traceability, Releases, Jobs.",
-      "notes": "src/components/__tests__/ViewTabs.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/ViewTabs.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/ViewTabs.test.tsx"
     },
     {
       "id": "t_ac002b",
@@ -2612,17 +1728,8 @@
         "r_ac002"
       ],
       "expected": "mdSectionDiff reports only changed sections by heading with added/removed lines; the Jobs view renders each modified .md file's changed section headings, and reports a changed diagram coarsely as 'diagram changed'.",
-      "notes": "src/__tests__/archDiff.test.ts; src/components/__tests__/JobsView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/archDiff.test.ts"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/JobsView.test.tsx"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/__tests__/archDiff.test.ts; src/components/__tests__/JobsView.test.tsx"
     },
     {
       "id": "t_jc007b",
@@ -2632,17 +1739,8 @@
         "r_jc007"
       ],
       "expected": "The active open job's in-progress architecture changes render the modified SAD's changed section headings and their added/removed lines (section-aware), built from mdSectionDiff over the before snapshot vs the working SAD.",
-      "notes": "src/components/__tests__/JobsView.test.tsx; src/__tests__/archDiff.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/JobsView.test.tsx"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/archDiff.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "src/components/__tests__/JobsView.test.tsx; src/__tests__/archDiff.test.ts"
     },
     {
       "id": "t_re004",
@@ -2652,93 +1750,8 @@
         "r_re004"
       ],
       "expected": "SKILL.md's 'Cutting a release' procedure states the release-cut job closes itself (status closed) as the last step before the tag, that its version derives to that release, and that an open release-cut job after the release ships is a process error.",
-      "notes": "skill/__tests__/release.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/release.test.ts"
-        }
-      ]
-    },
-    {
-      "id": "t_ver1",
-      "code": "TEST-160",
-      "text": "Confirm VTP items carry framework-agnostic automation linkage that validates.",
-      "verifies": [
-        "r_ver1"
-      ],
-      "expected": "A VtpItem with automation [{runner,file,selector}] validates; a RunRecord validates as a sidecar; the matcher resolves links by file/selector.",
-      "notes": "src/shared/__tests__/verification.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/verification.test.ts"
-        }
-      ]
-    },
-    {
-      "id": "t_ver2",
-      "code": "TEST-161",
-      "text": "Confirm a normalized run record is defined and validates.",
-      "verifies": [
-        "r_ver2"
-      ],
-      "expected": "validate() accepts a run sidecar with runner/ref/ranAt/summary/results and rejects a malformed summary; every run-schema field has a description.",
-      "notes": "src/shared/__tests__/verification.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/verification.test.ts"
-        }
-      ]
-    },
-    {
-      "id": "t_ver3",
-      "code": "TEST-162",
-      "text": "Confirm automated results derive from the run (and manual falls back).",
-      "verifies": [
-        "r_ver3"
-      ],
-      "expected": "verificationOutcome derives passed/failed/not_run for automated items from the run and ignores a stale stored result; a manual item falls back to its result; rollup counts by status.",
-      "notes": "src/shared/__tests__/verification.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/verification.test.ts"
-        }
-      ]
-    },
-    {
-      "id": "t_ver4",
-      "code": "TEST-163",
-      "text": "Confirm the Results view shows the chain and derived status.",
-      "verifies": [
-        "r_ver4"
-      ],
-      "expected": "TestingView renders verifies + editable automation links + a run-derived status badge for automated tests and a manual result control for manual tests, with a run-provenance banner.",
-      "notes": "src/components/__tests__/TestingView.test.tsx",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/TestingView.test.tsx"
-        }
-      ]
-    },
-    {
-      "id": "t_ver5",
-      "code": "TEST-164",
-      "text": "Confirm the skill documents capturing runs and freezing them for deliverables.",
-      "verifies": [
-        "r_ver5"
-      ],
-      "expected": "SKILL.md documents the VTP->test->run chain: the automation linkage, a normalized run sidecar from a machine reporter (framework-agnostic), result derivation, and freezing the run into the release baseline and each closed job's after cache.",
-      "notes": "skill/__tests__/verification.test.ts",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/verification.test.ts"
-        }
-      ]
+      "result": "passed",
+      "notes": "skill/__tests__/release.test.ts"
     }
   ]
 }

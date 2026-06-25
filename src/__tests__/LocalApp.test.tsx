@@ -29,6 +29,7 @@ vi.mock('../localFileApi', () => ({
   listDocuments: vi.fn(async () => []),
   loadProject: vi.fn(),
   loadPrd: vi.fn(async () => null),
+  loadRun: vi.fn(async () => null),
   loadDocument: vi.fn(async (_type: 'srs' | 'vtp', name: string) => (name === 'AppA' ? docA : docB)),
   saveDocument: vi.fn(),
   createNewDocument: vi.fn(),

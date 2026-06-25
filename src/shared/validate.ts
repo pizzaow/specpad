@@ -1,6 +1,6 @@
 import Ajv from 'ajv';
 import type { ValidateFunction } from 'ajv';
-import { projectSchema, releasesSchema, jobSchema, jobsSchema } from './schema';
+import { projectSchema, releasesSchema, jobSchema, jobsSchema, runSchema } from './schema';
 import { DOC_TYPES } from './docTypes';
 
 export interface ValidationError {
@@ -16,6 +16,7 @@ const validators: Record<string, ValidateFunction> = {
   releases: ajv.compile(releasesSchema as object),
   job: ajv.compile(jobSchema as object),
   jobs: ajv.compile(jobsSchema as object),
+  run: ajv.compile(runSchema as object),
 };
 for (const d of DOC_TYPES) {
   if (d.schema) validators[d.type] = ajv.compile(d.schema as object);

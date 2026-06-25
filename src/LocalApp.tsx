@@ -5,7 +5,7 @@
  * persisted directory handles so return visits reopen without re-picking.
  */
 import React, { useEffect, useRef, useState } from 'react';
-import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, ReleasesDoc, JobDoc, JobsDoc } from './shared';
+import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, ReleasesDoc, JobDoc, JobsDoc, RunRecord } from './shared';
 import {
   DocumentListItem,
   isFileSystemAccessSupported,
@@ -21,6 +21,7 @@ import {
   loadDocument,
   loadProject,
   loadPrd,
+  loadRun,
   saveDocument,
   createNewDocument,
   hasOpenDirectory,
@@ -155,6 +156,7 @@ const LocalApp: React.FC = () => {
   const [vtpDoc, setVtpDoc] = useState<VtpDoc | null>(null);
   const [prdDoc, setPrdDoc] = useState<PrdDoc | null>(null);
   const [prdBaseline, setPrdBaseline] = useState<PrdDoc | null>(null);
+  const [runRecord, setRunRecord] = useState<RunRecord | null>(null);
   const [dirtyPrd, setDirtyPrd] = useState(false);
   const [currentView, setCurrentView] = useState<ViewMode>('overview');
   const [theme, setTheme] = useState<ThemeId>(readStoredTheme);
@@ -356,6 +358,7 @@ const LocalApp: React.FC = () => {
     setPrdBaseline(prdBase);
     setSrsBaseline(srsBase);
     setVtpBaseline(vtpBase);
+    setRunRecord(await loadRun(name));
   };
 
   const loadNamedDocs = async (name: string) => {
@@ -408,6 +411,7 @@ const LocalApp: React.FC = () => {
       setVtpDoc(null);
       setPrdDoc(null);
       setPrdBaseline(null);
+      setRunRecord(null);
       setDirtyPrd(false);
       setProjectDoc(null);
       setReleases(null);
@@ -711,7 +715,7 @@ const LocalApp: React.FC = () => {
         {currentView === 'prd' && prdDoc && <PrdTable key={selectedDocName} doc={prdDoc} srs={srsDoc} onChange={handlePrdChange} baseline={prdBaseline} attribution={prdSnapshots.length ? prdAttribution : undefined} readOnly={launch.demo} />}
         {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onChange={handleChange} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} />}
         {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onChange={handleChange} redline={vtpRedline} attribution={vtpSnapshots.length ? vtpAttribution : undefined} />}
-        {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} onChange={handleChange} />}
+        {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} run={runRecord} onChange={handleChange} readOnly={launch.demo} />}
         {currentView === 'releases' && isDirectoryOpen && (
           <ReleasesView releases={releases} jobs={jobsDoc?.jobs ?? []} />
         )}

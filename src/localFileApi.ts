@@ -4,7 +4,7 @@
  * Chrome/Edge: full support. Firefox/Safari: fallback upload/download.
  */
 
-import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SpecPadDoc, ReleasesDoc, JobDoc, JobsDoc, JobCommit, SidecarDoc } from './shared';
+import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SpecPadDoc, ReleasesDoc, JobDoc, JobsDoc, JobCommit, SidecarDoc, RunRecord } from './shared';
 import { createSrsDoc, createVtpDoc, REGISTER_TYPES } from './shared';
 
 declare global {
@@ -447,6 +447,19 @@ export async function loadJobCommits(jobId: string): Promise<JobCommit[]> {
     return JSON.parse(await (await fh.getFile()).text()) as JobCommit[];
   } catch {
     return [];
+  }
+}
+
+/** Load the latest captured verification run (`.specpad/run/<name>.run.json`), or null if none. */
+export async function loadRun(name: string): Promise<RunRecord | null> {
+  const segments = ['.specpad', 'run'];
+  try {
+    if (demoBaseUrl) return (await fetchDemoJson(`${segments.join('/')}/${name}.run.json`)) as RunRecord | null;
+    const dir = await getSubDirectory(segments);
+    if (!dir) return null;
+    return (await readJsonFrom(dir, `${name}.run.json`)) as RunRecord | null;
+  } catch {
+    return null;
   }
 }
 

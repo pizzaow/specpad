@@ -394,6 +394,18 @@
       },
       "title": "Release-cut jobs auto-close as the final step before the release",
       "description": "A release is cut under a job (e.g. 'Cut release vX'). That job is the release's final act and must close itself as the last step before the tag, so no 'Cut release' job is ever left open after its release ships (its derived version is that release, because the tag contains its commit). Document the cutting-a-release procedure in the skill and retroactively close the stale JOB-23 ('Cut release v1.3').",
+      "status": "closed"
+    },
+    {
+      "id": "j_352d45",
+      "code": "JOB-32",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Verification evidence \u2014 VTP\u2192test\u2192run chain (linkage + run capture + Results chain view)",
+      "description": "Establish the framework-agnostic verification evidence chain: a VTP item links to its automated test(s) via a stored, id-keyed automation field ({runner,file,selector}); a normalized RunRecord captures an actual run's per-test outcomes (parsed from the runner's machine report, e.g. vitest --reporter=json) stamped with the commit/date; the editor's Results tab shows and edits the full chain (VTP\u2192automation\u2192run status), deriving automated results from the run instead of hand-asserting them; run records are frozen for key deliverables (release baseline + job close). Core stays test-framework agnostic (runner/selector opaque; adapters or CI emit the normalized record). Phase 1 of the verification-evidence design.",
       "status": "open"
     }
   ]

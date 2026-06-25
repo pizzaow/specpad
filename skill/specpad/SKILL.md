@@ -333,7 +333,9 @@ Run at release time or on request:
    files** (the SAD markdown, its diagrams, the guide). For each, `git show <tag>:docs/specpad/<file>`
    written under `docs/specpad/.specpad/baseline/` mirroring the top-level file names. Iterate the index
    rather than a fixed list, so a newly-registered document type is captured automatically. Set that
-   release's `snapshot` to `".specpad/baseline"` and the top-level `baseline` to that version.
+   release's `snapshot` to `".specpad/baseline"` and the top-level `baseline` to that version. Also copy
+   the latest **verification run** (`.specpad/run/<name>.run.json`) into the baseline and
+   `snapshots/<version>/` — see *Verification runs*.
 4. Re-validate every JSON file you wrote.
 
 A **release is a first-class checkpoint**: a version + **its set of jobs** (the closed jobs whose derived
@@ -357,6 +359,25 @@ must **close itself as the last step before the release** — never leave it ope
 A release-cut job left **open** after its release ships is a process error: the job that cuts the
 release is part of the release it cuts (its derived `version` is that release, because the tag contains
 its commit). It has no further scope once the tag exists — close it, don't defer it.
+
+### Verification runs — test results as evidence (VTP → test → run)
+A verification result is **evidence of an executed test**, not a typed-in claim. The chain is
+**VTP item → the automated test that runs it → a captured run**, and SpecPad stores the first and last
+links (the test source lives in git; its detail is the report's job):
+- **Linkage (stored on the VTP item).** Each automated test carries `automation: [{ runner, file,
+  selector? }]` — framework-agnostic: `runner` and `selector` are opaque (e.g. `vitest` + a test name,
+  `playwright` + `#15`). A test with no `automation` is **manual** and keeps a hand-recorded `result`.
+- **Capture (a run record).** Run the suite with a machine reporter and normalize it to a **`run`
+  sidecar** — `{ runner, ref (commit), ranAt, summary, results:[{file, selector?, status}] }` — written
+  to `.specpad/run/<name>.run.json`. SpecPad ships a **vitest adapter** (`scripts/specpad-verify.mjs`);
+  other runners are sibling adapters, or your CI emits the same normalized JSON directly. The core never
+  parses a test framework.
+- **Derivation.** The editor derives each automated test's result by matching its `automation` links to
+  the run's `results` (by file, then selector) — passed/failed/skipped, or **not run** when a link has
+  no matching result. Manual tests fall back to their stored `result`. Nothing derived is stored.
+- **Freeze for key deliverables.** Copy the latest run record into the **release baseline** at `refresh`
+  (and `snapshots/<version>/`) and into a job's **`after/`** at close, alongside the spec snapshots — so
+  each release and each closed job carries its own verification evidence. Regenerable by re-running.
 
 ### `pull <version>` — cache an older snapshot on demand
 `git show <ref>:docs/specpad/<file>` for each spec file into `.specpad/snapshots/<version>/`
@@ -384,7 +405,9 @@ Maintain it as authoritative metadata (it is **not** part of the regenerable `.s
   `<last>` = the job's final commit; for an adopted/older job re-derive `before` from `git show <base>:…`,
   `<base>` = the parent of the job's first commit). Also write `.specpad/jobs/<id>/commits.json` — the
   job's commits from `git log --grep='Job: <id>' --format='%H … %s … %an … %cs'` — so the editor can show
-  the commits behind a job's changes. The editor diffs/renders these; you never diff. `refresh` rebuilds
+  the commits behind a job's changes. Also copy the latest **verification run**
+  (`.specpad/run/<name>.run.json`) into the job's `after/`, so a closed job carries the test evidence for
+  its change (see *Verification runs*). The editor diffs/renders these; you never diff. `refresh` rebuilds
   the caches and re-derives versions.
 
 ### Source-traceability export (job → commits → code)
