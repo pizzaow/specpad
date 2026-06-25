@@ -1678,7 +1678,7 @@
     {
       "id": "r_ver4",
       "code": "VER-4",
-      "text": "The Results view shall present the full verification chain per test \u2014 the requirement(s) it verifies, its automation link(s) (editable), and a run-derived status for automated tests (recorded status for manual ones) \u2014 plus a run-provenance banner (runner, commit, date) when a run is loaded.",
+      "text": "The Results view shall group tests into Manual and Automated sections (manual first); each automated test shall show its automation link(s) read-only with click-to-edit, and a run-derived status, under a run-provenance banner (runner, commit, date); each manual test shall show a recorded result and notes. The requirement-verifies trace is not repeated here.",
       "satisfies": [
         "p_ds01"
       ],
@@ -1696,6 +1696,18 @@
       ],
       "tags": [
         "skill",
+        "verification"
+      ]
+    },
+    {
+      "id": "r_ver6",
+      "code": "VER-6",
+      "text": "The Results view shall provide a run-detail dialog listing the captured run's per-test outcomes (file, selector, status, duration) and summary, filterable to failures, so the run evidence is inspectable; raw console output is not stored (link the run's commit/CI for the full log).",
+      "satisfies": [
+        "p_ds01"
+      ],
+      "tags": [
+        "editor",
         "verification"
       ]
     }

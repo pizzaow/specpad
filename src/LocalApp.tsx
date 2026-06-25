@@ -715,7 +715,7 @@ const LocalApp: React.FC = () => {
         {currentView === 'prd' && prdDoc && <PrdTable key={selectedDocName} doc={prdDoc} srs={srsDoc} onChange={handlePrdChange} baseline={prdBaseline} attribution={prdSnapshots.length ? prdAttribution : undefined} readOnly={launch.demo} />}
         {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onChange={handleChange} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} />}
         {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onChange={handleChange} redline={vtpRedline} attribution={vtpSnapshots.length ? vtpAttribution : undefined} />}
-        {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} run={runRecord} onChange={handleChange} readOnly={launch.demo} />}
+        {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} run={runRecord} onChange={handleChange} readOnly={launch.demo} />}
         {currentView === 'releases' && isDirectoryOpen && (
           <ReleasesView releases={releases} jobs={jobsDoc?.jobs ?? []} />
         )}
