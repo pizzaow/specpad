@@ -1189,18 +1189,6 @@
       ]
     },
     {
-      "id": "r_re004",
-      "code": "REL-4",
-      "text": "A release shall be cut under a job whose final act is to close itself: the release-cut job shall be set to closed as the last step before the release tag (so its derived version is that release), and a release-cut job shall never remain open after its release ships.",
-      "satisfies": [
-        "p_pr002"
-      ],
-      "tags": [
-        "skill",
-        "releases"
-      ]
-    },
-    {
       "id": "h_pd000",
       "heading": true,
       "text": "Product requirements (PRD)"

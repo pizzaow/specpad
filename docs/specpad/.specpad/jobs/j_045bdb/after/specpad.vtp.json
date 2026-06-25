@@ -1741,17 +1741,6 @@
       "expected": "The active open job's in-progress architecture changes render the modified SAD's changed section headings and their added/removed lines (section-aware), built from mdSectionDiff over the before snapshot vs the working SAD.",
       "result": "passed",
       "notes": "src/components/__tests__/JobsView.test.tsx; src/__tests__/archDiff.test.ts"
-    },
-    {
-      "id": "t_re004",
-      "code": "TEST-159",
-      "text": "Confirm the skill documents the release-cut job closing itself as the final step before the release.",
-      "verifies": [
-        "r_re004"
-      ],
-      "expected": "SKILL.md's 'Cutting a release' procedure states the release-cut job closes itself (status closed) as the last step before the tag, that its version derives to that release, and that an open release-cut job after the release ships is a process error.",
-      "result": "passed",
-      "notes": "skill/__tests__/release.test.ts"
     }
   ]
 }

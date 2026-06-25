@@ -344,6 +344,20 @@ generated from. The release→jobs mapping is **derived** (from `job.version`), 
 If there are **no matching tags**, write a manifest with `baseline: null` and `releases: []` (copy
 `templates/starter.releases.json`); the editor degrades gracefully.
 
+### Cutting a release — the cut job closes itself
+A release is cut **under a job** (e.g. "Cut release v1.4"). That job is the release's final act, so it
+must **close itself as the last step before the release** — never leave it open. In order:
+1. Confirm every other in-scope job for this release is `closed`; any still-open job rolls to the next
+   release (its commits won't be in this tag).
+2. As the **final commit** of the release, set the **release-cut job** to `status: "closed"` in
+   `<name>.jobs.json`, write its `after` cache + `commits.json`, and clear it from `<name>.job.json`.
+3. Tag the release (`git tag vX`) on that commit, then `refresh` so the manifest, baseline, and every
+   job's derived `version` update.
+
+A release-cut job left **open** after its release ships is a process error: the job that cuts the
+release is part of the release it cuts (its derived `version` is that release, because the tag contains
+its commit). It has no further scope once the tag exists — close it, don't defer it.
+
 ### `pull <version>` — cache an older snapshot on demand
 `git show <ref>:docs/specpad/<file>` for each spec file into `.specpad/snapshots/<version>/`
 (mirroring top-level names), then set that release entry's `snapshot` to that path. Do **not** diff.
