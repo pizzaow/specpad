@@ -75,4 +75,20 @@ describe('buildAuditReport', () => {
     expect(r.trace[0].prds).toEqual([]);
     expect(r.coverage.productRequirements.total).toBe(0);
   });
+
+  it('derives an automated test result from the run, not a stored field (VER-8)', () => {
+    const autoVtp: VtpDoc = {
+      schemaVersion: '1.0', type: 'vtp', name: 'Acme', title: 'VTP',
+      items: [{ id: 't_a', code: 'T-A', text: 'Auto', verifies: ['r_1'], expected: 'e', automation: [{ runner: 'vitest', file: 'a.test.ts' }] }],
+    };
+    // No run loaded → the automated test is "not run", not passing.
+    expect(buildAuditReport({ srs, vtp: autoVtp }).coverage.tests.passed).toBe(0);
+    expect(buildAuditReport({ srs, vtp: autoVtp }).trace.find((t) => t.req.id === 'r_1')!.rollup).toBe('not_tested');
+    // With a passing run → derived as passed.
+    const run = { schemaVersion: '1.0' as const, type: 'run' as const, name: 'Acme', runner: 'vitest', ref: 'abc', ranAt: '2026-06-26',
+      summary: { total: 1, passed: 1, failed: 0, skipped: 0 }, results: [{ file: 'a.test.ts', selector: 'x', status: 'passed' as const }] };
+    const r = buildAuditReport({ srs, vtp: autoVtp }, run);
+    expect(r.coverage.tests.passed).toBe(1);
+    expect(r.trace.find((t) => t.req.id === 'r_1')!.rollup).toBe('passed');
+  });
 });

@@ -15,8 +15,9 @@
  */
 import React, { useState } from 'react';
 import type { JobsDoc, JobRecord, JobType, DocDiff, ItemChange, SrsItem, VtpItem, PrdItem, JobCommit } from '../shared';
-import { createJobsDoc, createJobRecord, REGISTER_TYPES, docTypeFor } from '../shared';
+import { createJobsDoc, createJobRecord, REGISTER_TYPES, docTypeFor, verificationOutcome } from '../shared';
 import type { MdFileDiff } from '../archDiff';
+import type { RunRecord, VtpItem as VtpItemT } from '../shared';
 
 // A per-job diff keyed by document type (srs/vtp/prd/…), rendered generically below.
 type RegisterItem = SrsItem | VtpItem | PrdItem;
@@ -33,6 +34,8 @@ interface JobsViewProps {
   jobDiffs?: Record<string, JobDiff>;
   jobCommits?: Record<string, JobCommit[]>;
   jobArch?: Record<string, ArchChange>;
+  jobRuns?: Record<string, RunRecord>; // per-closed-job frozen verification run (after/<name>.run.json)
+  run?: RunRecord | null; // latest captured run, used for active jobs / when a job has no frozen run
   // Live diff of an active open job's before snapshot vs the working copy (in-progress changes).
   activeDiffs?: Record<string, JobDiff>;
   activeArch?: Record<string, ArchChange>;
@@ -60,7 +63,42 @@ function groupOrder(a: string, b: string): number {
 const typeOf = (j: JobRecord): JobType => j.type ?? 'feature';
 const ownerOf = (j: JobRecord): string => (j.owner ? j.owner.name : '');
 
-const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDiffs, jobCommits, jobArch, activeDiffs, activeArch, onChange, onSetActive, readOnly }) => {
+// A job's verification picture: the run-derived status of the tests it added/modified.
+function JobVerification({ diff, run }: { diff?: JobDiff; run: RunRecord | null }) {
+  const vtp = diff?.vtp;
+  const tests = vtp ? [...vtp.added, ...vtp.modified].map((c) => c.after as VtpItemT).filter(Boolean) : [];
+  if (tests.length === 0) return <p className="text-muted">No verification tests changed in this job.</p>;
+  const outcomes = tests.map((t) => ({ t, o: verificationOutcome(t, run) }));
+  const n = (s: string) => outcomes.filter((x) => x.o.status === s).length;
+  const passed = n('passed'), failed = n('failed'), notRun = n('not_run'), manual = outcomes.filter((x) => !x.o.automated).length;
+  const allOk = failed === 0 && notRun === 0;
+  return (
+    <>
+      <p>
+        <span className={`label label-${allOk ? 'success' : failed ? 'danger' : 'warning'}`}>
+          {allOk ? `✓ ${passed}/${tests.length} verified` : failed ? `✗ ${failed} failing` : `⚠ ${notRun} not run`}
+        </span>{' '}
+        {!run && <span className="text-muted">— no captured run loaded</span>}
+        {manual > 0 && <span className="text-muted"> · {manual} manual</span>}
+      </p>
+      <ul className="list-unstyled" style={{ marginLeft: 8 }}>
+        {outcomes.map(({ t, o }) => {
+          const cls = o.status === 'passed' ? 'success' : o.status === 'failed' ? 'danger' : o.status === 'not_run' ? 'warning' : 'default';
+          const label = o.status === 'not_run' ? 'not run' : o.status === 'unset' ? '—' : o.status === 'not_tested' ? 'not tested' : o.status;
+          return (
+            <li key={t.id} style={{ padding: '1px 0' }}>
+              <span className={`label label-${cls}`} style={{ marginRight: 6 }}>{label}</span>
+              <strong>{t.code || t.id}</strong> <span className="text-muted">{t.text}</span>
+              {!o.automated && <span className="text-muted"> (manual)</span>}
+            </li>
+          );
+        })}
+      </ul>
+    </>
+  );
+}
+
+const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDiffs, jobCommits, jobArch, jobRuns, run, activeDiffs, activeArch, onChange, onSetActive, readOnly }) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const jobs = doc?.jobs ?? [];
@@ -175,6 +213,15 @@ const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDif
           <p className="text-muted">In progress — no starting snapshot is cached for this job yet, so its changes can't be shown.</p>
         ) : (
           <p className="text-muted">In progress — make this the active job to see its changes here, or close it to materialize them.</p>
+        )}
+
+        <h4 style={{ marginTop: 20 }}>Verification</h4>
+        {selected.status === 'closed' ? (
+          <JobVerification diff={diff} run={jobRuns?.[selected.id] ?? run ?? null} />
+        ) : isActive ? (
+          <JobVerification diff={activeDiff} run={run ?? null} />
+        ) : (
+          <p className="text-muted">Make this the active job, or close it, to see its verification.</p>
         )}
 
         {arch && (

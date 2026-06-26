@@ -1710,30 +1710,6 @@
         "editor",
         "verification"
       ]
-    },
-    {
-      "id": "r_ver7",
-      "code": "VER-7",
-      "text": "A job's detail shall present a Verification section: the run-derived status of the verification tests the job added or modified, with a pass / not-run / fail summary, using the job's frozen run (closed jobs) or the latest run (the active job).",
-      "satisfies": [
-        "p_pr002"
-      ],
-      "tags": [
-        "editor",
-        "verification"
-      ]
-    },
-    {
-      "id": "r_ver8",
-      "code": "VER-8",
-      "text": "Test-result roll-ups (the Overview headline and the Auditor/Traceability coverage) shall derive each automated test's outcome from the captured run, and each manual test's from its recorded result \u2014 never from a stored result on an automated test.",
-      "satisfies": [
-        "p_ds01"
-      ],
-      "tags": [
-        "editor",
-        "verification"
-      ]
     }
   ]
 }

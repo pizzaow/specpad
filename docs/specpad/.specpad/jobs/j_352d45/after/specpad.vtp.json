@@ -2616,36 +2616,6 @@
           "file": "src/components/__tests__/TestingView.test.tsx"
         }
       ]
-    },
-    {
-      "id": "t_ver7",
-      "code": "TEST-166",
-      "text": "Confirm a job's detail shows the run-derived verification status of its changed tests.",
-      "verifies": [
-        "r_ver7"
-      ],
-      "expected": "JobsView's job detail renders a Verification section summarizing the run-derived status (passed/not-run/fail) of the tests the job added/modified, using the job's frozen run or the latest run.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/JobsView.test.tsx"
-        }
-      ]
-    },
-    {
-      "id": "t_ver8",
-      "code": "TEST-167",
-      "text": "Confirm roll-ups derive automated results from the run, not a stored field.",
-      "verifies": [
-        "r_ver8"
-      ],
-      "expected": "buildAuditReport derives test pass/fail from the run for automated tests (and falls back to a manual test's stored result); the Overview headline shows the run-derived passing count.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/auditReport.test.ts"
-        }
-      ]
     }
   ]
 }

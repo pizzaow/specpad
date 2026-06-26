@@ -50,6 +50,18 @@ describe('OverviewView', () => {
     expect(onNavigate).toHaveBeenCalledWith('audit');
   });
 
+  it('derives the tests-passing headline from the run for automated tests (VER-8)', () => {
+    const autoVtp: VtpDoc = {
+      schemaVersion: '1.0', type: 'vtp', name: 'Acme', title: 'VTP',
+      items: [{ id: 't_a', code: 'T-A', text: 'Auto', verifies: ['r_1'], expected: 'ok', automation: [{ runner: 'vitest', file: 'a.test.ts' }] }],
+    };
+    const run = { schemaVersion: '1.0' as const, type: 'run' as const, name: 'Acme', runner: 'vitest', ref: 'abc', ranAt: '2026-06-26',
+      summary: { total: 1, passed: 1, failed: 0, skipped: 0 }, results: [{ file: 'a.test.ts', selector: 'x', status: 'passed' as const }] };
+    render(<OverviewView projectName="Acme" prd={null} srs={srs} vtp={autoVtp} run={run} releases={releases} jobs={jobs} onNavigate={vi.fn()} />);
+    expect(screen.getByText('tests passing')).toBeInTheDocument();
+    expect(screen.getByText('1/1')).toBeInTheDocument();
+  });
+
   it('handles an empty project (no releases, no open jobs)', () => {
     render(<OverviewView projectName="Empty" prd={null} srs={null} vtp={null} releases={null} jobs={[]} onNavigate={vi.fn()} />);
     expect(screen.getByText(/No open jobs/i)).toBeInTheDocument();

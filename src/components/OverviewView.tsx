@@ -5,7 +5,7 @@
  * documents (coverage via the shared buildAuditReport).
  */
 import React from 'react';
-import type { PrdDoc, SrsDoc, VtpDoc, ReleasesDoc, JobRecord } from '../shared';
+import type { PrdDoc, SrsDoc, VtpDoc, ReleasesDoc, JobRecord, RunRecord } from '../shared';
 import { buildAuditReport } from '../auditReport';
 import type { ViewKey } from './ViewTabs';
 
@@ -14,6 +14,7 @@ interface OverviewViewProps {
   prd: PrdDoc | null;
   srs: SrsDoc | null;
   vtp: VtpDoc | null;
+  run?: RunRecord | null;
   releases: ReleasesDoc | null;
   jobs: JobRecord[];
   onNavigate: (key: ViewKey) => void;
@@ -26,9 +27,10 @@ const Metric: React.FC<{ value: React.ReactNode; label: string; tone?: 'ok' | 'd
   </div>
 );
 
-const OverviewView: React.FC<OverviewViewProps> = ({ projectName, prd, srs, vtp, releases, jobs, onNavigate }) => {
-  const report = buildAuditReport({ prd, srs, vtp });
+const OverviewView: React.FC<OverviewViewProps> = ({ projectName, prd, srs, vtp, run, releases, jobs, onNavigate }) => {
+  const report = buildAuditReport({ prd, srs, vtp }, run ?? null);
   const { requirements } = report.coverage;
+  const testCov = report.coverage.tests;
   const findings = report.violations.length;
   const openJobs = jobs.filter((j) => j.status === 'open');
   const relList = releases?.releases ?? [];
@@ -53,7 +55,11 @@ const OverviewView: React.FC<OverviewViewProps> = ({ projectName, prd, srs, vtp,
           label={findings === 1 ? 'open governance finding' : 'open governance findings'}
           tone={findings === 0 ? 'ok' : 'danger'}
         />
-        <Metric value={report.coverage.tests.passed} label="tests passed" tone="ok" />
+        <Metric
+          value={`${testCov.passed}/${testCov.total}`}
+          label={run ? 'tests passing' : 'tests passing (no run)'}
+          tone={testCov.failed > 0 ? 'danger' : 'ok'}
+        />
         <Metric value={latest ? latest.version : 'Unreleased'} label="latest release" />
       </div>
 

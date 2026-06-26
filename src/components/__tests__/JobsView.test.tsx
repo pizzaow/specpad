@@ -87,6 +87,22 @@ describe('JobsView — in progress vs released', () => {
     expect(screen.getByText(/abc1234de/)).toBeInTheDocument();
   });
 
+  it('shows a closed job\'s run-derived verification of its changed tests (VER-7)', () => {
+    const diffs = {
+      j_feat: {
+        srs: { added: [], removed: [], modified: [] },
+        vtp: { added: [{ id: 't_1', status: 'added' as const, after: { id: 't_1', code: 'TEST-1', text: 'Logs in', automation: [{ runner: 'vitest', file: 'login.test.ts' }] } }], removed: [], modified: [] },
+      },
+    };
+    const run = { schemaVersion: '1.0' as const, type: 'run' as const, name: 'AcmeApp', runner: 'vitest', ref: 'cafe1234', ranAt: '2026-06-26',
+      summary: { total: 1, passed: 1, failed: 0, skipped: 0 }, results: [{ file: 'login.test.ts', selector: 'x', status: 'passed' as const }] };
+    renderView({ jobDiffs: diffs, run });
+    fireEvent.click(screen.getByText('Login'));
+    expect(screen.getByText('Verification')).toBeInTheDocument();
+    expect(screen.getByText(/1\/1 verified/)).toBeInTheDocument();
+    expect(screen.getByText('TEST-1')).toBeInTheDocument();
+  });
+
   it('shows owner and derived (read-only) version in the detail', () => {
     renderView();
     fireEvent.click(screen.getByText('SSO'));

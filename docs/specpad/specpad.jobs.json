@@ -406,6 +406,18 @@
       },
       "title": "Verification evidence \u2014 VTP\u2192test\u2192run chain (linkage + run capture + Results chain view)",
       "description": "Establish the framework-agnostic verification evidence chain: a VTP item links to its automated test(s) via a stored, id-keyed automation field ({runner,file,selector}); a normalized RunRecord captures an actual run's per-test outcomes (parsed from the runner's machine report, e.g. vitest --reporter=json) stamped with the commit/date; the editor's Results tab shows and edits the full chain (VTP\u2192automation\u2192run status), deriving automated results from the run instead of hand-asserting them; run records are frozen for key deliverables (release baseline + job close). Core stays test-framework agnostic (runner/selector opaque; adapters or CI emit the normalized record). Phase 1 of the verification-evidence design.",
+      "status": "closed"
+    },
+    {
+      "id": "j_75eac8",
+      "code": "JOB-33",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Verification rollups \u2014 per-job verification status in the Jobs view + an Overview headline",
+      "description": "Phase 2 of verification evidence. Surface the captured run as roll-ups that complete the design-control loop: a job's detail shows the verification status of the tests it added/modified (derived from the run) with a pass/not-run/fail summary; the Overview shows an overall verification headline. Uses the latest captured run; per-release/per-job frozen runs (frozen on close/cut) light up the same panels for historical checkpoints.",
       "status": "open"
     }
   ]

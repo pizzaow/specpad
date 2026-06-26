@@ -112,10 +112,11 @@ async function loadJobArch(jobId: string): Promise<ArchChange | undefined> {
 async function loadJobCaches(
   name: string,
   jd: JobsDoc | null,
-): Promise<{ diffs: Record<string, JobDiff>; commits: Record<string, JobCommit[]>; arch: Record<string, ArchChange> }> {
+): Promise<{ diffs: Record<string, JobDiff>; commits: Record<string, JobCommit[]>; arch: Record<string, ArchChange>; runs: Record<string, RunRecord> }> {
   const diffs: Record<string, JobDiff> = {};
   const commits: Record<string, JobCommit[]> = {};
   const arch: Record<string, ArchChange> = {};
+  const runs: Record<string, RunRecord> = {};
   for (const j of jd?.jobs ?? []) {
     if (j.status !== 'closed') continue;
     // Diff every register document type the job cached (srs/vtp/prd/…) — new types flow in here.
@@ -127,12 +128,13 @@ async function loadJobCaches(
       ]);
       if (b && a) entry[dt.type] = diffItems<RegisterItem>(itemsOf(b), itemsOf(a));
     }
-    const [cs, ac] = await Promise.all([loadJobCommits(j.id), loadJobArch(j.id)]);
+    const [cs, ac, runText] = await Promise.all([loadJobCommits(j.id), loadJobArch(j.id), loadJobText(j.id, 'after', `${name}.run.json`)]);
     if (Object.keys(entry).length) diffs[j.id] = entry;
     if (cs.length) commits[j.id] = cs;
     if (ac) arch[j.id] = ac;
+    if (runText) { try { runs[j.id] = JSON.parse(runText) as RunRecord; } catch { /* ignore malformed */ } }
   }
-  return { diffs, commits, arch };
+  return { diffs, commits, arch, runs };
 }
 
 // The arc42 markdown declares its diagrams via ![alt](name.svg); load exactly those
@@ -175,6 +177,7 @@ const LocalApp: React.FC = () => {
   const [jobDiffs, setJobDiffs] = useState<Record<string, { srs?: DocDiff<SrsItem | VtpItem>; vtp?: DocDiff<SrsItem | VtpItem> }>>({});
   const [jobCommits, setJobCommits] = useState<Record<string, JobCommit[]>>({});
   const [jobArch, setJobArch] = useState<Record<string, ArchChange>>({});
+  const [jobRuns, setJobRuns] = useState<Record<string, RunRecord>>({});
   // Cached `before` snapshots for active OPEN jobs (jobId → docType → snapshot), diffed below.
   const [activeBefore, setActiveBefore] = useState<Record<string, Record<string, SpecPadDoc>>>({});
   // Cached `before` architecture (file list + contents) for active OPEN jobs, for the in-progress arch diff.
@@ -298,6 +301,7 @@ const LocalApp: React.FC = () => {
     setJobDiffs(caches.diffs);
     setJobCommits(caches.commits);
     setJobArch(caches.arch);
+    setJobRuns(caches.runs);
     // Active open jobs: load each one's `before` snapshot so its in-progress changes
     // (before vs the working copy) can be shown without git or closing the job.
     const before: Record<string, Record<string, SpecPadDoc>> = {};
@@ -421,6 +425,7 @@ const LocalApp: React.FC = () => {
       setJobDiffs({});
       setJobCommits({});
       setJobArch({});
+      setJobRuns({});
       setActiveBefore({});
       setActiveBeforeArch({});
       setSad(null);
@@ -707,7 +712,7 @@ const LocalApp: React.FC = () => {
         {currentView === 'overview' && isDirectoryOpen && (
           <OverviewView
             projectName={selectedDocName || projectName}
-            prd={prdDoc} srs={srsDoc} vtp={vtpDoc}
+            prd={prdDoc} srs={srsDoc} vtp={vtpDoc} run={runRecord}
             releases={releases} jobs={jobsDoc?.jobs ?? []}
             onNavigate={setCurrentView}
           />
@@ -728,7 +733,7 @@ const LocalApp: React.FC = () => {
           />
         )}
         {currentView === 'trace' && srsDoc && (
-          <TraceabilityView prd={prdDoc} srs={srsDoc} vtp={vtpDoc} />
+          <TraceabilityView prd={prdDoc} srs={srsDoc} vtp={vtpDoc} run={runRecord} />
         )}
         {currentView === 'arch' && isDirectoryOpen && (
           <ArchitectureView
@@ -746,6 +751,8 @@ const LocalApp: React.FC = () => {
             jobDiffs={jobDiffs}
             jobCommits={jobCommits}
             jobArch={jobArch}
+            jobRuns={jobRuns}
+            run={runRecord}
             activeDiffs={activeDiffs}
             activeArch={activeArch}
             onChange={handleJobsChange}

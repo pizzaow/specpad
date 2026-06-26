@@ -5,7 +5,7 @@
  * live via the shared buildAuditReport (so it agrees with the skill).
  */
 import React, { useMemo } from 'react';
-import type { PrdDoc, SrsDoc, VtpDoc } from '../shared';
+import type { PrdDoc, SrsDoc, VtpDoc, RunRecord } from '../shared';
 import { buildAuditReport } from '../auditReport';
 import type { TestRollup } from '../auditReport';
 
@@ -13,6 +13,7 @@ interface TraceabilityViewProps {
   prd: PrdDoc | null;
   srs: SrsDoc | null;
   vtp: VtpDoc | null;
+  run?: RunRecord | null;
 }
 
 const ROLLUP_LABEL: Record<TestRollup, string> = {
@@ -35,8 +36,8 @@ const Stat: React.FC<{ label: string; value: React.ReactNode; muted?: boolean; a
   </div>
 );
 
-const TraceabilityView: React.FC<TraceabilityViewProps> = ({ prd, srs, vtp }) => {
-  const report = useMemo(() => buildAuditReport({ prd, srs, vtp }), [prd, srs, vtp]);
+const TraceabilityView: React.FC<TraceabilityViewProps> = ({ prd, srs, vtp, run }) => {
+  const report = useMemo(() => buildAuditReport({ prd, srs, vtp }, run ?? null), [prd, srs, vtp, run]);
 
   if (!srs) {
     return <div className="alert alert-info">Open a project with a requirements document to see traceability.</div>;

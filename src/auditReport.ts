@@ -5,8 +5,8 @@
  * source/release attribution lives in the Jobs/Releases views. Governance gaps are
  * the shared checkGovernance output, so the Auditor view and the skill agree.
  */
-import type { PrdDoc, SrsDoc, VtpDoc, PrdItem, SrsItem, VtpItem, GovernanceViolation } from './shared';
-import { checkGovernance } from './shared';
+import type { PrdDoc, SrsDoc, VtpDoc, PrdItem, SrsItem, VtpItem, GovernanceViolation, RunRecord } from './shared';
+import { checkGovernance, verificationOutcome } from './shared';
 
 export type TestRollup = 'passed' | 'failed' | 'not_tested' | 'no_test';
 
@@ -32,10 +32,18 @@ export interface AuditReport {
 
 const isReq = (i: SrsItem) => !i.heading;
 
-function rollupFor(tests: VtpItem[]): TestRollup {
+// A test's effective status: derived from the run for automated tests, the stored
+// result for manual ones (verificationOutcome). 'passed'/'failed' are decisive;
+// everything else (not_run/skipped/not_tested/unset) counts as not-yet-verified.
+function statusOf(t: VtpItem, run: RunRecord | null): 'passed' | 'failed' | 'other' {
+  const s = verificationOutcome(t, run).status;
+  return s === 'passed' ? 'passed' : s === 'failed' ? 'failed' : 'other';
+}
+
+function rollupFor(tests: VtpItem[], run: RunRecord | null): TestRollup {
   if (tests.length === 0) return 'no_test';
-  if (tests.some((t) => t.result === 'failed')) return 'failed';
-  if (tests.every((t) => t.result === 'passed')) return 'passed';
+  if (tests.some((t) => statusOf(t, run) === 'failed')) return 'failed';
+  if (tests.every((t) => statusOf(t, run) === 'passed')) return 'passed';
   return 'not_tested';
 }
 
@@ -43,7 +51,7 @@ export function buildAuditReport(docs: {
   prd?: PrdDoc | null;
   srs?: SrsDoc | null;
   vtp?: VtpDoc | null;
-}): AuditReport {
+}, run: RunRecord | null = null): AuditReport {
   const prd = docs.prd ?? null;
   const srsItems = docs.srs?.items ?? [];
   const vtpItems = (docs.vtp?.items ?? []).filter((t) => !t.heading);
@@ -70,16 +78,17 @@ export function buildAuditReport(docs: {
       else if (prd) danglingPrdRefs.push(id);
     }
     const tests = testsByReq.get(req.id) ?? [];
-    return { req, prds, danglingPrdRefs, tests, rollup: rollupFor(tests) };
+    return { req, prds, danglingPrdRefs, tests, rollup: rollupFor(tests, run) };
   });
 
   const verified = trace.filter((r) => r.tests.length > 0).length;
 
+  const statuses = vtpItems.map((t) => statusOf(t, run));
   const tests = {
     total: vtpItems.length,
-    passed: vtpItems.filter((t) => t.result === 'passed').length,
-    failed: vtpItems.filter((t) => t.result === 'failed').length,
-    notTested: vtpItems.filter((t) => t.result !== 'passed' && t.result !== 'failed').length,
+    passed: statuses.filter((s) => s === 'passed').length,
+    failed: statuses.filter((s) => s === 'failed').length,
+    notTested: statuses.filter((s) => s === 'other').length,
     noExpected: vtpItems.filter((t) => !t.expected || t.expected.trim() === '').length,
   };
 
