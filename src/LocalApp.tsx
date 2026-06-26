@@ -117,23 +117,25 @@ async function loadJobCaches(
   const commits: Record<string, JobCommit[]> = {};
   const arch: Record<string, ArchChange> = {};
   const runs: Record<string, RunRecord> = {};
-  for (const j of jd?.jobs ?? []) {
-    if (j.status !== 'closed') continue;
+  // Load every closed job's cache in parallel — on the network-backed demo this is the
+  // bulk of the load, and sequential per-job fetching made it tens of seconds. Writes are
+  // keyed by job id, so the parallel branches never collide.
+  await Promise.all((jd?.jobs ?? []).filter((j) => j.status === 'closed').map(async (j) => {
     // Diff every register document type the job cached (srs/vtp/prd/…) — new types flow in here.
     const entry: JobDiff = {};
-    for (const dt of REGISTER_TYPES) {
+    await Promise.all(REGISTER_TYPES.map(async (dt) => {
       const [b, a] = await Promise.all([
         loadJobSnapshot(j.id, 'before', dt.type, name),
         loadJobSnapshot(j.id, 'after', dt.type, name),
       ]);
       if (b && a) entry[dt.type] = diffItems<RegisterItem>(itemsOf(b), itemsOf(a));
-    }
+    }));
     const [cs, ac, runText] = await Promise.all([loadJobCommits(j.id), loadJobArch(j.id), loadJobText(j.id, 'after', `${name}.run.json`)]);
     if (Object.keys(entry).length) diffs[j.id] = entry;
     if (cs.length) commits[j.id] = cs;
     if (ac) arch[j.id] = ac;
     if (runText) { try { runs[j.id] = JSON.parse(runText) as RunRecord; } catch { /* ignore malformed */ } }
-  }
+  }));
   return { diffs, commits, arch, runs };
 }
 
@@ -297,6 +299,10 @@ const LocalApp: React.FC = () => {
     const jd = await loadJobs(name);
     setJobsDoc(jd);
     setDirtyJobs(false);
+    // Load the verification run early — before the per-job cache storm below — so the
+    // run-derived Results/Overview/Traceability roll-ups populate fast on the (network)
+    // demo instead of waiting on hundreds of sequential per-job snapshot fetches.
+    setRunRecord(await loadRun(name));
     const caches = await loadJobCaches(name, jd);
     setJobDiffs(caches.diffs);
     setJobCommits(caches.commits);
@@ -362,7 +368,6 @@ const LocalApp: React.FC = () => {
     setPrdBaseline(prdBase);
     setSrsBaseline(srsBase);
     setVtpBaseline(vtpBase);
-    setRunRecord(await loadRun(name));
   };
 
   const loadNamedDocs = async (name: string) => {
