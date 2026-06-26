@@ -80,8 +80,12 @@ describe('dogfood job caches', () => {
     expect(skill).toMatch(/in-progress changes/i);             // open-job in-progress diff
     const active = JSON.parse(readFileSync(root('specpad.job.json'), 'utf8'));
     const id = (active.jobs ?? [active.job]).filter(Boolean)[0];
-    const beforeSrs = JSON.parse(readFileSync(`${jobsDir}${id}/before/specpad.srs.json`, 'utf8'));
-    expect(validate(beforeSrs)).toEqual([]);
+    // An active job (when present) has a before snapshot; right after a release cut the
+    // marker is empty (no active job until the next one is set), so there is nothing to check.
+    if (id) {
+      const beforeSrs = JSON.parse(readFileSync(`${jobsDir}${id}/before/specpad.srs.json`, 'utf8'));
+      expect(validate(beforeSrs)).toEqual([]);
+    }
   });
 
   it('a release is a full-doc checkpoint that maps to its jobs', () => {

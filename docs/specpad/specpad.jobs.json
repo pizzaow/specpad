@@ -298,7 +298,8 @@
       },
       "title": "Cut release v1.3",
       "description": "Cut release v1.3: close JOB-15..22 and set their version to v1.3, regenerate their before/after/commit caches, refresh the baseline snapshot (preserving v1.2 as an older snapshot), and add the v1.3 entry to the releases manifest. Release bookkeeping using the existing Release entity (REL-1..3) \u2014 no new product behavior.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.4"
     },
     {
       "id": "j_8f3c20",
@@ -310,7 +311,8 @@
       },
       "title": "Marketing site refresh \u2014 vision and feature list",
       "description": "Refresh specpad.com messaging (keeping the look & feel) to reflect v1.3: a balanced/dual hero (specs that live in your repo AND design-control evidence), and a feature list covering the full chain \u2014 product requirements (PRD), software requirements + verification, the traceability matrix and Auditor design-control map (IEC 62304 / 21 CFR 820.30), architecture, change control via jobs (in-progress + released diffs), releases as checkpoints, governance, themes, and the eQMS-export direction. Marketing copy only \u2014 non-behavioural.",
-      "status": "open"
+      "status": "closed",
+      "version": "v1.4"
     },
     {
       "id": "j_1d9f4a",
@@ -322,7 +324,8 @@
       },
       "title": "Document-type registry \u2014 single source of truth; snapshot/diff/validation built from it",
       "description": "Introduce src/shared/docTypes.ts as the registry of content document types (srs, vtp, prd; future soup/sdd/cyber) \u2014 each with kind (id-keyed register / prose / asset), file naming, schema, baseline membership, and generator scope. Build validation and the schema reference from it. Make snapshot/diff loaders document-type-generic so a newly registered register type flows into release/baseline snapshots, per-job diffs, and the redline with no code changes. Generalize the skill's snapshot/cache prose to 'every document in the project index plus the architecture files'.",
-      "status": "open"
+      "status": "closed",
+      "version": "v1.4"
     },
     {
       "id": "j_2a7d63",
@@ -334,7 +337,8 @@
       },
       "title": "PRD editing tab + redline in the editor",
       "description": "Add a Product Requirements tab to the editor that edits the PRD register (text/code/status/tags, add/delete) and shows the since-baseline redline (the diff plumbing is registry-generic from JOB-25). PRD status (proposed/implemented) is editable since it drives prd-coverage and the Auditor map. Built on the document-type registry.",
-      "status": "open"
+      "status": "closed",
+      "version": "v1.4"
     },
     {
       "id": "j_6e2c81",
@@ -346,7 +350,8 @@
       },
       "title": "Baseline generator + adoption default to PRD and architecture",
       "description": "Make the full design-control set the default when adopting SpecPad on an existing repo: the baseline generator drafts, by default, a PRD (user needs / product intent, proposed for ratification, with SRS items linked up via satisfies) and a starter arc42 SAD (context + building-block diagram) in addition to SRS/VTP. init/import default to the full set, each proposed for ratification (a project may decline a type). Broaden the demo manifest regex so every content document type is carried, not a fixed list. Skill prose, registry-aware (drafts the project's configured document types).",
-      "status": "open"
+      "status": "closed",
+      "version": "v1.4"
     },
     {
       "id": "j_3f8b22",
@@ -358,7 +363,8 @@
       },
       "title": "PRD tab downward trace + design-control phase bands under the tabs",
       "description": "In the Product Requirements tab, show each item's downward trace \u2014 the software requirements that satisfy it (a Satisfied-by column), flagging an implemented PRD item with no satisfying requirement. And render a thin band below the document tabs labelling each design-control phase, spanning the tabs it covers (Design Inputs across Product Requirements + Requirements; Design Verification across Verification Tests + Results; Design Outputs = Architecture; Traceability; Design History = Releases; Design Changes = Jobs).",
-      "status": "open"
+      "status": "closed",
+      "version": "v1.4"
     },
     {
       "id": "j_9a4e17",
@@ -370,7 +376,8 @@
       },
       "title": "Per-job impact evaluation across every registered document type (+ bring the SAD current)",
       "description": "Generalize the working loop so a job evaluates its impact on EVERY registered document type \u2014 not just SRS/VTP. Register architecture (the SAD) as a document type so the registry is the complete list of impactable docs; the working loop (SKILL.md + CLAUDE.specpad.md) iterates the project's registered types (product requirements, requirements, verification, architecture, and any future pillar) and updates each affected one in the same job, spec-first \u2014 the same registry-generic approach used for the diffs. Apply it by bringing SpecPad's own SAD current (it had drifted since v1.2: no PRD, registry, Auditor, themes).",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.4"
     },
     {
       "id": "j_045bdb",
@@ -382,7 +389,8 @@
       },
       "title": "Editor authoring-view consistency (PRD/VTP parity, SRS rename, chronological tabs) + section-aware architecture diffs",
       "description": "Make the PRD and VTP tables consistent with the SRS table: PRD hides Tags/Status (assume implemented; flag proposed in red under the code + italic text), uses the row hamburger (add/move/delete/view info), and shows Satisfied-by as an expandable Tests-style toggle; VTP hides Result (this is the plan, not the results), uses the row hamburger, moves history into the info dialog, and shows Verifies as an expandable Tests-style toggle. Rename the SRS view to Software Requirements (it was just 'Requirements', confusing next to Product Requirements). Order the tabs chronologically through the design-control phases (Inputs -> Outputs -> Verification -> Controls -> Traceability -> History -> Changes). Make architecture diffs section-aware: markdown files report what changed per heading; diagrams report 'Diagram changed'.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.4"
     },
     {
       "id": "j_4b5409",
@@ -394,7 +402,8 @@
       },
       "title": "Release-cut jobs auto-close as the final step before the release",
       "description": "A release is cut under a job (e.g. 'Cut release vX'). That job is the release's final act and must close itself as the last step before the tag, so no 'Cut release' job is ever left open after its release ships (its derived version is that release, because the tag contains its commit). Document the cutting-a-release procedure in the skill and retroactively close the stale JOB-23 ('Cut release v1.3').",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.4"
     },
     {
       "id": "j_352d45",
@@ -406,7 +415,8 @@
       },
       "title": "Verification evidence \u2014 VTP\u2192test\u2192run chain (linkage + run capture + Results chain view)",
       "description": "Establish the framework-agnostic verification evidence chain: a VTP item links to its automated test(s) via a stored, id-keyed automation field ({runner,file,selector}); a normalized RunRecord captures an actual run's per-test outcomes (parsed from the runner's machine report, e.g. vitest --reporter=json) stamped with the commit/date; the editor's Results tab shows and edits the full chain (VTP\u2192automation\u2192run status), deriving automated results from the run instead of hand-asserting them; run records are frozen for key deliverables (release baseline + job close). Core stays test-framework agnostic (runner/selector opaque; adapters or CI emit the normalized record). Phase 1 of the verification-evidence design.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.4"
     },
     {
       "id": "j_75eac8",
@@ -418,7 +428,21 @@
       },
       "title": "Verification rollups \u2014 per-job verification status in the Jobs view + an Overview headline",
       "description": "Phase 2 of verification evidence. Surface the captured run as roll-ups that complete the design-control loop: a job's detail shows the verification status of the tests it added/modified (derived from the run) with a pass/not-run/fail summary; the Overview shows an overall verification headline. Uses the latest captured run; per-release/per-job frozen runs (frozen on close/cut) light up the same panels for historical checkpoints.",
-      "status": "open"
+      "status": "closed",
+      "version": "v1.4"
+    },
+    {
+      "id": "j_55a97c",
+      "code": "JOB-34",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "version": "v1.4",
+      "title": "Cut release v1.4",
+      "description": "Release v1.4: closed the done-but-open jobs (JOB-24..28, JOB-33), set version v1.4 on JOB-23..34, moved the v1.3 baseline to snapshots/v1.3, regenerated the v1.4 baseline and froze the verification run into it. Per the release-cut procedure (JOB-31), this cut job closes itself as the final step before the v1.4 tag.",
+      "status": "closed"
     }
   ]
 }

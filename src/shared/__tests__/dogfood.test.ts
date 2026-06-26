@@ -37,8 +37,9 @@ describe('SpecPad self-documentation (dogfood)', () => {
   });
 
   it('keeps every active job pointed at an open record in the register', () => {
+    // The marker may be empty right after a release cut (no active job until the next
+    // one is set); the invariant is that any active id resolves to an OPEN record.
     const ids = activeJobIds(job as JobDoc);
-    expect(ids.length).toBeGreaterThan(0);
     for (const id of ids) {
       const active = (jobs as JobsDoc).jobs.find((j) => j.id === id);
       expect(active, `active id ${id} resolves`).toBeDefined();

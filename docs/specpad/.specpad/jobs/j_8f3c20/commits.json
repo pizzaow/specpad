@@ -1,0 +1,20 @@
+[
+  {
+    "hash": "d0f90060880418c9b9ba847dd4ca0511c451fc3f",
+    "subject": "docs(site): re-capture feature screenshots against the v1.3 editor",
+    "author": "Geoff Pollard",
+    "date": "2026-06-22"
+  },
+  {
+    "hash": "7a542fa980393a2a05dcd65499349117720f50cc",
+    "subject": "fix(site): update capture-screenshots for the v1.3 editor",
+    "author": "Geoff Pollard",
+    "date": "2026-06-22"
+  },
+  {
+    "hash": "14b80be1972110436d225e6adaa081aa51a4741e",
+    "subject": "docs(site): refresh specpad.com messaging \u2014 vision + full feature list",
+    "author": "Geoff Pollard",
+    "date": "2026-06-22"
+  }
+]

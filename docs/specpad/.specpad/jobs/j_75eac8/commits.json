@@ -1,0 +1,14 @@
+[
+  {
+    "hash": "3bd107f933d9f9398e2d843d10a04dd8fdb8b21c",
+    "subject": "perf(editor): load the verification run early + parallelize per-job cache loading",
+    "author": "Geoff Pollard",
+    "date": "2026-06-26"
+  },
+  {
+    "hash": "34871909726326d78c5ba639d34daf63f0bfcc82",
+    "subject": "feat(verification): phase 2 \u2014 per-job verification rollup + run-derived coverage roll-ups",
+    "author": "Geoff Pollard",
+    "date": "2026-06-26"
+  }
+]

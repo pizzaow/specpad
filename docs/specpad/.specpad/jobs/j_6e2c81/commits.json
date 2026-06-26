@@ -1,0 +1,14 @@
+[
+  {
+    "hash": "22419577680c70ada7785ff522125e808233b805",
+    "subject": "docs(design): document-type registry design + \"add a pillar\" recipe",
+    "author": "Geoff Pollard",
+    "date": "2026-06-22"
+  },
+  {
+    "hash": "20068ba496ec439745fedb1ba3672f1003d8ba4f",
+    "subject": "feat(skill): adoption defaults to the full set \u2014 generator drafts PRD + starter SAD (BASE-6, INIT-4)",
+    "author": "Geoff Pollard",
+    "date": "2026-06-22"
+  }
+]
