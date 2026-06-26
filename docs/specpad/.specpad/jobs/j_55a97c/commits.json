@@ -1,7 +1,7 @@
 [
   {
-    "hash": "PENDING",
-    "subject": "release: cut v1.4",
+    "hash": "2bebfe387dd78c7e881daa732d6c15826a164f9b",
+    "subject": "release: cut v1.4 \u2014 close JOB-24..28/33, derive versions, refresh baseline + freeze run",
     "author": "Geoff Pollard",
     "date": "2026-06-26"
   }
