@@ -443,6 +443,18 @@
       "title": "Cut release v1.4",
       "description": "Release v1.4: closed the done-but-open jobs (JOB-24..28, JOB-33), set version v1.4 on JOB-23..34, moved the v1.3 baseline to snapshots/v1.3, regenerated the v1.4 baseline and froze the verification run into it. Per the release-cut procedure (JOB-31), this cut job closes itself as the final step before the v1.4 tag.",
       "status": "closed"
+    },
+    {
+      "id": "j_b3d7e2",
+      "code": "JOB-35",
+      "type": "bugfix",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Fault-tolerant diagram loading (unresolvable ref no longer aborts project open)",
+      "description": "A markdown diagram reference the editor cannot resolve — a missing file, or a reference with path segments the File System Access API rejects with 'Name is not allowed' — crashed the whole open with 'Failed to open project', because loadProjectText rethrew any non-NotFound error. Make diagram/asset loading fault-tolerant: walk nested path segments so a subdirectory reference resolves, and degrade any unresolvable reference to a missing diagram rather than throwing, so one bad reference can never abort opening the project.",
+      "status": "open"
     }
   ]
 }

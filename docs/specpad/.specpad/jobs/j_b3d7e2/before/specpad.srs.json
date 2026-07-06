@@ -1100,15 +1100,6 @@
       ]
     },
     {
-      "id": "r_dg004",
-      "code": "DGM-4",
-      "text": "Loading a markdown-referenced diagram (or any project asset) shall be fault-tolerant: a reference the editor cannot open \u2014 because the file is absent or the reference contains path segments the File System Access API rejects as an invalid name \u2014 shall degrade to a missing diagram and shall never abort opening the project; a reference into a subdirectory (path segments separated by '/') shall be resolved by walking the project folder.",
-      "tags": [
-        "architecture",
-        "editor"
-      ]
-    },
-    {
       "id": "r_ac001",
       "code": "AC-1",
       "text": "The closed-job cache shall snapshot the architecture files (sad.md, diagram SVGs, the guide, and the optional workspace.dsl) plus a per-state manifest, so a job's architecture changes are available to the editor.",

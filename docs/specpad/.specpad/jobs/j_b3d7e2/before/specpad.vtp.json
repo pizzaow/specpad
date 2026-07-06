@@ -1721,21 +1721,6 @@
       ]
     },
     {
-      "id": "t_dg004",
-      "code": "TEST-168",
-      "text": "Load project assets through a fake directory handle: a nested reference, a missing file, and a reference with an invalid name.",
-      "verifies": [
-        "r_dg004"
-      ],
-      "expected": "loadProjectText resolves a subdirectory reference (diagrams/context.svg) by walking into the folder, and returns null (never throws) for a bare missing file, a reference into a missing subdirectory, and a reference the handle rejects with a Name-is-not-allowed error.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/localFileApi.test.ts"
-        }
-      ]
-    },
-    {
       "id": "t_ac001",
       "code": "TEST-110",
       "text": "Confirm closed-job caches snapshot the architecture files and a per-state manifest.",

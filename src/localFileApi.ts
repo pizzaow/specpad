@@ -406,12 +406,21 @@ export async function loadProjectText(filename: string): Promise<string | null> 
     return res.text();
   }
   if (!projectDirHandle) return null;
+  // A reference may point into a subdirectory (e.g. "diagrams/context.svg"), so walk the
+  // path segments. Any failure — a missing file/dir, or a segment the File System Access
+  // API rejects as an invalid name ("Name is not allowed") — degrades to null (treated as
+  // absent) rather than throwing, so one bad diagram reference can never abort opening the
+  // project.
+  const segments = filename.split('/').filter((s) => s && s !== '.');
+  const filePart = segments.pop();
+  if (!filePart) return null;
+  const dir = segments.length ? await getSubDirectory(segments) : projectDirHandle;
+  if (!dir) return null;
   try {
-    const fh = await projectDirHandle.getFileHandle(filename);
+    const fh = await dir.getFileHandle(filePart);
     return await (await fh.getFile()).text();
-  } catch (err: any) {
-    if (err?.name === 'NotFoundError') return null;
-    throw err;
+  } catch {
+    return null;
   }
 }
 

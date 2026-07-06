@@ -1,6 +1,47 @@
 import { describe, it, expect } from 'vitest';
-import { parseDocument, serializeDocument, snapshotDirSegments, classifyDocFilename } from '../localFileApi';
+import {
+  parseDocument,
+  serializeDocument,
+  snapshotDirSegments,
+  classifyDocFilename,
+  openProjectFromHandle,
+  loadProjectText,
+} from '../localFileApi';
 import type { SrsDoc } from '../shared';
+
+// A minimal fake FileSystemDirectoryHandle: `files` are readable by bare name in this
+// directory, `subdirs` are nested directory handles. getFileHandle mirrors the browser,
+// rejecting path-bearing / empty / dot names with a "Name is not allowed" error.
+function makeDir(
+  files: Record<string, string> = {},
+  subdirs: Record<string, any> = {},
+): any {
+  const notFound = (): never => {
+    const e: any = new Error('not found');
+    e.name = 'NotFoundError';
+    throw e;
+  };
+  return {
+    kind: 'directory',
+    name: 'root',
+    async *values() {
+      for (const name of Object.keys(files)) yield { kind: 'file', name };
+    },
+    async getFileHandle(name: string) {
+      if (!name || name === '.' || name === '..' || name.includes('/') || name.includes('\\')) {
+        const e: any = new Error(`Failed to execute 'getFileHandle': Name is not allowed`);
+        e.name = 'TypeError';
+        throw e;
+      }
+      if (!(name in files)) notFound();
+      return { getFile: async () => ({ text: async () => files[name] }) };
+    },
+    async getDirectoryHandle(name: string) {
+      if (name in subdirs) return subdirs[name];
+      return notFound();
+    },
+  };
+}
 
 describe('localFileApi serialization', () => {
   it('round-trips an srs doc preserving ids', () => {
@@ -32,6 +73,25 @@ describe('classifyDocFilename', () => {
   it('returns null for non-document files', () => {
     expect(classifyDocFilename('Acme.sad.md')).toBeNull();
     expect(classifyDocFilename('notes.txt')).toBeNull();
+  });
+});
+
+describe('loadProjectText fault tolerance (DGM-4)', () => {
+  it('resolves a nested reference by walking into the subdirectory', async () => {
+    const diagrams = makeDir({ 'context.svg': '<svg>ctx</svg>' });
+    await openProjectFromHandle(makeDir({}, { diagrams }));
+    expect(await loadProjectText('diagrams/context.svg')).toBe('<svg>ctx</svg>');
+    expect(await loadProjectText('./diagrams/context.svg')).toBe('<svg>ctx</svg>');
+  });
+
+  it('degrades an unresolvable reference to null instead of throwing', async () => {
+    await openProjectFromHandle(makeDir({ 'foo.svg': '<svg/>' }));
+    // Bare missing file, missing subdirectory, and a name the handle rejects as invalid.
+    await expect(loadProjectText('missing.svg')).resolves.toBeNull();
+    await expect(loadProjectText('nope/context.svg')).resolves.toBeNull();
+    await expect(loadProjectText('bad\\name.svg')).resolves.toBeNull();
+    // A resolvable bare reference still loads.
+    expect(await loadProjectText('foo.svg')).toBe('<svg/>');
   });
 });
 
