@@ -38,6 +38,22 @@ describe('RowMenu', () => {
     expect(h.onOutdent).not.toHaveBeenCalled();
   });
 
+  it('renders the open menu in a body portal at popover z-index (EDA-8)', () => {
+    render(
+      <div data-testid="table-container">
+        <RowMenu {...handlers()} />
+      </div>,
+    );
+    fireEvent.click(screen.getByLabelText('Row actions'));
+    const menu = document.querySelector('.row-menu-dropdown') as HTMLElement;
+    expect(menu).toBeTruthy();
+    // Portaled out of the table subtree so no row/column stacking context can obscure it.
+    expect(screen.getByTestId('table-container').contains(menu)).toBe(false);
+    expect(menu.parentElement).toBe(document.body);
+    expect(menu.style.position).toBe('fixed');
+    expect(menu.style.zIndex).toBe('1050');
+  });
+
   it('closes via the backdrop without firing a callback', () => {
     const h = handlers();
     render(<RowMenu {...h} />);

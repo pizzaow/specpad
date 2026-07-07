@@ -455,6 +455,18 @@
       "title": "Fault-tolerant diagram loading (unresolvable ref no longer aborts project open)",
       "description": "A markdown diagram reference the editor cannot resolve — a missing file, or a reference with path segments the File System Access API rejects with 'Name is not allowed' — crashed the whole open with 'Failed to open project', because loadProjectText rethrew any non-NotFound error. Make diagram/asset loading fault-tolerant: walk nested path segments so a subdirectory reference resolves, and degrade any unresolvable reference to a missing diagram rather than throwing, so one bad reference can never abort opening the project.",
       "status": "open"
+    },
+    {
+      "id": "j_c9f4a1",
+      "code": "JOB-36",
+      "type": "bugfix",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Row-actions menu z-order — render the open menu above surrounding table content",
+      "description": "The per-row hamburger (⋮) menu on the requirements/verification/PRD tables was partially obscured when opened: the dropdown was an absolutely-positioned element with a tiny z-index nested inside a table row, and each row's fade-in animation (animating transform) establishes a stacking context that traps the menu inside its row, so later rows paint over the part that overflows downward. Render the open menu (and its backdrop) in a portal to document.body with fixed positioning anchored to the trigger, at a popover-level z-index, so it can never be trapped by a row/column stacking context; close on scroll/resize so it stays anchored.",
+      "status": "open"
     }
   ]
 }

@@ -636,21 +636,6 @@
       ]
     },
     {
-      "id": "t_ed0a08",
-      "code": "TEST-169",
-      "text": "Open the row-actions menu inside a container and inspect where it renders and its stacking.",
-      "verifies": [
-        "r_ed0a08"
-      ],
-      "expected": "The open menu is portaled to document.body (not a descendant of the table container in which the trigger sits) and is fixed-positioned at a popover-level z-index, so a row/column stacking context cannot obscure it.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/RowMenu.test.tsx"
-        }
-      ]
-    },
-    {
       "id": "t_ed0a04",
       "code": "TEST-41",
       "text": "Click the show-tests toggle on a requirement that has a verifying test.",

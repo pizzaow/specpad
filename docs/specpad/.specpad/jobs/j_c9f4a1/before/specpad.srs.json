@@ -343,15 +343,6 @@
       ]
     },
     {
-      "id": "r_ed0a08",
-      "code": "EDA-8",
-      "text": "The open row-actions menu shall render above surrounding table content — never obscured by other rows or columns — by rendering in a portal outside the table (not nested inside a row's stacking context) at a popover-level stacking order; it stays anchored to its trigger and dismisses on scroll or resize.",
-      "level": 1,
-      "tags": [
-        "editor"
-      ]
-    },
-    {
       "id": "r_ed0a04",
       "code": "EDA-4",
       "text": "A requirement row shall offer a show-tests toggle that reveals its verifying tests inline (code, text, expected, result).",
