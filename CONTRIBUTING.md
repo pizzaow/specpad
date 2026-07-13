@@ -56,7 +56,12 @@ files valid and governance-clean.
 
 - `src/shared/` — the contract (schemas, validate, governance, ids, factories). Highest review bar.
 - `src/` — the React editor.
-- `skill/specpad/` — the distributable Claude Code skill (`SKILL.md` + templates).
+- `skill/specpad/` — the distributable Claude Code skill (`SKILL.md` + templates); this is
+  the source that gets zipped as `specpad-skill.zip` for downstream consumers.
+- `.claude/skills/specpad/` — a committed byte-for-byte mirror of `skill/specpad/`, so
+  Claude Code auto-loads the skill for contributors working on this repo with zero setup.
+  After editing anything under `skill/specpad/`, run `npm run sync-skill` and commit the
+  refreshed mirror; the pre-push hook blocks pushes if the two directories drift.
 - `site/` — marketing site and the generated schema reference.
 - `docs/design/` — design specs; `docs/specpad/` — SpecPad's own spec (dogfood).
 

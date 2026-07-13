@@ -467,6 +467,30 @@
       "title": "Row-actions menu z-order — render the open menu above surrounding table content",
       "description": "The per-row hamburger (⋮) menu on the requirements/verification/PRD tables was partially obscured when opened: the dropdown was an absolutely-positioned element with a tiny z-index nested inside a table row, and each row's fade-in animation (animating transform) establishes a stacking context that traps the menu inside its row, so later rows paint over the part that overflows downward. Render the open menu (and its backdrop) in a portal to document.body with fixed positioning anchored to the trigger, at a popover-level z-index, so it can never be trapped by a row/column stacking context; close on scroll/resize so it stays anchored.",
       "status": "open"
+    },
+    {
+      "id": "j_a5c1f0",
+      "code": "JOB-37",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Committed .claude/skills/specpad mirror of the distributable skill",
+      "description": "Contributors working on this repo should have the specpad skill active in Claude Code with zero setup on clone. skill/specpad/ remains the canonical source of the distributable product (the folder that gets zipped as specpad-skill.zip). .claude/skills/specpad/ is added as a committed installed copy, treated as a build artifact of skill/specpad/. Drift is prevented by a pre-push hook check plus an `npm run sync-skill` command that regenerates the mirror. Cross-platform, no symlink or Developer-Mode dependency on Windows.",
+      "status": "closed"
+    },
+    {
+      "id": "j_e2d1b4",
+      "code": "JOB-38",
+      "type": "bugfix",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "SKILL.md jobs.json shape & code-naming ambiguity",
+      "description": "A downstream rimsys-sync adoption failed with a runtime TypeError because the skill created rimsys-sync.jobs.json with an `items` top-level array instead of the schema-required `jobs`. Root cause: (a) templates/ ships starter files for proj/srs/vtp/prd/releases but not for jobs, so the skill had no template to copy when creating the register and inferred the shape from SKILL.md prose; (b) the SKILL.md prose (jobs-register section) describes the record shape but never names the top-level `jobs` field, so `items` (used by srs/vtp/prd) was a plausible guess. Fix upstream in skill/specpad/: add templates/starter.jobs.json matching JobsDoc (src/shared/schema.ts:297), and make SKILL.md name the top-level `jobs: []` field explicitly. Also make the JOB code convention explicit (either prescribe JOB-<n> monotonic or explicitly leave it project-local) so downstream projects don't drift into thematic codes.",
+      "status": "open"
     }
   ]
 }

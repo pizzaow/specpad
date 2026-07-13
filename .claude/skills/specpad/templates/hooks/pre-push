@@ -1,14 +1,9 @@
 #!/usr/bin/env bash
 #
 # SpecPad pre-push check.
-# Base template: skill/specpad/templates/hooks/pre-push (installed by `specpad init`).
-# This repo's copy adds ONE self-hosting-only check before the template logic:
-# the committed .claude/skills/specpad/ mirror must match skill/specpad/ so
-# contributors get the current skill on clone. Everything after the marker
-# below is verbatim from the template.
+# Canonical copy: skill/specpad/templates/hooks/pre-push (installed by `specpad init`).
 # Install per repo with:  git config core.hooksPath .githooks
 #
-#   HARD-BLOCK : .claude/skills/specpad/ has drifted from skill/specpad/.
 #   HARD-BLOCK : a pushed commit with no `Job:` trailer.
 #   WARN       : a pushed commit that changes code but touches no SRS/VTP — run a
 #                SpecPad requirement audit, or add a `Spec: none <reason>` trailer
@@ -20,19 +15,6 @@
 # is safe to install on an existing repo and on any branching model.
 
 [ "${SPECPAD_SKIP:-0}" = "1" ] && exit 0
-
-# --- specpad-self-hosting extension: skill-mirror drift check --------------
-if [ -d skill/specpad ] && [ -d .claude/skills/specpad ]; then
-  if ! diff -rq skill/specpad .claude/skills/specpad >/dev/null 2>&1; then
-    echo "SpecPad: .claude/skills/specpad/ has drifted from skill/specpad/." >&2
-    echo "         Run 'npm run sync-skill' and commit the result." >&2
-    exit 1
-  fi
-elif [ -d skill/specpad ] && [ ! -d .claude/skills/specpad ]; then
-  echo "SpecPad: .claude/skills/specpad/ is missing. Run 'npm run sync-skill'." >&2
-  exit 1
-fi
-# --- end extension; everything below is the template ----------------------
 
 specdir="docs/specpad"
 [ -d "$specdir" ] || exit 0   # not a SpecPad project — nothing to enforce
