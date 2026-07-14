@@ -453,7 +453,8 @@
         "email": "geoffpollard@gmail.com"
       },
       "title": "Fault-tolerant diagram loading (unresolvable ref no longer aborts project open)",
-      "description": "A markdown diagram reference the editor cannot resolve — a missing file, or a reference with path segments the File System Access API rejects with 'Name is not allowed' — crashed the whole open with 'Failed to open project', because loadProjectText rethrew any non-NotFound error. Make diagram/asset loading fault-tolerant: walk nested path segments so a subdirectory reference resolves, and degrade any unresolvable reference to a missing diagram rather than throwing, so one bad reference can never abort opening the project.",
+      "description": "The editor no longer fails to open a project when a diagram reference in the SAD points at a missing or invalid path — the reference degrades to a missing-diagram placeholder and the rest of the project loads normally.",
+      "technical_notes": "loadProjectText rethrew any non-NotFound error, so an unresolvable diagram reference (a missing file, or a path with segments the File System Access API rejects with 'Name is not allowed') aborted the whole open with 'Failed to open project'. Fix: walk nested path segments so a subdirectory reference resolves, and catch every failure mode of the resolver — degrade to a missing diagram rather than throwing.",
       "status": "open"
     },
     {
@@ -465,7 +466,8 @@
         "email": "geoffpollard@gmail.com"
       },
       "title": "Row-actions menu z-order — render the open menu above surrounding table content",
-      "description": "The per-row hamburger (⋮) menu on the requirements/verification/PRD tables was partially obscured when opened: the dropdown was an absolutely-positioned element with a tiny z-index nested inside a table row, and each row's fade-in animation (animating transform) establishes a stacking context that traps the menu inside its row, so later rows paint over the part that overflows downward. Render the open menu (and its backdrop) in a portal to document.body with fixed positioning anchored to the trigger, at a popover-level z-index, so it can never be trapped by a row/column stacking context; close on scroll/resize so it stays anchored.",
+      "description": "The per-row hamburger (⋮) menu on the requirements, verification, and PRD tables now paints above surrounding rows instead of being clipped by them.",
+      "technical_notes": "Root cause: the dropdown was an absolutely-positioned element with a small z-index nested inside a table row, and each row's fade-in animation (animating transform) establishes a stacking context that traps the menu inside its row — so later rows paint over the part that overflows downward. Fix: render the open menu (and its backdrop) in a portal to document.body with fixed positioning anchored to the trigger, at a popover-level z-index, so it can never be trapped by a row/column stacking context. Close on scroll/resize so the menu stays anchored to the trigger.",
       "status": "open"
     },
     {
@@ -489,7 +491,21 @@
         "email": "geoffpollard@gmail.com"
       },
       "title": "SKILL.md jobs.json shape & code-naming ambiguity",
-      "description": "A downstream rimsys-sync adoption failed with a runtime TypeError because the skill created rimsys-sync.jobs.json with an `items` top-level array instead of the schema-required `jobs`. Root cause: (a) templates/ ships starter files for proj/srs/vtp/prd/releases but not for jobs, so the skill had no template to copy when creating the register and inferred the shape from SKILL.md prose; (b) the SKILL.md prose (jobs-register section) describes the record shape but never names the top-level `jobs` field, so `items` (used by srs/vtp/prd) was a plausible guess. Fix upstream in skill/specpad/: add templates/starter.jobs.json matching JobsDoc (src/shared/schema.ts:297), and make SKILL.md name the top-level `jobs: []` field explicitly. Also make the JOB code convention explicit (either prescribe JOB-<n> monotonic or explicitly leave it project-local) so downstream projects don't drift into thematic codes.",
+      "description": "Ship a starter template for the jobs register and name its top-level `jobs` array in SKILL.md, plus make the JOB-<n> code convention explicit, so downstream projects can't guess the shape wrong.",
+      "technical_notes": "Root cause of the crash a downstream rimsys-sync adoption hit: (a) templates/ shipped starter files for proj/srs/vtp/prd/releases but not for jobs, so the skill inferred the shape from SKILL.md prose; (b) the jobs-register section described the record shape but never named the top-level `jobs` field, so `items` (used by srs/vtp/prd) was a plausible guess and became rimsys-sync.jobs.json, which then blew up on `.find` in the editor. Fix upstream in skill/specpad/: add templates/starter.jobs.json matching JobsDoc (src/shared/schema.ts:297), and make SKILL.md name the top-level `jobs: []` field explicitly. Also prescribe `JOB-<n>` monotonic (rather than leaving it project-local and inviting thematic codes).",
+      "status": "open"
+    },
+    {
+      "id": "j_5b4a8f",
+      "code": "JOB-39",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff [EXAS]",
+        "email": "gpollard@exactsciences.com"
+      },
+      "title": "Split job description into release-note description + engineer technical_notes",
+      "description": "Give the jobs register two altitudes: a short release-note-voice `description` (what a user sees in the changelog) and an optional engineer-voice `technical_notes` (root cause, mechanism, files touched). Both stay prose and validation-optional; no governance rule.",
+      "technical_notes": "Add `technical_notes?: string` to `JobRecord` and `jobsSchema.properties` in src/shared/schema.ts; update the sidecars.test.ts records-only assertion to include the new key. Extend SKILL.md's cache-files bullet and Jobs-register section with an altitude rule, a before/after example, and a one-line migration note. Add an example record to templates/starter.jobs.json showing the split. Editor renders `technical_notes` only in the job detail view (as a secondary field under Description), not in the release-notes list. Do not auto-migrate existing files; opportunistically clean up SpecPad's own open jobs (JOB-35, JOB-36, JOB-38). Dogfood as JOBS-13.",
       "status": "open"
     }
   ]

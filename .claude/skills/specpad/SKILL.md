@@ -302,8 +302,10 @@ all redlines, version diffs, and attribution from the raw snapshots you write us
 - `<name>.jobs.json` — optional **jobs register** (no-tracker case). Type `jobs`. Records live under a
   top-level `jobs: [ … ]` array (**not** `items` — that field name is used by the register documents
   srs/vtp/prd, but `jobs.json`'s array is named `jobs`). Each record is
-  `{ id, code?, title, description?, status: "open"|"closed" }` and holds **no change associations**
-  (which items/commits a job touched is derived from git via the `Job:` trailer).
+  `{ id, code?, title, description?, technical_notes?, status: "open"|"closed" }` and holds **no change
+  associations** (which items/commits a job touched is derived from git via the `Job:` trailer).
+  `description` is release-note-voice (what a user reads in the changelog); `technical_notes` is the
+  engineer-voice detail (root cause, mechanism, files touched) — see the *Jobs register* section.
   `job.json`'s `job` points at the active record's **`id`**. A closed record's scope is sealed: don't
   re-activate it — create a new record for further work.
 - `.specpad/baseline/` — raw snapshot of the spec files at the latest release (always present once
@@ -387,9 +389,10 @@ links (the test source lives in git; its detail is the report's job):
 
 ### Jobs register (`<name>.jobs.json`) — when there is no external tracker
 The register's top-level shape is `{ schemaVersion, type: "jobs", name, jobs: [ … ] }` — records live
-under **`jobs`**, not `items`. Each record is `{ id, code?, title, description?, status }` only, and
-carries **no change associations** (which items and commits a job touched is derived from git, never
-stored). Maintain it as authoritative metadata (it is **not** part of the regenerable `.specpad/` cache):
+under **`jobs`**, not `items`. Each record is `{ id, code?, title, description?, technical_notes?,
+status }` only, and carries **no change associations** (which items and commits a job touched is derived
+from git, never stored). Maintain it as authoritative metadata (it is **not** part of the regenerable
+`.specpad/` cache):
 - **Create** it the first time the user tracks work without a tracker by copying
   `templates/starter.jobs.json` (replacing `PROJECT_NAME`) — or let them create it in the editor's
   Jobs tab. Generate each record's `id` like any other key — a `j_` prefix + 6 hex digits, unique within
@@ -397,6 +400,22 @@ stored). Maintain it as authoritative metadata (it is **not** part of the regene
   (`JOB-1`, `JOB-2`, …) — it is a human label, freely renameable (nothing references it), so pick the
   next unused `n` when adding a record and don't reuse a code from a deleted one. Set `owner` from git
   (`user.name`/`user.email`) at creation; set `type` to `feature` or `bugfix`.
+- **`description` vs `technical_notes` — two altitudes.** `description` is release-note voice: one or
+  two sentences a user would read in a changelog ("what shipped, why they care"). `technical_notes` is
+  engineer voice: root cause, mechanism, files touched, follow-ups — the detail a maintainer wants when
+  they open the job later. Both fields are optional prose; there is no governance rule and either may
+  be blank. When a newly-opened job carries engineer detail, put it in `technical_notes` and keep the
+  `description` short. Example — the same job at both altitudes:
+  > `description`: *"Auth client now retries transient 5xx responses (up to 3× with exponential
+  > backoff) so a flaky upstream no longer surfaces as a login failure."*
+  > `technical_notes`: *"Introduced `RetryPolicy` in `src/auth/retry.ts` (200/400/800 ms, capped at
+  > 3 attempts). Applied it in `AuthClient.login` and `AuthClient.refresh` — the two call sites that
+  > were logged as the source of the reported 502s. Non-5xx errors still fail fast (no retry on 4xx).
+  > Follow-up: extend to the token-exchange endpoint once its idempotency story is settled."*
+
+  When touching an existing job record whose `description` mixes altitudes, consider splitting it into
+  a concise summary + `technical_notes` — no bulk migration is required (existing files without
+  `technical_notes` remain valid).
 - **Version is derived, not hand-set.** A job's `version` is the release tag whose commits contain the
   job (Unreleased until a release does). Derive it at `refresh`: for each closed job, the earliest tag
   matching the manifest `tagPattern` that contains the job's last commit (`git tag --contains <sha>`).

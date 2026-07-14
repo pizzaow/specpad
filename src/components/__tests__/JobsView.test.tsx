@@ -103,6 +103,24 @@ describe('JobsView — in progress vs released', () => {
     expect(screen.getByText('TEST-1')).toBeInTheDocument();
   });
 
+  it('renders technical_notes in the detail view but not in the release-notes list (JOBS-13)', () => {
+    const withNotes: JobsDoc = {
+      ...doc,
+      jobs: [
+        ...doc.jobs.filter((j) => j.id !== 'j_feat'),
+        { id: 'j_feat', code: 'JOB-1', type: 'feature', title: 'Login', description: 'Adds login.', technical_notes: 'AuthClient calls /login via retry policy.', status: 'closed' },
+      ],
+    };
+    render(<JobsView doc={withNotes} projectName="AcmeApp" activeIds={[]} onChange={vi.fn()} onSetActive={vi.fn()} />);
+    // List row: description is shown, technical_notes is NOT.
+    expect(screen.getByText('Adds login.')).toBeInTheDocument();
+    expect(screen.queryByText(/AuthClient calls \/login/)).not.toBeInTheDocument();
+    // Detail view: both fields are rendered as editable textareas.
+    fireEvent.click(screen.getByText('Login'));
+    expect(screen.getByText('Technical notes')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('AuthClient calls /login via retry policy.')).toBeInTheDocument();
+  });
+
   it('shows owner and derived (read-only) version in the detail', () => {
     renderView();
     fireEvent.click(screen.getByText('SSO'));

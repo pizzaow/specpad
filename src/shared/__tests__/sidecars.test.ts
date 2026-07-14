@@ -89,7 +89,7 @@ describe('sidecar schemas', () => {
 
   it('a job record stores only record fields — no change associations (r_jb002)', () => {
     const keys = Object.keys((jobsSchema as any).properties.jobs.items.properties).sort();
-    expect(keys).toEqual(['code', 'description', 'id', 'owner', 'status', 'title', 'type', 'version']);
+    expect(keys).toEqual(['code', 'description', 'id', 'owner', 'status', 'technical_notes', 'title', 'type', 'version']);
   });
 
   it('accepts a job record with type/version/owner and rejects a bad type', () => {

@@ -170,7 +170,13 @@ const JobsView: React.FC<JobsViewProps> = ({ doc, projectName, activeIds, jobDif
           </Field>
           <Field label="Description">
             <textarea className="form-control" rows={4} value={selected.description ?? ''} disabled={readOnly}
-              onChange={(e) => updateSelected({ description: e.target.value })} />
+              onChange={(e) => updateSelected({ description: e.target.value })}
+              placeholder="Release-note voice — 1–2 sentences a user reads in the changelog." />
+          </Field>
+          <Field label="Technical notes">
+            <textarea className="form-control" rows={6} value={selected.technical_notes ?? ''} disabled={readOnly}
+              onChange={(e) => updateSelected({ technical_notes: e.target.value })}
+              placeholder="Engineer voice — root cause, mechanism, files touched, follow-ups." />
           </Field>
           <Field label="Status">
             <select className="form-control" value={selected.status} disabled={readOnly} aria-label="Job status"

@@ -640,6 +640,15 @@
       ]
     },
     {
+      "id": "r_jb013",
+      "code": "JOBS-13",
+      "text": "A job record shall carry an optional release-note-voice description (short, user-facing summary) and an optional engineer-voice technical_notes field (root cause, mechanism, files touched); both remain prose and validation-optional, and the editor shall render technical_notes only in the job detail view (not the release-notes list).",
+      "tags": [
+        "jobs",
+        "editor"
+      ]
+    },
+    {
       "id": "h_in000",
       "heading": true,
       "text": "Onboarding (specpad init)"

@@ -290,7 +290,11 @@ export interface JobRecord {
   version?: string;
   owner?: AuthorRef;
   title: string;
+  // Release-note-voice summary (1–2 sentences, user-facing changelog altitude).
   description?: string;
+  // Engineer-voice detail — root cause, mechanism, files touched, follow-ups.
+  // Not shown in release notes; surfaced in the editor's job detail view.
+  technical_notes?: string;
   status: JobStatus;
 }
 
@@ -410,7 +414,8 @@ export const jobsSchema = {
           version: { type: 'string', description: 'Release this job shipped in — skill-derived (the release tag whose commits contain the job), not hand-set; absent means Unreleased. The Jobs view groups by its major component.' },
           owner: { ...authorRefSchema, description: 'Who owns the job — set from git (user.name/user.email) when the job is created; reassignable.' },
           title: { type: 'string', description: 'Short human-readable summary of the job.' },
-          description: { type: 'string', description: 'Optional longer description of the work the job covers.' },
+          description: { type: 'string', description: 'Release-note-voice summary of the job — 1–2 sentences a user would read in a changelog. Keep engineer detail (root cause, mechanism, files) in technical_notes instead.' },
+          technical_notes: { type: 'string', description: 'Optional engineer-voice detail — root cause, mechanism, files touched, follow-ups. Not shown in the release-notes list; surfaced in the job detail view.' },
           status: { enum: ['open', 'closed'], description: 'Lifecycle state: "open" (may accrue more commits) or "closed" (scope sealed; further work spawns a new job).' },
         },
       },

@@ -2676,6 +2676,25 @@
           "file": "src/__tests__/auditReport.test.ts"
         }
       ]
+    },
+    {
+      "id": "t_jb013",
+      "code": "TEST-170",
+      "text": "Validate a jobs register with a record carrying both description and technical_notes; inspect the schema properties; render a job's detail view and confirm technical_notes appears there but not in the list row.",
+      "verifies": [
+        "r_jb013"
+      ],
+      "expected": "validate() accepts a job record with technical_notes; jobsSchema.properties.jobs.items.properties includes both description and technical_notes as optional strings; JobsView's list row renders only description under the title, while the detail view renders a Technical notes field beneath Description.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/shared/__tests__/sidecars.test.ts"
+        },
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/JobsView.test.tsx"
+        }
+      ]
     }
   ]
 }
