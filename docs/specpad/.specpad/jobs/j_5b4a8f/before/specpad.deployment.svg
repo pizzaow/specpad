@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="260" viewBox="0 0 720 260" font-family="Helvetica, Arial, sans-serif" font-size="12">
+  <rect width="720" height="260" fill="#ffffff"/>
+  <text x="16" y="24" font-size="15" font-weight="bold">Deployment View — specpad.com</text>
+
+  <rect x="40" y="90" width="130" height="60" rx="6" fill="#dbe7ff" stroke="#4a6fa5"/>
+  <text x="105" y="118" text-anchor="middle" font-weight="bold">Browser</text>
+  <text x="105" y="136" text-anchor="middle" fill="#555">editor SPA</text>
+
+  <rect x="250" y="40" width="150" height="50" rx="6" fill="#eaeaea" stroke="#888"/>
+  <text x="325" y="70" text-anchor="middle" font-weight="bold">Route 53 + ACM</text>
+
+  <rect x="250" y="110" width="150" height="50" rx="6" fill="#eaeaea" stroke="#888"/>
+  <text x="325" y="135" text-anchor="middle" font-weight="bold">CloudFront</text>
+  <text x="325" y="151" text-anchor="middle" fill="#555">+ OAC, URL rewrite</text>
+
+  <rect x="470" y="90" width="210" height="110" rx="6" fill="#fff3cd" stroke="#b8860b"/>
+  <text x="575" y="115" text-anchor="middle" font-weight="bold">Private S3 bucket</text>
+  <text x="575" y="138" text-anchor="middle" fill="#555">/ (marketing)</text>
+  <text x="575" y="156" text-anchor="middle" fill="#555">/v01/ (editor) · /demo/</text>
+  <text x="575" y="174" text-anchor="middle" fill="#555">/staging/ (in-progress)</text>
+
+  <line x1="170" y1="120" x2="248" y2="135" stroke="#555" marker-end="url(#a)"/>
+  <text x="205" y="115" text-anchor="middle" fill="#555">https</text>
+  <line x1="325" y1="90" x2="325" y2="108" stroke="#999" marker-end="url(#a)"/>
+  <line x1="400" y1="135" x2="468" y2="140" stroke="#555" marker-end="url(#a)"/>
+  <text x="435" y="128" text-anchor="middle" fill="#555">origin</text>
+
+  <defs><marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#555"/></marker></defs>
+</svg>
