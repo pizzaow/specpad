@@ -2732,7 +2732,14 @@
       "verifies": [
         "r_sv3"
       ],
-      "expected": "The worktree's sparse-checkout cone is the allowlisted paths only; files outside them (for example src/) are absent from the working tree even though they exist in the repository."
+      "expected": "The worktree's sparse-checkout cone is the allowlisted paths only; files outside them (for example src/) are absent from the working tree even though they exist in the repository.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/repository.integration.test.ts",
+          "selector": "Repository — provisioning (SRV-3, CMT-1)"
+        }
+      ]
     },
     {
       "id": "t_sv4",
@@ -2869,6 +2876,11 @@
           "runner": "vitest",
           "file": "server/__tests__/commitGate.test.ts",
           "selector": "commitAuthor (AUTH-6)"
+        },
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/repository.integration.test.ts",
+          "selector": "Repository — publishing (CMT-3, CMT-5, AUTH-6)"
         }
       ]
     },
@@ -2879,7 +2891,14 @@
       "verifies": [
         "r_cm1"
       ],
-      "expected": "Each user reads their own uncommitted edits and none of the other's; the two working copies are independent."
+      "expected": "Each user reads their own uncommitted edits and none of the other's; the two working copies are independent.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/repository.integration.test.ts",
+          "selector": "Repository — provisioning (SRV-3, CMT-1)"
+        }
+      ]
     },
     {
       "id": "t_cm2",
@@ -2892,8 +2911,8 @@
       "automation": [
         {
           "runner": "vitest",
-          "file": "src/transports/__tests__/conformance.test.ts",
-          "selector": "FileApi conformance — 'remote (SpecPad server)'"
+          "file": "server/__tests__/repository.integration.test.ts",
+          "selector": "Repository — status and the pending diff (CMT-2, CMT-7)"
         }
       ]
     },
@@ -2906,6 +2925,11 @@
       ],
       "expected": "No commit exists before Commit is pressed; afterwards exactly one commit on the configured branch contains all the pending changes.",
       "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/repository.integration.test.ts",
+          "selector": "Repository — publishing (CMT-3, CMT-5, AUTH-6)"
+        },
         {
           "runner": "vitest",
           "file": "src/components/__tests__/CommitDialog.test.tsx",
@@ -2931,6 +2955,11 @@
           "runner": "vitest",
           "file": "server/__tests__/commitGate.test.ts",
           "selector": "checkCommit — governance policy (CMT-4)"
+        },
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/repository.integration.test.ts",
+          "selector": "Repository — publishing (CMT-3, CMT-5, AUTH-6)"
         }
       ]
     },
@@ -2952,6 +2981,11 @@
           "runner": "vitest",
           "file": "server/__tests__/commitGate.test.ts",
           "selector": "buildCommitMessage (CMT-5)"
+        },
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/repository.integration.test.ts",
+          "selector": "Repository — publishing (CMT-3, CMT-5, AUTH-6)"
         }
       ]
     },
@@ -2962,7 +2996,14 @@
       "verifies": [
         "r_cm6"
       ],
-      "expected": "The commit is rebased onto the advanced branch and pushed within the bounded retry count; no force-push is ever issued, and a persistent failure is reported rather than forced."
+      "expected": "The commit is rebased onto the advanced branch and pushed within the bounded retry count; no force-push is ever issued, and a persistent failure is reported rather than forced.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/repository.integration.test.ts",
+          "selector": "Repository — concurrent editors (CMT-6, MRG-5)"
+        }
+      ]
     },
     {
       "id": "t_cm7",
@@ -2985,8 +3026,8 @@
         },
         {
           "runner": "vitest",
-          "file": "src/transports/__tests__/remote.test.ts",
-          "selector": "discard (CMT-7)"
+          "file": "server/__tests__/repository.integration.test.ts",
+          "selector": "Repository — discard (CMT-7)"
         }
       ]
     },
@@ -3014,11 +3055,19 @@
     {
       "id": "t_ce2",
       "code": "TEST-191",
-      "text": "Inspect the request the editor sends when a single field of one requirement is edited.",
+      "text": "Have two users edit different items of the same document at the same time, then publish both.",
       "verifies": [
         "r_ce2"
       ],
-      "expected": "The request carries an item-level operation identifying the item by its stable id, not the whole document; two users editing different items of one document both succeed without contention."
+      "expected": "Neither write contends with the other — each lands in its own working copy — and both edits survive publication, reconciled by the structural merge with no conflict raised.",
+      "notes": "Supersedes the original item-level-operations wording: per-user working copies remove cross-user write contention entirely, so the reconciliation point is publication, not the write.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/repository.integration.test.ts",
+          "selector": "merges two people editing different requirements, with no conflict"
+        }
+      ]
     },
     {
       "id": "t_ce3",
@@ -3119,7 +3168,14 @@
       "verifies": [
         "r_mg5"
       ],
-      "expected": "Resolution goes through the structural merge; no textual conflict markers ever appear in a document, and the committed file remains valid JSON conforming to its schema."
+      "expected": "Resolution goes through the structural merge; no textual conflict markers ever appear in a document, and the committed file remains valid JSON conforming to its schema.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/repository.integration.test.ts",
+          "selector": "Repository — concurrent editors (CMT-6, MRG-5)"
+        }
+      ]
     },
     {
       "id": "t_mg6",

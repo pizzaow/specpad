@@ -2037,7 +2037,7 @@
     {
       "id": "r_ce2",
       "code": "CE-2",
-      "text": "The editor shall write changes to the server as item-level operations (upsert, delete, reorder) rather than as whole documents, so concurrent edits to different items of one document do not contend.",
+      "text": "Concurrent editing shall not depend on document-level locking: because each user edits a private working copy, two people editing different items of one document shall both succeed, their edits reconciled item-by-item when they publish.",
       "satisfies": [
         "p_sv01"
       ],
