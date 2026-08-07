@@ -15,6 +15,11 @@ import type { ServerConfig } from './config';
 import { createAuthProvider, resolveSession } from './auth';
 import { Repository } from './repository';
 import { handleApi } from './api';
+import type { ApiServices } from './api';
+import { PresenceRegistry } from './presence';
+import { EventBus, HEARTBEAT_MS } from './events';
+import { BranchWatcher, DEFAULT_WATCH_INTERVAL_MS } from './branchWatcher';
+import { execGitRunner } from './git';
 
 const API_PREFIX = '/api/v1';
 const MAX_BODY_BYTES = 8 * 1024 * 1024;
@@ -92,7 +97,26 @@ async function serveStatic(
 export function createServer(config: ServerConfig, repository: Repository, editorDir: string) {
   const provider = createAuthProvider(config.auth);
 
-  return http.createServer(async (req, res) => {
+  // Advisory presence and the branch watcher (CE-3, CE-4). All of this is a courtesy:
+  // if every timer below stopped, editing and committing would work exactly the same.
+  const presence = new PresenceRegistry();
+  const events = new EventBus();
+  const watcher = new BranchWatcher(execGitRunner(), repository.repoDir, config.repo.branch);
+  const services: ApiServices = { presence, events, now: () => Date.now() };
+
+  const heartbeat = setInterval(() => events.heartbeat(), HEARTBEAT_MS);
+  const poll = setInterval(() => {
+    void (async () => {
+      if (presence.sweep(Date.now())) events.broadcast('presence', presence.list(Date.now()));
+      const moved = await watcher.check().catch(() => null);
+      if (moved) events.broadcast('upstream', { sha: moved, branch: config.repo.branch });
+    })();
+  }, DEFAULT_WATCH_INTERVAL_MS);
+  // Never hold the process open for a courtesy.
+  heartbeat.unref?.();
+  poll.unref?.();
+
+  const server = http.createServer(async (req, res) => {
     const url = new URL(req.url ?? '/', 'http://localhost');
 
     try {
@@ -113,6 +137,18 @@ export function createServer(config: ServerConfig, repository: Repository, edito
         return;
       }
 
+      // The event stream needs the raw response, so it never enters the JSON router.
+      if (url.pathname === `${API_PREFIX}/events`) {
+        const unsubscribe = events.subscribe(res);
+        events.send(res, 'hello', {
+          presence: presence.list(Date.now(), session.principal.id),
+          sha: watcher.currentSha,
+          branch: config.repo.branch,
+        });
+        req.on('close', unsubscribe);
+        return;
+      }
+
       const workingCopy = await repository.workingCopyFor(session.principal);
       const response = await handleApi(
         {
@@ -124,23 +160,46 @@ export function createServer(config: ServerConfig, repository: Repository, edito
         session,
         workingCopy,
         config,
+        services,
       );
       sendJson(res, response.status, response.body);
     } catch (err) {
       sendJson(res, 500, { error: err instanceof Error ? err.message : String(err) });
     }
   });
+
+  /**
+   * Shut down cleanly. An open SSE stream is a connection that never ends on its own,
+   * so `server.close()` alone would wait forever and a container would need SIGKILL:
+   * end the streams first, then stop accepting, then drop what is left.
+   */
+  const shutdown = async (): Promise<void> => {
+    clearInterval(heartbeat);
+    clearInterval(poll);
+    events.closeAll();
+    await new Promise<void>((resolve) => {
+      server.close(() => resolve());
+      server.closeAllConnections?.();
+    });
+  };
+
+  return { server, shutdown };
+}
+
+export interface RunningServer {
+  server: http.Server;
+  shutdown: () => Promise<void>;
 }
 
 /** Boot from a config file: clone or fetch, then listen. Resolves once listening. */
-export async function start(configPath: string): Promise<http.Server> {
+export async function start(configPath: string): Promise<RunningServer> {
   const config = loadConfig(JSON.parse(await fs.readFile(configPath, 'utf8')));
   const editorDir = path.resolve(process.env.SPECPAD_EDITOR_DIR ?? 'dist');
 
   const repository = new Repository(config);
   await repository.ensureClone();
 
-  const server = createServer(config, repository, editorDir);
+  const { server, shutdown } = createServer(config, repository, editorDir);
   await new Promise<void>((resolve, reject) => {
     server.once('error', reject);
     server.listen(config.port, config.bind, () => {
@@ -155,7 +214,7 @@ export async function start(configPath: string): Promise<http.Server> {
     `SpecPad server listening on ${where}:${config.port} — ` +
       `${config.repo.url} (${config.repo.branch}), auth: ${config.auth.provider}`,
   );
-  return server;
+  return { server, shutdown };
 }
 
 export async function main(argv: string[]): Promise<void> {
@@ -163,7 +222,15 @@ export async function main(argv: string[]): Promise<void> {
   if (!configPath) {
     throw new Error('Usage: specpad-server <config.json>');
   }
-  await start(configPath);
+  const { shutdown } = await start(configPath);
+
+  // A container stops with SIGTERM; without this the open event streams would hold the
+  // process until the runtime lost patience and killed it.
+  for (const signal of ['SIGTERM', 'SIGINT'] as const) {
+    process.once(signal, () => {
+      void shutdown().then(() => process.exit(0));
+    });
+  }
 }
 
 // Run when invoked directly (`npm run server -- ./config.json`), but not when a test

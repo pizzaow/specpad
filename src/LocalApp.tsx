@@ -46,8 +46,11 @@ import {
   serverStatus,
   serverCommit,
   serverDiscard,
+  serverSubscribe,
+  serverClaimPresence,
+  serverReleasePresence,
 } from './fileApi';
-import type { ServerSession, ServerStatus } from './fileApi';
+import type { ServerSession, ServerStatus, Presence, UpstreamMoved } from './fileApi';
 import { activeJobIds, diffItems, REGISTER_TYPES } from './shared';
 import type { DocDiff, SrsItem, VtpItem, PrdItem, SpecPadDoc, JobCommit } from './shared';
 import { buildRedline, computeAttribution } from './changeTracking';
@@ -62,6 +65,9 @@ import CommitDialog from './components/CommitDialog';
 import * as recentStore from './handleStore';
 import type { RecentProject } from './handleStore';
 import { parseLaunchParams } from './launchParams';
+
+// Presence claims expire server-side after 45s; refresh well inside that (CE-4).
+const PRESENCE_HEARTBEAT_MS = 20_000;
 import SRSTable from './components/SRSTable';
 import VTPTable from './components/VTPTable';
 import TestingView from './components/TestingView';
@@ -212,8 +218,26 @@ const LocalApp: React.FC = () => {
   const [serverSession, setServerSession] = useState<ServerSession | null>(null);
   const [serverState, setServerState] = useState<ServerStatus | null>(null);
   const [showCommit, setShowCommit] = useState(false);
+  // Advisory presence and the upstream-moved signal (CE-3). Neither affects editing.
+  const [presence, setPresence] = useState<Presence[]>([]);
+  const [upstream, setUpstream] = useState<UpstreamMoved | null>(null);
+  const editingItemRef = useRef<{ doc: string | null; itemId: string | null }>({
+    doc: null,
+    itemId: null,
+  });
 
   const supportsFileSystemAccess = isFileSystemAccessSupported();
+
+  /**
+   * Announce which row this user has open, so others see it before they duplicate the
+   * work. Entirely advisory: a failure here is swallowed and changes nothing (CE-4).
+   */
+  const announceEditing = (itemId: string | null) => {
+    const doc = selectedDocName || projectName;
+    const where = { doc: doc ? `${doc}.${currentView === 'vtp' ? 'vtp' : 'srs'}.json` : null, itemId };
+    editingItemRef.current = where;
+    void serverClaimPresence(where.doc, itemId);
+  };
 
   /** Refresh the pending-change set behind the Commit badge. Never fatal. */
   const refreshServerStatus = async () => {
@@ -597,6 +621,32 @@ const LocalApp: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Presence and the upstream-moved signal, while connected to a server (CE-3).
+  // Everything here is a courtesy: if the stream never connects, the editor simply
+  // says less, and editing, committing, and merging are unaffected (CE-4).
+  useEffect(() => {
+    if (!serverSession) return;
+    const me = serverSession.principal.id;
+
+    const unsubscribe = serverSubscribe({
+      onHello: (info) => setPresence(info.presence ?? []),
+      onPresence: (list) => setPresence(list.filter((p) => p.userId !== me)),
+      onUpstream: (moved) => setUpstream(moved),
+    });
+
+    // Refresh the claim so it does not expire while someone is still typing.
+    const beat = window.setInterval(() => {
+      const { doc, itemId } = editingItemRef.current;
+      if (itemId) void serverClaimPresence(doc, itemId);
+    }, PRESENCE_HEARTBEAT_MS);
+
+    return () => {
+      unsubscribe();
+      window.clearInterval(beat);
+      void serverReleasePresence();
+    };
+  }, [serverSession]);
+
   const handleSelectDocument = async (name: string) => {
     if (!name || !hasOpenDirectory()) return;
     if (dirty && !window.confirm('You have unsaved changes that will be lost. Switch anyway?')) return;
@@ -644,6 +694,36 @@ const LocalApp: React.FC = () => {
   };
 
   const dirty = dirtySrs || dirtyVtp || dirtyPrd || dirtyJobs || dirtySad || dirtyDsl;
+
+  // ---- Presence, resolved for display (CE-3) ----
+
+  const currentDocFilename = `${selectedDocName || projectName}.${currentView === 'vtp' ? 'vtp' : 'srs'}.json`;
+
+  /** Others editing a row of the document on screen, keyed by item id. */
+  const presenceByItem = React.useMemo(() => {
+    const byItem = new Map<string, string[]>();
+    for (const person of presence) {
+      if (!person.itemId) continue;
+      if (person.doc && person.doc !== currentDocFilename) continue;
+      byItem.set(person.itemId, [...(byItem.get(person.itemId) ?? []), person.displayName]);
+    }
+    return byItem;
+  }, [presence, currentDocFilename]);
+
+  /** Name each person's location the way a human would: by code, not by stable id. */
+  const presenceLabels = React.useMemo(() => {
+    const codeById = new Map<string, string>();
+    for (const doc of [srsDoc, vtpDoc, prdDoc]) {
+      for (const item of doc?.items ?? []) {
+        if (item.code) codeById.set(item.id, item.code);
+      }
+    }
+    return presence.map((person) => ({
+      userId: person.userId,
+      displayName: person.displayName,
+      where: person.itemId ? (codeById.get(person.itemId) ?? person.itemId) : null,
+    }));
+  }, [presence, srsDoc, vtpDoc, prdDoc]);
 
   const save = async () => {
     const name = selectedDocName || projectName;
@@ -742,8 +822,37 @@ const LocalApp: React.FC = () => {
         <ServerBar
           session={serverSession}
           status={serverState}
+          presence={presenceLabels}
           onCommit={() => setShowCommit(true)}
         />
+      )}
+
+      {upstream && (
+        <div className="alert alert-info" role="status">
+          <strong>{upstream.branch}</strong> has moved since you opened this — someone else
+          published a change. Your own edits are safe and will be merged when you commit.
+          <button
+            type="button"
+            className="btn btn-default btn-xs"
+            style={{ marginLeft: 10 }}
+            onClick={async () => {
+              setUpstream(null);
+              if (dirty && !window.confirm('You have unsaved changes that will be lost. Reload anyway?')) return;
+              await applyOpened(await openServerProject(), projectName);
+              await refreshServerStatus();
+            }}
+          >
+            Reload
+          </button>
+          <button
+            type="button"
+            className="close"
+            onClick={() => setUpstream(null)}
+            aria-label="Dismiss"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
       )}
 
       {!supportsFileSystemAccess && !launch.demo && !serverSession && (
@@ -783,8 +892,8 @@ const LocalApp: React.FC = () => {
           />
         )}
         {currentView === 'prd' && prdDoc && <PrdTable key={selectedDocName} doc={prdDoc} srs={srsDoc} onChange={handlePrdChange} baseline={prdBaseline} attribution={prdSnapshots.length ? prdAttribution : undefined} readOnly={launch.demo} />}
-        {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onChange={handleChange} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} />}
-        {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onChange={handleChange} redline={vtpRedline} attribution={vtpSnapshots.length ? vtpAttribution : undefined} />}
+        {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onChange={handleChange} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} onEditingItem={serverSession ? announceEditing : undefined} presence={presenceByItem} />}
+        {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onChange={handleChange} redline={vtpRedline} attribution={vtpSnapshots.length ? vtpAttribution : undefined} onEditingItem={serverSession ? announceEditing : undefined} presence={presenceByItem} />}
         {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} run={runRecord} onChange={handleChange} readOnly={launch.demo} />}
         {currentView === 'releases' && isDirectoryOpen && (
           <ReleasesView releases={releases} jobs={jobsDoc?.jobs ?? []} />

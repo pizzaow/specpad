@@ -38,6 +38,11 @@ export class Repository {
     this.worktreesDir = path.join(config.workDir, 'work');
   }
 
+  /** The bare clone's directory, for anything that reads the repo without a worktree. */
+  get repoDir(): string {
+    return this.bareDir;
+  }
+
   private get bare(): Git {
     return new Git(this.runner, this.bareDir);
   }

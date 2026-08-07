@@ -6,7 +6,7 @@
  * hamburger). Execution results live on the Results tab, and per-item history lives
  * in the info dialog — neither is shown here, so this view stays the plan of record.
  */
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import type { SrsDoc, VtpDoc, VtpItem } from '../shared';
 import { createVtpItem, generateId, ID_PREFIX } from '../shared';
 import type { RedlineView, AttributionView } from '../changeTracking';
@@ -21,6 +21,10 @@ interface VTPTableProps {
   onChange: (doc: VtpDoc) => void;
   redline?: RedlineView;
   attribution?: Map<string, AttributionView>;
+  /** Which row is being edited, for advisory presence (CE-3). Null when none is. */
+  onEditingItem?: (itemId: string | null) => void;
+  /** Other people currently editing rows of this document, keyed by item id (CE-3). */
+  presence?: Map<string, string[]>;
 }
 
 type EditField = 'code' | 'text' | 'verifies' | 'expected';
@@ -28,13 +32,28 @@ type EditTarget = { index: number; field: EditField } | null;
 
 const INDENT_PX = 22;
 
-const VTPTable: React.FC<VTPTableProps> = ({ doc, srsDoc, onChange, redline, attribution }) => {
+const VTPTable: React.FC<VTPTableProps> = ({
+  doc,
+  srsDoc,
+  onChange,
+  redline,
+  attribution,
+  onEditingItem,
+  presence,
+}) => {
   const data = doc;
   const update = (items: VtpItem[]) => onChange({ ...doc, items });
   const [editing, setEditing] = useState<EditTarget>(null);
   const [editValue, setEditValue] = useState('');
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [infoIndex, setInfoIndex] = useState<number | null>(null);
+
+  // Tell the shell which row is open, so others in this document see it (CE-3).
+  const editingId = editing ? (data.items[editing.index]?.id ?? null) : null;
+  useEffect(() => {
+    onEditingItem?.(editingId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editingId]);
 
   const headingCodes = useMemo(() => deriveHeadingCodes(data.items), [data.items]);
   const srsById = useMemo(() => {
@@ -177,7 +196,17 @@ const VTPTable: React.FC<VTPTableProps> = ({ doc, srsDoc, onChange, redline, att
               <React.Fragment key={item.id}>
                 <tr className={bad ? 'danger' : rowStatusClass(false, entry)}>
                   <td className={isCellChanged(entry, 'code') ? 'ct-changed' : undefined}
-                    style={{ paddingLeft: 8 + (item.level ?? 0) * INDENT_PX }}>{renderCell(index, 'code')}</td>
+                    style={{ paddingLeft: 8 + (item.level ?? 0) * INDENT_PX }}>
+                    {renderCell(index, 'code')}
+                    {presence?.get(item.id)?.length ? (
+                      <span
+                        className="row-presence"
+                        title={`${presence.get(item.id)!.join(', ')} editing this now`}
+                      >
+                        ● {presence.get(item.id)!.length}
+                      </span>
+                    ) : null}
+                  </td>
                   <td className={isCellChanged(entry, 'text') ? 'ct-changed' : undefined}>{renderCell(index, 'text')}</td>
                   <td className={isCellChanged(entry, 'verifies') ? 'ct-changed' : undefined}>
                     <button type="button" className={`btn btn-link btn-xs${bad ? ' text-danger' : ''}`} aria-label={`Show requirements verified by ${item.id}`}

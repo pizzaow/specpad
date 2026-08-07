@@ -56,6 +56,56 @@ describe('ServerBar — the Commit affordance (EDR-3)', () => {
   });
 });
 
+describe('ServerBar — presence (CE-3)', () => {
+  it('names the one other person and the row they are in', () => {
+    render(
+      <ServerBar
+        session={session('committer')}
+        status={clean}
+        onCommit={vi.fn()}
+        presence={[{ userId: 'kim', displayName: 'Kim Patel', where: 'REQ-14' }]}
+      />,
+    );
+
+    expect(screen.getByText('Kim Patel is editing REQ-14')).toBeInTheDocument();
+  });
+
+  it('says someone is here when they are in no particular row', () => {
+    render(
+      <ServerBar
+        session={session('committer')}
+        status={clean}
+        onCommit={vi.fn()}
+        presence={[{ userId: 'kim', displayName: 'Kim Patel', where: null }]}
+      />,
+    );
+
+    expect(screen.getByText('Kim Patel is here')).toBeInTheDocument();
+  });
+
+  it('summarizes rather than listing every name once there are several', () => {
+    render(
+      <ServerBar
+        session={session('committer')}
+        status={clean}
+        onCommit={vi.fn()}
+        presence={[
+          { userId: 'kim', displayName: 'Kim Patel', where: 'REQ-14' },
+          { userId: 'sam', displayName: 'Sam Ree', where: 'REQ-22' },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText(/2 others here · editing REQ-14, REQ-22/)).toBeInTheDocument();
+  });
+
+  it('shows nothing when nobody else is around', () => {
+    render(<ServerBar session={session('committer')} status={clean} onCommit={vi.fn()} presence={[]} />);
+
+    expect(screen.queryByText(/editing/i)).not.toBeInTheDocument();
+  });
+});
+
 describe('ServerBar — the pending badge', () => {
   it('counts the pending changes', () => {
     render(<ServerBar session={session('committer')} status={dirty} onCommit={vi.fn()} />);

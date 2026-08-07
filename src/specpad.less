@@ -493,6 +493,21 @@ tr.warning { background-color: var(--warn-weak) !important; }
 }
 .server-branch code { font-family: var(--font-mono); }
 .server-identity { font-weight: 600; color: var(--text); }
+.server-presence {
+  color: var(--text-muted);
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 42ch;
+}
+/* Advisory only — deliberately quiet, so it never reads as a lock. */
+.row-presence {
+  margin-left: 6px;
+  font-size: 10px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
 
 .commit-changes code { font-family: var(--font-mono); }
 .commit-changes li { line-height: 1.6; }

@@ -3135,7 +3135,25 @@
       "verifies": [
         "r_ce3"
       ],
-      "expected": "Subscribers receive a presence event naming the item being edited and, separately, a signal that the target branch has moved."
+      "expected": "Subscribers receive a presence event naming the item being edited and, separately, a signal that the target branch has moved.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/boot.integration.test.ts",
+          "selector": "the event stream (CE-3, CE-4)"
+        },
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/presence.test.ts",
+          "selector": "BranchWatcher"
+        },
+        {
+          "runner": "vitest",
+          "file": "src/transports/__tests__/remote.test.ts",
+          "selector": "presence (CE-3, CE-4)"
+        }
+      ],
+      "notes": "The presence half is exercised end-to-end over a real SSE connection. The upstream-moved half is verified at the unit level (BranchWatcher: first observation is not a change, an unreachable remote is not a change) rather than end-to-end, since that would mean waiting on the poll interval."
     },
     {
       "id": "t_ce4",
@@ -3144,7 +3162,24 @@
       "verifies": [
         "r_ce4"
       ],
-      "expected": "The abandoned claim expires automatically; the second user is warned but not prevented from editing, and the edit is still applied correctly."
+      "expected": "The abandoned claim expires automatically; the second user is warned but not prevented from editing, and the edit is still applied correctly.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/presence.test.ts",
+          "selector": "PresenceRegistry"
+        },
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/SRSTable.test.tsx",
+          "selector": "SRSTable advisory presence (CE-3, CE-4)"
+        },
+        {
+          "runner": "vitest",
+          "file": "src/transports/__tests__/remote.test.ts",
+          "selector": "presence (CE-3, CE-4)"
+        }
+      ]
     },
     {
       "id": "t_mg1",

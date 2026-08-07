@@ -6,7 +6,7 @@
  * baseline: added/modified rows are highlighted, removed rows render inline as
  * read-only, struck-through entries at their baseline position.
  */
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import type { SrsDoc, SrsItem, VtpDoc, VtpItem } from '../shared';
 import { createSrsItem, generateId, ID_PREFIX } from '../shared';
 import type { AttributionView, RedlineEntry } from '../changeTracking';
@@ -22,6 +22,10 @@ interface SRSTableProps {
   onChange: (doc: SrsDoc) => void;
   baseline?: SrsDoc | null;
   attribution?: Map<string, AttributionView>;
+  /** Which row is being edited, for advisory presence (CE-3). Null when none is. */
+  onEditingItem?: (itemId: string | null) => void;
+  /** Other people currently in this document, keyed by item id (CE-3). */
+  presence?: Map<string, string[]>;
 }
 
 type EditField = 'code' | 'text' | 'tags';
@@ -29,7 +33,15 @@ type EditTarget = { index: number; field: EditField } | null;
 
 const INDENT_PX = 22;
 
-const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onChange, baseline, attribution }) => {
+const SRSTable: React.FC<SRSTableProps> = ({
+  doc,
+  vtpDoc,
+  onChange,
+  baseline,
+  attribution,
+  onEditingItem,
+  presence,
+}) => {
   const data = doc;
   const [editing, setEditing] = useState<EditTarget>(null);
   const [editValue, setEditValue] = useState('');
@@ -59,6 +71,14 @@ const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onChange, baseline, at
 
   const ids = () => data.items.map((i) => i.id);
   const update = (items: SrsItem[]) => onChange({ ...doc, items });
+
+  // Tell the shell which row is open for editing, so it can announce it to other
+  // people in the same document. Advisory only — nothing here blocks on it (CE-4).
+  const editingId = editing ? (data.items[editing.index]?.id ?? null) : null;
+  useEffect(() => {
+    onEditingItem?.(editingId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editingId]);
 
   const startEdit = (index: number, field: EditField) => {
     const value = data.items[index][field];
@@ -205,6 +225,14 @@ const SRSTable: React.FC<SRSTableProps> = ({ doc, vtpDoc, onChange, baseline, at
                     {item.heading
                       ? renderCell(index, 'code', <strong>{headingCodes.get(item.id)}</strong>)
                       : renderCell(index, 'code')}
+                    {presence?.get(item.id)?.length ? (
+                      <span
+                        className="row-presence"
+                        title={`${presence.get(item.id)!.join(', ')} editing this now`}
+                      >
+                        ● {presence.get(item.id)!.length}
+                      </span>
+                    ) : null}
                   </td>
                   <td className={isCellChanged(entry, 'text') ? 'ct-changed' : undefined}
                     style={item.heading ? { fontWeight: 'bold' } : undefined}>

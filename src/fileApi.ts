@@ -36,10 +36,21 @@ import type {
   CommitResult,
   ServerConflict,
   PendingChange,
+  Presence,
+  UpstreamMoved,
+  ServerEventHandlers,
 } from './transports/remote';
 
 export type { FileApi, DocumentListItem, DocKind, SnapshotLocation };
-export type { ServerSession, ServerStatus, CommitResult, ServerConflict, PendingChange };
+export type {
+  ServerSession,
+  ServerStatus,
+  CommitResult,
+  ServerConflict,
+  PendingChange,
+  Presence,
+  UpstreamMoved,
+};
 export {
   classifyDocFilename,
   serializeDocument,
@@ -142,6 +153,26 @@ export async function serverCommit(message: string): Promise<CommitResult> {
 /** Throw away this user's pending changes (CMT-7). */
 export async function serverDiscard(): Promise<ServerStatus> {
   return requireServer().discard();
+}
+
+/** Subscribe to presence and upstream-moved events; no-op when not on a server (CE-3). */
+export function serverSubscribe(handlers: ServerEventHandlers): () => void {
+  if (!remoteTransport) return () => {};
+  return remoteTransport.subscribeEvents(handlers);
+}
+
+/** Announce where this user is editing. Advisory: failures are ignored (CE-4). */
+export async function serverClaimPresence(
+  doc: string | null,
+  itemId: string | null,
+): Promise<void> {
+  if (!remoteTransport) return;
+  await remoteTransport.claimPresence(doc, itemId);
+}
+
+export async function serverReleasePresence(): Promise<void> {
+  if (!remoteTransport) return;
+  await remoteTransport.releasePresence();
 }
 
 // ---- Opening a local project ----

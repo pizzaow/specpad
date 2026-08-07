@@ -113,3 +113,39 @@ describe('SRSTable redline (Word-style)', () => {
     expect(container.querySelector('tr.ct-removed-row')).toBeNull();
   });
 });
+
+describe('SRSTable advisory presence (CE-3, CE-4)', () => {
+  const presence = new Map([['r_001', ['Kim Patel']]]);
+
+  it('marks a row someone else is editing, naming them', () => {
+    render(<SRSTable doc={srs} vtpDoc={vtp} onChange={vi.fn()} presence={presence} />);
+    expect(screen.getByTitle('Kim Patel editing this now')).toBeInTheDocument();
+  });
+
+  it('never prevents editing a row someone else has claimed (CE-4)', () => {
+    const onChange = vi.fn();
+    render(<SRSTable doc={srs} vtpDoc={vtp} onChange={onChange} presence={presence} />);
+
+    // A claim is a courtesy: the second person is told, and edits anyway.
+    fireEvent.click(screen.getByText('Shall authenticate.'));
+    const input = screen.getByDisplayValue('Shall authenticate.');
+    fireEvent.change(input, { target: { value: 'Shall authenticate users.' } });
+    fireEvent.blur(input);
+
+    expect(onChange).toHaveBeenCalled();
+    expect(onChange.mock.calls[0][0].items[1].text).toBe('Shall authenticate users.');
+  });
+
+  it('reports which row is open so the shell can announce it', () => {
+    const onEditingItem = vi.fn();
+    render(<SRSTable doc={srs} vtpDoc={vtp} onChange={vi.fn()} onEditingItem={onEditingItem} />);
+
+    fireEvent.click(screen.getByText('Shall authenticate.'));
+    expect(onEditingItem).toHaveBeenCalledWith('r_001');
+  });
+
+  it('renders no presence marker when nobody else is in the document', () => {
+    render(<SRSTable doc={srs} vtpDoc={vtp} onChange={vi.fn()} />);
+    expect(screen.queryByTitle(/editing this now/)).toBeNull();
+  });
+});

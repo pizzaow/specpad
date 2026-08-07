@@ -56,6 +56,9 @@ vi.mock('../fileApi', () => ({
   serverStatus: vi.fn(async () => ({ changed: [], dirty: false })),
   serverCommit: vi.fn(),
   serverDiscard: vi.fn(),
+  serverSubscribe: vi.fn(() => () => undefined),
+  serverClaimPresence: vi.fn(async () => undefined),
+  serverReleasePresence: vi.fn(async () => undefined),
 }));
 
 import LocalApp from '../LocalApp';

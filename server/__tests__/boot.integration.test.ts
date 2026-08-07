@@ -42,6 +42,7 @@ const json = (doc: unknown) => JSON.stringify(doc, null, 2) + '\n';
 let root = '';
 let originDir = '';
 let server: Server | null = null;
+let shutdown: (() => Promise<void>) | null = null;
 let base = '';
 
 /** An unprivileged, almost-certainly-free port; the listen would fail loudly if not. */
@@ -111,15 +112,18 @@ beforeAll(async () => {
     }),
   );
 
-  server = await start(configPath);
+  const running = await start(configPath);
+  server = running.server;
+  shutdown = running.shutdown;
   base = `http://127.0.0.1:${PORT}/api/v1`;
 }, 60_000);
 
 afterAll(async () => {
-  if (server) await new Promise<void>((resolve) => server!.close(() => resolve()));
+  // Must not hang: open SSE streams never end on their own (CE-3).
+  if (shutdown) await shutdown();
   delete process.env.SPECPAD_EDITOR_DIR;
   if (root) await fs.rm(root, { recursive: true, force: true }).catch(() => undefined);
-});
+}, 20_000);
 
 describe.skipIf(!gitAvailable)('the server process (SRV-1)', () => {
   it('starts from a config file and listens', () => {
@@ -190,6 +194,119 @@ describe.skipIf(!gitAvailable)('the API over HTTP (SRV-4)', () => {
   it('404s an unknown endpoint', async () => {
     expect((await api('GET', '/nope')).status).toBe(404);
   });
+});
+
+/** Subscribe to the SSE stream and collect framed events until closed. */
+function subscribeSse(url: string) {
+  const controller = new AbortController();
+  const received: { event: string; data: any }[] = [];
+
+  const opened = fetch(url, { signal: controller.signal }).then((res) => {
+    void (async () => {
+      const reader = res.body!.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      try {
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          let split: number;
+          while ((split = buffer.indexOf('\n\n')) !== -1) {
+            const frame = buffer.slice(0, split);
+            buffer = buffer.slice(split + 2);
+            const name = frame.split('\n').find((l) => l.startsWith('event: '));
+            if (!name) continue; // a heartbeat comment
+            const data = frame
+              .split('\n')
+              .filter((l) => l.startsWith('data: '))
+              .map((l) => l.slice(6))
+              .join('\n');
+            received.push({ event: name.slice(7), data: data ? JSON.parse(data) : null });
+          }
+        }
+      } catch {
+        /* aborted */
+      }
+    })();
+    return res;
+  });
+
+  const waitFor = async (event: string, timeoutMs = 5000) => {
+    const deadline = Date.now() + timeoutMs;
+    for (;;) {
+      const found = received.find((e) => e.event === event);
+      if (found) return found;
+      if (Date.now() > deadline) throw new Error(`no "${event}" event within ${timeoutMs}ms`);
+      await new Promise((r) => setTimeout(r, 25));
+    }
+  };
+
+  return { received, opened, waitFor, close: () => controller.abort() };
+}
+
+describe.skipIf(!gitAvailable)('the event stream (CE-3, CE-4)', () => {
+  it('opens an SSE stream and greets the subscriber with the current state', async () => {
+    const stream = subscribeSse(`${base}/events`);
+    const res = await stream.opened;
+
+    expect(res.headers.get('content-type')).toMatch(/text\/event-stream/);
+    const hello = await stream.waitFor('hello');
+    expect(hello.data).toMatchObject({ branch: 'main' });
+    expect(hello.data.presence).toEqual([]);
+
+    stream.close();
+  }, 20_000);
+
+  it('broadcasts a presence claim naming the item being edited', async () => {
+    const stream = subscribeSse(`${base}/events`);
+    await stream.waitFor('hello');
+
+    await api('POST', '/presence', { doc: 'acme.srs.json', itemId: 'r_1' });
+
+    const presence = await stream.waitFor('presence');
+    expect(presence.data).toEqual([
+      {
+        userId: 'dev',
+        displayName: 'Development User',
+        doc: 'acme.srs.json',
+        itemId: 'r_1',
+      },
+    ]);
+
+    stream.close();
+  }, 20_000);
+
+  it('leaves the caller out of their own list, and releases on request', async () => {
+    // A claim identical to the one already held is deliberately not re-broadcast, so
+    // this moves to a different item to produce a fresh event.
+    const stream = subscribeSse(`${base}/events`);
+    await stream.waitFor('hello');
+
+    const { body } = await api('POST', '/presence', { doc: 'acme.srs.json', itemId: 'r_2' });
+    // The caller never needs telling where they themselves are.
+    expect(body.presence).toEqual([]);
+
+    const moved = await stream.waitFor('presence');
+    expect(moved.data[0]).toMatchObject({ itemId: 'r_2' });
+
+    const release = await api('POST', '/presence', { release: true });
+    expect(release.status).toBe(200);
+    expect(release.body.presence).toEqual([]);
+
+    stream.close();
+  }, 20_000);
+
+  it('drops the subscriber when the client goes away', async () => {
+    const stream = subscribeSse(`${base}/events`);
+    await stream.waitFor('hello');
+    stream.close();
+
+    // A broadcast after the client vanished must not disturb the server.
+    await new Promise((r) => setTimeout(r, 100));
+    const after = await api('POST', '/presence', { itemId: 'r_1' });
+    expect(after.status).toBe(200);
+  }, 20_000);
 });
 
 describe.skipIf(!gitAvailable)('request to commit, over HTTP (CMT-2, CMT-3)', () => {

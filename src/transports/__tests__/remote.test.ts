@@ -212,6 +212,99 @@ describe('commit (CMT-3)', () => {
   });
 });
 
+describe('presence (CE-3, CE-4)', () => {
+  it('announces where the user is editing', async () => {
+    const calls = stubFetch(() => ({ status: 200, body: { presence: [] } }));
+
+    await new RemoteTransport('/api/v1', session()).claimPresence('acme.srs.json', 'r_14');
+
+    expect(calls[0].url).toBe('/api/v1/presence');
+    expect(JSON.parse(String(calls[0].init!.body))).toEqual({
+      doc: 'acme.srs.json',
+      itemId: 'r_14',
+    });
+  });
+
+  it('releases on request', async () => {
+    const calls = stubFetch(() => ({ status: 200, body: { presence: [] } }));
+
+    await new RemoteTransport('/api/v1', session()).releasePresence();
+
+    expect(JSON.parse(String(calls[0].init!.body))).toEqual({ release: true });
+  });
+
+  it('swallows a failure, because a courtesy must never break an edit (CE-4)', async () => {
+    stubFetch(() => ({ status: 500, body: { error: 'presence exploded' } }));
+    const transport = new RemoteTransport('/api/v1', session());
+
+    await expect(transport.claimPresence('acme.srs.json', 'r_14')).resolves.toBeUndefined();
+    await expect(transport.releasePresence()).resolves.toBeUndefined();
+  });
+
+  it('subscribes to the event stream and routes each event to its handler', () => {
+    const listeners = new Map<string, (e: MessageEvent) => void>();
+    let closed = false;
+    class FakeEventSource {
+      constructor(public url: string) {}
+      addEventListener(name: string, fn: (e: MessageEvent) => void) {
+        listeners.set(name, fn);
+      }
+      close() {
+        closed = true;
+      }
+    }
+    vi.stubGlobal('EventSource', FakeEventSource);
+
+    const seen: Record<string, unknown> = {};
+    const off = new RemoteTransport('/api/v1', session()).subscribeEvents({
+      onHello: (info) => (seen.hello = info),
+      onPresence: (list) => (seen.presence = list),
+      onUpstream: (moved) => (seen.upstream = moved),
+    });
+
+    listeners.get('hello')!({ data: '{"presence":[],"sha":null,"branch":"main"}' } as MessageEvent);
+    listeners.get('presence')!({ data: '[{"userId":"kim","itemId":"r_1"}]' } as MessageEvent);
+    listeners.get('upstream')!({ data: '{"sha":"abc","branch":"main"}' } as MessageEvent);
+
+    expect(seen.hello).toMatchObject({ branch: 'main' });
+    expect(seen.presence).toEqual([{ userId: 'kim', itemId: 'r_1' }]);
+    expect(seen.upstream).toEqual({ sha: 'abc', branch: 'main' });
+
+    off();
+    expect(closed).toBe(true);
+  });
+
+  it('ignores a malformed frame rather than breaking the editor', () => {
+    const listeners = new Map<string, (e: MessageEvent) => void>();
+    class FakeEventSource {
+      constructor(public url: string) {}
+      addEventListener(name: string, fn: (e: MessageEvent) => void) {
+        listeners.set(name, fn);
+      }
+      close() {}
+    }
+    vi.stubGlobal('EventSource', FakeEventSource);
+
+    let calls = 0;
+    new RemoteTransport('/api/v1', session()).subscribeEvents({
+      onPresence: () => {
+        calls++;
+      },
+    });
+
+    expect(() => listeners.get('presence')!({ data: 'not json' } as MessageEvent)).not.toThrow();
+    expect(calls).toBe(0);
+  });
+
+  it('degrades to a no-op where EventSource does not exist', () => {
+    vi.stubGlobal('EventSource', undefined);
+
+    const off = new RemoteTransport('/api/v1', session()).subscribeEvents({ onPresence: () => {} });
+
+    expect(() => off()).not.toThrow();
+  });
+});
+
 describe('discard (CMT-7)', () => {
   it('drops cached version tags, since the working copy was reverted', async () => {
     const calls = stubFetch((url, init) => {

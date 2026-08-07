@@ -97,9 +97,13 @@ The process itself is covered by `server/__tests__/boot.integration.test.ts`, wh
 server from a config file and drives it over HTTP from session probe to a commit on the branch, and
 by `repository.integration.test.ts`, which exercises the git pipeline against a real repository.
 
+Presence and the upstream-moved signal ride an SSE stream at `GET /api/v1/events`. Both are
+deliberately weak: claims expire on their own after 45s, nothing blocks on them, and losing the
+registry to a restart costs a moment of silence and nothing else. The server ends open streams
+before closing, so SIGTERM does not hang.
+
 Not yet implemented: the **OIDC provider** (use `proxy` behind your existing gateway — it throws a
-message saying so), the **presence/event stream** (CE-3, CE-4), and an **in-place conflict
-resolver**. Today a conflict is reported per field with both values shown, and the user reloads,
+message saying so) and an **in-place conflict resolver**. Today a conflict is reported per field with both values shown, and the user reloads,
 reapplies, and commits again — correct and safe, but more work for them than picking a side in the
 table would be.
 

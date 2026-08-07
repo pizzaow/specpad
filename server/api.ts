@@ -11,6 +11,15 @@ import type { Session } from './auth';
 import type { ServerConfig } from './config';
 import type { WorkingCopy } from './workingCopy';
 import { PathError } from './paths';
+import type { PresenceRegistry } from './presence';
+import type { EventBus } from './events';
+
+/** Process-wide services the request handler shares (CE-3). */
+export interface ApiServices {
+  presence: PresenceRegistry;
+  events: EventBus;
+  now: () => number;
+}
 
 export interface ApiRequest {
   method: string;
@@ -36,9 +45,10 @@ export async function handleApi(
   session: Session,
   workingCopy: WorkingCopy,
   config: ServerConfig,
+  services?: ApiServices,
 ): Promise<ApiResponse> {
   try {
-    return await route(req, session, workingCopy, config);
+    return await route(req, session, workingCopy, config, services);
   } catch (err) {
     if (err instanceof PathError) return error(400, err.message);
     return error(500, err instanceof Error ? err.message : String(err));
@@ -50,6 +60,7 @@ async function route(
   session: Session,
   wc: WorkingCopy,
   config: ServerConfig,
+  services?: ApiServices,
 ): Promise<ApiResponse> {
   const { method, path } = req;
 
@@ -146,6 +157,25 @@ async function route(
   if (method === 'POST' && path === '/discard') {
     await wc.discard();
     return ok(await wc.status());
+  }
+
+  // Advisory editing presence (CE-3, CE-4). Only someone who can edit can be "editing";
+  // a failure here must never affect the edit itself, so it does nothing but announce.
+  if (method === 'POST' && path === '/presence') {
+    if (!services) return error(503, 'Presence is not available on this server.');
+    const body = (req.body ?? {}) as { doc?: string | null; itemId?: string | null; release?: boolean };
+    const now = services.now();
+
+    const changed = body.release
+      ? services.presence.release(session.principal.id)
+      : services.presence.claim(
+          { id: session.principal.id, displayName: session.principal.displayName },
+          { doc: body.doc ?? null, itemId: body.itemId ?? null },
+          now,
+        );
+
+    if (changed) services.events.broadcast('presence', services.presence.list(now));
+    return ok({ presence: services.presence.list(now, session.principal.id) });
   }
 
   return error(404, `No such endpoint: ${method} ${path}`);

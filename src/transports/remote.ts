@@ -58,6 +58,25 @@ export interface CommitResult {
   };
 }
 
+/** Someone else, and where they are (CE-3). */
+export interface Presence {
+  userId: string;
+  displayName: string;
+  doc: string | null;
+  itemId: string | null;
+}
+
+export interface UpstreamMoved {
+  sha: string;
+  branch: string;
+}
+
+export interface ServerEventHandlers {
+  onHello?(info: { presence: Presence[]; sha: string | null; branch: string }): void;
+  onPresence?(present: Presence[]): void;
+  onUpstream?(moved: UpstreamMoved): void;
+}
+
 export class RemoteError extends Error {
   constructor(
     message: string,
@@ -172,6 +191,57 @@ export class RemoteTransport implements FileApi {
   async discard(): Promise<ServerStatus> {
     this.versions.clear();
     return this.request<ServerStatus>('POST', '/discard');
+  }
+
+  // ---- Presence (CE-3, CE-4) — advisory, and never allowed to affect an edit ----
+
+  /**
+   * Announce where this user is. Failures are swallowed deliberately: presence is a
+   * courtesy, and a courtesy that can break someone's editing session is a defect.
+   */
+  async claimPresence(doc: string | null, itemId: string | null): Promise<void> {
+    try {
+      await this.request('POST', '/presence', { doc, itemId });
+    } catch {
+      /* advisory only */
+    }
+  }
+
+  async releasePresence(): Promise<void> {
+    try {
+      await this.request('POST', '/presence', { release: true });
+    } catch {
+      /* advisory only */
+    }
+  }
+
+  /**
+   * Subscribe to the server's event stream. Returns an unsubscribe function.
+   *
+   * Degrades to a no-op where `EventSource` does not exist, so an environment without
+   * SSE gets an editor that simply says less rather than one that breaks.
+   */
+  subscribeEvents(handlers: ServerEventHandlers): () => void {
+    const Source = (globalThis as { EventSource?: typeof EventSource }).EventSource;
+    if (!Source) return () => {};
+
+    const source = new Source(`${this.base}/events`);
+    const listen = (name: string, handle: ((data: any) => void) | undefined) => {
+      if (!handle) return;
+      source.addEventListener(name, (event) => {
+        try {
+          handle(JSON.parse((event as MessageEvent).data));
+        } catch {
+          /* a malformed frame is not worth breaking the editor over */
+        }
+      });
+    };
+
+    listen('hello', handlers.onHello);
+    listen('presence', handlers.onPresence);
+    listen('upstream', handlers.onUpstream);
+
+    return () => source.close();
   }
 
   // ---- Internals ----
