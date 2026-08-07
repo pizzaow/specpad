@@ -6,7 +6,7 @@ import {
   classifyDocFilename,
   openProjectFromHandle,
   loadProjectText,
-} from '../localFileApi';
+} from '../fileApi';
 import type { SrsDoc } from '../shared';
 
 // A minimal fake FileSystemDirectoryHandle: `files` are readable by bare name in this
@@ -43,7 +43,7 @@ function makeDir(
   };
 }
 
-describe('localFileApi serialization', () => {
+describe('fileApi serialization', () => {
   it('round-trips an srs doc preserving ids', () => {
     const doc: SrsDoc = {
       schemaVersion: '1.0',

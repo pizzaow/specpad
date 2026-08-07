@@ -48,6 +48,7 @@
     { "id": "h_di00", "heading": true, "text": "Distribution and integrations" },
     { "id": "p_oss01", "code": "PROD-30", "status": "implemented", "text": "SpecPad shall be open-source and free at its core (MIT), distributed as an installable skill, with the regulated layer shipped as an opt-in add-on so unregulated teams pay nothing for it.", "tags": ["product"] },
     { "id": "p_ji01", "code": "PROD-31", "status": "proposed", "text": "SpecPad shall ingest org-defined work items from external trackers (Jira/Confluence) at the moment work begins on a job, seeding the job and the first requirement/PRD drafts from that context — pull at job start, not a live sync.", "tags": ["product", "roadmap"] },
-    { "id": "p_mr01", "code": "PROD-32", "status": "proposed", "text": "Multi-repo devices shall be supported by per-repo SpecPad instances tied together at a system level through hand-authored version pinning (a device-master document), not by coupling the repositories.", "tags": ["product", "roadmap"] }
+    { "id": "p_mr01", "code": "PROD-32", "status": "proposed", "text": "Multi-repo devices shall be supported by per-repo SpecPad instances tied together at a system level through hand-authored version pinning (a device-master document), not by coupling the repositories.", "tags": ["product", "roadmap"] },
+    { "id": "p_sv01", "code": "PROD-33", "status": "proposed", "text": "Staff without source access — quality and product managers — shall be able to edit the requirements and verification tests through a server their own company hosts, authenticated by corporate SSO, publishing their changes to the same git repository as commits authored by them.", "tags": ["product", "roadmap"] }
   ]
 }

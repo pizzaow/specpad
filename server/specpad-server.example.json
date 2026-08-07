@@ -1,0 +1,31 @@
+{
+  "repo": {
+    "url": "git@git.corp.internal:product/acme.git",
+    "branch": "main",
+    "credentialFile": "/run/secrets/specpad-deploy-key",
+    "paths": ["docs/specpad/"]
+  },
+  "auth": {
+    "provider": "proxy",
+    "trustedPeers": ["10.0.0.0/8"],
+    "headers": {
+      "user": "x-forwarded-user",
+      "email": "x-forwarded-email",
+      "name": "x-forwarded-preferred-username",
+      "groups": "x-forwarded-groups"
+    },
+    "roles": {
+      "committer": ["grp-product-managers", "grp-quality"],
+      "editor": ["grp-engineering"],
+      "reader": ["grp-all-staff"]
+    }
+  },
+  "commit": {
+    "requireActiveJob": true,
+    "requireGovernanceClean": "warn",
+    "pushRetries": 3
+  },
+  "workDir": "/srv/specpad",
+  "port": 8080,
+  "bind": "0.0.0.0"
+}

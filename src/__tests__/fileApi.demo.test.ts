@@ -13,7 +13,7 @@ import {
   saveDocument,
   saveJob,
   hasOpenDirectory,
-} from '../localFileApi';
+} from '../fileApi';
 import type { SrsDoc, ReleasesDoc, JobDoc } from '../shared';
 
 const srsDoc: SrsDoc = {

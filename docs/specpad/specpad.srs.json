@@ -1761,6 +1761,272 @@
         "editor",
         "verification"
       ]
+    },
+    {
+      "id": "h_sv000",
+      "heading": true,
+      "text": "Multi-user server (self-hosted)"
+    },
+    {
+      "id": "h_sv010",
+      "heading": true,
+      "level": 1,
+      "text": "Server core and API"
+    },
+    {
+      "id": "r_sv1",
+      "code": "SRV-1",
+      "text": "The system shall provide a self-hosted server that serves the version-pinned editor build and its HTTP API from a single origin, so a user with no local clone of the repository can edit the project's documents in a browser.",
+      "satisfies": ["p_sv01"],
+      "tags": ["server"]
+    },
+    {
+      "id": "r_sv2",
+      "code": "SRV-2",
+      "text": "The server shall confine every read and write to the configured path allowlist (by default docs/specpad/) and shall reject any request that resolves outside it.",
+      "satisfies": ["p_sv01"],
+      "tags": ["server", "security"]
+    },
+    {
+      "id": "r_sv3",
+      "code": "SRV-3",
+      "text": "The server's git working tree shall be sparse-checked-out to the allowlisted paths, so files outside them are physically absent from the tree the server can write to.",
+      "satisfies": ["p_sv01"],
+      "tags": ["server", "security"]
+    },
+    {
+      "id": "r_sv4",
+      "code": "SRV-4",
+      "text": "The server shall expose API operations mirroring the editor's file transport: session, document listing, document read with a version tag, item-operation write, working-copy status, commit, discard, and read-only history passthrough.",
+      "satisfies": ["p_sv01"],
+      "tags": ["server"]
+    },
+    {
+      "id": "r_sv5",
+      "code": "SRV-5",
+      "text": "The server shall enforce the shared contract by importing the validation and governance modules from src/shared, never by re-implementing either, so the server, the editor, and the skill cannot disagree.",
+      "satisfies": ["p_pc01"],
+      "tags": ["server", "contract"]
+    },
+    {
+      "id": "r_sv6",
+      "code": "SRV-6",
+      "text": "The server shall take its repository, branch, credential, authentication provider, role map, and commit policy from a single declarative configuration file, and shall refuse to start when that configuration is invalid or incomplete.",
+      "satisfies": ["p_sv01"],
+      "tags": ["server"]
+    },
+    {
+      "id": "h_sv020",
+      "heading": true,
+      "level": 1,
+      "text": "Identity and authorization"
+    },
+    {
+      "id": "r_ax1",
+      "code": "AUTH-1",
+      "text": "The server shall identify users through a pluggable authentication provider that yields a single principal (stable id, display name, email, group claims); no other part of the server shall depend on how the user was authenticated.",
+      "satisfies": ["p_sv01"],
+      "tags": ["server", "auth"]
+    },
+    {
+      "id": "r_ax2",
+      "code": "AUTH-2",
+      "text": "The server shall provide a proxy authentication provider that derives the principal from trusted upstream headers, and shall reject identity headers presented by any peer other than the configured trusted upstream.",
+      "satisfies": ["p_sv01"],
+      "tags": ["server", "auth", "security"]
+    },
+    {
+      "id": "r_ax3",
+      "code": "AUTH-3",
+      "text": "The server shall provide an OIDC authentication provider so a company can use corporate single sign-on directly, without an authenticating proxy in front of the server.",
+      "satisfies": ["p_sv01"],
+      "tags": ["server", "auth"]
+    },
+    {
+      "id": "r_ax4",
+      "code": "AUTH-4",
+      "text": "The server shall provide a development authentication provider with a fixed identity, which shall refuse to start when the server is bound to a non-loopback address.",
+      "satisfies": ["p_sv01"],
+      "tags": ["server", "auth", "security"]
+    },
+    {
+      "id": "r_ax5",
+      "code": "AUTH-5",
+      "text": "The server shall map a principal's group claims onto reader, editor, and committer roles, and shall deny access to a principal matching no role mapping.",
+      "satisfies": ["p_sv01"],
+      "tags": ["server", "auth"]
+    },
+    {
+      "id": "r_ax6",
+      "code": "AUTH-6",
+      "text": "The authenticated user's identity shall be independent of the git push credential: the server shall push with its configured machine credential while the human identity travels in the commit's author field.",
+      "satisfies": ["p_gh01"],
+      "tags": ["server", "auth"]
+    },
+    {
+      "id": "h_sv030",
+      "heading": true,
+      "level": 1,
+      "text": "Working copy and commit"
+    },
+    {
+      "id": "r_cm1",
+      "code": "CMT-1",
+      "text": "Each user shall have a private server-side working copy of the allowlisted paths, so one user's uncommitted edits are invisible to, and unaffected by, another's.",
+      "satisfies": ["p_sv01"],
+      "tags": ["server", "commit"]
+    },
+    {
+      "id": "r_cm2",
+      "code": "CMT-2",
+      "text": "Edits shall be autosaved to the user's working copy without being committed, and shall survive the user leaving and returning to the editor.",
+      "satisfies": ["p_sv01"],
+      "tags": ["server", "commit"]
+    },
+    {
+      "id": "r_cm3",
+      "code": "CMT-3",
+      "text": "The editor shall provide an explicit Commit action that publishes the user's working-copy changes as one git commit on the configured branch; no edit shall ever be committed automatically.",
+      "satisfies": ["p_sv01"],
+      "tags": ["server", "commit", "editor"]
+    },
+    {
+      "id": "r_cm4",
+      "code": "CMT-4",
+      "text": "Before committing, the server shall structurally validate every changed document and run the governance check, blocking or warning according to the configured commit policy.",
+      "satisfies": ["p_pc01"],
+      "tags": ["server", "commit", "governance"]
+    },
+    {
+      "id": "r_cm5",
+      "code": "CMT-5",
+      "text": "A commit made through the server shall be authored by the authenticated user's name and email and shall carry a Job: trailer for each active job; where policy requires an active job, the server shall refuse to commit without one.",
+      "satisfies": ["p_pr002"],
+      "tags": ["server", "commit", "jobs"]
+    },
+    {
+      "id": "r_cm6",
+      "code": "CMT-6",
+      "text": "A commit shall be rebased onto the latest state of the target branch and retried a bounded number of times when the push is rejected as non-fast-forward; the server shall never force-push.",
+      "satisfies": ["p_sv01"],
+      "tags": ["server", "commit"]
+    },
+    {
+      "id": "r_cm7",
+      "code": "CMT-7",
+      "text": "The Commit action shall present the pending item-level change summary and the governance result for confirmation before the commit is made, and a Discard action shall revert the user's working copy without affecting other users.",
+      "satisfies": ["p_sv01"],
+      "tags": ["server", "commit", "editor"]
+    },
+    {
+      "id": "h_sv040",
+      "heading": true,
+      "level": 1,
+      "text": "Concurrent editing and merge"
+    },
+    {
+      "id": "r_ce1",
+      "code": "CE-1",
+      "text": "Every document read shall carry a version tag which a write shall present back, and the server shall reject a write whose tag no longer matches the working copy's state, so no update is ever silently lost.",
+      "satisfies": ["p_sv01"],
+      "tags": ["server", "concurrency"]
+    },
+    {
+      "id": "r_ce2",
+      "code": "CE-2",
+      "text": "The editor shall write changes to the server as item-level operations (upsert, delete, reorder) rather than as whole documents, so concurrent edits to different items of one document do not contend.",
+      "satisfies": ["p_sv01"],
+      "tags": ["server", "concurrency"]
+    },
+    {
+      "id": "r_ce3",
+      "code": "CE-3",
+      "text": "The server shall publish an event stream carrying advisory editing presence and a signal that the target branch has moved.",
+      "satisfies": ["p_sv01"],
+      "tags": ["server", "concurrency"]
+    },
+    {
+      "id": "r_ce4",
+      "code": "CE-4",
+      "text": "Editing presence shall be advisory only: it shall expire automatically and shall never be required for the correctness of a concurrent edit.",
+      "satisfies": ["p_sv01"],
+      "tags": ["server", "concurrency"]
+    },
+    {
+      "id": "r_mg1",
+      "code": "MRG-1",
+      "text": "The system shall provide a pure three-way merge of SpecPad documents keyed on stable item ids, with no git or I/O dependency, usable by the editor, the server, and the skill alike.",
+      "satisfies": ["p_gh01"],
+      "tags": ["contract", "merge"]
+    },
+    {
+      "id": "r_mg2",
+      "code": "MRG-2",
+      "text": "The merge shall combine changes to different fields of the same item without conflict, and shall report a conflict only where both sides set the same field of the same item to different values.",
+      "satisfies": ["p_gh01"],
+      "tags": ["contract", "merge"]
+    },
+    {
+      "id": "r_mg3",
+      "code": "MRG-3",
+      "text": "The merge shall report a conflict where an item is deleted on one side and modified on the other, rather than letting the deletion silently win.",
+      "satisfies": ["p_gh01"],
+      "tags": ["contract", "merge"]
+    },
+    {
+      "id": "r_mg4",
+      "code": "MRG-4",
+      "text": "The merge shall not treat a difference in item order as a conflict.",
+      "satisfies": ["p_gh01"],
+      "tags": ["contract", "merge"]
+    },
+    {
+      "id": "r_mg5",
+      "code": "MRG-5",
+      "text": "SpecPad JSON documents shall never be merged textually; every merge conflict arising during a server commit shall be resolved through the structural merge.",
+      "satisfies": ["p_gh01"],
+      "tags": ["server", "merge"]
+    },
+    {
+      "id": "r_mg6",
+      "code": "MRG-6",
+      "text": "Where the merge cannot resolve a conflict automatically, the server shall return a per-field conflict report and the editor shall offer the user a choice between the conflicting values.",
+      "satisfies": ["p_sv01"],
+      "tags": ["server", "merge", "editor"]
+    },
+    {
+      "id": "h_sv050",
+      "heading": true,
+      "level": 1,
+      "text": "Editor transport and remote mode"
+    },
+    {
+      "id": "r_rx1",
+      "code": "EDR-1",
+      "text": "The editor shall reach documents only through a transport interface with interchangeable implementations (local filesystem, read-only demo, remote server); no view shall depend on which transport is in use.",
+      "satisfies": ["p_pr003"],
+      "tags": ["editor", "server"]
+    },
+    {
+      "id": "r_rx2",
+      "code": "EDR-2",
+      "text": "When running against a server, the editor shall obtain the signed-in principal and role from the server and display the signed-in identity.",
+      "satisfies": ["p_sv01"],
+      "tags": ["editor", "server", "auth"]
+    },
+    {
+      "id": "r_rx3",
+      "code": "EDR-3",
+      "text": "The editor shall render read-only when the user's role does not permit editing, and shall not offer the Commit action when the role does not permit committing.",
+      "satisfies": ["p_sv01"],
+      "tags": ["editor", "server", "auth"]
+    },
+    {
+      "id": "r_rx4",
+      "code": "EDR-4",
+      "text": "The launcher generated in the project folder shall be able to target a configured editor base URL, so a self-hosted deployment opens its own server rather than the public hosted editor.",
+      "satisfies": ["p_ed01"],
+      "tags": ["skill", "server"]
     }
   ]
 }

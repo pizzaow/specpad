@@ -20,8 +20,9 @@ export interface DocDiff<T> {
 }
 
 // Whole-field equality. Arrays (verifies/tags/hazards) compare order-insensitively;
-// scalars compare with ===.
-function valuesEqual(a: unknown, b: unknown): boolean {
+// scalars compare with ===. Exported so the three-way merge compares fields exactly
+// as the diff does — one definition of "changed" for the whole contract.
+export function valuesEqual(a: unknown, b: unknown): boolean {
   if (Array.isArray(a) && Array.isArray(b)) {
     if (a.length !== b.length) return false;
     const sa = [...a].map((x) => JSON.stringify(x)).sort();

@@ -40,7 +40,7 @@ import {
   loadJobText,
   loadProjectText,
   saveProjectText,
-} from './localFileApi';
+} from './fileApi';
 import { activeJobIds, diffItems, REGISTER_TYPES } from './shared';
 import type { DocDiff, SrsItem, VtpItem, PrdItem, SpecPadDoc, JobCommit } from './shared';
 import { buildRedline, computeAttribution } from './changeTracking';

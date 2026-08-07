@@ -11,7 +11,7 @@ const vtp: VtpDoc = {
   items: [{ id: 't_001', text: 'Test A', verifies: ['r_001'], expected: 'ok', result: 'passed' }],
 };
 
-vi.mock('../localFileApi', () => ({
+vi.mock('../fileApi', () => ({
   isFileSystemAccessSupported: () => true,
   hasOpenDirectory: () => true,
   getCurrentProjectName: () => 'Acme',

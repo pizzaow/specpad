@@ -19,7 +19,7 @@ vi.mock('../launchParams', () => ({
   parseLaunchParams: () => ({ demo: true }),
 }));
 
-vi.mock('../localFileApi', () => ({
+vi.mock('../fileApi', () => ({
   isFileSystemAccessSupported: () => true,
   enableDemoMode: vi.fn(),
   disableDemoMode: vi.fn(),
@@ -61,7 +61,7 @@ vi.mock('../localFileApi', () => ({
 }));
 
 import LocalApp from '../LocalApp';
-import { enableDemoMode, openDemoProject, saveDocument } from '../localFileApi';
+import { enableDemoMode, openDemoProject, saveDocument } from '../fileApi';
 
 describe('LocalApp demo mode', () => {
   it('auto-loads the demo project read-only', async () => {

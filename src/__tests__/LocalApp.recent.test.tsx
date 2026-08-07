@@ -33,7 +33,7 @@ const openProjectFromHandle = vi.fn(async () => ({
   name: 'acme',
   documents: [{ type: 'srs', name: 'acme', filename: 'acme.srs.json' }],
 }));
-vi.mock('../localFileApi', () => ({
+vi.mock('../fileApi', () => ({
   isFileSystemAccessSupported: () => true,
   hasOpenDirectory: () => true,
   getCurrentProjectName: () => 'acme',

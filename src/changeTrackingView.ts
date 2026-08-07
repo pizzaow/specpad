@@ -5,7 +5,7 @@
  */
 import type { RedlineEntry, AttributionView, SnapshotInput } from './changeTracking';
 import type { ReleasesDoc } from './shared';
-import type { SnapshotLocation } from './localFileApi';
+import type { SnapshotLocation } from './fileApi';
 
 /** Bootstrap contextual row class for a redline status (heading always wins). */
 export function rowStatusClass(heading: boolean | undefined, rl: RedlineEntry | undefined): string {

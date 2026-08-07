@@ -94,7 +94,7 @@
         },
         {
           "runner": "vitest",
-          "file": "src/__tests__/localFileApi.test.ts"
+          "file": "src/__tests__/fileApi.test.ts"
         }
       ]
     },
@@ -105,7 +105,7 @@
       "verifies": [
         "r_a202"
       ],
-      "expected": "Each id matches prefix_<6 hex>, and ID_PREFIX maps requirement\u2192r, test\u2192t, heading\u2192h.",
+      "expected": "Each id matches prefix_<6 hex>, and ID_PREFIX maps requirement→r, test→t, heading→h.",
       "automation": [
         {
           "runner": "vitest",
@@ -292,7 +292,7 @@
       "automation": [
         {
           "runner": "vitest",
-          "file": "src/__tests__/localFileApi.test.ts"
+          "file": "src/__tests__/fileApi.test.ts"
         }
       ]
     },
@@ -553,7 +553,7 @@
       "verifies": [
         "r_ce109"
       ],
-      "expected": "The editor renders and remains editable, showing a \"history unavailable \u2014 run specpad refresh\" note instead of redline/attribution.",
+      "expected": "The editor renders and remains editable, showing a \"history unavailable — run specpad refresh\" note instead of redline/attribution.",
       "notes": "LocalApp degraded path: loaders return null when the cache is absent (src/__tests__/LocalApp.test.tsx mocks them null); an explicit banner assertion is still pending.",
       "automation": [
         {
@@ -581,7 +581,7 @@
     {
       "id": "t_ed0a01",
       "code": "TEST-38",
-      "text": "Open a requirement's hamburger menu and choose Add \u25b8 Child.",
+      "text": "Open a requirement's hamburger menu and choose Add ▸ Child.",
       "verifies": [
         "r_ed0a01"
       ],
@@ -869,7 +869,7 @@
         "r_ed0b10"
       ],
       "expected": "The demo project loads read-only over HTTP from /demo/; all read views (tables, testing, validation, version history, redlines, job chip) function.",
-      "notes": "src/__tests__/LocalApp.demo.test.tsx; src/__tests__/localFileApi.demo.test.ts; testing view, version history, and redlines exercised manually in the dev server",
+      "notes": "src/__tests__/LocalApp.demo.test.tsx; src/__tests__/fileApi.demo.test.ts; testing view, version history, and redlines exercised manually in the dev server",
       "automation": [
         {
           "runner": "vitest",
@@ -877,7 +877,7 @@
         },
         {
           "runner": "vitest",
-          "file": "src/__tests__/localFileApi.demo.test.ts"
+          "file": "src/__tests__/fileApi.demo.test.ts"
         }
       ]
     },
@@ -888,7 +888,7 @@
       "verifies": [
         "r_ed0b11"
       ],
-      "expected": "All write affordances are absent or inert and a \"Demo \u2014 read-only\" indicator is visible.",
+      "expected": "All write affordances are absent or inert and a \"Demo — read-only\" indicator is visible.",
       "automation": [
         {
           "runner": "vitest",
@@ -904,7 +904,7 @@
         "r_ms001"
       ],
       "expected": "site/src/__tests__/generate-reference.test.ts and src/shared/__tests__/schema-descriptions.test.ts both pass; the build fails if any schema property lacks a description.",
-      "notes": "site/src/__tests__/generate-reference.test.ts; src/shared/__tests__/schema-descriptions.test.ts \u2014 automated coverage confirmed in the marketing-site branch test run",
+      "notes": "site/src/__tests__/generate-reference.test.ts; src/shared/__tests__/schema-descriptions.test.ts — automated coverage confirmed in the marketing-site branch test run",
       "automation": [
         {
           "runner": "vitest",
@@ -949,8 +949,8 @@
       "verifies": [
         "r_jb002"
       ],
-      "expected": "A job record's schema properties are exactly id/code/title/description/status \u2014 no field listing changed items or commits; SKILL.md documents deriving job \u2192 SRS \u2192 VTP \u2192 source from git.",
-      "notes": "src/shared/__tests__/sidecars.test.ts (records-only assertion); docs/design \u00a713.1; SKILL.md on-demand reports.",
+      "expected": "A job record's schema properties are exactly id/code/title/description/status — no field listing changed items or commits; SKILL.md documents deriving job → SRS → VTP → source from git.",
+      "notes": "src/shared/__tests__/sidecars.test.ts (records-only assertion); docs/design §13.1; SKILL.md on-demand reports.",
       "automation": [
         {
           "runner": "vitest",
@@ -1082,7 +1082,7 @@
       "verifies": [
         "r_jb010"
       ],
-      "expected": "It documents capturing requirements as you build, spec-first, with the job \u2192 requirement \u2192 test \u2192 code chain attributed to the active job.",
+      "expected": "It documents capturing requirements as you build, spec-first, with the job → requirement → test → code chain attributed to the active job.",
       "automation": [
         {
           "runner": "vitest",
@@ -1387,7 +1387,7 @@
       "verifies": [
         "r_jv004"
       ],
-      "expected": "Jobs renders in the oversight group (with Releases and Auditor), to the right of Overview and the authoring views \u2014 not leftmost.",
+      "expected": "Jobs renders in the oversight group (with Releases and Auditor), to the right of Overview and the authoring views — not leftmost.",
       "automation": [
         {
           "runner": "vitest",
@@ -1746,7 +1746,7 @@
       "automation": [
         {
           "runner": "vitest",
-          "file": "src/__tests__/localFileApi.test.ts"
+          "file": "src/__tests__/fileApi.test.ts"
         }
       ]
     },
@@ -1783,7 +1783,7 @@
     {
       "id": "t_co001",
       "code": "TEST-112",
-      "text": "Confirm both skills ship \u2014 core specpad and the specpad-medical add-on.",
+      "text": "Confirm both skills ship — core specpad and the specpad-medical add-on.",
       "verifies": [
         "r_co001"
       ],
@@ -1832,7 +1832,7 @@
       "verifies": [
         "r_re001"
       ],
-      "expected": "releases.json lists v1.2; the closed jobs carry version v1.2 (so the release groups them); SKILL.md states the release\u2192jobs mapping is derived from job.version.",
+      "expected": "releases.json lists v1.2; the closed jobs carry version v1.2 (so the release groups them); SKILL.md states the release→jobs mapping is derived from job.version.",
       "automation": [
         {
           "runner": "vitest",
@@ -1967,7 +1967,7 @@
     {
       "id": "t_ad003",
       "code": "TEST-124",
-      "text": "Confirm the Traceability matrix links PRD\u2192requirement\u2192test with results and flags unverified requirements.",
+      "text": "Confirm the Traceability matrix links PRD→requirement→test with results and flags unverified requirements.",
       "verifies": [
         "r_ad003"
       ],
@@ -2028,7 +2028,7 @@
       "automation": [
         {
           "runner": "vitest",
-          "file": "src/__tests__/localFileApi.test.ts"
+          "file": "src/__tests__/fileApi.test.ts"
         },
         {
           "runner": "vitest",
@@ -2171,7 +2171,7 @@
       "verifies": [
         "r_gd002"
       ],
-      "expected": "Each guide file contains a what-to-capture section and clearly-marked good and bad examples (e.g. \u2705/\u274c or Good/Bad headings).",
+      "expected": "Each guide file contains a what-to-capture section and clearly-marked good and bad examples (e.g. ✅/❌ or Good/Bad headings).",
       "automation": [
         {
           "runner": "vitest",
@@ -2186,7 +2186,7 @@
       "verifies": [
         "r_gd003"
       ],
-      "expected": "The set of guide files under skill/specpad/guides/ equals the set referenced by SKILL.md \u2014 no guide is unreferenced and no referenced guide is missing.",
+      "expected": "The set of guide files under skill/specpad/guides/ equals the set referenced by SKILL.md — no guide is unreferenced and no referenced guide is missing.",
       "automation": [
         {
           "runner": "vitest",
@@ -2329,7 +2329,7 @@
       "verifies": [
         "r_bg006"
       ],
-      "expected": "SKILL.md's baseline generator states it drafts the full default set \u2014 a PRD (proposed, with SRS linked via satisfies) and a starter arc42 architecture \u2014 in addition to SRS/VTP, is registry-aware, and that a type may be declined.",
+      "expected": "SKILL.md's baseline generator states it drafts the full default set — a PRD (proposed, with SRS linked via satisfies) and a starter arc42 architecture — in addition to SRS/VTP, is registry-aware, and that a type may be declined.",
       "automation": [
         {
           "runner": "vitest",
@@ -2393,7 +2393,7 @@
       "verifies": [
         "r_rg005"
       ],
-      "expected": "SKILL.md and the CLAUDE.specpad.md template both instruct evaluating the job's impact on every registered document type \u2014 naming the PRD (user-facing intent) and the architecture/SAD (structural changes) alongside SRS/VTP \u2014 before implementing, spec-first.",
+      "expected": "SKILL.md and the CLAUDE.specpad.md template both instruct evaluating the job's impact on every registered document type — naming the PRD (user-facing intent) and the architecture/SAD (structural changes) alongside SRS/VTP — before implementing, spec-first.",
       "automation": [
         {
           "runner": "vitest",
@@ -2695,6 +2695,449 @@
           "file": "src/components/__tests__/JobsView.test.tsx"
         }
       ]
+    },
+    {
+      "id": "h_tsv00",
+      "heading": true,
+      "text": "Multi-user server (self-hosted)"
+    },
+    {
+      "id": "t_sv1",
+      "code": "TEST-171",
+      "text": "Start the server against a test repository with no local clone available to the client, and open the editor from the server's own origin.",
+      "verifies": [
+        "r_sv1"
+      ],
+      "expected": "The server serves the version-pinned editor build and its API from one origin; the editor opens the project and lists its documents without any File System Access prompt."
+    },
+    {
+      "id": "t_sv2",
+      "code": "TEST-172",
+      "text": "Request reads and writes for paths outside the allowlist, including traversal forms such as ../../src/index.tsx and an absolute path.",
+      "verifies": [
+        "r_sv2"
+      ],
+      "expected": "Every request resolving outside the configured allowlist is rejected with a client error and no filesystem access occurs; requests inside docs/specpad/ succeed.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/paths.test.ts"
+        }
+      ]
+    },
+    {
+      "id": "t_sv3",
+      "code": "TEST-173",
+      "text": "Inspect a provisioned user working tree on disk.",
+      "verifies": [
+        "r_sv3"
+      ],
+      "expected": "The worktree's sparse-checkout cone is the allowlisted paths only; files outside them (for example src/) are absent from the working tree even though they exist in the repository."
+    },
+    {
+      "id": "t_sv4",
+      "code": "TEST-174",
+      "text": "Exercise each API operation named in the transport surface against a test repository.",
+      "verifies": [
+        "r_sv4"
+      ],
+      "expected": "Session, document listing, document read with a version tag, item-operation write, working-copy status, commit, discard, and history passthrough each respond with the documented shape; the listing is derived from the directory rather than a static manifest.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/api.test.ts"
+        }
+      ]
+    },
+    {
+      "id": "t_sv5",
+      "code": "TEST-175",
+      "text": "Inspect the server's imports and assert parity with the shared contract module.",
+      "verifies": [
+        "r_sv5"
+      ],
+      "expected": "The server imports validate and checkGovernance from src/shared and defines no second implementation of either; a parity test fails if the server duplicates a contract rule."
+    },
+    {
+      "id": "t_sv6",
+      "code": "TEST-176",
+      "text": "Start the server with a valid configuration, then with a configuration missing the repository, the branch, and the auth provider in turn.",
+      "verifies": [
+        "r_sv6"
+      ],
+      "expected": "The valid configuration starts; each invalid or incomplete configuration is refused at startup with a message naming the offending setting, and the server does not begin listening.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/config.test.ts"
+        }
+      ]
+    },
+    {
+      "id": "t_ax1",
+      "code": "TEST-177",
+      "text": "Run the same request flow under two different authentication providers and inspect what the rest of the server sees.",
+      "verifies": [
+        "r_ax1"
+      ],
+      "expected": "Both providers yield a principal with id, display name, email, and groups; the git and document layers behave identically and reference no provider-specific detail.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/auth.test.ts",
+          "selector": "createAuthProvider (AUTH-1)"
+        },
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/auth.test.ts",
+          "selector": "resolveSession (AUTH-1, AUTH-5)"
+        }
+      ]
+    },
+    {
+      "id": "t_ax2",
+      "code": "TEST-178",
+      "text": "Send identity headers from the configured trusted upstream, and then the same headers directly from an untrusted peer.",
+      "verifies": [
+        "r_ax2"
+      ],
+      "expected": "Headers from the trusted upstream establish the principal; identical headers from an untrusted peer are rejected as unauthenticated and never establish an identity.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/auth.test.ts",
+          "selector": "ProxyAuthProvider (AUTH-2)"
+        }
+      ]
+    },
+    {
+      "id": "t_ax3",
+      "code": "TEST-179",
+      "text": "Configure the OIDC provider against a test identity provider and complete a sign-in.",
+      "verifies": [
+        "r_ax3"
+      ],
+      "expected": "The authorization-code flow completes without a front proxy and the resulting principal carries the identity provider's name, email, and group claims."
+    },
+    {
+      "id": "t_ax4",
+      "code": "TEST-180",
+      "text": "Start with the development provider bound to loopback, then bound to a non-loopback address.",
+      "verifies": [
+        "r_ax4"
+      ],
+      "expected": "The loopback binding starts and authenticates as the fixed development identity; the non-loopback binding is refused at startup.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/auth.test.ts",
+          "selector": "DevAuthProvider (AUTH-4)"
+        },
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/config.test.ts",
+          "selector": "refuses the dev provider on a non-loopback bind (AUTH-4)"
+        }
+      ]
+    },
+    {
+      "id": "t_ax5",
+      "code": "TEST-181",
+      "text": "Sign in as principals whose group claims map to committer, editor, and reader, and as one matching no mapping.",
+      "verifies": [
+        "r_ax5"
+      ],
+      "expected": "Each mapped principal receives the corresponding role; the unmapped principal is denied access outright rather than defaulting to any role.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/auth.test.ts",
+          "selector": "roleFor (AUTH-5)"
+        }
+      ]
+    },
+    {
+      "id": "t_ax6",
+      "code": "TEST-182",
+      "text": "Commit as an SSO-authenticated user and inspect the resulting commit object and the credential used for the push.",
+      "verifies": [
+        "r_ax6"
+      ],
+      "expected": "The commit's author is the authenticated human's name and email; the push is performed with the configured machine credential, and no user credential is required or stored.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/commitGate.test.ts",
+          "selector": "commitAuthor (AUTH-6)"
+        }
+      ]
+    },
+    {
+      "id": "t_cm1",
+      "code": "TEST-183",
+      "text": "Have two users edit different requirements without committing, then inspect what each user reads back.",
+      "verifies": [
+        "r_cm1"
+      ],
+      "expected": "Each user reads their own uncommitted edits and none of the other's; the two working copies are independent."
+    },
+    {
+      "id": "t_cm2",
+      "code": "TEST-184",
+      "text": "Edit a requirement, close the browser without committing, and reopen the editor as the same user.",
+      "verifies": [
+        "r_cm2"
+      ],
+      "expected": "The edit was autosaved to the user's working copy, is still present on return, and no commit was created."
+    },
+    {
+      "id": "t_cm3",
+      "code": "TEST-185",
+      "text": "Make several edits and inspect the repository's commit log before and after pressing Commit.",
+      "verifies": [
+        "r_cm3"
+      ],
+      "expected": "No commit exists before Commit is pressed; afterwards exactly one commit on the configured branch contains all the pending changes."
+    },
+    {
+      "id": "t_cm4",
+      "code": "TEST-186",
+      "text": "Attempt to commit a structurally invalid document, and a change introducing a governance violation, under each commit policy setting.",
+      "verifies": [
+        "r_cm4"
+      ],
+      "expected": "A structurally invalid document is never committed; a governance violation blocks the commit under the blocking policy and is reported but permitted under the warning policy.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/commitGate.test.ts",
+          "selector": "checkCommit — governance policy (CMT-4)"
+        }
+      ]
+    },
+    {
+      "id": "t_cm5",
+      "code": "TEST-187",
+      "text": "Commit with active jobs set, and attempt to commit with none while the policy requires one.",
+      "verifies": [
+        "r_cm5"
+      ],
+      "expected": "The commit's author is the authenticated user and it carries one Job: trailer per active job; with no active job and the policy requiring one, the commit is refused with an explanatory message.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/commitGate.test.ts",
+          "selector": "checkCommit — attribution (CMT-5)"
+        },
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/commitGate.test.ts",
+          "selector": "buildCommitMessage (CMT-5)"
+        }
+      ]
+    },
+    {
+      "id": "t_cm6",
+      "code": "TEST-188",
+      "text": "Advance the target branch between the server's fetch and its push, and observe the retry behaviour and the reflog.",
+      "verifies": [
+        "r_cm6"
+      ],
+      "expected": "The commit is rebased onto the advanced branch and pushed within the bounded retry count; no force-push is ever issued, and a persistent failure is reported rather than forced."
+    },
+    {
+      "id": "t_cm7",
+      "code": "TEST-189",
+      "text": "Open the Commit dialog with pending changes, then use Discard while another user also has pending changes.",
+      "verifies": [
+        "r_cm7"
+      ],
+      "expected": "The dialog lists the pending item-level additions, modifications, and removals together with the governance result before confirmation; Discard restores the user's working copy to the target branch and leaves the other user's pending changes untouched."
+    },
+    {
+      "id": "t_ce1",
+      "code": "TEST-190",
+      "text": "Read a document, let the working copy change, then submit a write carrying the original version tag.",
+      "verifies": [
+        "r_ce1"
+      ],
+      "expected": "The stale write is rejected with a conflict status rather than applied; re-reading yields a fresh version tag with which the write succeeds.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/api.test.ts",
+          "selector": "optimistic concurrency (CE-1)"
+        }
+      ]
+    },
+    {
+      "id": "t_ce2",
+      "code": "TEST-191",
+      "text": "Inspect the request the editor sends when a single field of one requirement is edited.",
+      "verifies": [
+        "r_ce2"
+      ],
+      "expected": "The request carries an item-level operation identifying the item by its stable id, not the whole document; two users editing different items of one document both succeed without contention."
+    },
+    {
+      "id": "t_ce3",
+      "code": "TEST-192",
+      "text": "Subscribe to the event stream, begin editing an item as a second user, and push a commit to the target branch from outside the server.",
+      "verifies": [
+        "r_ce3"
+      ],
+      "expected": "Subscribers receive a presence event naming the item being edited and, separately, a signal that the target branch has moved."
+    },
+    {
+      "id": "t_ce4",
+      "code": "TEST-193",
+      "text": "Claim an item, then disconnect abruptly without releasing it; separately, attempt to edit an item claimed by someone else.",
+      "verifies": [
+        "r_ce4"
+      ],
+      "expected": "The abandoned claim expires automatically; the second user is warned but not prevented from editing, and the edit is still applied correctly."
+    },
+    {
+      "id": "t_mg1",
+      "code": "TEST-194",
+      "text": "Inspect the merge module's dependencies and call it with plain document objects.",
+      "verifies": [
+        "r_mg1"
+      ],
+      "expected": "merge is a pure function of base, ours, and theirs, keyed on item id, importing no git or filesystem module; identical inputs always produce identical output.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/shared/__tests__/merge.test.ts",
+          "selector": "mergeItems — purity (MRG-1)"
+        }
+      ]
+    },
+    {
+      "id": "t_mg2",
+      "code": "TEST-195",
+      "text": "Merge one side's change to an item's tags against the other side's change to the same item's text; then merge two different values of the same field of the same item.",
+      "verifies": [
+        "r_mg2"
+      ],
+      "expected": "Different fields of the same item merge cleanly into one item carrying both changes; the same field set to two different values is reported as a conflict naming the item and the field.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/shared/__tests__/merge.test.ts",
+          "selector": "merges changes to different fields of the same item without conflict (MRG-2)"
+        },
+        {
+          "runner": "vitest",
+          "file": "src/shared/__tests__/merge.test.ts",
+          "selector": "reports a conflict when both sides set the same field differently (MRG-2)"
+        }
+      ]
+    },
+    {
+      "id": "t_mg3",
+      "code": "TEST-196",
+      "text": "Merge a document where one side deleted an item and the other modified it.",
+      "verifies": [
+        "r_mg3"
+      ],
+      "expected": "The result is a reported conflict for that item; the item is not silently dropped from the merged document.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/shared/__tests__/merge.test.ts",
+          "selector": "reports a conflict when one side deletes an item the other modified (MRG-3)"
+        },
+        {
+          "runner": "vitest",
+          "file": "src/shared/__tests__/merge.test.ts",
+          "selector": "keeps the surviving item when a deletion conflicts with a modification (MRG-3)"
+        }
+      ]
+    },
+    {
+      "id": "t_mg4",
+      "code": "TEST-197",
+      "text": "Merge two documents whose items are identical but ordered differently.",
+      "verifies": [
+        "r_mg4"
+      ],
+      "expected": "The merge succeeds with no conflicts and every item is present exactly once.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/shared/__tests__/merge.test.ts",
+          "selector": "does not treat a difference in item order as a conflict (MRG-4)"
+        }
+      ]
+    },
+    {
+      "id": "t_mg5",
+      "code": "TEST-198",
+      "text": "Force a conflicting rebase of a SpecPad JSON document during a server commit and inspect how it is resolved.",
+      "verifies": [
+        "r_mg5"
+      ],
+      "expected": "Resolution goes through the structural merge; no textual conflict markers ever appear in a document, and the committed file remains valid JSON conforming to its schema."
+    },
+    {
+      "id": "t_mg6",
+      "code": "TEST-199",
+      "text": "Commit a change that conflicts with an upstream change on the same field, and follow the resulting flow in the editor.",
+      "verifies": [
+        "r_mg6"
+      ],
+      "expected": "The server returns a per-field conflict report rather than committing; the editor presents both values for that field and commits the user's choice."
+    },
+    {
+      "id": "t_rx1",
+      "code": "TEST-200",
+      "text": "Run the editor's views against each transport implementation in turn using a shared conformance suite.",
+      "verifies": [
+        "r_rx1"
+      ],
+      "expected": "Every view works unchanged against the local, demo, and remote transports; no view imports a transport module directly, and the conformance suite passes for all three.",
+      "notes": "The conformance suite is table-driven: a transport is verified by adding one entry to TRANSPORTS. Local and demo are covered; the remote entry lands with the server.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/transports/__tests__/conformance.test.ts"
+        }
+      ]
+    },
+    {
+      "id": "t_rx2",
+      "code": "TEST-201",
+      "text": "Open the editor against a server as an authenticated user.",
+      "verifies": [
+        "r_rx2"
+      ],
+      "expected": "The editor fetches the session, and the signed-in user's display name and role are shown in the application shell."
+    },
+    {
+      "id": "t_rx3",
+      "code": "TEST-202",
+      "text": "Open the editor as a reader, as an editor, and as a committer.",
+      "verifies": [
+        "r_rx3"
+      ],
+      "expected": "The reader sees read-only views with no editing affordances; the editor role can edit but is offered no Commit action; the committer sees both. Server-side checks reject writes from a reader regardless of what the client renders.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/api.test.ts",
+          "selector": "writes and roles (EDR-3)"
+        }
+      ]
+    },
+    {
+      "id": "t_rx4",
+      "code": "TEST-203",
+      "text": "Scaffold a project with a configured editor base URL and open the generated launcher.",
+      "verifies": [
+        "r_rx4"
+      ],
+      "expected": "The launcher redirects to the configured self-hosted editor at its version-pinned path, and falls back to the public hosted editor when no base URL is configured."
     }
   ]
 }

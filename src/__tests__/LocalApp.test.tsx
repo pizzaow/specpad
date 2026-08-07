@@ -14,7 +14,7 @@ const docB: SrsDoc = {
   items: [{ id: 'r_002', text: 'Requirement B' }],
 };
 
-vi.mock('../localFileApi', () => ({
+vi.mock('../fileApi', () => ({
   isFileSystemAccessSupported: () => true,
   hasOpenDirectory: () => true,
   getCurrentProjectName: () => 'AppA',

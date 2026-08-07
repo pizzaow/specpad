@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { REGISTER_TYPES, docTypeFor, isRegisterType, registerTypesInIndex } from '../docTypes';
 import { validate } from '../validate';
 import { diffItems } from '../diff';
-import { classifyDocFilename } from '../../localFileApi';
+import { classifyDocFilename } from '../../transports/types';
 
 describe('document-type registry', () => {
   it('describes each content document type with kind / schema / flags (REG-1)', () => {

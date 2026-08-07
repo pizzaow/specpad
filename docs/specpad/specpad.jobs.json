@@ -507,6 +507,19 @@
       "description": "Give the jobs register two altitudes: a short release-note-voice `description` (what a user sees in the changelog) and an optional engineer-voice `technical_notes` (root cause, mechanism, files touched). Both stay prose and validation-optional; no governance rule.",
       "technical_notes": "Add `technical_notes?: string` to `JobRecord` and `jobsSchema.properties` in src/shared/schema.ts; update the sidecars.test.ts records-only assertion to include the new key. Extend SKILL.md's cache-files bullet and Jobs-register section with an altitude rule, a before/after example, and a one-line migration note. Add an example record to templates/starter.jobs.json showing the split. Editor renders `technical_notes` only in the job detail view (as a secondary field under Description), not in the release-notes list. Do not auto-migrate existing files; opportunistically clean up SpecPad's own open jobs (JOB-35, JOB-36, JOB-38). Dogfood as JOBS-13.",
       "status": "open"
+    },
+    {
+      "id": "j_7c2e91",
+      "code": "JOB-40",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Multi-user self-hosted server — edit the spec without source access",
+      "description": "Staff without a clone of the repository — quality and product managers — can now edit requirements and verification tests in the SpecPad editor through a server their company hosts, signing in with corporate SSO and publishing their changes with an explicit Commit button. Their edits arrive in the repository as ordinary git commits authored by them.",
+      "technical_notes": "See docs/design/specpad-server-design.md. Three parts: (1) a FileApi transport seam in the editor so the same UI runs against local files, the read-only demo, or a server; (2) src/shared/merge.ts — a pure item-id-keyed three-way merge, the reason concurrent editing is safe and the reason SpecPad JSON is never merged textually; (3) a server workspace in this repo owning a bare clone plus one sparse-checked-out git worktree per user, with a pluggable AuthProvider (proxy/oidc/dev) yielding a Principal. Identity is deliberately separate from the git push credential: SSO supplies the commit author, a machine credential does the push. Commit pipeline is validate -> checkGovernance -> commit as the human with Job: trailers -> rebase -> push, never force. Governance runs server-side because the client is not trusted.",
+      "status": "open"
     }
   ]
 }
