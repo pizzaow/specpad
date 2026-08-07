@@ -313,7 +313,7 @@
       "id": "h_ed0a00",
       "heading": true,
       "code": "Authoring",
-      "text": "Editor \u2014 authoring"
+      "text": "Editor — authoring"
     },
     {
       "id": "r_ed0a01",
@@ -392,7 +392,7 @@
       "id": "h_ed0b00",
       "heading": true,
       "code": "Shell",
-      "text": "Editor \u2014 application shell"
+      "text": "Editor — application shell"
     },
     {
       "id": "r_ed0b01",
@@ -436,7 +436,7 @@
     {
       "id": "r_ed0b05",
       "code": "EDS-5",
-      "text": "A footer status bar shall summarize validation \u2014 clean, or a clickable error/warning count that expands the detail messages.",
+      "text": "A footer status bar shall summarize validation — clean, or a clickable error/warning count that expands the detail messages.",
       "level": 1,
       "tags": [
         "editor",
@@ -529,7 +529,7 @@
     {
       "id": "r_jb001",
       "code": "JOBS-1",
-      "text": "The skill shall maintain an owned jobs register (<name>.jobs.json) of job records \u2014 each with a stable id, an optional code label, a title, an optional description, and an open/closed status \u2014 used when there is no external tracker.",
+      "text": "The skill shall maintain an owned jobs register (<name>.jobs.json) of job records — each with a stable id, an optional code label, a title, an optional description, and an open/closed status — used when there is no external tracker.",
       "satisfies": [
         "p_pr002"
       ],
@@ -606,7 +606,7 @@
     {
       "id": "r_jb009",
       "code": "JOBS-9",
-      "text": "A pre-push git hook shall enforce these gates across the pushed commits \u2014 blocking any commit without a Job trailer and warning when code changed with no SRS/VTP \u2014 while skipping merge commits, tag pushes, and history before SpecPad was adopted, and offering a per-commit waiver (a Spec: none trailer) and an emergency bypass.",
+      "text": "A pre-push git hook shall enforce these gates across the pushed commits — blocking any commit without a Job trailer and warning when code changed with no SRS/VTP — while skipping merge commits, tag pushes, and history before SpecPad was adopted, and offering a per-commit waiver (a Spec: none trailer) and an emergency bypass.",
       "tags": [
         "jobs",
         "governance"
@@ -615,7 +615,7 @@
     {
       "id": "r_jb010",
       "code": "JOBS-10",
-      "text": "In a SpecPad-governed repo, the skill shall capture requirements and verification tests as a first-class output of development \u2014 distilling the user's expressed intent into the SRS/VTP spec-first (before or alongside implementation) and attributing it to the active job \u2014 rather than documenting after the fact.",
+      "text": "In a SpecPad-governed repo, the skill shall capture requirements and verification tests as a first-class output of development — distilling the user's expressed intent into the SRS/VTP spec-first (before or alongside implementation) and attributing it to the active job — rather than documenting after the fact.",
       "tags": [
         "jobs",
         "skill"
@@ -656,7 +656,7 @@
     {
       "id": "r_in001",
       "code": "INIT-1",
-      "text": "The skill shall provide an idempotent init setup that, in one step, scaffolds docs/specpad/, generates the launcher, installs the pre-push hook (via core.hooksPath), and wires the SpecPad working-loop directive into the project CLAUDE.md \u2014 so a freshly-installed skill is fully configured with no manual steps.",
+      "text": "The skill shall provide an idempotent init setup that, in one step, scaffolds docs/specpad/, generates the launcher, installs the pre-push hook (via core.hooksPath), and wires the SpecPad working-loop directive into the project CLAUDE.md — so a freshly-installed skill is fully configured with no manual steps.",
       "satisfies": [
         "p_in01"
       ],
@@ -686,7 +686,7 @@
     {
       "id": "r_in004",
       "code": "INIT-4",
-      "text": "init shall scaffold the full default document set \u2014 including the PRD register \u2014 listing each document in the project index, so user-need traceability is available from the start (a project may delete the PRD).",
+      "text": "init shall scaffold the full default document set — including the PRD register — listing each document in the project index, so user-need traceability is available from the start (a project may delete the PRD).",
       "satisfies": [
         "p_in01"
       ],
@@ -703,7 +703,7 @@
     {
       "id": "r_bg001",
       "code": "BASE-1",
-      "text": "The skill shall provide a baseline generator that drafts an initial SRS and VTP from an existing codebase \u2014 surveying entry points, public surfaces, modules, docs, and existing tests \u2014 so SpecPad can be adopted on a project that did not start with it.",
+      "text": "The skill shall provide a baseline generator that drafts an initial SRS and VTP from an existing codebase — surveying entry points, public surfaces, modules, docs, and existing tests — so SpecPad can be adopted on a project that did not start with it.",
       "satisfies": [
         "p_bl01"
       ],
@@ -724,7 +724,7 @@
     {
       "id": "r_bg003",
       "code": "BASE-3",
-      "text": "The generator shall distill testable behavioral requirements at the \"shall\" altitude \u2014 one per distinct externally-observable behavior or constraint, not implementation detail \u2014 and produce governance-clean output (every requirement carries a verifying VTP entry with an expected result).",
+      "text": "The generator shall distill testable behavioral requirements at the \"shall\" altitude — one per distinct externally-observable behavior or constraint, not implementation detail — and produce governance-clean output (every requirement carries a verifying VTP entry with an expected result).",
       "tags": [
         "skill",
         "onboarding"
@@ -742,7 +742,7 @@
     {
       "id": "r_bg005",
       "code": "BASE-5",
-      "text": "The generator shall report its coverage explicitly \u2014 what it covered and what it could not \u2014 rather than silently truncating.",
+      "text": "The generator shall report its coverage explicitly — what it covered and what it could not — rather than silently truncating.",
       "tags": [
         "skill",
         "onboarding"
@@ -751,7 +751,7 @@
     {
       "id": "r_bg006",
       "code": "BASE-6",
-      "text": "When adopting an existing project the baseline generator shall by default draft the full configured document set \u2014 a PRD (user needs / product intent, proposed for ratification, with SRS items linked up via satisfies) and a starter arc42 architecture (context + building-block diagram) in addition to the SRS and VTP \u2014 each declinable per project; it shall be registry-aware (drafting the project's configured document types) so future pillars are constructed the same way.",
+      "text": "When adopting an existing project the baseline generator shall by default draft the full configured document set — a PRD (user needs / product intent, proposed for ratification, with SRS items linked up via satisfies) and a starter arc42 architecture (context + building-block diagram) in addition to the SRS and VTP — each declinable per project; it shall be registry-aware (drafting the project's configured document types) so future pillars are constructed the same way.",
       "satisfies": [
         "p_bl01"
       ],
@@ -798,7 +798,7 @@
     {
       "id": "r_au004",
       "code": "AUDIT-4",
-      "text": "The audit shall flag coverage gaps \u2014 a requirement with no covering test, and a VTP notes reference to a test that no longer resolves.",
+      "text": "The audit shall flag coverage gaps — a requirement with no covering test, and a VTP notes reference to a test that no longer resolves.",
       "tags": [
         "skill",
         "governance"
@@ -830,7 +830,7 @@
     {
       "id": "r_jv002",
       "code": "JV-2",
-      "text": "The Jobs view shall present jobs as release notes \u2014 grouped by major version (unversioned jobs under \"Unreleased\"), then by type into Features and Bugfixes \u2014 with each job's description shown beneath its title.",
+      "text": "The Jobs view shall present jobs as release notes — grouped by major version (unversioned jobs under \"Unreleased\"), then by type into Features and Bugfixes — with each job's description shown beneath its title.",
       "tags": [
         "editor",
         "jobs"
@@ -848,7 +848,7 @@
     {
       "id": "r_jv004",
       "code": "JV-4",
-      "text": "The Jobs tab shall sit in the oversight tab group (with Releases and the Auditor view), to the right of the Overview and the authoring views \u2014 superseding its former leftmost placement.",
+      "text": "The Jobs tab shall sit in the oversight tab group (with Releases and the Auditor view), to the right of the Overview and the authoring views — superseding its former leftmost placement.",
       "tags": [
         "editor",
         "jobs"
@@ -898,7 +898,7 @@
     {
       "id": "r_jc005",
       "code": "JC-5",
-      "text": "The skill shall snapshot a job's before state \u2014 the full key doc set (proj/srs/vtp plus the SAD markdown, diagrams, guide, and an arch-files manifest) \u2014 into .specpad/jobs/<id>/before/ when the job is created (not only on close), pinning the job's starting point so in-progress changes can be diffed against the working copy.",
+      "text": "The skill shall snapshot a job's before state — the full key doc set (proj/srs/vtp plus the SAD markdown, diagrams, guide, and an arch-files manifest) — into .specpad/jobs/<id>/before/ when the job is created (not only on close), pinning the job's starting point so in-progress changes can be diffed against the working copy.",
       "satisfies": [
         "p_pr002"
       ],
@@ -922,7 +922,7 @@
     {
       "id": "r_jc007",
       "code": "JC-7",
-      "text": "The Jobs view shall render the active open job's in-progress architecture changes \u2014 which SAD/diagram files it added, modified, or removed (coarse, file-level), plus a section-aware diff (changed headings with added/removed lines) for each modified markdown file \u2014 by diffing its cached before snapshot against the working SAD and diagrams.",
+      "text": "The Jobs view shall render the active open job's in-progress architecture changes — which SAD/diagram files it added, modified, or removed (coarse, file-level), plus a section-aware diff (changed headings with added/removed lines) for each modified markdown file — by diffing its cached before snapshot against the working SAD and diagrams.",
       "satisfies": [
         "p_pr002"
       ],
@@ -939,7 +939,7 @@
     {
       "id": "r_sc001",
       "code": "SRC-1",
-      "text": "Because every commit carries a Job: trailer, the skill shall derive a job's commits and code changes from git (job \u2192 commits \u2192 code) on demand, with no maintained requirement-to-code matrix.",
+      "text": "Because every commit carries a Job: trailer, the skill shall derive a job's commits and code changes from git (job → commits → code) on demand, with no maintained requirement-to-code matrix.",
       "satisfies": [
         "p_tr01"
       ],
@@ -974,7 +974,7 @@
     {
       "id": "r_sa001",
       "code": "SAD-1",
-      "text": "The system shall support an optional architecture spec \u2014 an arc42 software architecture document (<name>.sad.md) plus a C4 model in Structurizr DSL (<name>.workspace.dsl) \u2014 tracked under docs/specpad/, separate from the id-keyed JSON requirements contract.",
+      "text": "The system shall support an optional architecture spec — an arc42 software architecture document (<name>.sad.md) plus a C4 model in Structurizr DSL (<name>.workspace.dsl) — tracked under docs/specpad/, separate from the id-keyed JSON requirements contract.",
       "satisfies": [
         "p_pr004"
       ],
@@ -1081,7 +1081,7 @@
     {
       "id": "r_av004",
       "code": "AV-4",
-      "text": "Per-job diagram change tracking shall be coarse \u2014 that the diagram file changed \u2014 not in-diagram deltas.",
+      "text": "Per-job diagram change tracking shall be coarse — that the diagram file changed — not in-diagram deltas.",
       "tags": [
         "architecture",
         "change-tracking"
@@ -1090,7 +1090,7 @@
     {
       "id": "r_dg001",
       "code": "DGM-1",
-      "text": "Diagrams shall be placed by the arc42 markdown via image references (![caption](name.svg)), so the document defines where each diagram appears \u2014 a context overview near the top, plus building block (interfaces), runtime (process), and deployment.",
+      "text": "Diagrams shall be placed by the arc42 markdown via image references (![caption](name.svg)), so the document defines where each diagram appears — a context overview near the top, plus building block (interfaces), runtime (process), and deployment.",
       "satisfies": [
         "p_sa01"
       ],
@@ -1111,7 +1111,7 @@
     {
       "id": "r_dg003",
       "code": "DGM-3",
-      "text": "The Structurizr C4 DSL shall be optional \u2014 supported when present (loader kept; the editor shows it only when present) but not included in the default templates or scaffold.",
+      "text": "The Structurizr C4 DSL shall be optional — supported when present (loader kept; the editor shows it only when present) but not included in the default templates or scaffold.",
       "tags": [
         "architecture",
         "editor"
@@ -1120,7 +1120,7 @@
     {
       "id": "r_dg004",
       "code": "DGM-4",
-      "text": "Loading a markdown-referenced diagram (or any project asset) shall be fault-tolerant: a reference the editor cannot open \u2014 because the file is absent or the reference contains path segments the File System Access API rejects as an invalid name \u2014 shall degrade to a missing diagram and shall never abort opening the project; a reference into a subdirectory (path segments separated by '/') shall be resolved by walking the project folder.",
+      "text": "Loading a markdown-referenced diagram (or any project asset) shall be fault-tolerant: a reference the editor cannot open — because the file is absent or the reference contains path segments the File System Access API rejects as an invalid name — shall degrade to a missing diagram and shall never abort opening the project; a reference into a subdirectory (path segments separated by '/') shall be resolved by walking the project folder.",
       "tags": [
         "architecture",
         "editor"
@@ -1173,7 +1173,7 @@
     {
       "id": "r_co003",
       "code": "CORE-3",
-      "text": "The shared contract and the editor shall remain unified across both skills \u2014 the medical add-on adds prose, templates, and governance, never a code fork; the editor activates medical features only when a medical profile is present.",
+      "text": "The shared contract and the editor shall remain unified across both skills — the medical add-on adds prose, templates, and governance, never a code fork; the editor activates medical features only when a medical profile is present.",
       "tags": [
         "skill",
         "packaging"
@@ -1187,7 +1187,7 @@
     {
       "id": "r_re001",
       "code": "REL-1",
-      "text": "A release shall be a first-class checkpoint \u2014 a version with its set of jobs (the closed jobs whose version equals the release) and a full snapshot of all key documentation; the release\u2192jobs mapping is derived from job.version, never stored separately.",
+      "text": "A release shall be a first-class checkpoint — a version with its set of jobs (the closed jobs whose version equals the release) and a full snapshot of all key documentation; the release→jobs mapping is derived from job.version, never stored separately.",
       "satisfies": [
         "p_pr004",
         "p_rl01"
@@ -1235,7 +1235,7 @@
     {
       "id": "r_pd001",
       "code": "PRD-1",
-      "text": "The system shall support an optional product-requirements (PRD) register as a peer document (<name>.prd.json) with the same item shape as the SRS \u2014 a stable id, an optional renameable code, and text \u2014 for capturing product intent / user needs above the software requirements.",
+      "text": "The system shall support an optional product-requirements (PRD) register as a peer document (<name>.prd.json) with the same item shape as the SRS — a stable id, an optional renameable code, and text — for capturing product intent / user needs above the software requirements.",
       "satisfies": [
         "p_pr005"
       ],
@@ -1283,7 +1283,7 @@
     {
       "id": "r_pd005",
       "code": "PRD-5",
-      "text": "The editor shall provide a Product Requirements tab to view and edit the PRD register \u2014 each item's code and text, with hierarchy and section headings \u2014 using the same interaction model as the Software Requirements table (a per-row hamburger menu for add/move/indent/delete/view-information), and shall show the since-baseline redline; edits save to <name>.prd.json. The tab is available only when the project has a PRD register.",
+      "text": "The editor shall provide a Product Requirements tab to view and edit the PRD register — each item's code and text, with hierarchy and section headings — using the same interaction model as the Software Requirements table (a per-row hamburger menu for add/move/indent/delete/view-information), and shall show the since-baseline redline; edits save to <name>.prd.json. The tab is available only when the project has a PRD register.",
       "satisfies": [
         "p_pr003"
       ],
@@ -1295,7 +1295,7 @@
     {
       "id": "r_pd006",
       "code": "PRD-6",
-      "text": "The Product Requirements tab shall show each item's downward trace \u2014 the software requirements that satisfy it \u2014 as an expandable Satisfied-by count toggle (mirroring the Software Requirements Tests toggle), and shall flag an implemented product requirement that no requirement satisfies (a coverage gap).",
+      "text": "The Product Requirements tab shall show each item's downward trace — the software requirements that satisfy it — as an expandable Satisfied-by count toggle (mirroring the Software Requirements Tests toggle), and shall flag an implemented product requirement that no requirement satisfies (a coverage gap).",
       "satisfies": [
         "p_tr01"
       ],
@@ -1312,7 +1312,7 @@
     {
       "id": "r_ad001",
       "code": "AUD-1",
-      "text": "The editor shall provide an Auditor view that orients a reviewer to the project's design-control evidence \u2014 a scope statement, a design-control map, and the roadmap \u2014 with links into the relevant tabs; it is computed live and points to (rather than contains) the traceability matrix.",
+      "text": "The editor shall provide an Auditor view that orients a reviewer to the project's design-control evidence — a scope statement, a design-control map, and the roadmap — with links into the relevant tabs; it is computed live and points to (rather than contains) the traceability matrix.",
       "satisfies": [
         "p_pr004"
       ],
@@ -1389,7 +1389,7 @@
     {
       "id": "r_dc001",
       "code": "DC-1",
-      "text": "The Auditor view shall present a design-control map: each formal element \u2014 Design Inputs, Design Outputs, Design Verification, Design Validation, Traceability, Design Changes, Design History File, Design Reviews, Risk Management, and Configuration Management \u2014 shown with its standard citation (IEC 62304 and 21 CFR 820.30), a plain-language statement, a status, and a link to the section/tab that holds the evidence, so an engineer can answer 'where are your design inputs?' (and the equivalent for each phase) directly from this view.",
+      "text": "The Auditor view shall present a design-control map: each formal element — Design Inputs, Design Outputs, Design Verification, Design Validation, Traceability, Design Changes, Design History File, Design Reviews, Risk Management, and Configuration Management — shown with its standard citation (IEC 62304 and 21 CFR 820.30), a plain-language statement, a status, and a link to the section/tab that holds the evidence, so an engineer can answer 'where are your design inputs?' (and the equivalent for each phase) directly from this view.",
       "satisfies": [
         "p_pr004"
       ],
@@ -1401,7 +1401,7 @@
     {
       "id": "r_dc002",
       "code": "DC-2",
-      "text": "Each design-control element's status shall be derived from the loaded project where determinable \u2014 Design Inputs present when requirements exist, Design Verification reflecting test coverage, Design Changes present when jobs exist, Design History present when releases exist \u2014 and elements not yet built (Design Validation, Risk Management) shall be marked as gaps.",
+      "text": "Each design-control element's status shall be derived from the loaded project where determinable — Design Inputs present when requirements exist, Design Verification reflecting test coverage, Design Changes present when jobs exist, Design History present when releases exist — and elements not yet built (Design Validation, Risk Management) shall be marked as gaps.",
       "satisfies": [
         "p_pr004"
       ],
@@ -1454,7 +1454,7 @@
     {
       "id": "r_vs004",
       "code": "OVR-1",
-      "text": "The editor shall provide an Overview (Home) view \u2014 an engineer's status home for the open project \u2014 showing the in-progress (open) jobs, the latest release, and a coverage/health headline (requirements verified and open governance findings), with quick navigation into the authoring views.",
+      "text": "The editor shall provide an Overview (Home) view — an engineer's status home for the open project — showing the in-progress (open) jobs, the latest release, and a coverage/health headline (requirements verified and open governance findings), with quick navigation into the authoring views.",
       "satisfies": [
         "p_pr003"
       ],
@@ -1478,7 +1478,7 @@
     {
       "id": "r_vs006",
       "code": "TAB-2",
-      "text": "Below the document tabs the editor shall render a thin band labelling each design-control phase, spanning the tabs that contribute to it \u2014 Design Inputs across the Product Requirements and Requirements tabs, Design Verification across Verification Tests and Results, Design Outputs (Architecture), Design Controls (Auditor), Traceability, Design History (Releases), and Design Changes (Jobs).",
+      "text": "Below the document tabs the editor shall render a thin band labelling each design-control phase, spanning the tabs that contribute to it — Design Inputs across the Product Requirements and Requirements tabs, Design Verification across Verification Tests and Results, Design Outputs (Architecture), Design Controls (Auditor), Traceability, Design History (Releases), and Design Changes (Jobs).",
       "satisfies": [
         "p_pr004"
       ],
@@ -1520,7 +1520,7 @@
     {
       "id": "r_gd003",
       "code": "GUIDE-3",
-      "text": "SKILL.md shall route to each guide at its working-loop touchpoint by pointer (not by inlining the guide body), and the routing shall stay in sync with the files \u2014 every guide SKILL.md references shall exist, and every shipped guide shall be referenced (no orphaned or dangling guides).",
+      "text": "SKILL.md shall route to each guide at its working-loop touchpoint by pointer (not by inlining the guide body), and the routing shall stay in sync with the files — every guide SKILL.md references shall exist, and every shipped guide shall be referenced (no orphaned or dangling guides).",
       "satisfies": [
         "p_sk01"
       ],
@@ -1537,7 +1537,7 @@
     {
       "id": "r_rg001",
       "code": "REG-1",
-      "text": "The contract shall define a single document-type registry describing each content document type (srs, vtp, prd, and future pillars such as SOUP/SBOM, cybersecurity, SDD) \u2014 its kind (id-keyed register, prose, or asset), file naming, schema, whether it is part of the baseline snapshot, and whether the baseline generator drafts it.",
+      "text": "The contract shall define a single document-type registry describing each content document type (srs, vtp, prd, and future pillars such as SOUP/SBOM, cybersecurity, SDD) — its kind (id-keyed register, prose, or asset), file naming, schema, whether it is part of the baseline snapshot, and whether the baseline generator drafts it.",
       "satisfies": [
         "p_pr001"
       ],
@@ -1561,7 +1561,7 @@
     {
       "id": "r_rg003",
       "code": "REG-3",
-      "text": "The release/baseline snapshot and the per-job before/after cache shall cover every document in the project index plus the architecture files \u2014 iterating the index, not a fixed list \u2014 so a newly-registered document type is captured in snapshots and caches without further changes.",
+      "text": "The release/baseline snapshot and the per-job before/after cache shall cover every document in the project index plus the architecture files — iterating the index, not a fixed list — so a newly-registered document type is captured in snapshots and caches without further changes.",
       "satisfies": [
         "p_pr001"
       ],
@@ -1574,7 +1574,7 @@
     {
       "id": "r_rg004",
       "code": "REG-4",
-      "text": "The snapshot/diff loaders and the editor's per-job change view shall be document-type-generic \u2014 iterating the registry's register types and diffing by stable id \u2014 so a newly-registered register type flows into per-job diffs and the redline with no code change.",
+      "text": "The snapshot/diff loaders and the editor's per-job change view shall be document-type-generic — iterating the registry's register types and diffing by stable id — so a newly-registered register type flows into per-job diffs and the redline with no code change.",
       "satisfies": [
         "p_pr001"
       ],
@@ -1587,7 +1587,7 @@
     {
       "id": "r_rg005",
       "code": "REG-5",
-      "text": "The working loop shall require a job to evaluate its impact across every registered document type \u2014 software requirements, verification tests, product requirements, architecture, and any future pillar \u2014 and capture/update each affected one spec-first in the same job, driven by the registry rather than a fixed SRS/VTP list, so a newly-registered document type is evaluated for impact on every job without changing the loop.",
+      "text": "The working loop shall require a job to evaluate its impact across every registered document type — software requirements, verification tests, product requirements, architecture, and any future pillar — and capture/update each affected one spec-first in the same job, driven by the registry rather than a fixed SRS/VTP list, so a newly-registered document type is evaluated for impact on every job without changing the loop.",
       "satisfies": [
         "p_pr001"
       ],
@@ -1613,7 +1613,7 @@
     {
       "id": "h_avc0",
       "heading": true,
-      "text": "Editor \u2014 authoring-view consistency"
+      "text": "Editor — authoring-view consistency"
     },
     {
       "id": "r_avc1",
@@ -1630,7 +1630,7 @@
     {
       "id": "r_avc2",
       "code": "AVC-2",
-      "text": "The Product Requirements table shall treat product requirements as implemented by default \u2014 hiding the status and tags columns \u2014 and shall flag a still-proposed item with a bold red \u201cPROPOSED\u201d note under its code and italicised text, so the table reads as the ratified product baseline.",
+      "text": "The Product Requirements table shall treat product requirements as implemented by default — hiding the status and tags columns — and shall flag a still-proposed item with a bold red “PROPOSED” note under its code and italicised text, so the table reads as the ratified product baseline.",
       "satisfies": [
         "p_pr003"
       ],
@@ -1654,7 +1654,7 @@
     {
       "id": "r_avc4",
       "code": "AVC-4",
-      "text": "The software-requirements view shall be labelled \u201cSoftware Requirements\u201d (in the tab, the table heading, and the generated schema reference) to distinguish it from the Product Requirements view.",
+      "text": "The software-requirements view shall be labelled “Software Requirements” (in the tab, the table heading, and the generated schema reference) to distinguish it from the Product Requirements view.",
       "satisfies": [
         "p_pr003"
       ],
@@ -1670,7 +1670,7 @@
     {
       "id": "r_ver1",
       "code": "VER-1",
-      "text": "A verification test shall carry a framework-agnostic link to the automated test(s) that execute it \u2014 an automation list of {runner, file, selector?} where runner and selector are opaque to the core \u2014 so the evidence chain VTP test -> automated test is stored on the item; a test with no automation is manual and keeps a recorded result.",
+      "text": "A verification test shall carry a framework-agnostic link to the automated test(s) that execute it — an automation list of {runner, file, selector?} where runner and selector are opaque to the core — so the evidence chain VTP test -> automated test is stored on the item; a test with no automation is manual and keeps a recorded result.",
       "satisfies": [
         "p_tr01"
       ],
@@ -1682,7 +1682,7 @@
     {
       "id": "r_ver2",
       "code": "VER-2",
-      "text": "A captured run shall be recorded as a normalized run sidecar \u2014 {runner, ref (commit), ranAt, summary, results:[{file, selector?, status}]} \u2014 produced by parsing a runner's machine report (a vitest adapter ships; other runners are sibling adapters or CI emitting the same shape). The core shall not parse any test framework.",
+      "text": "A captured run shall be recorded as a normalized run sidecar — {runner, ref (commit), ranAt, summary, results:[{file, selector?, status}]} — produced by parsing a runner's machine report (a vitest adapter ships; other runners are sibling adapters or CI emitting the same shape). The core shall not parse any test framework.",
       "satisfies": [
         "p_ds01"
       ],
@@ -1694,7 +1694,7 @@
     {
       "id": "r_ver3",
       "code": "VER-3",
-      "text": "An automated test's result shall be derived by matching its automation links to a run record (by file, then selector) \u2014 passed, failed, skipped, or not-run when a link has no matching result \u2014 and shall not be hand-stored; a manual test falls back to its recorded result.",
+      "text": "An automated test's result shall be derived by matching its automation links to a run record (by file, then selector) — passed, failed, skipped, or not-run when a link has no matching result — and shall not be hand-stored; a manual test falls back to its recorded result.",
       "satisfies": [
         "p_ds01"
       ],
@@ -1717,7 +1717,7 @@
     {
       "id": "r_ver5",
       "code": "VER-5",
-      "text": "Run records shall be frozen for key deliverables \u2014 copied into the release baseline at refresh (and snapshots/<version>/) and into each closed job's after cache \u2014 so every release and job carries its own verification evidence.",
+      "text": "Run records shall be frozen for key deliverables — copied into the release baseline at refresh (and snapshots/<version>/) and into each closed job's after cache — so every release and job carries its own verification evidence.",
       "satisfies": [
         "p_pr002"
       ],
@@ -1753,7 +1753,7 @@
     {
       "id": "r_ver8",
       "code": "VER-8",
-      "text": "Test-result roll-ups (the Overview headline and the Auditor/Traceability coverage) shall derive each automated test's outcome from the captured run, and each manual test's from its recorded result \u2014 never from a stored result on an automated test.",
+      "text": "Test-result roll-ups (the Overview headline and the Auditor/Traceability coverage) shall derive each automated test's outcome from the captured run, and each manual test's from its recorded result — never from a stored result on an automated test.",
       "satisfies": [
         "p_ds01"
       ],
@@ -1777,43 +1777,70 @@
       "id": "r_sv1",
       "code": "SRV-1",
       "text": "The system shall provide a self-hosted server that serves the version-pinned editor build and its HTTP API from a single origin, so a user with no local clone of the repository can edit the project's documents in a browser.",
-      "satisfies": ["p_sv01"],
-      "tags": ["server"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server"
+      ]
     },
     {
       "id": "r_sv2",
       "code": "SRV-2",
       "text": "The server shall confine every read and write to the configured path allowlist (by default docs/specpad/) and shall reject any request that resolves outside it.",
-      "satisfies": ["p_sv01"],
-      "tags": ["server", "security"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server",
+        "security"
+      ]
     },
     {
       "id": "r_sv3",
       "code": "SRV-3",
       "text": "The server's git working tree shall be sparse-checked-out to the allowlisted paths, so files outside them are physically absent from the tree the server can write to.",
-      "satisfies": ["p_sv01"],
-      "tags": ["server", "security"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server",
+        "security"
+      ]
     },
     {
       "id": "r_sv4",
       "code": "SRV-4",
       "text": "The server shall expose API operations mirroring the editor's file transport: session, document listing, document read with a version tag, item-operation write, working-copy status, commit, discard, and read-only history passthrough.",
-      "satisfies": ["p_sv01"],
-      "tags": ["server"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server"
+      ]
     },
     {
       "id": "r_sv5",
       "code": "SRV-5",
       "text": "The server shall enforce the shared contract by importing the validation and governance modules from src/shared, never by re-implementing either, so the server, the editor, and the skill cannot disagree.",
-      "satisfies": ["p_pc01"],
-      "tags": ["server", "contract"]
+      "satisfies": [
+        "p_pc01"
+      ],
+      "tags": [
+        "server",
+        "contract"
+      ]
     },
     {
       "id": "r_sv6",
       "code": "SRV-6",
       "text": "The server shall take its repository, branch, credential, authentication provider, role map, and commit policy from a single declarative configuration file, and shall refuse to start when that configuration is invalid or incomplete.",
-      "satisfies": ["p_sv01"],
-      "tags": ["server"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server"
+      ]
     },
     {
       "id": "h_sv020",
@@ -1825,43 +1852,75 @@
       "id": "r_ax1",
       "code": "AUTH-1",
       "text": "The server shall identify users through a pluggable authentication provider that yields a single principal (stable id, display name, email, group claims); no other part of the server shall depend on how the user was authenticated.",
-      "satisfies": ["p_sv01"],
-      "tags": ["server", "auth"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server",
+        "auth"
+      ]
     },
     {
       "id": "r_ax2",
       "code": "AUTH-2",
       "text": "The server shall provide a proxy authentication provider that derives the principal from trusted upstream headers, and shall reject identity headers presented by any peer other than the configured trusted upstream.",
-      "satisfies": ["p_sv01"],
-      "tags": ["server", "auth", "security"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server",
+        "auth",
+        "security"
+      ]
     },
     {
       "id": "r_ax3",
       "code": "AUTH-3",
       "text": "The server shall provide an OIDC authentication provider so a company can use corporate single sign-on directly, without an authenticating proxy in front of the server.",
-      "satisfies": ["p_sv01"],
-      "tags": ["server", "auth"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server",
+        "auth"
+      ]
     },
     {
       "id": "r_ax4",
       "code": "AUTH-4",
       "text": "The server shall provide a development authentication provider with a fixed identity, which shall refuse to start when the server is bound to a non-loopback address.",
-      "satisfies": ["p_sv01"],
-      "tags": ["server", "auth", "security"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server",
+        "auth",
+        "security"
+      ]
     },
     {
       "id": "r_ax5",
       "code": "AUTH-5",
       "text": "The server shall map a principal's group claims onto reader, editor, and committer roles, and shall deny access to a principal matching no role mapping.",
-      "satisfies": ["p_sv01"],
-      "tags": ["server", "auth"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server",
+        "auth"
+      ]
     },
     {
       "id": "r_ax6",
       "code": "AUTH-6",
       "text": "The authenticated user's identity shall be independent of the git push credential: the server shall push with its configured machine credential while the human identity travels in the commit's author field.",
-      "satisfies": ["p_gh01"],
-      "tags": ["server", "auth"]
+      "satisfies": [
+        "p_gh01"
+      ],
+      "tags": [
+        "server",
+        "auth"
+      ]
     },
     {
       "id": "h_sv030",
@@ -1873,50 +1932,89 @@
       "id": "r_cm1",
       "code": "CMT-1",
       "text": "Each user shall have a private server-side working copy of the allowlisted paths, so one user's uncommitted edits are invisible to, and unaffected by, another's.",
-      "satisfies": ["p_sv01"],
-      "tags": ["server", "commit"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server",
+        "commit"
+      ]
     },
     {
       "id": "r_cm2",
       "code": "CMT-2",
       "text": "Edits shall be autosaved to the user's working copy without being committed, and shall survive the user leaving and returning to the editor.",
-      "satisfies": ["p_sv01"],
-      "tags": ["server", "commit"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server",
+        "commit"
+      ]
     },
     {
       "id": "r_cm3",
       "code": "CMT-3",
       "text": "The editor shall provide an explicit Commit action that publishes the user's working-copy changes as one git commit on the configured branch; no edit shall ever be committed automatically.",
-      "satisfies": ["p_sv01"],
-      "tags": ["server", "commit", "editor"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server",
+        "commit",
+        "editor"
+      ]
     },
     {
       "id": "r_cm4",
       "code": "CMT-4",
       "text": "Before committing, the server shall structurally validate every changed document and run the governance check, blocking or warning according to the configured commit policy.",
-      "satisfies": ["p_pc01"],
-      "tags": ["server", "commit", "governance"]
+      "satisfies": [
+        "p_pc01"
+      ],
+      "tags": [
+        "server",
+        "commit",
+        "governance"
+      ]
     },
     {
       "id": "r_cm5",
       "code": "CMT-5",
       "text": "A commit made through the server shall be authored by the authenticated user's name and email and shall carry a Job: trailer for each active job; where policy requires an active job, the server shall refuse to commit without one.",
-      "satisfies": ["p_pr002"],
-      "tags": ["server", "commit", "jobs"]
+      "satisfies": [
+        "p_pr002"
+      ],
+      "tags": [
+        "server",
+        "commit",
+        "jobs"
+      ]
     },
     {
       "id": "r_cm6",
       "code": "CMT-6",
       "text": "A commit shall be rebased onto the latest state of the target branch and retried a bounded number of times when the push is rejected as non-fast-forward; the server shall never force-push.",
-      "satisfies": ["p_sv01"],
-      "tags": ["server", "commit"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server",
+        "commit"
+      ]
     },
     {
       "id": "r_cm7",
       "code": "CMT-7",
       "text": "The Commit action shall present the pending item-level change summary and the governance result for confirmation before the commit is made, and a Discard action shall revert the user's working copy without affecting other users.",
-      "satisfies": ["p_sv01"],
-      "tags": ["server", "commit", "editor"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server",
+        "commit",
+        "editor"
+      ]
     },
     {
       "id": "h_sv040",
@@ -1928,71 +2026,122 @@
       "id": "r_ce1",
       "code": "CE-1",
       "text": "Every document read shall carry a version tag which a write shall present back, and the server shall reject a write whose tag no longer matches the working copy's state, so no update is ever silently lost.",
-      "satisfies": ["p_sv01"],
-      "tags": ["server", "concurrency"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server",
+        "concurrency"
+      ]
     },
     {
       "id": "r_ce2",
       "code": "CE-2",
       "text": "The editor shall write changes to the server as item-level operations (upsert, delete, reorder) rather than as whole documents, so concurrent edits to different items of one document do not contend.",
-      "satisfies": ["p_sv01"],
-      "tags": ["server", "concurrency"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server",
+        "concurrency"
+      ]
     },
     {
       "id": "r_ce3",
       "code": "CE-3",
       "text": "The server shall publish an event stream carrying advisory editing presence and a signal that the target branch has moved.",
-      "satisfies": ["p_sv01"],
-      "tags": ["server", "concurrency"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server",
+        "concurrency"
+      ]
     },
     {
       "id": "r_ce4",
       "code": "CE-4",
       "text": "Editing presence shall be advisory only: it shall expire automatically and shall never be required for the correctness of a concurrent edit.",
-      "satisfies": ["p_sv01"],
-      "tags": ["server", "concurrency"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server",
+        "concurrency"
+      ]
     },
     {
       "id": "r_mg1",
       "code": "MRG-1",
       "text": "The system shall provide a pure three-way merge of SpecPad documents keyed on stable item ids, with no git or I/O dependency, usable by the editor, the server, and the skill alike.",
-      "satisfies": ["p_gh01"],
-      "tags": ["contract", "merge"]
+      "satisfies": [
+        "p_gh01"
+      ],
+      "tags": [
+        "contract",
+        "merge"
+      ]
     },
     {
       "id": "r_mg2",
       "code": "MRG-2",
       "text": "The merge shall combine changes to different fields of the same item without conflict, and shall report a conflict only where both sides set the same field of the same item to different values.",
-      "satisfies": ["p_gh01"],
-      "tags": ["contract", "merge"]
+      "satisfies": [
+        "p_gh01"
+      ],
+      "tags": [
+        "contract",
+        "merge"
+      ]
     },
     {
       "id": "r_mg3",
       "code": "MRG-3",
       "text": "The merge shall report a conflict where an item is deleted on one side and modified on the other, rather than letting the deletion silently win.",
-      "satisfies": ["p_gh01"],
-      "tags": ["contract", "merge"]
+      "satisfies": [
+        "p_gh01"
+      ],
+      "tags": [
+        "contract",
+        "merge"
+      ]
     },
     {
       "id": "r_mg4",
       "code": "MRG-4",
       "text": "The merge shall not treat a difference in item order as a conflict.",
-      "satisfies": ["p_gh01"],
-      "tags": ["contract", "merge"]
+      "satisfies": [
+        "p_gh01"
+      ],
+      "tags": [
+        "contract",
+        "merge"
+      ]
     },
     {
       "id": "r_mg5",
       "code": "MRG-5",
       "text": "SpecPad JSON documents shall never be merged textually; every merge conflict arising during a server commit shall be resolved through the structural merge.",
-      "satisfies": ["p_gh01"],
-      "tags": ["server", "merge"]
+      "satisfies": [
+        "p_gh01"
+      ],
+      "tags": [
+        "server",
+        "merge"
+      ]
     },
     {
       "id": "r_mg6",
       "code": "MRG-6",
       "text": "Where the merge cannot resolve a conflict automatically, the server shall return a per-field conflict report and the editor shall offer the user a choice between the conflicting values.",
-      "satisfies": ["p_sv01"],
-      "tags": ["server", "merge", "editor"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server",
+        "merge",
+        "editor"
+      ]
     },
     {
       "id": "h_sv050",
@@ -2004,29 +2153,51 @@
       "id": "r_rx1",
       "code": "EDR-1",
       "text": "The editor shall reach documents only through a transport interface with interchangeable implementations (local filesystem, read-only demo, remote server); no view shall depend on which transport is in use.",
-      "satisfies": ["p_pr003"],
-      "tags": ["editor", "server"]
+      "satisfies": [
+        "p_pr003"
+      ],
+      "tags": [
+        "editor",
+        "server"
+      ]
     },
     {
       "id": "r_rx2",
       "code": "EDR-2",
       "text": "When running against a server, the editor shall obtain the signed-in principal and role from the server and display the signed-in identity.",
-      "satisfies": ["p_sv01"],
-      "tags": ["editor", "server", "auth"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "editor",
+        "server",
+        "auth"
+      ]
     },
     {
       "id": "r_rx3",
       "code": "EDR-3",
       "text": "The editor shall render read-only when the user's role does not permit editing, and shall not offer the Commit action when the role does not permit committing.",
-      "satisfies": ["p_sv01"],
-      "tags": ["editor", "server", "auth"]
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "editor",
+        "server",
+        "auth"
+      ]
     },
     {
       "id": "r_rx4",
       "code": "EDR-4",
-      "text": "The launcher generated in the project folder shall be able to target a configured editor base URL, so a self-hosted deployment opens its own server rather than the public hosted editor.",
-      "satisfies": ["p_ed01"],
-      "tags": ["skill", "server"]
+      "text": "The launcher generated in the project folder shall target an editor base URL configured in the project index, so a self-hosted deployment opens its own server; with none configured it shall open the public hosted editor.",
+      "satisfies": [
+        "p_ed01"
+      ],
+      "tags": [
+        "skill",
+        "server"
+      ]
     }
   ]
 }

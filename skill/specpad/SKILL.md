@@ -141,7 +141,12 @@ launcher — with no manual configuration. Re-running it must be a safe no-op.
    **`specpad-medical`** add-on skill (its templates) — if it isn't installed, tell the user to add it.
    The SAD references diagrams (draw.io SVGs) the user adds; the Structurizr `workspace.dsl` is opt-in
    only. The user can switch later by re-scaffolding. (More profile options can be added.)
-3. **Generate the launcher** `docs/specpad/index.html` from the template.
+3. **Generate the launcher** `docs/specpad/index.html` from the template. Replace `PROJECT_NAME`
+   with the project name, and **every** occurrence of `EDITOR_BASE_URL` (there are two — the
+   redirect and the no-JavaScript fallback link) with the project index's `editorBaseUrl`, or
+   `https://specpad.com` when it sets none. A team running its own SpecPad server sets
+   `editorBaseUrl` in `<name>.proj.json` so everyone on the repo lands on their server rather than
+   the public editor; regenerate the launcher whenever that value changes.
 4. **Install the pre-push hook** (the commit-check backstop):
    ```
    mkdir -p .githooks

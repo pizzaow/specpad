@@ -8,14 +8,14 @@
  * push access to a real repository.
  */
 
-import { SCHEMA_VERSION } from '../src/shared';
+import { editorVersionPath } from '../src/shared';
 
 /**
- * The editor build path this server serves, derived from the contract version the way
- * the hosted editor does it: schemaVersion "1.0" → /v01/. Old version paths stay live
- * forever, so documents always open in an editor that understands them.
+ * The editor build path this server serves — one definition, shared with the launcher:
+ * schemaVersion "1.0" → /v01/. Old version paths stay live forever, so documents always
+ * open in an editor that understands them.
  */
-export const SCHEMA_VERSION_PATH = `/v${SCHEMA_VERSION.split('.')[0].padStart(2, '0')}`;
+export const SCHEMA_VERSION_PATH = editorVersionPath().replace(/\/$/, '');
 
 export type AuthProviderName = 'proxy' | 'oidc' | 'dev';
 export type Role = 'reader' | 'editor' | 'committer';

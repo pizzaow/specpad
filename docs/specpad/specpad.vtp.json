@@ -3208,11 +3208,22 @@
     {
       "id": "t_rx4",
       "code": "TEST-203",
-      "text": "Scaffold a project with a configured editor base URL and open the generated launcher.",
+      "text": "Inspect the launcher template and the URL it builds for a project that configures an editor base URL, and for one that does not.",
       "verifies": [
         "r_rx4"
       ],
-      "expected": "The launcher redirects to the configured self-hosted editor at its version-pinned path, and falls back to the public hosted editor when no base URL is configured."
+      "expected": "The launcher hardcodes no editor host: it carries a placeholder substituted in both the redirect and the no-JavaScript fallback link. A configured base yields <base>/v01/; an absent, blank, or whitespace base yields https://specpad.com/v01/. The version path is always derived from schemaVersion, never taken from the configured base.",
+      "notes": "The skill performs the substitution, so the automated tests cover the template placeholders, the SKILL.md instruction, and the URL-building contract; the scaffold step itself is prose-verified.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/shared/__tests__/launcher.test.ts"
+        },
+        {
+          "runner": "vitest",
+          "file": "skill/__tests__/launcher.test.ts"
+        }
+      ]
     }
   ]
 }

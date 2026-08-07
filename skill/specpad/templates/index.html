@@ -9,6 +9,10 @@
       // hosted https page can. schemaVersion "1.0" -> editor build /v01/.
       (function () {
         var PROJECT = 'PROJECT_NAME'; // replaced by the skill at scaffold time
+        // Replaced by the skill from the project index's editorBaseUrl. Left as the
+        // public hosted editor when the project sets none; a company running its own
+        // SpecPad server points this at their server so the whole team lands there.
+        var EDITOR = 'EDITOR_BASE_URL';
         var params = new URLSearchParams(window.location.search);
         var open = params.get('open') || 'srs';
         // This launcher lives inside the project folder, so it knows that folder's
@@ -23,12 +27,12 @@
           'name=' + encodeURIComponent(PROJECT) +
           '&open=' + encodeURIComponent(open) +
           (dir ? '&dir=' + encodeURIComponent(dir) : '');
-        window.location.href = 'https://specpad.com/v01/#' + frag;
+        window.location.href = EDITOR + '/v01/#' + frag;
       })();
     </script>
   </head>
   <body>
     <p>Opening SpecPad… if nothing happens,
-      <a href="https://specpad.com/v01/">click here</a>.</p>
+      <a href="EDITOR_BASE_URL/v01/">click here</a>.</p>
   </body>
 </html>

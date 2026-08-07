@@ -18,6 +18,9 @@ export interface ProjectDoc {
   name: string;
   title: string;
   description?: string;
+  // Where the generated launcher sends people. Absent = the public hosted editor;
+  // set it to a company's own SpecPad server so the whole team lands there (EDR-4).
+  editorBaseUrl?: string;
   documents: ProjectDocRef[];
 }
 
@@ -116,6 +119,7 @@ export const projectSchema = {
     name: { type: 'string', description: 'Short system name; also the filename stem ([name].proj.json).' },
     title: { type: 'string', description: 'Human-readable project title shown in the editor.' },
     description: { type: 'string', description: 'Optional free-text summary of the system under specification.' },
+    editorBaseUrl: { type: 'string', description: 'Optional base URL the generated launcher opens (e.g. "https://specpad.internal.corp" for a self-hosted server). Absent uses the public hosted editor; the version path is always derived from schemaVersion.' },
     documents: {
       type: 'array',
       description: 'The SRS and VTP files that make up this project.',
