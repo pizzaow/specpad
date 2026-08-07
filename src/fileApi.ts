@@ -29,8 +29,17 @@ import {
 } from './transports/types';
 import { LocalTransport, isFileSystemAccessSupported, verifyPermission } from './transports/local';
 import { DemoTransport, READ_ONLY_DEMO } from './transports/demo';
+import { RemoteTransport, connectToServer } from './transports/remote';
+import type {
+  ServerSession,
+  ServerStatus,
+  CommitResult,
+  ServerConflict,
+  PendingChange,
+} from './transports/remote';
 
 export type { FileApi, DocumentListItem, DocKind, SnapshotLocation };
+export type { ServerSession, ServerStatus, CommitResult, ServerConflict, PendingChange };
 export {
   classifyDocFilename,
   serializeDocument,
@@ -77,6 +86,64 @@ export async function openDemoProject(): Promise<{ name: string; documents: Docu
   return demoTransport.open();
 }
 
+// ---- Server (remote) mode ----
+
+let remoteTransport: RemoteTransport | null = null;
+
+/**
+ * Look for a SpecPad server serving this page and switch to it if there is one.
+ * Returns the session, or null when the editor is running against local files.
+ */
+export async function connectToSpecPadServer(
+  baseUrl = '/api/v1',
+): Promise<ServerSession | null> {
+  const transport = await connectToServer(baseUrl);
+  if (!transport) return null;
+  remoteTransport = transport;
+  active = transport;
+  return transport.getSession();
+}
+
+export function isServerMode(): boolean {
+  return remoteTransport !== null;
+}
+
+/** Reset server mode (tests only). */
+export function disableServerMode(): void {
+  remoteTransport = null;
+  active = localTransport;
+}
+
+export function getServerSession(): ServerSession | null {
+  return remoteTransport ? remoteTransport.getSession() : null;
+}
+
+function requireServer(): RemoteTransport {
+  if (!remoteTransport) throw new Error('Not connected to a SpecPad server');
+  return remoteTransport;
+}
+
+/** Open the project the server owns — no picker, the server chose it. */
+export async function openServerProject(): Promise<{ name: string; documents: DocumentListItem[] }> {
+  const transport = requireServer();
+  return { name: transport.projectName(), documents: await transport.listDocuments() };
+}
+
+/** Pending (uncommitted) changes in this user's working copy — the Commit badge. */
+export async function serverStatus(): Promise<ServerStatus> {
+  return requireServer().status();
+}
+
+/** Publish this user's pending changes as one commit (CMT-3). */
+export async function serverCommit(message: string): Promise<CommitResult> {
+  return requireServer().commit(message);
+}
+
+/** Throw away this user's pending changes (CMT-7). */
+export async function serverDiscard(): Promise<ServerStatus> {
+  return requireServer().discard();
+}
+
 // ---- Opening a local project ----
 
 export async function openProjectDirectory(): Promise<{ name: string; documents: DocumentListItem[] }> {
@@ -111,6 +178,14 @@ export async function listDocuments(): Promise<DocumentListItem[]> {
   return active.listDocuments();
 }
 
+/** Refuse a write the active transport cannot accept, in that transport's own terms. */
+function assertWritable(): void {
+  if (!active.readOnly) return;
+  throw new Error(
+    remoteTransport ? 'Your role does not permit editing this project.' : READ_ONLY_DEMO,
+  );
+}
+
 // ---- Documents (required: absent is an error) ----
 
 async function requireJson(filename: string): Promise<SpecPadDoc> {
@@ -135,7 +210,7 @@ export async function loadPrd(name: string): Promise<PrdDoc> {
 }
 
 export async function saveDocument(doc: SrsDoc | VtpDoc | PrdDoc | ProjectDoc): Promise<void> {
-  if (active.readOnly) throw new Error(READ_ONLY_DEMO);
+  assertWritable();
   // The schema uses type 'project', but the filename suffix is 'proj'.
   const kind = doc.type === 'project' ? 'proj' : doc.type;
   await active.writeText([`${doc.name}.${kind}.json`], serializeDocument(doc));
@@ -165,7 +240,7 @@ export async function loadJob(name: string): Promise<JobDoc | null> {
 
 /** Write the current-job marker `<name>.job.json`. */
 export async function saveJob(name: string, doc: JobDoc): Promise<void> {
-  if (active.readOnly) throw new Error(READ_ONLY_DEMO);
+  assertWritable();
   await active.writeText([`${name}.job.json`], serializeDocument(doc));
 }
 
@@ -176,13 +251,13 @@ export async function loadJobs(name: string): Promise<JobsDoc | null> {
 
 /** Write the jobs register `<name>.jobs.json`. */
 export async function saveJobs(name: string, doc: JobsDoc): Promise<void> {
-  if (active.readOnly) throw new Error(READ_ONLY_DEMO);
+  assertWritable();
   await active.writeText([`${name}.jobs.json`], serializeDocument(doc));
 }
 
 /** Write a project text file (e.g. `<name>.sad.md`, `<name>.workspace.dsl`). */
 export async function saveProjectText(filename: string, content: string): Promise<void> {
-  if (active.readOnly) throw new Error(READ_ONLY_DEMO);
+  assertWritable();
   await active.writeText([filename], content);
 }
 

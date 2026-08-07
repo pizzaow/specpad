@@ -47,6 +47,15 @@ function makeWorkingCopy() {
     readText: vi.fn(async () => '# Architecture'),
     writeText: vi.fn(async () => undefined),
     status: vi.fn(async () => ({ changed: ['docs/specpad/acme.srs.json'], dirty: true })),
+    pendingDiff: vi.fn(async () => [
+      {
+        path: 'docs/specpad/acme.srs.json',
+        kind: 'register' as const,
+        added: [],
+        modified: ['REQ-14'],
+        removed: [],
+      },
+    ]),
     bundle: vi.fn(async () => ({ srs, job: { schemaVersion: '1.0', type: 'job', jobs: ['j_1'] } })),
     publish: vi.fn(async () => ({ ok: true, commit: 'abc123' })),
     discard: vi.fn(async () => undefined),
@@ -115,10 +124,31 @@ describe('reads (SRV-4)', () => {
     expect((await call({ path: '/doc/acme.vtp.json' })).status).toBe(404);
   });
 
-  it('reports the pending change set for the Commit badge', async () => {
+  it('reports the pending change set at item level for the Commit dialog (CMT-7)', async () => {
     const res = await call({ path: '/status' });
 
-    expect(res.body).toEqual({ changed: ['docs/specpad/acme.srs.json'], dirty: true });
+    expect(res.body).toEqual({
+      changed: ['docs/specpad/acme.srs.json'],
+      dirty: true,
+      diff: [
+        {
+          path: 'docs/specpad/acme.srs.json',
+          kind: 'register',
+          added: [],
+          modified: ['REQ-14'],
+          removed: [],
+        },
+      ],
+    });
+  });
+
+  it('skips the item-level diff when there is nothing pending', async () => {
+    wc.status.mockResolvedValueOnce({ changed: [], dirty: false });
+
+    const res = await call({ path: '/status' });
+
+    expect(res.body).toEqual({ changed: [], dirty: false, diff: [] });
+    expect(wc.pendingDiff).not.toHaveBeenCalled();
   });
 
   it('rejects a path that escapes the project root (SRV-2)', async () => {

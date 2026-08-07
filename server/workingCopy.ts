@@ -8,7 +8,7 @@
  */
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { mergeDocs, activeJobIds } from '../src/shared';
+import { mergeDocs, activeJobIds, diffItems } from '../src/shared';
 import type { ProjectBundle, SpecPadDoc, SrsDoc, VtpDoc, PrdDoc, ProjectDoc, JobDoc, JobsDoc } from '../src/shared';
 import { classifyDocFilename, serializeDocument } from '../src/transports/types';
 import type { DocumentListItem } from '../src/transports/types';
@@ -31,11 +31,23 @@ export interface CommitOutcome {
   message?: string;
 }
 
+/** One changed file, summarized at item level where the file is a register (CMT-7). */
+export interface PendingChange {
+  path: string;
+  kind: 'register' | 'file';
+  /** Item labels (code, falling back to id) — registers only. */
+  added?: string[];
+  modified?: string[];
+  removed?: string[];
+}
+
 export interface StatusReport {
   /** Repository-relative paths with pending changes. */
   changed: string[];
   /** True when there is anything to commit. */
   dirty: boolean;
+  /** Per-file summary; item-level for registers. */
+  diff?: PendingChange[];
 }
 
 export class WorkingCopy {
@@ -106,6 +118,45 @@ export class WorkingCopy {
       this.config.repo.paths.some((root) => p === root || p.startsWith(`${root}/`)),
     );
     return { changed, dirty: changed.length > 0 };
+  }
+
+  /**
+   * The pending change set, summarized at item level (CMT-7).
+   *
+   * "3 files changed" tells a product manager nothing; "REQ-14 modified, REQ-22 added"
+   * is the thing they are actually about to publish. Computed against HEAD with the
+   * same id-keyed diff the editor's redline uses.
+   */
+  async pendingDiff(): Promise<PendingChange[]> {
+    const { changed } = await this.status();
+    const changes: PendingChange[] = [];
+
+    for (const repoPath of changed) {
+      if (!isSpecPadRegister(repoPath)) {
+        changes.push({ path: repoPath, kind: 'file' });
+        continue;
+      }
+      const [headText, currentText] = await Promise.all([
+        this.git.showFile('HEAD', repoPath),
+        fs.readFile(this.absolute(repoPath), 'utf8').catch(() => null),
+      ]);
+      const before = itemsOf(headText);
+      const after = itemsOf(currentText);
+      if (before === null || after === null) {
+        changes.push({ path: repoPath, kind: 'file' });
+        continue;
+      }
+      const diff = diffItems(before, after);
+      changes.push({
+        path: repoPath,
+        kind: 'register',
+        added: diff.added.map((c) => label(c.after)),
+        modified: diff.modified.map((c) => label(c.after)),
+        removed: diff.removed.map((c) => label(c.before)),
+      });
+    }
+
+    return changes;
   }
 
   /** Assemble the whole project for the governance check. */
@@ -269,6 +320,23 @@ export class WorkingCopy {
   async discard(): Promise<void> {
     await this.git.discard(this.config.repo.paths);
   }
+}
+
+/** A register's items, or null when the text is missing or not a parseable register. */
+function itemsOf(text: string | null): { id: string; code?: string }[] | null {
+  if (text === null) return null;
+  try {
+    const items = (JSON.parse(text) as { items?: unknown }).items;
+    return Array.isArray(items) ? (items as { id: string; code?: string }[]) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** How a row is named to a human: its code where it has one, else its stable id. */
+function label(item: { id: string; code?: string } | undefined): string {
+  if (!item) return '(unknown)';
+  return item.code ?? item.id;
 }
 
 /** A register document the structural merge understands (srs/vtp/prd). */

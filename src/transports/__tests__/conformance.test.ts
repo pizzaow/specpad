@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { LocalTransport } from '../local';
 import { DemoTransport } from '../demo';
+import { connectToServer } from '../remote';
+import { classifyDocFilename } from '../types';
 import type { FileApi } from '../types';
 import type { SrsDoc } from '../../shared';
 
@@ -116,7 +118,77 @@ const TRANSPORTS: Harness[] = [
       return transport;
     },
   },
+  {
+    name: 'remote (SpecPad server)',
+    writable: true,
+    async open(files) {
+      vi.stubGlobal('fetch', fakeServer(files));
+      const transport = await connectToServer('/api/v1');
+      if (!transport) throw new Error('the fake server did not answer the session probe');
+      return transport;
+    },
+  },
 ];
+
+/**
+ * A fake SpecPad server over the same `files` map, implementing the routes the remote
+ * transport uses. Mirrors the real server's behaviour where it matters: it normalizes
+ * document JSON on write, and 404s an absent path.
+ */
+function fakeServer(files: Record<string, string>) {
+  const json = (status: number, body: unknown) =>
+    ({
+      ok: status >= 200 && status < 300,
+      status,
+      headers: new Headers({ 'content-type': 'application/json' }),
+      json: async () => body,
+      text: async () => JSON.stringify(body),
+    }) as unknown as Response;
+
+  return vi.fn(async (url: string, init?: RequestInit) => {
+    const path = decodeURIComponent(url.replace(/^\/api\/v1/, ''));
+    const method = init?.method ?? 'GET';
+    const body = init?.body ? JSON.parse(String(init.body)) : undefined;
+
+    if (path === '/session') {
+      return json(200, {
+        principal: { id: 'jane', displayName: 'Jane Smith', email: 'jane@corp.example' },
+        role: 'committer',
+        capabilities: { read: true, write: true, commit: true },
+        repo: { branch: 'main', projectDir: 'docs/specpad' },
+        project: 'acme',
+        activeJob: null,
+        commitPolicy: { requireActiveJob: true, requireGovernanceClean: 'warn' },
+      });
+    }
+    if (path === '/documents') {
+      const documents = Object.keys(files)
+        .filter((p) => !p.includes('/'))
+        .map(classifyDocFilename)
+        .filter(Boolean);
+      return json(200, { documents });
+    }
+    if (path.startsWith('/doc/')) {
+      const key = path.slice('/doc/'.length);
+      if (method === 'PUT') {
+        files[key] = JSON.stringify(body.doc, null, 2) + '\n';
+        return json(200, { version: 'v2' });
+      }
+      if (!(key in files)) return json(404, { error: 'Document not found.' });
+      return json(200, { doc: JSON.parse(files[key]), version: 'v1' });
+    }
+    if (path.startsWith('/text/')) {
+      const key = path.slice('/text/'.length);
+      if (method === 'PUT') {
+        files[key] = body.text;
+        return json(200, { written: true });
+      }
+      if (!(key in files)) return json(404, { error: 'File not found.' });
+      return json(200, { text: files[key] });
+    }
+    return json(404, { error: 'No such endpoint.' });
+  });
+}
 
 const PROJECT_FILES = {
   'acme.proj.json': JSON.stringify({ schemaVersion: '1.0', type: 'project', name: 'acme', title: 'Acme', documents: [] }),
@@ -180,14 +252,22 @@ describe.each(TRANSPORTS)('FileApi conformance — $name', (harness) => {
   });
 
   if (harness.writable) {
-    it('writes a text file and reads it back', async () => {
-      await transport.writeText(['acme.vtp.json'], '{"hello":true}');
-      expect(await transport.readText(['acme.vtp.json'])).toBe('{"hello":true}');
+    // Compared as parsed documents, not byte-for-byte: a transport may legitimately
+    // normalize JSON formatting on the way through (the server does).
+    it('writes a document and reads it back', async () => {
+      const updated = { ...srsDoc, title: 'Updated' };
+      await transport.writeText(['acme.srs.json'], JSON.stringify(updated, null, 2) + '\n');
+      expect(await transport.readJson(['acme.srs.json'])).toEqual(updated);
+    });
+
+    it('writes a text file and reads it back verbatim', async () => {
+      await transport.writeText(['notes.md'], '# Notes');
+      expect(await transport.readText(['notes.md'])).toBe('# Notes');
     });
 
     it('writes into a nested path', async () => {
-      await transport.writeText(['.specpad', 'run', 'acme.run.json'], '{}');
-      expect(await transport.readText(['.specpad', 'run', 'acme.run.json'])).toBe('{}');
+      await transport.writeText(['.specpad', 'run', 'acme.run.json'], '{}\n');
+      expect(await transport.readJson(['.specpad', 'run', 'acme.run.json'])).toEqual({});
     });
 
     it('reports itself as writable', () => {

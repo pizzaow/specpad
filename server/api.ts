@@ -83,7 +83,8 @@ async function route(
   }
 
   if (method === 'GET' && path === '/status') {
-    return ok(await wc.status());
+    const status = await wc.status();
+    return ok({ ...status, diff: status.dirty ? await wc.pendingDiff() : [] });
   }
 
   if (method === 'GET' && path.startsWith('/doc/')) {
@@ -119,6 +120,15 @@ async function route(
     }
     await wc.writeText(clientPath, `${JSON.stringify(body.doc, null, 2)}\n`);
     return ok({ version: versionTag(body.doc) });
+  }
+
+  if (method === 'PUT' && path.startsWith('/text/')) {
+    const body = req.body as { text?: unknown } | undefined;
+    if (!body || typeof body.text !== 'string') {
+      return error(400, 'Expected a JSON body of the form { text }.');
+    }
+    await wc.writeText(decodeURIComponent(path.slice('/text/'.length)), body.text);
+    return ok({ written: true });
   }
 
   if (method === 'POST' && path === '/commit') {

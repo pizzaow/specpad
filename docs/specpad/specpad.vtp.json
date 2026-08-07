@@ -2888,7 +2888,14 @@
       "verifies": [
         "r_cm2"
       ],
-      "expected": "The edit was autosaved to the user's working copy, is still present on return, and no commit was created."
+      "expected": "The edit was autosaved to the user's working copy, is still present on return, and no commit was created.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/transports/__tests__/conformance.test.ts",
+          "selector": "FileApi conformance — 'remote (SpecPad server)'"
+        }
+      ]
     },
     {
       "id": "t_cm3",
@@ -2897,7 +2904,19 @@
       "verifies": [
         "r_cm3"
       ],
-      "expected": "No commit exists before Commit is pressed; afterwards exactly one commit on the configured branch contains all the pending changes."
+      "expected": "No commit exists before Commit is pressed; afterwards exactly one commit on the configured branch contains all the pending changes.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/CommitDialog.test.tsx",
+          "selector": "CommitDialog — committing (CMT-3)"
+        },
+        {
+          "runner": "vitest",
+          "file": "src/transports/__tests__/remote.test.ts",
+          "selector": "commit (CMT-3)"
+        }
+      ]
     },
     {
       "id": "t_cm4",
@@ -2952,7 +2971,24 @@
       "verifies": [
         "r_cm7"
       ],
-      "expected": "The dialog lists the pending item-level additions, modifications, and removals together with the governance result before confirmation; Discard restores the user's working copy to the target branch and leaves the other user's pending changes untouched."
+      "expected": "The dialog lists the pending item-level additions, modifications, and removals together with the governance result before confirmation; Discard restores the user's working copy to the target branch and leaves the other user's pending changes untouched.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/CommitDialog.test.tsx",
+          "selector": "CommitDialog — the pending change summary (CMT-7)"
+        },
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/CommitDialog.test.tsx",
+          "selector": "CommitDialog — discarding (CMT-7)"
+        },
+        {
+          "runner": "vitest",
+          "file": "src/transports/__tests__/remote.test.ts",
+          "selector": "discard (CMT-7)"
+        }
+      ]
     },
     {
       "id": "t_ce1",
@@ -2966,6 +3002,11 @@
         {
           "runner": "vitest",
           "file": "server/__tests__/api.test.ts",
+          "selector": "optimistic concurrency (CE-1)"
+        },
+        {
+          "runner": "vitest",
+          "file": "src/transports/__tests__/remote.test.ts",
           "selector": "optimistic concurrency (CE-1)"
         }
       ]
@@ -3087,7 +3128,19 @@
       "verifies": [
         "r_mg6"
       ],
-      "expected": "The server returns a per-field conflict report rather than committing; the editor presents both values for that field and commits the user's choice."
+      "expected": "The server returns a per-field conflict report rather than committing; the editor presents both values for that field and commits the user's choice.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/CommitDialog.test.tsx",
+          "selector": "CommitDialog — conflicts (MRG-6)"
+        },
+        {
+          "runner": "vitest",
+          "file": "src/transports/__tests__/remote.test.ts",
+          "selector": "commit (CMT-3)"
+        }
+      ]
     },
     {
       "id": "t_rx1",
@@ -3097,7 +3150,7 @@
         "r_rx1"
       ],
       "expected": "Every view works unchanged against the local, demo, and remote transports; no view imports a transport module directly, and the conformance suite passes for all three.",
-      "notes": "The conformance suite is table-driven: a transport is verified by adding one entry to TRANSPORTS. Local and demo are covered; the remote entry lands with the server.",
+      "notes": "The conformance suite is table-driven: a transport is verified by adding one entry to TRANSPORTS. All three (local, demo, remote) are covered.",
       "automation": [
         {
           "runner": "vitest",
@@ -3112,7 +3165,19 @@
       "verifies": [
         "r_rx2"
       ],
-      "expected": "The editor fetches the session, and the signed-in user's display name and role are shown in the application shell."
+      "expected": "The editor fetches the session, and the signed-in user's display name and role are shown in the application shell.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/ServerBar.test.tsx",
+          "selector": "ServerBar — identity (EDR-2)"
+        },
+        {
+          "runner": "vitest",
+          "file": "src/transports/__tests__/remote.test.ts",
+          "selector": "connectToServer (EDR-2)"
+        }
+      ]
     },
     {
       "id": "t_rx3",
@@ -3127,6 +3192,16 @@
           "runner": "vitest",
           "file": "server/__tests__/api.test.ts",
           "selector": "writes and roles (EDR-3)"
+        },
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/ServerBar.test.tsx",
+          "selector": "ServerBar — the Commit affordance (EDR-3)"
+        },
+        {
+          "runner": "vitest",
+          "file": "src/transports/__tests__/remote.test.ts",
+          "selector": "role-driven read-only (EDR-3)"
         }
       ]
     },

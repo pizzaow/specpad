@@ -52,6 +52,12 @@ vi.mock('../fileApi', () => ({
   openFileFallback: vi.fn(),
   saveFileFallback: vi.fn(),
   serializeDocument: vi.fn(),
+  connectToSpecPadServer: vi.fn(async () => null),
+  isServerMode: () => false,
+  openServerProject: vi.fn(),
+  serverStatus: vi.fn(async () => ({ changed: [], dirty: false })),
+  serverCommit: vi.fn(),
+  serverDiscard: vi.fn(),
 }));
 
 import LocalApp from '../LocalApp';

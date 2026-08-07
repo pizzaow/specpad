@@ -49,6 +49,13 @@ vi.mock('../fileApi', () => ({
   getDirHandle: vi.fn(() => null),
   verifyPermission: vi.fn(async () => false),
   openProjectFromHandle: vi.fn(),
+  // No SpecPad server is serving these tests: the editor falls through to local files.
+  connectToSpecPadServer: vi.fn(async () => null),
+  isServerMode: () => false,
+  openServerProject: vi.fn(),
+  serverStatus: vi.fn(async () => ({ changed: [], dirty: false })),
+  serverCommit: vi.fn(),
+  serverDiscard: vi.fn(),
 }));
 
 import LocalApp from '../LocalApp';

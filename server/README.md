@@ -58,13 +58,26 @@ Note the subtlety in `Git.conflictedFile`: during a *rebase*, git's index stages
 relative to how a user thinks about them — stage 2 is the upstream branch and stage 3 is the commit
 being replayed. We return them the way the user means them.
 
+## How the editor finds it
+
+The editor probes `GET /api/v1/session` on load. A session response means a server is serving the
+page, so it switches to the remote transport, opens the project the server owns, and shows the
+signed-in identity — no folder picker, no configuration. Anything else (a 404, or a static host
+answering with the SPA's `index.html`) falls through to the demo or local-file paths, so the
+public hosted editor is unaffected. The probe checks for JSON *and* a session shape, because a
+200 carrying HTML is exactly what a static host returns for an unknown path.
+
 ## Status
 
 Implemented and tested: config validation, path confinement, the proxy and dev auth providers,
-role mapping, the commit gate, the API surface and its authorization, optimistic concurrency,
-and the structural merge.
+role mapping, the commit gate, the API surface and its authorization, optimistic concurrency, the
+structural merge, the remote transport, and the editor's server bar and Commit dialog.
+
+All three transports (local, demo, remote) pass one shared conformance suite in
+`src/transports/__tests__/conformance.test.ts`.
 
 Not yet implemented: the **OIDC provider** (use `proxy` behind your existing gateway — it throws a
-message saying so), the **presence/event stream** (CE-3, CE-4), and the editor-side **Commit UI**
-(EDR-2, CMT-3, CMT-7 and the conflict resolver). The `remote` transport entry in
-`src/transports/__tests__/conformance.test.ts` lands with that UI.
+message saying so), the **presence/event stream** (CE-3, CE-4), and an **in-place conflict
+resolver**. Today a conflict is reported per field with both values shown, and the user reloads,
+reapplies, and commits again — correct and safe, but more work for them than picking a side in the
+table would be.

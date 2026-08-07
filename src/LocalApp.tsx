@@ -40,7 +40,14 @@ import {
   loadJobText,
   loadProjectText,
   saveProjectText,
+  connectToSpecPadServer,
+  openServerProject,
+  isServerMode,
+  serverStatus,
+  serverCommit,
+  serverDiscard,
 } from './fileApi';
+import type { ServerSession, ServerStatus } from './fileApi';
 import { activeJobIds, diffItems, REGISTER_TYPES } from './shared';
 import type { DocDiff, SrsItem, VtpItem, PrdItem, SpecPadDoc, JobCommit } from './shared';
 import { buildRedline, computeAttribution } from './changeTracking';
@@ -50,6 +57,8 @@ import { mdSectionDiff } from './archDiff';
 import type { MdFileDiff } from './archDiff';
 import MenuBar from './components/MenuBar';
 import VersionHistoryDialog from './components/VersionHistoryDialog';
+import ServerBar from './components/ServerBar';
+import CommitDialog from './components/CommitDialog';
 import * as recentStore from './handleStore';
 import type { RecentProject } from './handleStore';
 import { parseLaunchParams } from './launchParams';
@@ -199,8 +208,22 @@ const LocalApp: React.FC = () => {
   const [dirtySrs, setDirtySrs] = useState(false);
   const [dirtyVtp, setDirtyVtp] = useState(false);
   const [showVersions, setShowVersions] = useState(false);
+  // Server (remote) mode: the project lives in a clone the server owns (EDR-2).
+  const [serverSession, setServerSession] = useState<ServerSession | null>(null);
+  const [serverState, setServerState] = useState<ServerStatus | null>(null);
+  const [showCommit, setShowCommit] = useState(false);
 
   const supportsFileSystemAccess = isFileSystemAccessSupported();
+
+  /** Refresh the pending-change set behind the Commit badge. Never fatal. */
+  const refreshServerStatus = async () => {
+    if (!isServerMode()) return;
+    try {
+      setServerState(await serverStatus());
+    } catch {
+      /* the badge is informational — a failed refresh must not break editing */
+    }
+  };
 
   const vtpRedline = React.useMemo(
     () => (vtpDoc ? buildRedline(vtpBaseline, vtpDoc) : undefined),
@@ -496,13 +519,39 @@ const LocalApp: React.FC = () => {
     setRecent(await recentStore.listRecent());
   };
 
-  // On load: pick the initial view, list recent projects, and — when the launcher
-  // points at a folder whose permission already persisted — reopen it silently.
+  // On load: pick the initial view, then work out how this session reaches its files —
+  // a SpecPad server serving this page, the hosted demo, or local files (EDR-1).
   useEffect(() => {
     if (launch.open) setCurrentView(launch.open);
-    if (launch.demo) {
-      let cancelled = false;
-      void (async () => {
+    let cancelled = false;
+
+    void (async () => {
+      // 1. Is a SpecPad server serving this page? If so it owns the project: there is
+      //    no folder to pick, and the signed-in identity comes from the server (EDR-2).
+      const session = await connectToSpecPadServer();
+      if (cancelled) return;
+      if (session) {
+        setServerSession(session);
+        setLoading(true);
+        try {
+          const result = await openServerProject();
+          if (!cancelled) {
+            await applyOpened(result, launch.name);
+            await refreshServerStatus();
+          }
+        } catch (err: any) {
+          if (!cancelled) {
+            setIsDirectoryOpen(false);
+            setError(`Could not open the project on the server: ${err.message}`);
+          }
+        } finally {
+          if (!cancelled) setLoading(false);
+        }
+        return;
+      }
+
+      // 2. The read-only hosted demo.
+      if (launch.demo) {
         setLoading(true);
         try {
           enableDemoMode(import.meta.env.VITE_DEMO_BASE || '/demo/');
@@ -518,14 +567,11 @@ const LocalApp: React.FC = () => {
         } finally {
           if (!cancelled) setLoading(false);
         }
-      })();
-      return () => {
-        cancelled = true;
-      };
-    }
-    if (!supportsFileSystemAccess || !recentStore.isSupported()) return;
-    let cancelled = false;
-    (async () => {
+        return;
+      }
+
+      // 3. Local files: list recent projects and silently reopen one still permitted.
+      if (!supportsFileSystemAccess || !recentStore.isSupported()) return;
       const list = await recentStore.listRecent();
       if (cancelled) return;
       setRecent(list);
@@ -544,6 +590,7 @@ const LocalApp: React.FC = () => {
         }
       }
     })();
+
     return () => {
       cancelled = true;
     };
@@ -590,7 +637,9 @@ const LocalApp: React.FC = () => {
   const handlePrdChange = (next: PrdDoc) => { setPrdDoc(next); setDirtyPrd(true); };
 
   const persist = async (doc: SrsDoc | VtpDoc | PrdDoc) => {
-    if (supportsFileSystemAccess && hasOpenDirectory()) await saveDocument(doc);
+    // Server mode writes over HTTP, so it needs no File System Access support — without
+    // this a Firefox user on a server would silently get a download instead of a save.
+    if (isServerMode() || (supportsFileSystemAccess && hasOpenDirectory())) await saveDocument(doc);
     else saveFileFallback(serializeDocument(doc), `${doc.name}.${doc.type}.json`);
   };
 
@@ -606,6 +655,9 @@ const LocalApp: React.FC = () => {
       if (dirtySad && sad !== null) { await saveProjectText(`${name}.sad.md`, sad); setDirtySad(false); }
       if (dirtyDsl && dsl !== null) { await saveProjectText(`${name}.workspace.dsl`, dsl); setDirtyDsl(false); }
       setError(null);
+      // In server mode a save lands in this user's working copy, uncommitted (CMT-2),
+      // so the pending-change badge has to catch up.
+      await refreshServerStatus();
     } catch (err: any) {
       setError(`Failed to save: ${err.message}`);
     }
@@ -686,7 +738,15 @@ const LocalApp: React.FC = () => {
         demo={launch.demo}
       />
 
-      {!supportsFileSystemAccess && !launch.demo && (
+      {serverSession && (
+        <ServerBar
+          session={serverSession}
+          status={serverState}
+          onCommit={() => setShowCommit(true)}
+        />
+      )}
+
+      {!supportsFileSystemAccess && !launch.demo && !serverSession && (
         <div className="alert alert-warning">
           Your browser doesn't support the File System Access API. Use Chrome or Edge for full editing.
         </div>
@@ -806,6 +866,23 @@ const LocalApp: React.FC = () => {
       )}
 
       {showVersions && <VersionHistoryDialog releases={releases} onClose={() => setShowVersions(false)} />}
+
+      {showCommit && serverSession && (
+        <CommitDialog
+          status={serverState ?? { changed: [], dirty: false, diff: [] }}
+          branch={serverSession.repo.branch}
+          activeJobLabel={activeJobLabel}
+          onCommit={serverCommit}
+          onDiscard={async () => {
+            await serverDiscard();
+            // The working copy was reverted, so what is on screen is stale.
+            await applyOpened(await openServerProject(), projectName);
+            await refreshServerStatus();
+          }}
+          onClose={() => setShowCommit(false)}
+          onCommitted={() => void refreshServerStatus()}
+        />
+      )}
     </div>
   );
 };
