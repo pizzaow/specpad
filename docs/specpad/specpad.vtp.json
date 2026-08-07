@@ -2708,7 +2708,14 @@
       "verifies": [
         "r_sv1"
       ],
-      "expected": "The server serves the version-pinned editor build and its API from one origin; the editor opens the project and lists its documents without any File System Access prompt."
+      "expected": "The server serves the version-pinned editor build and its API from one origin; the editor opens the project and lists its documents without any File System Access prompt.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/boot.integration.test.ts",
+          "selector": "the server process (SRV-1)"
+        }
+      ]
     },
     {
       "id": "t_sv2",
@@ -2722,6 +2729,11 @@
         {
           "runner": "vitest",
           "file": "server/__tests__/paths.test.ts"
+        },
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/boot.integration.test.ts",
+          "selector": "the API over HTTP (SRV-4)"
         }
       ]
     },
@@ -2753,6 +2765,11 @@
         {
           "runner": "vitest",
           "file": "server/__tests__/api.test.ts"
+        },
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/boot.integration.test.ts",
+          "selector": "the API over HTTP (SRV-4)"
         }
       ]
     },
@@ -2763,7 +2780,13 @@
       "verifies": [
         "r_sv5"
       ],
-      "expected": "The server imports validate and checkGovernance from src/shared and defines no second implementation of either; a parity test fails if the server duplicates a contract rule."
+      "expected": "The server imports validate and checkGovernance from src/shared and defines no second implementation of either; a parity test fails if the server duplicates a contract rule.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/contract-parity.test.ts"
+        }
+      ]
     },
     {
       "id": "t_sv6",
@@ -2777,8 +2800,44 @@
         {
           "runner": "vitest",
           "file": "server/__tests__/config.test.ts"
+        },
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/boot.integration.test.ts",
+          "selector": "the server process (SRV-1)"
         }
       ]
+    },
+    {
+      "id": "t_sv7",
+      "code": "TEST-204",
+      "text": "Start the server from a configuration file, then start it again with an invalid configuration.",
+      "verifies": [
+        "r_sv7"
+      ],
+      "expected": "The valid run listens and answers requests; the invalid run prints every configuration problem and exits non-zero without listening.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/boot.integration.test.ts",
+          "selector": "the server process (SRV-1)"
+        },
+        {
+          "runner": "vitest",
+          "file": "server/__tests__/config.test.ts",
+          "selector": "loadConfig"
+        }
+      ]
+    },
+    {
+      "id": "t_sv8",
+      "code": "TEST-205",
+      "text": "Build the container image and run it with a config file and a working-directory volume mounted.",
+      "verifies": [
+        "r_sv8"
+      ],
+      "expected": "The image builds; the container serves the editor at its version path and the API on the same origin; the bare clone and per-user worktrees persist in the mounted volume across a container restart.",
+      "notes": "Manual: not automated, and NOT YET RUN — no container runtime was available where the Dockerfile was written. The entry point it packages is the same one boot.integration.test.ts verifies."
     },
     {
       "id": "t_ax1",
@@ -2927,6 +2986,11 @@
       "automation": [
         {
           "runner": "vitest",
+          "file": "server/__tests__/boot.integration.test.ts",
+          "selector": "request to commit, over HTTP (CMT-2, CMT-3)"
+        },
+        {
+          "runner": "vitest",
           "file": "server/__tests__/repository.integration.test.ts",
           "selector": "Repository — publishing (CMT-3, CMT-5, AUTH-6)"
         },
@@ -2934,11 +2998,6 @@
           "runner": "vitest",
           "file": "src/components/__tests__/CommitDialog.test.tsx",
           "selector": "CommitDialog — committing (CMT-3)"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/transports/__tests__/remote.test.ts",
-          "selector": "commit (CMT-3)"
         }
       ]
     },

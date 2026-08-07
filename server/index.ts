@@ -4,11 +4,12 @@
  * cross-domain OAuth redirects, and no dependency on specpad.com being reachable from
  * inside a corporate network.
  *
- *   node --experimental-strip-types server/index.ts ./specpad-server.config.json
+ *   npm run server -- ./specpad-server.config.json
  */
 import http from 'node:http';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { loadConfig, isLoopbackBind, SCHEMA_VERSION_PATH } from './config';
 import type { ServerConfig } from './config';
 import { createAuthProvider, resolveSession } from './auth';
@@ -131,11 +132,8 @@ export function createServer(config: ServerConfig, repository: Repository, edito
   });
 }
 
-export async function main(argv: string[]): Promise<void> {
-  const configPath = argv[2];
-  if (!configPath) {
-    throw new Error('Usage: specpad-server <config.json>');
-  }
+/** Boot from a config file: clone or fetch, then listen. Resolves once listening. */
+export async function start(configPath: string): Promise<http.Server> {
   const config = loadConfig(JSON.parse(await fs.readFile(configPath, 'utf8')));
   const editorDir = path.resolve(process.env.SPECPAD_EDITOR_DIR ?? 'dist');
 
@@ -143,12 +141,41 @@ export async function main(argv: string[]): Promise<void> {
   await repository.ensureClone();
 
   const server = createServer(config, repository, editorDir);
-  server.listen(config.port, config.bind, () => {
-    const where = isLoopbackBind(config.bind) ? 'localhost only' : config.bind;
-    // eslint-disable-next-line no-console
-    console.log(
-      `SpecPad server listening on ${where}:${config.port} — ` +
-        `${config.repo.url} (${config.repo.branch}), auth: ${config.auth.provider}`,
-    );
+  await new Promise<void>((resolve, reject) => {
+    server.once('error', reject);
+    server.listen(config.port, config.bind, () => {
+      server.off('error', reject);
+      resolve();
+    });
+  });
+
+  const where = isLoopbackBind(config.bind) ? 'localhost only' : config.bind;
+  // eslint-disable-next-line no-console
+  console.log(
+    `SpecPad server listening on ${where}:${config.port} — ` +
+      `${config.repo.url} (${config.repo.branch}), auth: ${config.auth.provider}`,
+  );
+  return server;
+}
+
+export async function main(argv: string[]): Promise<void> {
+  const configPath = argv[2];
+  if (!configPath) {
+    throw new Error('Usage: specpad-server <config.json>');
+  }
+  await start(configPath);
+}
+
+// Run when invoked directly (`npm run server -- ./config.json`), but not when a test
+// imports `createServer`/`start`. Without this the entry point defined main() and
+// never called it, so the process did nothing at all.
+const invokedDirectly =
+  process.argv[1] !== undefined &&
+  import.meta.url === pathToFileURL(process.argv[1]).href;
+
+if (invokedDirectly) {
+  main(process.argv).catch((err) => {
+    console.error(err instanceof Error ? err.message : String(err));
+    process.exit(1);
   });
 }

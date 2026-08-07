@@ -20,13 +20,30 @@ Requirements: `SRV-*`, `AUTH-*`, `CMT-*`, `CE-*`, `MRG-*`, `EDR-*` in `docs/spec
 ```bash
 cp server/specpad-server.example.json ./specpad-server.config.json   # then edit it
 npm run build                                                        # builds the editor into dist/
-node --experimental-strip-types server/index.ts ./specpad-server.config.json
+npm run server -- ./specpad-server.config.json
 ```
 
 `SPECPAD_EDITOR_DIR` overrides where the editor build is served from (default `dist`).
 
+An invalid configuration is refused at startup with every problem listed and a non-zero exit code —
+the server never comes up half-configured, because it holds push access to a real repository.
+
 For local development, set `auth.provider` to `dev` and `bind` to `127.0.0.1` — the dev provider
 refuses to start on any other interface.
+
+### In a container
+
+```bash
+docker build -t specpad-server .
+docker run -p 8080:8080 \
+  -v /srv/specpad:/srv/specpad \
+  -v $PWD/specpad-server.config.json:/etc/specpad/config.json:ro \
+  -v ~/.ssh/deploy-key:/run/secrets/specpad-deploy-key:ro \
+  specpad-server
+```
+
+The image runs the same entry point `npm run server` does. `/srv/specpad` holds the bare clone and
+per-user worktrees, so keep it on a volume that outlives the container.
 
 ## Layout
 
@@ -76,8 +93,16 @@ structural merge, the remote transport, and the editor's server bar and Commit d
 All three transports (local, demo, remote) pass one shared conformance suite in
 `src/transports/__tests__/conformance.test.ts`.
 
+The process itself is covered by `server/__tests__/boot.integration.test.ts`, which starts the
+server from a config file and drives it over HTTP from session probe to a commit on the branch, and
+by `repository.integration.test.ts`, which exercises the git pipeline against a real repository.
+
 Not yet implemented: the **OIDC provider** (use `proxy` behind your existing gateway — it throws a
 message saying so), the **presence/event stream** (CE-3, CE-4), and an **in-place conflict
 resolver**. Today a conflict is reported per field with both values shown, and the user reloads,
 reapplies, and commits again — correct and safe, but more work for them than picking a side in the
 table would be.
+
+**The `Dockerfile` has not been built or run** — no Docker was available in the environment it was
+written in. `npm run server` is verified; the container packages that same command, but treat the
+image as untested until someone builds it.

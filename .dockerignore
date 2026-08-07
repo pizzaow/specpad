@@ -1,0 +1,11 @@
+node_modules
+dist
+dist-site
+site/reference
+.git
+.github
+.claude
+docs/superpowers
+*.log
+.env
+.env.*

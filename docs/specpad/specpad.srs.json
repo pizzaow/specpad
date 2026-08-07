@@ -1843,6 +1843,29 @@
       ]
     },
     {
+      "id": "r_sv7",
+      "code": "SRV-7",
+      "text": "The server shall start from a configuration file path given on the command line, and shall exit with a non-zero status when it cannot start.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server"
+      ]
+    },
+    {
+      "id": "r_sv8",
+      "code": "SRV-8",
+      "text": "The server shall be distributable as a single self-hosted container image that serves both the editor build and the API, holding its git clone and per-user working copies in a volume that outlives the container.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "tags": [
+        "server",
+        "deployment"
+      ]
+    },
+    {
       "id": "h_sv020",
       "heading": true,
       "level": 1,
