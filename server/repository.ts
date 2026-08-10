@@ -38,6 +38,8 @@ export class Repository {
   private readonly worktreesDir: string;
   /** Serializes provisioning so two concurrent requests cannot race one worktree. */
   private readonly provisioning = new Map<string, Promise<WorkingCopy>>();
+  /** When each worktree was last used, for idle reaping (WCL-1). */
+  private readonly lastUsed = new Map<string, number>();
 
   constructor(
     private readonly project: ProjectConfig,
@@ -84,9 +86,10 @@ export class Repository {
     await this.bare.fetch();
   }
 
-  /** This user's working copy, provisioning it on first use (CMT-1). */
-  async workingCopyFor(principal: Principal): Promise<WorkingCopy> {
+  /** This user's working copy, provisioning it on first use (CMT-1, WCL-3). */
+  async workingCopyFor(principal: Principal, now: number = Date.now()): Promise<WorkingCopy> {
     const dir = path.join(this.worktreesDir, worktreeName(principal.id));
+    this.lastUsed.set(dir, now);
     const inFlight = this.provisioning.get(dir);
     if (inFlight) return inFlight;
 
@@ -123,7 +126,53 @@ export class Repository {
   /** Remove a user's worktree (session cleanup / reaping idle copies). */
   async release(principal: Principal): Promise<void> {
     const dir = path.join(this.worktreesDir, worktreeName(principal.id));
+    await this.removeWorktree(dir);
+  }
+
+  private async removeWorktree(dir: string): Promise<void> {
     await this.bare.tryRun('worktree', 'remove', '--force', dir);
     await this.bare.tryRun('worktree', 'prune');
+    this.lastUsed.delete(dir);
+  }
+
+  /**
+   * Remove working copies idle beyond `idleTimeout` seconds (WCL-1). Returns how many
+   * went, for logging.
+   *
+   * Two things this deliberately will not do. It never removes a copy holding
+   * uncommitted changes (WCL-2) — that work exists nowhere else, so reaping it would
+   * destroy it outright, and "they had gone home" is not consent. And it never removes
+   * one whose provisioning is in flight, since that copy is in use by definition.
+   *
+   * A copy the server has not seen used — after a restart, say — is not reaped either:
+   * it is treated as used now, so a restart costs one extra idle period rather than a
+   * sweep that deletes everybody's drafts. Cheap insurance against the worst outcome.
+   */
+  async reapIdle(now: number, idleTimeout: number): Promise<number> {
+    if (idleTimeout <= 0) return 0; // reaping disabled (WCL-4)
+
+    const entries = await fs.readdir(this.worktreesDir).catch(() => [] as string[]);
+    let reaped = 0;
+
+    for (const entry of entries) {
+      const dir = path.join(this.worktreesDir, entry);
+      if (this.provisioning.has(dir)) continue;
+
+      const seen = this.lastUsed.get(dir);
+      if (seen === undefined) {
+        this.lastUsed.set(dir, now);
+        continue;
+      }
+      if (now - seen < idleTimeout * 1000) continue;
+
+      // The one hard rule: unpublished work is never reaped (WCL-2).
+      const copy = new WorkingCopy(new Git(this.runner, dir), this.project, dir);
+      const status = await copy.status().catch(() => ({ dirty: true, changed: [] }));
+      if (status.dirty) continue;
+
+      await this.removeWorktree(dir);
+      reaped += 1;
+    }
+    return reaped;
   }
 }

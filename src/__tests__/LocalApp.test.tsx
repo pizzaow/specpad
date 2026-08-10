@@ -51,6 +51,8 @@ vi.mock('../fileApi', () => ({
   openProjectFromHandle: vi.fn(),
   // No SpecPad server is serving these tests: the editor falls through to local files.
   connectToSpecPadServer: vi.fn(async () => null),
+  listServerProjects: vi.fn(async () => []),
+  switchServerProject: vi.fn(async () => null),
   isProjectChoice: (r: unknown) => typeof r === 'object' && r !== null && 'chooseProject' in r,
   serverApiBase: (id?: string) => (id ? `/api/v1/p/${id}` : '/api/v1'),
   isServerMode: () => false,
@@ -120,13 +122,56 @@ describe('LocalApp document switching', () => {
     render(<LocalApp />);
 
     expect(await screen.findByText(/Choose a project/i)).toBeInTheDocument();
-    const alpha = await screen.findByRole('link', { name: 'Alpha Device' });
-    expect(alpha).toHaveAttribute('href', '?project=alpha');
-    expect(await screen.findByRole('link', { name: 'Beta Device' })).toHaveAttribute(
-      'href',
-      '?project=beta',
-    );
+    expect(await screen.findByRole('button', { name: 'Alpha Device' })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Beta Device' })).toBeInTheDocument();
     // Not the local-files path: no folder picker prompt is offered in its place.
     expect(screen.queryByText(/doesn't support the File System Access API/i)).toBeNull();
+
+    // Choosing one opens it in place, rather than navigating away (MPT-11).
+    const { switchServerProject } = await import('../fileApi');
+    fireEvent.click(screen.getByRole('button', { name: 'Beta Device' }));
+    await waitFor(() => expect(switchServerProject).toHaveBeenCalledWith('beta'));
+  });
+
+  // MPT-12: switching reloads from the new project and leaves the URL naming it.
+  it('reloads from the newly-selected project and rewrites the URL to name it', async () => {
+    const fileApi = await import('../fileApi');
+    const connect = fileApi.connectToSpecPadServer as unknown as ReturnType<typeof vi.fn>;
+    const switchTo = fileApi.switchServerProject as unknown as ReturnType<typeof vi.fn>;
+    const listProjects = fileApi.listServerProjects as unknown as ReturnType<typeof vi.fn>;
+    const openServer = fileApi.openServerProject as unknown as ReturnType<typeof vi.fn>;
+
+    const sessionFor = (projectId: string, project: string) => ({
+      principal: { id: 'jane', displayName: 'Jane Smith', email: 'jane@corp.example' },
+      role: 'committer' as const,
+      capabilities: { read: true, write: true, commit: true },
+      repo: { branch: 'main', projectDir: 'docs/specpad' },
+      projectId,
+      project,
+      activeJob: null,
+      commitPolicy: { requireActiveJob: true, requireGovernanceClean: 'warn' },
+    });
+
+    connect.mockResolvedValueOnce(sessionFor('alpha', 'AppA'));
+    listProjects.mockResolvedValueOnce([
+      { id: 'alpha', title: 'Alpha Device', branch: 'main', role: 'committer' },
+      { id: 'beta', title: 'Beta Device', branch: 'main', role: 'committer' },
+    ]);
+    openServer.mockResolvedValue({ name: 'AppA', documents: [{ type: 'srs', name: 'AppA', filename: 'AppA.srs.json' }] });
+
+    render(<LocalApp />);
+
+    const chip = await screen.findByRole('button', { name: /Alpha Device/ });
+
+    // Choosing Beta switches the transport and re-opens through the normal path.
+    switchTo.mockResolvedValueOnce(sessionFor('beta', 'AppB'));
+    openServer.mockResolvedValue({ name: 'AppB', documents: [{ type: 'srs', name: 'AppB', filename: 'AppB.srs.json' }] });
+    fireEvent.click(chip);
+    fireEvent.click(await screen.findByText('Beta Device'));
+
+    await waitFor(() => expect(switchTo).toHaveBeenCalledWith('beta'));
+    // The chip now names Beta, and a reload would come back to it.
+    expect(await screen.findByRole('button', { name: /Beta Device/ })).toBeInTheDocument();
+    await waitFor(() => expect(window.location.search).toContain('project=beta'));
   });
 });

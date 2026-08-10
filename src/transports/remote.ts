@@ -311,6 +311,19 @@ export function isProjectChoice(result: unknown): result is ProjectChoice {
 }
 
 /**
+ * The projects this user may open (MPT-7, MPT-11). Always at the deployment root: the
+ * list is about the server, not about whichever project happens to be open.
+ */
+export async function fetchProjects(rootBase = '/api/v1'): Promise<ProjectSummary[]> {
+  const res = await fetch(`${rootBase.replace(/\/+$/, '')}/projects`, {
+    credentials: 'same-origin',
+  });
+  if (!res.ok) return [];
+  const payload = (await res.json().catch(() => null)) as { projects?: ProjectSummary[] } | null;
+  return Array.isArray(payload?.projects) ? payload!.projects : [];
+}
+
+/**
  * Probe for a SpecPad server at `baseUrl`. Returns null when there is none — a static
  * host answering the SPA's index.html for an unknown path must not be mistaken for one,
  * so the response has to be JSON *and* carry a session shape.

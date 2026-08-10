@@ -393,3 +393,89 @@ describe.skipIf(!gitAvailable)('Repository — discard (CMT-7)', () => {
     expect((await kimCopy.readJson(['acme.srs.json']) as SrsDoc).title).toBe("Kim's draft");
   });
 });
+
+/**
+ * Idle working copies (WCL-1..4).
+ *
+ * The clock is injected rather than waited on, so these run in milliseconds. The test
+ * that matters most is the one that does NOT reap: an uncommitted draft exists nowhere
+ * but that worktree, so reaping it would destroy work outright.
+ */
+describe.skipIf(!gitAvailable)('Repository — reaping idle working copies (WCL-1..4)', () => {
+  const HOUR = 3600;
+  const worktreeDir = (principal: Principal) =>
+    path.join(projectWorkDir(config.workDir, config.projects[0].id), 'work', worktreeName(principal.id));
+
+  const exists = (dir: string) => fs.stat(dir).then(() => true).catch(() => false);
+
+  it('removes a copy idle past the timeout, and leaves a recently-used one alone', async () => {
+    const repository = makeRepository();
+    await repository.ensureClone();
+    await repository.workingCopyFor(jane, 1_000);
+    await repository.workingCopyFor(kim, 1_000);
+
+    // Kim comes back; Jane does not.
+    await repository.workingCopyFor(kim, 1_000 + 3 * HOUR * 1000);
+    const reaped = await repository.reapIdle(1_000 + 4 * HOUR * 1000, 2 * HOUR);
+
+    expect(reaped).toBe(1);
+    expect(await exists(worktreeDir(jane))).toBe(false);
+    expect(await exists(worktreeDir(kim))).toBe(true);
+  });
+
+  it('never removes a copy holding uncommitted changes, however idle (WCL-2)', async () => {
+    const repository = makeRepository();
+    await repository.ensureClone();
+    const wc = await repository.workingCopyFor(jane, 1_000);
+    await wc.writeText('acme.srs.json', json({ ...srs, items: [{ id: 'r_1', text: 'An unpublished draft.' }] }));
+
+    // A year idle. The draft exists in no git object anywhere.
+    const reaped = await repository.reapIdle(1_000 + 365 * 24 * HOUR * 1000, HOUR);
+
+    expect(reaped).toBe(0);
+    expect(await exists(worktreeDir(jane))).toBe(true);
+    expect(await wc.readJson('acme.srs.json')).toMatchObject({
+      items: [{ text: 'An unpublished draft.' }],
+    });
+  });
+
+  it('re-provisions a reaped copy on next use, so the user notices nothing (WCL-3)', async () => {
+    const repository = makeRepository();
+    await repository.ensureClone();
+    await repository.workingCopyFor(jane, 1_000);
+    await repository.reapIdle(1_000 + 2 * HOUR * 1000, HOUR);
+    expect(await exists(worktreeDir(jane))).toBe(false);
+
+    const wc = await repository.workingCopyFor(jane, 1_000 + 3 * HOUR * 1000);
+
+    expect(await exists(worktreeDir(jane))).toBe(true);
+    expect(await wc.readJson('acme.srs.json')).toMatchObject({ type: 'srs' });
+  });
+
+  it('reaps nothing when reaping is disabled (WCL-4)', async () => {
+    const repository = makeRepository();
+    await repository.ensureClone();
+    await repository.workingCopyFor(jane, 1_000);
+
+    const reaped = await repository.reapIdle(1_000 + 365 * 24 * HOUR * 1000, 0);
+
+    expect(reaped).toBe(0);
+    expect(await exists(worktreeDir(jane))).toBe(true);
+  });
+
+  it('does not reap a copy it has never seen used, so a restart cannot delete drafts', async () => {
+    const repository = makeRepository();
+    await repository.ensureClone();
+    await repository.workingCopyFor(jane, 1_000);
+
+    // A fresh Repository, as after a restart: the worktree is on disk, unknown to it.
+    const restarted = makeRepository();
+    const first = await restarted.reapIdle(1_000 + 365 * 24 * HOUR * 1000, HOUR);
+
+    expect(first).toBe(0);
+    expect(await exists(worktreeDir(jane))).toBe(true);
+    // It is now being tracked, so an idle period from *here* does reap it.
+    const later = await restarted.reapIdle(1_000 + 366 * 24 * HOUR * 1000, HOUR);
+    expect(later).toBe(1);
+  });
+});

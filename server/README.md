@@ -58,7 +58,7 @@ per-user worktrees, so keep it on a volume that outlives the container.
 | `paths.ts` | Path confinement — every function here is a security control (SRV-2) |
 | `git.ts` | Git plumbing behind an injectable runner; never force-pushes |
 | `repository.ts` | One project's bare clone and per-user sparse worktrees (SRV-3, CMT-1, MPT-4) |
-| `registry.ts` | The hosted projects and their per-project runtime (MPT-1, MPT-8) |
+| `registry.ts` | The hosted projects and their per-project runtime (MPT-1, MPT-8, WCL-1) |
 | `routing.ts` | Which project a request is for (MPT-3) |
 | `workingCopy.ts` | Reads/writes, the commit pipeline, structural conflict resolution |
 | `commitGate.ts` | Validation + governance + attribution, as a pure function (CMT-4, CMT-5) |
@@ -86,7 +86,22 @@ registry and event stream, so an editing claim in one project does not wake the 
 
 A repository's launcher opens its own project by setting `editorProjectId` in the project index
 alongside `editorBaseUrl` (MPT-10); the editor also accepts `?project=<id>` directly. Reaching a
-multi-project server without naming one produces the project list rather than an arbitrary choice.
+multi-project server without naming one offers the project list rather than an arbitrary choice.
+Once inside, the server bar carries a **project switcher** (MPT-11): choosing another project
+reloads the editor from it and rewrites the URL, so a refresh stays where you are.
+
+## Idle working copies
+
+A checkout per user per project accumulates — six projects and forty staff is 240 sparse worktrees.
+`workingCopies.idleTimeout` (default 24h, `0` disables) is how long one may sit unused before a
+sweep removes it; `sweepInterval` (default 1h) is how often that sweep runs.
+
+Two things reaping will never do. It never removes a copy holding **uncommitted changes** (WCL-2):
+that work exists in no git object anywhere, so reaping it would destroy it, and "they went home" is
+not consent. And it never removes a copy the process has not seen used — after a restart, every
+worktree is treated as used *now*, so a restart costs one extra idle period rather than a sweep that
+deletes everyone's drafts. A reaped copy is re-provisioned on next use (WCL-3), so a user who
+returns sees nothing but the committed state.
 
 ## Two things worth knowing
 
@@ -135,9 +150,7 @@ Multi-project tenancy is covered by `server/__tests__/multiProject.test.ts` (con
 per-project authorization) and `multiProject.integration.test.ts`, which runs two real repositories
 through one process over HTTP.
 
-Not yet implemented: an **in-editor project picker** (the project list is rendered as links today)
-and **worktree reaping** — `Repository.release()` exists and nothing calls it, which matters more
-now that worktrees multiply by project. Also the **OIDC provider** (use `proxy` behind your existing gateway — it throws a
+Not yet implemented: the **OIDC provider** (use `proxy` behind your existing gateway — it throws a
 message saying so) and an **in-place conflict resolver**. Today a conflict is reported per field with both values shown, and the user reloads,
 reapplies, and commits again — correct and safe, but more work for them than picking a side in the
 table would be.

@@ -247,3 +247,37 @@ describe('authorization across projects (MPT-5, MPT-6)', () => {
     expect(roleFor(roles, ['grp-none'])).toBeNull();
   });
 });
+
+// ---- WCL-4: the reaping policy is configuration, not a constant ----
+
+describe('working-copy reaping policy (WCL-4)', () => {
+  it('defaults to a day idle, swept hourly', () => {
+    expect(loadConfig(legacy).workingCopies).toEqual({
+      idleTimeout: 24 * 60 * 60,
+      sweepInterval: 60 * 60,
+    });
+  });
+
+  it('honours a configured idle period', () => {
+    const config = loadConfig({ ...legacy, workingCopies: { idleTimeout: 900, sweepInterval: 300 } });
+
+    expect(config.workingCopies).toEqual({ idleTimeout: 900, sweepInterval: 300 });
+  });
+
+  it('treats an idle period of zero as reaping disabled', () => {
+    const { config, errors } = validateConfig({ ...legacy, workingCopies: { idleTimeout: 0 } });
+
+    expect(errors).toEqual([]);
+    expect(config!.workingCopies.idleTimeout).toBe(0);
+  });
+
+  it('refuses a nonsensical period at startup rather than at the first sweep', () => {
+    expect(validateConfig({ ...legacy, workingCopies: { idleTimeout: -1 } }).config).toBeNull();
+    expect(validateConfig({ ...legacy, workingCopies: { idleTimeout: 1.5 } }).config).toBeNull();
+    expect(validateConfig({ ...legacy, workingCopies: { idleTimeout: 'never' } }).config).toBeNull();
+    // Reaping on with no sweep would silently never run.
+    expect(
+      validateConfig({ ...legacy, workingCopies: { idleTimeout: 600, sweepInterval: 0 } }).config,
+    ).toBeNull();
+  });
+});

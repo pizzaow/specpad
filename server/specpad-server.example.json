@@ -44,6 +44,10 @@
     "requireGovernanceClean": "warn",
     "pushRetries": 3
   },
+  "workingCopies": {
+    "idleTimeout": 86400,
+    "sweepInterval": 3600
+  },
   "workDir": "/srv/specpad",
   "port": 8080,
   "bind": "0.0.0.0"

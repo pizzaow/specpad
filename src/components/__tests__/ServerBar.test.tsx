@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ServerBar from '../ServerBar';
-import type { ServerSession, ServerStatus } from '../../fileApi';
+import type { ServerSession, ServerStatus, ProjectSummary } from '../../fileApi';
 
 // EDR-2/EDR-3: who am I, what may I do, and how much have I not yet published.
 
@@ -134,5 +134,83 @@ describe('ServerBar — the pending badge', () => {
     render(<ServerBar session={session('committer')} status={null} onCommit={vi.fn()} />);
 
     expect(screen.getByRole('button', { name: /commit/i })).toBeDisabled();
+  });
+});
+
+// ---- The project switcher (MPT-11, MPT-13) ----
+
+const projects: ProjectSummary[] = [
+  { id: 'alpha', title: 'Alpha Device', branch: 'main', role: 'committer' },
+  { id: 'beta', title: 'Beta Device', branch: 'release', role: 'reader' },
+];
+
+const inProject = (id: string): ServerSession => ({ ...session('committer'), projectId: id });
+
+describe('ServerBar — the project switcher (MPT-11, MPT-13)', () => {
+  it('names the project being edited when there is a choice of them', () => {
+    render(
+      <ServerBar session={inProject('alpha')} status={clean} onCommit={vi.fn()} projects={projects} />,
+    );
+
+    expect(screen.getByRole('button', { name: /Alpha Device/ })).toBeInTheDocument();
+  });
+
+  it('offers every project the user may open, with its branch and their role', () => {
+    render(
+      <ServerBar session={inProject('alpha')} status={clean} onCommit={vi.fn()} projects={projects} />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: /Alpha Device/ }));
+
+    const menu = screen.getByRole('menu', { name: 'Projects' });
+    expect(menu).toHaveTextContent('Beta Device');
+    expect(menu).toHaveTextContent('release');
+    expect(menu).toHaveTextContent('Read-only');
+  });
+
+  it('asks to switch when another project is chosen', () => {
+    const onSelectProject = vi.fn();
+    render(
+      <ServerBar
+        session={inProject('alpha')}
+        status={clean}
+        onCommit={vi.fn()}
+        projects={projects}
+        onSelectProject={onSelectProject}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: /Alpha Device/ }));
+    fireEvent.click(screen.getByText('Beta Device'));
+
+    expect(onSelectProject).toHaveBeenCalledWith('beta');
+  });
+
+  it('does not re-open the project already open', () => {
+    const onSelectProject = vi.fn();
+    render(
+      <ServerBar
+        session={inProject('alpha')}
+        status={clean}
+        onCommit={vi.fn()}
+        projects={projects}
+        onSelectProject={onSelectProject}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: /Alpha Device/ }));
+    fireEvent.click(screen.getByText('Alpha Device', { selector: 'li' }));
+
+    expect(onSelectProject).not.toHaveBeenCalled();
+  });
+
+  it('offers no switcher on a single-project server — one project is not a decision', () => {
+    render(
+      <ServerBar
+        session={inProject('alpha')}
+        status={clean}
+        onCommit={vi.fn()}
+        projects={[projects[0]]}
+      />,
+    );
+
+    expect(screen.queryByRole('button', { name: /Alpha Device/ })).toBeNull();
   });
 });

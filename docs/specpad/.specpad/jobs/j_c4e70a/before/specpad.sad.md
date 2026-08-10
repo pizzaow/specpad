@@ -118,7 +118,9 @@ reproducibility of evidence (deterministic, versioned, git-backed); traceability
 `verifies`, job→code via the `Job:` trailer).
 
 ## 11. Risks and Technical Debt
-The **OIDC provider is unimplemented** (deployments use a proxy in front); the **container image is unbuilt and
+The server's per-user worktrees are **never reaped** (`Repository.release()` exists and nothing calls
+it) — bounded by users × projects, so multi-project tenancy makes it matter sooner. The **OIDC
+provider is unimplemented** (deployments use a proxy in front); the **container image is unbuilt and
 untested**; a merge conflict is reported but not resolvable in place. Presence and the
 upstream-moved signal are advisory and lost on restart, by design.
 Per-job architecture diffs are coarse (file changed + SAD line diff, no in-diagram delta); the SAD is

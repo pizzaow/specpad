@@ -29,7 +29,7 @@ import {
 } from './transports/types';
 import { LocalTransport, isFileSystemAccessSupported, verifyPermission } from './transports/local';
 import { DemoTransport, READ_ONLY_DEMO } from './transports/demo';
-import { RemoteTransport, connectToServer, isProjectChoice } from './transports/remote';
+import { RemoteTransport, connectToServer, isProjectChoice, fetchProjects } from './transports/remote';
 import type {
   ServerSession,
   ProjectChoice,
@@ -127,6 +127,28 @@ export async function connectToSpecPadServer(
   const result = await connectToServer(serverApiBase(projectId));
   if (!result) return null;
   if (isProjectChoice(result)) return result;
+  remoteTransport = result;
+  active = result;
+  return result.getSession();
+}
+
+/** The projects the signed-in user may open (MPT-11). Empty when not on a server. */
+export async function listServerProjects(): Promise<ProjectSummary[]> {
+  if (!remoteTransport) return [];
+  return fetchProjects();
+}
+
+/**
+ * Switch to another project on the same server (MPT-11, MPT-12).
+ *
+ * The transport is replaced wholesale rather than re-pointed: every cached version tag
+ * and document listing belongs to the project it came from, and carrying any of it
+ * across would be a stale-read waiting to happen. Returns null if the switch fails, in
+ * which case the caller is still connected to the project it was already on.
+ */
+export async function switchServerProject(projectId: string): Promise<ServerSession | null> {
+  const result = await connectToServer(serverApiBase(projectId));
+  if (!result || isProjectChoice(result)) return null;
   remoteTransport = result;
   active = result;
   return result.getSession();

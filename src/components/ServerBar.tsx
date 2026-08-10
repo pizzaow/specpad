@@ -5,8 +5,8 @@
  * answered at a glance: who am I signed in as, what may I do, and how much have I
  * changed but not yet published.
  */
-import React from 'react';
-import type { ServerSession, ServerStatus } from '../fileApi';
+import React, { useState } from 'react';
+import type { ServerSession, ServerStatus, ProjectSummary } from '../fileApi';
 
 export interface PresenceLabel {
   userId: string;
@@ -21,6 +21,9 @@ interface ServerBarProps {
   onCommit: () => void;
   /** Other people in this project right now (CE-3). Advisory only. */
   presence?: PresenceLabel[];
+  /** Projects this user may open on this server (MPT-7, MPT-11). */
+  projects?: ProjectSummary[];
+  onSelectProject?: (id: string) => void;
 }
 
 const ROLE_LABEL: Record<ServerSession['role'], string> = {
@@ -29,12 +32,61 @@ const ROLE_LABEL: Record<ServerSession['role'], string> = {
   committer: 'Editor',
 };
 
-const ServerBar: React.FC<ServerBarProps> = ({ session, status, onCommit, presence }) => {
+const ServerBar: React.FC<ServerBarProps> = ({
+  session,
+  status,
+  onCommit,
+  presence,
+  projects,
+  onSelectProject,
+}) => {
   const pending = status?.dirty ? (status.changed?.length ?? 0) : 0;
   const others = presence ?? [];
+  const [open, setOpen] = useState(false);
+  // Only worth a switcher where there is a choice: one project is not a decision (MPT-13).
+  const choices = projects ?? [];
+  const current = choices.find((p) => p.id === session.projectId);
 
   return (
     <div className="server-bar" role="region" aria-label="Server session">
+      {choices.length > 1 && (
+        <span className="menubar-dropdown server-project">
+          {open && (
+            <div data-testid="server-project-backdrop" className="menubar-backdrop" onClick={() => setOpen(false)} />
+          )}
+          <button
+            type="button"
+            className="menubar-chip"
+            aria-haspopup="menu"
+            aria-expanded={open}
+            onClick={() => setOpen((v) => !v)}
+            title="Switch project"
+          >
+            <span>{current?.title ?? session.project}</span> ▾
+          </button>
+          {open && (
+            <ul className="menubar-menu" role="menu" aria-label="Projects">
+              {choices.map((p) => (
+                <li
+                  key={p.id}
+                  role="menuitem"
+                  aria-current={p.id === session.projectId || undefined}
+                  onClick={() => {
+                    setOpen(false);
+                    if (p.id !== session.projectId) onSelectProject?.(p.id);
+                  }}
+                >
+                  {p.title}
+                  <span className="text-muted" style={{ marginLeft: 8 }}>
+                    {p.branch} · {ROLE_LABEL[p.role as ServerSession['role']] ?? p.role}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </span>
+      )}
+
       <span className="server-branch">
         <code>{session.repo.branch}</code> on the server
       </span>

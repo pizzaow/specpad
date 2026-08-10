@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach, vi } from 'vitest';
-import { RemoteTransport, connectToServer, RemoteError, isProjectChoice } from '../remote';
+import { RemoteTransport, connectToServer, RemoteError, isProjectChoice, fetchProjects } from '../remote';
 import type { ServerSession } from '../remote';
 
 // Behaviour specific to the server transport: optimistic concurrency (CE-1), the
@@ -358,5 +358,34 @@ describe('discard (CMT-7)', () => {
 
     const put = calls.find((c) => c.init?.method === 'PUT');
     expect(JSON.parse(String(put!.init!.body)).version).toBeUndefined();
+  });
+});
+
+describe('listing the projects a user may open (MPT-11)', () => {
+  it('asks the deployment root, not the project currently open', async () => {
+    const calls = stubFetch(() => ({ status: 200, body: { projects: [] } }));
+
+    await fetchProjects();
+
+    expect(calls[0].url).toBe('/api/v1/projects');
+  });
+
+  it('returns the listed projects', async () => {
+    stubFetch(() => ({
+      status: 200,
+      body: { projects: [{ id: 'acme', title: 'Acme', branch: 'main', role: 'reader' }] },
+    }));
+
+    expect(await fetchProjects()).toEqual([
+      { id: 'acme', title: 'Acme', branch: 'main', role: 'reader' },
+    ]);
+  });
+
+  it('degrades to an empty list rather than throwing — the switcher is not load-bearing', async () => {
+    stubFetch(() => ({ status: 500, body: { error: 'boom' } }));
+    expect(await fetchProjects()).toEqual([]);
+
+    stubFetch(() => ({ status: 200, body: { something: 'else' } }));
+    expect(await fetchProjects()).toEqual([]);
   });
 });

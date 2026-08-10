@@ -138,9 +138,17 @@ export function createServer(config: ServerConfig, registry: ProjectRegistry, ed
   const poll = setInterval(() => {
     void registry.tick(Date.now());
   }, DEFAULT_WATCH_INTERVAL_MS);
+  // Idle working copies, swept far less often than anything else here (WCL-1).
+  const sweep = setInterval(() => {
+    void registry.reapIdle(Date.now()).then((n) => {
+      // eslint-disable-next-line no-console
+      if (n > 0) console.log(`Reaped ${n} idle working ${n === 1 ? 'copy' : 'copies'}`);
+    });
+  }, Math.max(1, config.workingCopies.sweepInterval) * 1000);
   // Never hold the process open for a courtesy.
   heartbeat.unref?.();
   poll.unref?.();
+  sweep.unref?.();
 
   const server = http.createServer(async (req, res) => {
     const url = new URL(req.url ?? '/', 'http://localhost');
@@ -234,6 +242,7 @@ export function createServer(config: ServerConfig, registry: ProjectRegistry, ed
   const shutdown = async (): Promise<void> => {
     clearInterval(heartbeat);
     clearInterval(poll);
+    clearInterval(sweep);
     registry.closeAll();
     await new Promise<void>((resolve) => {
       server.close(() => resolve());

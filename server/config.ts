@@ -84,9 +84,25 @@ export interface CommitConfig {
   pushRetries: number;
 }
 
+/**
+ * When to clean up a user's working copy (WCL-1, WCL-4).
+ *
+ * A checkout per user per project accumulates: six projects and forty staff is 240
+ * sparse worktrees that nothing ever removes. Reaping is bounded by one hard rule —
+ * a copy holding uncommitted work is never touched (WCL-2) — so the cost of reaping
+ * too eagerly is a re-clone, not lost work.
+ */
+export interface WorkingCopyConfig {
+  /** Seconds a working copy may sit unused before it is eligible. 0 disables reaping. */
+  idleTimeout: number;
+  /** Seconds between sweeps. */
+  sweepInterval: number;
+}
+
 export interface ServerConfig {
   /** Every project this server hosts, in configuration order (MPT-1). */
   projects: ProjectConfig[];
+  workingCopies: WorkingCopyConfig;
   auth: AuthConfig;
   /** Server-wide default, inherited by a project that declares no policy of its own. */
   commit: CommitConfig;
@@ -343,6 +359,28 @@ export function validateConfig(raw: unknown): { config: ServerConfig | null; err
     errors.push('auth.roles must grant at least one role to at least one group');
   }
 
+  // ---- working-copy lifecycle (WCL-4) ----
+  const wcRaw = (root.workingCopies ?? {}) as Record<string, any>;
+  if (typeof root.workingCopies !== 'undefined' && (typeof root.workingCopies !== 'object' || root.workingCopies === null || Array.isArray(root.workingCopies))) {
+    errors.push('workingCopies must be an object');
+  }
+  const seconds = (value: unknown, key: string, fallback: number): number => {
+    if (value === undefined) return fallback;
+    if (typeof value !== 'number' || !Number.isInteger(value) || value < 0) {
+      errors.push(`workingCopies.${key} must be a non-negative integer number of seconds`);
+      return fallback;
+    }
+    return value;
+  };
+  // A day idle is a person who has gone home; re-provisioning costs one sparse checkout.
+  const workingCopies: WorkingCopyConfig = {
+    idleTimeout: seconds(wcRaw.idleTimeout, 'idleTimeout', 24 * 60 * 60),
+    sweepInterval: seconds(wcRaw.sweepInterval, 'sweepInterval', 60 * 60),
+  };
+  if (workingCopies.sweepInterval === 0 && workingCopies.idleTimeout > 0) {
+    errors.push('workingCopies.sweepInterval must be greater than zero when reaping is enabled');
+  }
+
   // ---- server ----
   if (typeof root.workDir !== 'string' || root.workDir.trim() === '') {
     errors.push('workDir is required');
@@ -357,6 +395,7 @@ export function validateConfig(raw: unknown): { config: ServerConfig | null; err
   return {
     config: {
       projects,
+      workingCopies,
       auth: {
         provider,
         trustedPeers,

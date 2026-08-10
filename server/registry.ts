@@ -13,7 +13,7 @@ import { EventBus } from './events';
 import { BranchWatcher } from './branchWatcher';
 import { execGitRunner } from './git';
 import type { GitRunner } from './git';
-import type { ProjectConfig, ServerConfig } from './config';
+import type { ProjectConfig, ServerConfig, WorkingCopyConfig } from './config';
 
 export interface ProjectRuntime {
   project: ProjectConfig;
@@ -25,8 +25,10 @@ export interface ProjectRuntime {
 
 export class ProjectRegistry {
   private readonly runtimes = new Map<string, ProjectRuntime>();
+  readonly workingCopies: WorkingCopyConfig;
 
   constructor(config: ServerConfig, runner: GitRunner = execGitRunner()) {
+    this.workingCopies = config.workingCopies;
     for (const project of config.projects) {
       const repository = new Repository(
         project,
@@ -83,6 +85,18 @@ export class ProjectRegistry {
       const moved = await watcher.check().catch(() => null);
       if (moved) events.broadcast('upstream', { sha: moved, branch: project.repo.branch });
     }
+  }
+
+  /**
+   * Remove working copies idle past the configured timeout, across every project
+   * (WCL-1). Returns the number removed so the caller can log it.
+   */
+  async reapIdle(now: number): Promise<number> {
+    let reaped = 0;
+    for (const { repository } of this.list()) {
+      reaped += await repository.reapIdle(now, this.workingCopies.idleTimeout).catch(() => 0);
+    }
+    return reaped;
   }
 
   closeAll(): void {

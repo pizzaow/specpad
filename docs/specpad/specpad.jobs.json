@@ -533,6 +533,19 @@
       "description": "One SpecPad server can now host several projects at once. A company with SpecPad in six repositories runs one server rather than six, with a single sign-on and per-project permissions — someone can be a committer on one project and a reader on another.",
       "technical_notes": "First slice: configuration, the repository registry, request routing, and per-project authorization. The single-repo config (repo: {...}) stays valid and is read as a one-entry registry, so existing deployments are untouched and the unprefixed /api/v1/... routes keep working when exactly one project is configured. Deferred to a second slice: the in-editor project picker and worktree reaping (Repository.release() exists but is still called by nothing, which matters more once worktrees multiply by project). Also brings the SAD current for the server as a whole, which JOB-40 did not touch.",
       "status": "open"
+    },
+    {
+      "id": "j_c4e70a",
+      "code": "JOB-42",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Project picker and working-copy reaping — the second multi-project slice",
+      "description": "On a server hosting several projects you can now switch between them from inside the editor, instead of editing the URL. The server also cleans up idle working copies, so a large deployment does not accumulate a checkout per person per project forever — never touching one that holds unpublished work.",
+      "technical_notes": "Completes JOB-41. Two halves: (1) the editor gains a project switcher fed by GET /api/v1/projects, replacing the plain list of links that slice one rendered; (2) the server reaps per-user worktrees after a configurable idle period. The safety property that matters for reaping is that a working copy with uncommitted changes is never removed - a reaped draft is destroyed work with no git object behind it. Reaping must also be idempotent with an active session, since a removed copy is simply re-provisioned on next use.",
+      "status": "open"
     }
   ]
 }

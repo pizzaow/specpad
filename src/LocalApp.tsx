@@ -50,6 +50,8 @@ import {
   serverClaimPresence,
   serverReleasePresence,
   isProjectChoice,
+  listServerProjects,
+  switchServerProject,
 } from './fileApi';
 import type {
   ServerSession,
@@ -225,6 +227,8 @@ const LocalApp: React.FC = () => {
   const [serverSession, setServerSession] = useState<ServerSession | null>(null);
   // A multi-project server reached without a project named in the URL (MPT-9).
   const [projectChoice, setProjectChoice] = useState<ProjectSummary[] | null>(null);
+  // Every project this user may open on this server, for the switcher (MPT-11).
+  const [serverProjects, setServerProjects] = useState<ProjectSummary[]>([]);
   const [serverState, setServerState] = useState<ServerStatus | null>(null);
   const [showCommit, setShowCommit] = useState(false);
   // Advisory presence and the upstream-moved signal (CE-3). Neither affects editing.
@@ -514,6 +518,40 @@ const LocalApp: React.FC = () => {
     }
   };
 
+  /**
+   * Open another project on the same server (MPT-11, MPT-12).
+   *
+   * Everything the editor holds — documents, baselines, job caches, presence — belongs
+   * to the project it was loaded from, so this reloads through the same path the first
+   * open takes rather than patching state in place. The URL is rewritten to name the
+   * new project so a reload comes back here, not to where the session started.
+   */
+  const handleSwitchProject = async (projectId: string) => {
+    if (projectId === serverSession?.projectId) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const session = await switchServerProject(projectId);
+      if (!session) {
+        setError('Could not open that project. You are still in the current one.');
+        return;
+      }
+      setProjectChoice(null);
+      setServerSession(session);
+      setPresence([]);
+      setUpstream(null);
+      await applyOpened(await openServerProject(), launch.name);
+      await refreshServerStatus();
+      const url = new URL(window.location.href);
+      url.searchParams.set('project', projectId);
+      window.history.replaceState(null, '', url.toString());
+    } catch (err: any) {
+      setError(`Could not open that project: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleOpenProject = async (useProjectFile: boolean) => {
     setLoading(true);
     setError(null);
@@ -573,6 +611,11 @@ const LocalApp: React.FC = () => {
       }
       if (session) {
         setServerSession(session);
+        // What else may this person open? Advisory: a failure here costs the switcher,
+        // never the session (MPT-11).
+        void listServerProjects().then((ps) => {
+          if (!cancelled) setServerProjects(ps);
+        });
         setLoading(true);
         try {
           const result = await openServerProject();
@@ -840,6 +883,8 @@ const LocalApp: React.FC = () => {
           session={serverSession}
           status={serverState}
           presence={presenceLabels}
+          projects={serverProjects}
+          onSelectProject={handleSwitchProject}
           onCommit={() => setShowCommit(true)}
         />
       )}
@@ -875,10 +920,17 @@ const LocalApp: React.FC = () => {
       {projectChoice && (
         <div className="alert alert-info" role="status">
           <strong>Choose a project.</strong> This SpecPad server hosts several; open the one you want:
-          <ul className="mb-0 mt-2">
+          <ul className="mb-0 mt-2 project-choice">
             {projectChoice.map((p) => (
               <li key={p.id}>
-                <a href={`?project=${encodeURIComponent(p.id)}`}>{p.title}</a>{' '}
+                <button
+                  type="button"
+                  className="btn btn-link"
+                  style={{ padding: 0 }}
+                  onClick={() => handleSwitchProject(p.id)}
+                >
+                  {p.title}
+                </button>{' '}
                 <span className="text-muted">
                   ({p.branch} — you are a {p.role})
                 </span>
