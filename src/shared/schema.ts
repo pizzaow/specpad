@@ -21,6 +21,8 @@ export interface ProjectDoc {
   // Where the generated launcher sends people. Absent = the public hosted editor;
   // set it to a company's own SpecPad server so the whole team lands there (EDR-4).
   editorBaseUrl?: string;
+  /** Which project on a multi-project self-hosted server this repo is (MPT-10). */
+  editorProjectId?: string;
   documents: ProjectDocRef[];
 }
 
@@ -120,6 +122,7 @@ export const projectSchema = {
     title: { type: 'string', description: 'Human-readable project title shown in the editor.' },
     description: { type: 'string', description: 'Optional free-text summary of the system under specification.' },
     editorBaseUrl: { type: 'string', description: 'Optional base URL the generated launcher opens (e.g. "https://specpad.internal.corp" for a self-hosted server). Absent uses the public hosted editor; the version path is always derived from schemaVersion.' },
+    editorProjectId: { type: 'string', description: 'Optional project id on a self-hosted server that hosts several projects, so this repository\'s launcher opens its own project. Absent opens the server\'s only project.' },
     documents: {
       type: 'array',
       description: 'The SRS and VTP files that make up this project.',

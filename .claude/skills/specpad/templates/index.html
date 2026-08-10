@@ -13,6 +13,10 @@
         // public hosted editor when the project sets none; a company running its own
         // SpecPad server points this at their server so the whole team lands there.
         var EDITOR = 'EDITOR_BASE_URL';
+        // Replaced by the skill from the project index's editorProjectId. Only a
+        // self-hosted server hosting several projects needs it; left empty otherwise,
+        // in which case the server serves its only project (MPT-9, MPT-10).
+        var PROJECT_ID = 'EDITOR_PROJECT_ID';
         var params = new URLSearchParams(window.location.search);
         var open = params.get('open') || 'srs';
         // This launcher lives inside the project folder, so it knows that folder's
@@ -26,7 +30,8 @@
         var frag =
           'name=' + encodeURIComponent(PROJECT) +
           '&open=' + encodeURIComponent(open) +
-          (dir ? '&dir=' + encodeURIComponent(dir) : '');
+          (dir ? '&dir=' + encodeURIComponent(dir) : '') +
+          (PROJECT_ID ? '&project=' + encodeURIComponent(PROJECT_ID) : '');
         window.location.href = EDITOR + '/v01/#' + frag;
       })();
     </script>

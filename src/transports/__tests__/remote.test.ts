@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach, vi } from 'vitest';
-import { RemoteTransport, connectToServer, RemoteError } from '../remote';
+import { RemoteTransport, connectToServer, RemoteError, isProjectChoice } from '../remote';
 import type { ServerSession } from '../remote';
 
 // Behaviour specific to the server transport: optimistic concurrency (CE-1), the
@@ -50,9 +50,9 @@ describe('connectToServer (EDR-2)', () => {
 
     const transport = await connectToServer('/api/v1');
 
-    expect(transport).not.toBeNull();
-    expect(transport!.getSession().principal.displayName).toBe('Jane Smith');
-    expect(transport!.projectName()).toBe('acme');
+    expect(transport).toBeInstanceOf(RemoteTransport);
+    expect((transport as RemoteTransport).getSession().principal.displayName).toBe('Jane Smith');
+    expect((transport as RemoteTransport).projectName()).toBe('acme');
   });
 
   it('returns null when there is no server', async () => {
@@ -76,6 +76,44 @@ describe('connectToServer (EDR-2)', () => {
 
   it('returns null when the network call fails outright', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => { throw new Error('offline'); }));
+
+    expect(await connectToServer('/api/v1')).toBeNull();
+  });
+});
+
+describe('reaching a multi-project server (MPT-9)', () => {
+  it('addresses the project named in the URL', async () => {
+    const calls = stubFetch(() => ({ status: 200, body: session() }));
+
+    await connectToServer('/api/v1/p/acme');
+
+    expect(calls[0].url).toBe('/api/v1/p/acme/session');
+  });
+
+  it('returns the project list when the server hosts several and none was named', async () => {
+    stubFetch(() => ({
+      status: 400,
+      body: {
+        error: 'This server hosts several projects; name one in the request path.',
+        projects: [
+          { id: 'acme', title: 'Acme', branch: 'main', role: 'committer' },
+          { id: 'beta', title: 'Beta', branch: 'main', role: 'reader' },
+        ],
+      },
+    }));
+
+    const result = await connectToServer('/api/v1');
+
+    // Not null: falling back to the local folder picker would hide a healthy server.
+    expect(isProjectChoice(result)).toBe(true);
+    expect((result as { chooseProject: { id: string }[] }).chooseProject.map((p) => p.id)).toEqual([
+      'acme',
+      'beta',
+    ]);
+  });
+
+  it('treats a refusal carrying no project list as no server at all', async () => {
+    stubFetch(() => ({ status: 400, body: { error: 'something else entirely' } }));
 
     expect(await connectToServer('/api/v1')).toBeNull();
   });

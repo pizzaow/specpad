@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { LocalTransport } from '../local';
 import { DemoTransport } from '../demo';
-import { connectToServer } from '../remote';
+import { connectToServer, isProjectChoice } from '../remote';
 import { classifyDocFilename } from '../types';
 import type { FileApi } from '../types';
 import type { SrsDoc } from '../../shared';
@@ -124,7 +124,9 @@ const TRANSPORTS: Harness[] = [
     async open(files) {
       vi.stubGlobal('fetch', fakeServer(files));
       const transport = await connectToServer('/api/v1');
-      if (!transport) throw new Error('the fake server did not answer the session probe');
+      if (!transport || isProjectChoice(transport)) {
+        throw new Error('the fake server did not answer the session probe');
+      }
       return transport;
     },
   },

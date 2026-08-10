@@ -12,14 +12,16 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { loadConfig, isLoopbackBind, SCHEMA_VERSION_PATH } from './config';
 import type { ServerConfig } from './config';
-import { createAuthProvider, resolveSession } from './auth';
-import { Repository } from './repository';
+import { createAuthProvider, sessionFor } from './auth';
+import type { Principal } from './auth';
+import { can } from './auth';
 import { handleApi } from './api';
 import type { ApiServices } from './api';
-import { PresenceRegistry } from './presence';
-import { EventBus, HEARTBEAT_MS } from './events';
-import { BranchWatcher, DEFAULT_WATCH_INTERVAL_MS } from './branchWatcher';
-import { execGitRunner } from './git';
+import { ProjectRegistry } from './registry';
+import type { ProjectRuntime } from './registry';
+import { parseApiPath } from './routing';
+import { HEARTBEAT_MS } from './events';
+import { DEFAULT_WATCH_INTERVAL_MS } from './branchWatcher';
 
 const API_PREFIX = '/api/v1';
 const MAX_BODY_BYTES = 8 * 1024 * 1024;
@@ -94,23 +96,47 @@ async function serveStatic(
   res.end(data);
 }
 
-export function createServer(config: ServerConfig, repository: Repository, editorDir: string) {
+/**
+ * The project a request is for: the one it named, or the only one there is (MPT-3).
+ * Null means the caller must choose.
+ */
+function resolveRuntime(registry: ProjectRegistry, projectId: string | null): ProjectRuntime | null {
+  return projectId === null ? registry.sole() : registry.get(projectId);
+}
+
+/** The projects this principal may read, for the discovery endpoint (MPT-7). */
+function visibleProjects(
+  registry: ProjectRegistry,
+  provider: ReturnType<typeof createAuthProvider>,
+  principal: Principal,
+): { id: string; title: string; branch: string; role: string }[] {
+  const visible = [];
+  for (const { project } of registry.list()) {
+    const session = sessionFor(provider, principal, project.roles);
+    // A project they hold no role in is omitted entirely rather than listed and
+    // refused: the list is what they can open, not an inventory of the deployment.
+    if (!session || !can(session.role, 'read')) continue;
+    visible.push({
+      id: project.id,
+      title: project.title,
+      branch: project.repo.branch,
+      role: session.role,
+    });
+  }
+  return visible;
+}
+
+export function createServer(config: ServerConfig, registry: ProjectRegistry, editorDir: string) {
   const provider = createAuthProvider(config.auth);
 
-  // Advisory presence and the branch watcher (CE-3, CE-4). All of this is a courtesy:
-  // if every timer below stopped, editing and committing would work exactly the same.
-  const presence = new PresenceRegistry();
-  const events = new EventBus();
-  const watcher = new BranchWatcher(execGitRunner(), repository.repoDir, config.repo.branch);
-  const services: ApiServices = { presence, events, now: () => Date.now() };
-
-  const heartbeat = setInterval(() => events.heartbeat(), HEARTBEAT_MS);
+  // Advisory presence and the branch watcher (CE-3, CE-4), now per project (MPT-8). All
+  // of this is a courtesy: if every timer below stopped, editing and committing would
+  // work exactly the same.
+  const heartbeat = setInterval(() => {
+    for (const { events } of registry.list()) events.heartbeat();
+  }, HEARTBEAT_MS);
   const poll = setInterval(() => {
-    void (async () => {
-      if (presence.sweep(Date.now())) events.broadcast('presence', presence.list(Date.now()));
-      const moved = await watcher.check().catch(() => null);
-      if (moved) events.broadcast('upstream', { sha: moved, branch: config.repo.branch });
-    })();
+    void registry.tick(Date.now());
   }, DEFAULT_WATCH_INTERVAL_MS);
   // Never hold the process open for a courtesy.
   heartbeat.unref?.();
@@ -128,38 +154,70 @@ export function createServer(config: ServerConfig, repository: Repository, edito
         return;
       }
 
-      const session = await resolveSession(provider, config.auth, {
+      // Identity is deployment-wide; the role is decided per project below (MPT-5).
+      const principal = await provider.authenticate({
         headers: req.headers as Record<string, string | string[] | undefined>,
         remoteAddress: req.socket.remoteAddress,
       });
+      if (!principal) {
+        sendJson(res, 401, { error: 'You are not signed in.' });
+        return;
+      }
+
+      const routed = parseApiPath(url.pathname.slice(API_PREFIX.length) || '/');
+
+      // Which projects may I open? (MPT-7) — answerable without naming one.
+      if (req.method === 'GET' && routed.projectId === null && routed.path === '/projects') {
+        sendJson(res, 200, { projects: visibleProjects(registry, provider, principal) });
+        return;
+      }
+
+      const runtime = resolveRuntime(registry, routed.projectId);
+      if (!runtime) {
+        // Unknown project, or none named where the answer is ambiguous (MPT-3). Either
+        // way the caller is told what they may open rather than left guessing.
+        sendJson(res, routed.projectId ? 404 : 400, {
+          error: routed.projectId
+            ? `No such project: ${routed.projectId}`
+            : 'This server hosts several projects; name one in the request path.',
+          projects: visibleProjects(registry, provider, principal),
+        });
+        return;
+      }
+
+      const { project, repository, presence, events, watcher } = runtime;
+      const session = sessionFor(provider, principal, project.roles);
       if (!session) {
-        sendJson(res, 401, { error: 'You are not signed in, or have no access to this project.' });
+        // No role *here* — which says nothing about the caller's other projects (MPT-6).
+        sendJson(res, 403, { error: `You do not have access to the project "${project.title}".` });
         return;
       }
 
       // The event stream needs the raw response, so it never enters the JSON router.
-      if (url.pathname === `${API_PREFIX}/events`) {
+      if (routed.path === '/events') {
         const unsubscribe = events.subscribe(res);
         events.send(res, 'hello', {
+          projectId: project.id,
           presence: presence.list(Date.now(), session.principal.id),
           sha: watcher.currentSha,
-          branch: config.repo.branch,
+          branch: project.repo.branch,
         });
         req.on('close', unsubscribe);
         return;
       }
 
       const workingCopy = await repository.workingCopyFor(session.principal);
+      const services: ApiServices = { presence, events, now: () => Date.now() };
       const response = await handleApi(
         {
           method: req.method ?? 'GET',
-          path: url.pathname.slice(API_PREFIX.length) || '/',
+          path: routed.path,
           query: url.searchParams,
           body: await readBody(req),
         },
         session,
         workingCopy,
-        config,
+        project,
         services,
       );
       sendJson(res, response.status, response.body);
@@ -176,7 +234,7 @@ export function createServer(config: ServerConfig, repository: Repository, edito
   const shutdown = async (): Promise<void> => {
     clearInterval(heartbeat);
     clearInterval(poll);
-    events.closeAll();
+    registry.closeAll();
     await new Promise<void>((resolve) => {
       server.close(() => resolve());
       server.closeAllConnections?.();
@@ -196,10 +254,15 @@ export async function start(configPath: string): Promise<RunningServer> {
   const config = loadConfig(JSON.parse(await fs.readFile(configPath, 'utf8')));
   const editorDir = path.resolve(process.env.SPECPAD_EDITOR_DIR ?? 'dist');
 
-  const repository = new Repository(config);
-  await repository.ensureClone();
+  const registry = new ProjectRegistry(config);
+  for (const { id, error } of await registry.ensureClones()) {
+    // Reported, not fatal: one unreachable repository must not take down the projects
+    // that are fine. Requests for it will fail loudly when someone opens it.
+    // eslint-disable-next-line no-console
+    console.error(`Project "${id}" could not be cloned or fetched: ${error.message}`);
+  }
 
-  const { server, shutdown } = createServer(config, repository, editorDir);
+  const { server, shutdown } = createServer(config, registry, editorDir);
   await new Promise<void>((resolve, reject) => {
     server.once('error', reject);
     server.listen(config.port, config.bind, () => {
@@ -209,10 +272,13 @@ export async function start(configPath: string): Promise<RunningServer> {
   });
 
   const where = isLoopbackBind(config.bind) ? 'localhost only' : config.bind;
+  const projects = config.projects
+    .map((p) => `${p.id} → ${p.repo.url} (${p.repo.branch})`)
+    .join('\n  ');
   // eslint-disable-next-line no-console
   console.log(
-    `SpecPad server listening on ${where}:${config.port} — ` +
-      `${config.repo.url} (${config.repo.branch}), auth: ${config.auth.provider}`,
+    `SpecPad server listening on ${where}:${config.port}, auth: ${config.auth.provider}\n` +
+      `  ${projects}`,
   );
   return { server, shutdown };
 }

@@ -16,6 +16,8 @@ export interface ServerSession {
   role: 'reader' | 'editor' | 'committer';
   capabilities: { read: boolean; write: boolean; commit: boolean };
   repo: { branch: string; projectDir: string };
+  /** Which of the server's projects this session is for (MPT-3). */
+  projectId?: string;
   project: string;
   activeJob: unknown | null;
   commitPolicy: { requireActiveJob: boolean; requireGovernanceClean: string };
@@ -287,19 +289,51 @@ function encodePath(path: string): string {
   return path.split('/').map(encodeURIComponent).join('/');
 }
 
+/** One project this user may open, as the server's discovery reply describes it (MPT-7). */
+export interface ProjectSummary {
+  id: string;
+  title: string;
+  branch: string;
+  role: string;
+}
+
+/**
+ * A server that hosts several projects, reached without naming one (MPT-3). This is a
+ * question to put to the user, not a failure: falling back to local-file mode here
+ * would hide a perfectly healthy server behind a folder picker.
+ */
+export interface ProjectChoice {
+  chooseProject: ProjectSummary[];
+}
+
+export function isProjectChoice(result: unknown): result is ProjectChoice {
+  return typeof result === 'object' && result !== null && 'chooseProject' in result;
+}
+
 /**
  * Probe for a SpecPad server at `baseUrl`. Returns null when there is none — a static
  * host answering the SPA's index.html for an unknown path must not be mistaken for one,
  * so the response has to be JSON *and* carry a session shape.
+ *
+ * A 400 carrying a project list is a server saying "which one?" and is returned as such.
  */
-export async function connectToServer(baseUrl: string): Promise<RemoteTransport | null> {
+export async function connectToServer(
+  baseUrl: string,
+): Promise<RemoteTransport | ProjectChoice | null> {
   try {
     const res = await fetch(`${baseUrl.replace(/\/+$/, '')}/session`, {
       credentials: 'same-origin',
     });
-    if (!res.ok) return null;
     if (!(res.headers.get('content-type') ?? '').includes('application/json')) return null;
-    const session = (await res.json()) as ServerSession;
+    const payload = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      // Only a project list makes a refusal meaningful; anything else is "no server".
+      const projects = (payload as { projects?: ProjectSummary[] } | null)?.projects;
+      return Array.isArray(projects) && projects.length > 0 ? { chooseProject: projects } : null;
+    }
+
+    const session = payload as ServerSession;
     if (!session || typeof session !== 'object' || !session.principal || !session.role) return null;
     return new RemoteTransport(baseUrl, session);
   } catch {

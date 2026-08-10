@@ -49,8 +49,15 @@ import {
   serverSubscribe,
   serverClaimPresence,
   serverReleasePresence,
+  isProjectChoice,
 } from './fileApi';
-import type { ServerSession, ServerStatus, Presence, UpstreamMoved } from './fileApi';
+import type {
+  ServerSession,
+  ServerStatus,
+  Presence,
+  UpstreamMoved,
+  ProjectSummary,
+} from './fileApi';
 import { activeJobIds, diffItems, REGISTER_TYPES } from './shared';
 import type { DocDiff, SrsItem, VtpItem, PrdItem, SpecPadDoc, JobCommit } from './shared';
 import { buildRedline, computeAttribution } from './changeTracking';
@@ -216,6 +223,8 @@ const LocalApp: React.FC = () => {
   const [showVersions, setShowVersions] = useState(false);
   // Server (remote) mode: the project lives in a clone the server owns (EDR-2).
   const [serverSession, setServerSession] = useState<ServerSession | null>(null);
+  // A multi-project server reached without a project named in the URL (MPT-9).
+  const [projectChoice, setProjectChoice] = useState<ProjectSummary[] | null>(null);
   const [serverState, setServerState] = useState<ServerStatus | null>(null);
   const [showCommit, setShowCommit] = useState(false);
   // Advisory presence and the upstream-moved signal (CE-3). Neither affects editing.
@@ -552,8 +561,16 @@ const LocalApp: React.FC = () => {
     void (async () => {
       // 1. Is a SpecPad server serving this page? If so it owns the project: there is
       //    no folder to pick, and the signed-in identity comes from the server (EDR-2).
-      const session = await connectToSpecPadServer();
+      //    Which project it owns comes from the URL when the server hosts several (MPT-9).
+      const session = await connectToSpecPadServer(launch.project);
       if (cancelled) return;
+      // A server hosting several projects, reached without one named: ask, rather than
+      // opening an arbitrary project or falling back to the local folder picker.
+      if (isProjectChoice(session)) {
+        setProjectChoice(session.chooseProject);
+        setIsDirectoryOpen(false);
+        return;
+      }
       if (session) {
         setServerSession(session);
         setLoading(true);
@@ -855,7 +872,23 @@ const LocalApp: React.FC = () => {
         </div>
       )}
 
-      {!supportsFileSystemAccess && !launch.demo && !serverSession && (
+      {projectChoice && (
+        <div className="alert alert-info" role="status">
+          <strong>Choose a project.</strong> This SpecPad server hosts several; open the one you want:
+          <ul className="mb-0 mt-2">
+            {projectChoice.map((p) => (
+              <li key={p.id}>
+                <a href={`?project=${encodeURIComponent(p.id)}`}>{p.title}</a>{' '}
+                <span className="text-muted">
+                  ({p.branch} — you are a {p.role})
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {!supportsFileSystemAccess && !launch.demo && !serverSession && !projectChoice && (
         <div className="alert alert-warning">
           Your browser doesn't support the File System Access API. Use Chrome or Edge for full editing.
         </div>

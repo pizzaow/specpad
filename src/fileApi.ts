@@ -29,9 +29,11 @@ import {
 } from './transports/types';
 import { LocalTransport, isFileSystemAccessSupported, verifyPermission } from './transports/local';
 import { DemoTransport, READ_ONLY_DEMO } from './transports/demo';
-import { RemoteTransport, connectToServer } from './transports/remote';
+import { RemoteTransport, connectToServer, isProjectChoice } from './transports/remote';
 import type {
   ServerSession,
+  ProjectChoice,
+  ProjectSummary,
   ServerStatus,
   CommitResult,
   ServerConflict,
@@ -44,6 +46,8 @@ import type {
 export type { FileApi, DocumentListItem, DocKind, SnapshotLocation };
 export type {
   ServerSession,
+  ProjectChoice,
+  ProjectSummary,
   ServerStatus,
   CommitResult,
   ServerConflict,
@@ -51,6 +55,7 @@ export type {
   Presence,
   UpstreamMoved,
 };
+export { isProjectChoice };
 export {
   classifyDocFilename,
   serializeDocument,
@@ -102,17 +107,29 @@ export async function openDemoProject(): Promise<{ name: string; documents: Docu
 let remoteTransport: RemoteTransport | null = null;
 
 /**
- * Look for a SpecPad server serving this page and switch to it if there is one.
- * Returns the session, or null when the editor is running against local files.
+ * The API base for a project (MPT-3). Naming none addresses the deployment's only
+ * project, which is what every single-project server — and every existing one — is.
+ */
+export function serverApiBase(projectId?: string): string {
+  return projectId ? `/api/v1/p/${encodeURIComponent(projectId)}` : '/api/v1';
+}
+
+/**
+ * Look for a SpecPad server serving this page and switch to it if there is one (MPT-9).
+ *
+ * Returns the session; null when the editor is running against local files; or the list
+ * of projects to choose from when a multi-project server was reached without one being
+ * named in the URL.
  */
 export async function connectToSpecPadServer(
-  baseUrl = '/api/v1',
-): Promise<ServerSession | null> {
-  const transport = await connectToServer(baseUrl);
-  if (!transport) return null;
-  remoteTransport = transport;
-  active = transport;
-  return transport.getSession();
+  projectId?: string,
+): Promise<ServerSession | ProjectChoice | null> {
+  const result = await connectToServer(serverApiBase(projectId));
+  if (!result) return null;
+  if (isProjectChoice(result)) return result;
+  remoteTransport = result;
+  active = result;
+  return result.getSession();
 }
 
 export function isServerMode(): boolean {

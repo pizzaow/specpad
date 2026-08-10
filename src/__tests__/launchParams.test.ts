@@ -50,3 +50,18 @@ describe('parseLaunchParams', () => {
     expect(p.demo).toBe(true);
   });
 });
+
+describe('project (MPT-9)', () => {
+  it('reads the project a self-hosted launcher names in the query string', () => {
+    expect(parseLaunchParams(loc('', '?project=acme')).project).toBe('acme');
+  });
+
+  it('reads it from the fragment too, for a launcher that puts it there', () => {
+    expect(parseLaunchParams(loc('#project=acme&open=srs')).project).toBe('acme');
+  });
+
+  it('is absent when no project is named, so the only project is used', () => {
+    expect(parseLaunchParams(loc('')).project).toBeUndefined();
+    expect(parseLaunchParams(loc('', '?demo')).project).toBeUndefined();
+  });
+});

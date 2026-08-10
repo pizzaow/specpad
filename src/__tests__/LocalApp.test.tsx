@@ -51,6 +51,8 @@ vi.mock('../fileApi', () => ({
   openProjectFromHandle: vi.fn(),
   // No SpecPad server is serving these tests: the editor falls through to local files.
   connectToSpecPadServer: vi.fn(async () => null),
+  isProjectChoice: (r: unknown) => typeof r === 'object' && r !== null && 'chooseProject' in r,
+  serverApiBase: (id?: string) => (id ? `/api/v1/p/${id}` : '/api/v1'),
   isServerMode: () => false,
   openServerProject: vi.fn(),
   serverStatus: vi.fn(async () => ({ changed: [], dirty: false })),
@@ -103,5 +105,28 @@ describe('LocalApp document switching', () => {
     fireEvent.click(screen.getByText('File ▾'));
     fireEvent.click(screen.getByText('Open project directory…'));
     expect(await screen.findByText(/Project overview/i)).toBeInTheDocument();
+  });
+
+  // MPT-9: a server hosting several projects, opened without one named in the URL.
+  it('asks which project to open rather than picking one or falling back to files', async () => {
+    const { connectToSpecPadServer } = await import('../fileApi');
+    (connectToSpecPadServer as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      chooseProject: [
+        { id: 'alpha', title: 'Alpha Device', branch: 'main', role: 'committer' },
+        { id: 'beta', title: 'Beta Device', branch: 'release', role: 'reader' },
+      ],
+    });
+
+    render(<LocalApp />);
+
+    expect(await screen.findByText(/Choose a project/i)).toBeInTheDocument();
+    const alpha = await screen.findByRole('link', { name: 'Alpha Device' });
+    expect(alpha).toHaveAttribute('href', '?project=alpha');
+    expect(await screen.findByRole('link', { name: 'Beta Device' })).toHaveAttribute(
+      'href',
+      '?project=beta',
+    );
+    // Not the local-files path: no folder picker prompt is offered in its place.
+    expect(screen.queryByText(/doesn't support the File System Access API/i)).toBeNull();
   });
 });

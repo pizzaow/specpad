@@ -59,6 +59,8 @@ vi.mock('../fileApi', () => ({
   verifyPermission: vi.fn(async () => false),
   openProjectFromHandle: vi.fn(),
   connectToSpecPadServer: vi.fn(async () => null),
+  isProjectChoice: () => false,
+  serverApiBase: (id?: string) => (id ? `/api/v1/p/${id}` : '/api/v1'),
   isServerMode: () => false,
   openServerProject: vi.fn(),
   serverStatus: vi.fn(async () => ({ changed: [], dirty: false })),

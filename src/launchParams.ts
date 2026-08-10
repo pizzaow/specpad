@@ -15,6 +15,7 @@ export interface LaunchParams {
   open?: OpenView;
   dir?: string; // the launcher's own folder path, used only to correlate locally
   demo: boolean; // read-only hosted demo (specpad.com/v01/?demo)
+  project?: string; // which project on a multi-project server (MPT-9)
 }
 
 export function parseLaunchParams(loc: Location = window.location): LaunchParams {
@@ -29,5 +30,8 @@ export function parseLaunchParams(loc: Location = window.location): LaunchParams
     open: open === 'srs' || open === 'vtp' || open === 'testing' ? open : undefined,
     dir: p.get('dir') || undefined,
     demo: search.has('demo') || p.has('demo'),
+    // A self-hosted launcher links straight to its project, so this normally arrives in
+    // the query string; the fragment is honoured too for a launcher that uses it.
+    project: search.get('project') || p.get('project') || undefined,
   };
 }

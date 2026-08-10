@@ -147,6 +147,10 @@ launcher — with no manual configuration. Re-running it must be a safe no-op.
    `https://specpad.com` when it sets none. A team running its own SpecPad server sets
    `editorBaseUrl` in `<name>.proj.json` so everyone on the repo lands on their server rather than
    the public editor; regenerate the launcher whenever that value changes.
+   Also replace `EDITOR_PROJECT_ID` with the index's **`editorProjectId`**, or the empty string when
+   it sets none. One server can host several repositories' projects, and that id is how this
+   repository's launcher opens **its own** project rather than the server's project list; a server
+   hosting a single project needs no id.
 4. **Install the pre-push hook** (the commit-check backstop):
    ```
    mkdir -p .githooks

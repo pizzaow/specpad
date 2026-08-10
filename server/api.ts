@@ -8,7 +8,7 @@
  */
 import { can } from './auth';
 import type { Session } from './auth';
-import type { ServerConfig } from './config';
+import type { ProjectConfig } from './config';
 import type { WorkingCopy } from './workingCopy';
 import { PathError } from './paths';
 import type { PresenceRegistry } from './presence';
@@ -44,11 +44,11 @@ export async function handleApi(
   req: ApiRequest,
   session: Session,
   workingCopy: WorkingCopy,
-  config: ServerConfig,
+  project: ProjectConfig,
   services?: ApiServices,
 ): Promise<ApiResponse> {
   try {
-    return await route(req, session, workingCopy, config, services);
+    return await route(req, session, workingCopy, project, services);
   } catch (err) {
     if (err instanceof PathError) return error(400, err.message);
     return error(500, err instanceof Error ? err.message : String(err));
@@ -59,7 +59,7 @@ async function route(
   req: ApiRequest,
   session: Session,
   wc: WorkingCopy,
-  config: ServerConfig,
+  project: ProjectConfig,
   services?: ApiServices,
 ): Promise<ApiResponse> {
   const { method, path } = req;
@@ -79,10 +79,11 @@ async function route(
         write: can(session.role, 'write'),
         commit: can(session.role, 'commit'),
       },
-      repo: { branch: config.repo.branch, projectDir: config.repo.paths[0] },
+      repo: { branch: project.repo.branch, projectDir: project.repo.paths[0] },
+      projectId: project.id,
       project: await wc.projectName(),
       activeJob: bundle.job ?? null,
-      commitPolicy: config.commit,
+      commitPolicy: project.commit,
     });
   }
 

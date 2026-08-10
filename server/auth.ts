@@ -203,19 +203,40 @@ export interface Session {
   role: Role;
 }
 
-/** Authenticate and authorize in one step; null when either fails (AUTH-5). */
+/**
+ * Authorize an already-identified principal against one role map (AUTH-5, MPT-5).
+ *
+ * Identity is deployment-wide; authorization is per project, so these are two steps
+ * rather than one: a principal signs in once and is then judged separately for each
+ * project they ask for. Null means "no role here", which is not a statement about any
+ * other project (MPT-6).
+ */
+export function sessionFor(
+  provider: AuthProvider,
+  principal: Principal,
+  roles: Record<Role, string[]>,
+): Session | null {
+  // The dev provider is its own authorization: a loopback-only fixed identity.
+  const role =
+    provider.name === 'dev' && ROLES.every((r) => roles[r].length === 0)
+      ? 'committer'
+      : roleFor(roles, principal.groups);
+  if (!role) return null;
+  return { principal, role };
+}
+
+/**
+ * Authenticate and authorize in one step; null when either fails (AUTH-5). `roles`
+ * defaults to the server-wide map — a caller serving a specific project passes that
+ * project's resolved map instead.
+ */
 export async function resolveSession(
   provider: AuthProvider,
   config: AuthConfig,
   req: AuthRequest,
+  roles: Record<Role, string[]> = config.roles,
 ): Promise<Session | null> {
   const principal = await provider.authenticate(req);
   if (!principal) return null;
-  // The dev provider is its own authorization: a loopback-only fixed identity.
-  const role =
-    provider.name === 'dev' && ROLES.every((r) => config.roles[r].length === 0)
-      ? 'committer'
-      : roleFor(config.roles, principal.groups);
-  if (!role) return null;
-  return { principal, role };
+  return sessionFor(provider, principal, roles);
 }

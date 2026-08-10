@@ -1,11 +1,16 @@
 /**
- * Server configuration (SRV-6).
+ * Server configuration (SRV-6, MPT-1, MPT-2).
  *
- * One declarative file describes the whole deployment: which repository, which branch,
- * which credential, which authentication provider, who gets which role, and how strict
- * the commit gate is. Validation is exhaustive and startup-blocking — a server that
- * comes up half-configured is worse than one that refuses to come up, because it holds
- * push access to a real repository.
+ * One declarative file describes the whole deployment: which repositories, which
+ * branches, which credentials, which authentication provider, who gets which role, and
+ * how strict the commit gate is. Validation is exhaustive and startup-blocking — a
+ * server that comes up half-configured is worse than one that refuses to come up,
+ * because it holds push access to real repositories.
+ *
+ * A deployment is a list of *projects* (MPT-1): a company with SpecPad in six
+ * repositories runs one server, not six. The older single-repository shape (`repo: {…}`
+ * at the root) is still accepted and read as a one-project deployment (MPT-2), so an
+ * existing config keeps working untouched.
  */
 
 import { editorVersionPath } from '../src/shared';
@@ -32,6 +37,32 @@ export interface RepoConfig {
   paths: string[];
 }
 
+/**
+ * One project the server hosts (MPT-1): a repository, plus the authorization and commit
+ * policy that apply to it. Roles and commit policy are *resolved* here — a project that
+ * declares neither inherits the server-wide ones (MPT-5), so the common case of "same
+ * rules everywhere" stays a single declaration.
+ *
+ * Everything below the routing layer takes a `ProjectConfig` rather than the whole
+ * server config, which is what makes cross-project access a type error rather than a
+ * thing to remember.
+ */
+export interface ProjectConfig {
+  /** URL- and path-safe identifier, unique across the deployment. */
+  id: string;
+  /** Human label for the project list; defaults to the id. */
+  title: string;
+  repo: RepoConfig;
+  roles: Record<Role, string[]>;
+  commit: CommitConfig;
+}
+
+/**
+ * A project id appears in a URL path and in a directory name, so it is constrained to
+ * an obviously safe alphabet rather than escaped at each use.
+ */
+const PROJECT_ID = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
+
 export interface AuthConfig {
   provider: AuthProviderName;
   /** Peers permitted to assert identity headers (proxy provider only). */
@@ -54,13 +85,28 @@ export interface CommitConfig {
 }
 
 export interface ServerConfig {
-  repo: RepoConfig;
+  /** Every project this server hosts, in configuration order (MPT-1). */
+  projects: ProjectConfig[];
   auth: AuthConfig;
+  /** Server-wide default, inherited by a project that declares no policy of its own. */
   commit: CommitConfig;
-  /** Where the bare clone and per-user worktrees live. */
+  /** Where each project's bare clone and per-user worktrees live. */
   workDir: string;
   port: number;
   bind: string;
+}
+
+/**
+ * The project a request without a project segment means (MPT-3). Exactly one configured
+ * project makes that unambiguous; more than one makes it a question the caller must
+ * answer, so this returns null rather than guessing.
+ */
+export function soleProject(config: ServerConfig): ProjectConfig | null {
+  return config.projects.length === 1 ? config.projects[0] : null;
+}
+
+export function findProject(config: ServerConfig, id: string): ProjectConfig | null {
+  return config.projects.find((p) => p.id === id) ?? null;
 }
 
 const DEFAULT_HEADERS = {
@@ -83,6 +129,93 @@ function asStringArray(value: unknown): string[] | null {
   return value as string[];
 }
 
+/** Parse a role map, collecting problems under the given config path. */
+function parseRoles(
+  raw: unknown,
+  where: string,
+  errors: string[],
+): Record<Role, string[]> | null {
+  if (raw === undefined) return null;
+  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
+    errors.push(`${where} must be an object mapping roles to group names`);
+    return null;
+  }
+  const rolesRaw = raw as Record<string, unknown>;
+  const roles = { reader: [], editor: [], committer: [] } as Record<Role, string[]>;
+  for (const role of ROLES) {
+    if (rolesRaw[role] === undefined) continue;
+    const list = asStringArray(rolesRaw[role]);
+    if (list === null) {
+      errors.push(`${where}.${role} must be an array of group names`);
+      continue;
+    }
+    roles[role] = list;
+  }
+  for (const key of Object.keys(rolesRaw)) {
+    if (!ROLES.includes(key as Role)) {
+      errors.push(`${where}.${key} is not a role (expected reader, editor, or committer)`);
+    }
+  }
+  return roles;
+}
+
+/** Parse the repository half of a project entry (or the legacy root `repo`). */
+function parseRepo(raw: Record<string, any>, where: string, errors: string[]): RepoConfig {
+  if (typeof raw.url !== 'string' || raw.url.trim() === '') {
+    errors.push(`${where}.url is required`);
+  }
+  if (typeof raw.branch !== 'string' || raw.branch.trim() === '') {
+    errors.push(`${where}.branch is required`);
+  }
+  let paths = asStringArray(raw.paths) ?? ['docs/specpad/'];
+  if (raw.paths !== undefined && asStringArray(raw.paths) === null) {
+    errors.push(`${where}.paths must be an array of strings`);
+    paths = ['docs/specpad/'];
+  }
+  if (paths.length === 0) errors.push(`${where}.paths must not be empty`);
+  for (const p of paths) {
+    if (p.startsWith('/') || /^[A-Za-z]:/.test(p)) {
+      errors.push(`${where}.paths entry "${p}" must be relative to the repository root`);
+    }
+    if (p.split(/[\\/]/).includes('..')) {
+      errors.push(`${where}.paths entry "${p}" must not contain ".."`);
+    }
+  }
+  return {
+    url: raw.url,
+    branch: raw.branch,
+    credentialFile: raw.credentialFile,
+    // Normalize to a trailing-slash-free, forward-slash form for prefix matching.
+    paths: paths.map((p) => p.replace(/\\/g, '/').replace(/\/+$/, '')),
+  };
+}
+
+/** Parse a commit policy, falling back to the given defaults. */
+function parseCommit(raw: unknown, where: string, errors: string[], base: CommitConfig): CommitConfig {
+  if (raw === undefined) return base;
+  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
+    errors.push(`${where} must be an object`);
+    return base;
+  }
+  const commitRaw = raw as Record<string, unknown>;
+  const policy = commitRaw.requireGovernanceClean ?? base.requireGovernanceClean;
+  if (policy !== 'block' && policy !== 'warn' && policy !== 'off') {
+    errors.push(`${where}.requireGovernanceClean must be "block", "warn", or "off"`);
+  }
+  if (commitRaw.requireActiveJob !== undefined && typeof commitRaw.requireActiveJob !== 'boolean') {
+    errors.push(`${where}.requireActiveJob must be a boolean`);
+  }
+  const pushRetries = commitRaw.pushRetries ?? base.pushRetries;
+  if (typeof pushRetries !== 'number' || !Number.isInteger(pushRetries) || pushRetries < 0) {
+    errors.push(`${where}.pushRetries must be a non-negative integer`);
+  }
+  return {
+    requireActiveJob: (commitRaw.requireActiveJob as boolean) ?? base.requireActiveJob,
+    requireGovernanceClean: policy as GovernancePolicy,
+    pushRetries: pushRetries as number,
+  };
+}
+
 /**
  * Validate raw config (parsed JSON) into a `ServerConfig`, collecting every problem
  * rather than failing on the first — an operator should see the whole list at once.
@@ -92,29 +225,6 @@ export function validateConfig(raw: unknown): { config: ServerConfig | null; err
   const root = (raw ?? {}) as Record<string, any>;
   if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
     return { config: null, errors: ['config must be a JSON object'] };
-  }
-
-  // ---- repo ----
-  const repoRaw = (root.repo ?? {}) as Record<string, any>;
-  if (typeof repoRaw.url !== 'string' || repoRaw.url.trim() === '') {
-    errors.push('repo.url is required');
-  }
-  if (typeof repoRaw.branch !== 'string' || repoRaw.branch.trim() === '') {
-    errors.push('repo.branch is required');
-  }
-  let paths = asStringArray(repoRaw.paths) ?? ['docs/specpad/'];
-  if (repoRaw.paths !== undefined && asStringArray(repoRaw.paths) === null) {
-    errors.push('repo.paths must be an array of strings');
-    paths = ['docs/specpad/'];
-  }
-  if (paths.length === 0) errors.push('repo.paths must not be empty');
-  for (const p of paths) {
-    if (p.startsWith('/') || /^[A-Za-z]:/.test(p)) {
-      errors.push(`repo.paths entry "${p}" must be relative to the repository root`);
-    }
-    if (p.split(/[\\/]/).includes('..')) {
-      errors.push(`repo.paths entry "${p}" must not contain ".."`);
-    }
   }
 
   // ---- auth ----
@@ -149,27 +259,9 @@ export function validateConfig(raw: unknown): { config: ServerConfig | null; err
     }
   }
 
-  const rolesRaw = (authRaw.roles ?? {}) as Record<string, any>;
-  const roles = { reader: [], editor: [], committer: [] } as Record<Role, string[]>;
-  for (const role of ROLES) {
-    const groups = rolesRaw[role];
-    if (groups === undefined) continue;
-    const list = asStringArray(groups);
-    if (list === null) {
-      errors.push(`auth.roles.${role} must be an array of group names`);
-      continue;
-    }
-    roles[role] = list;
-  }
-  for (const key of Object.keys(rolesRaw)) {
-    if (!ROLES.includes(key as Role)) {
-      errors.push(`auth.roles.${key} is not a role (expected reader, editor, or committer)`);
-    }
-  }
-  // A server nobody can sign in to is a misconfiguration, not a secure default.
-  if (provider !== 'dev' && ROLES.every((r) => roles[r].length === 0)) {
-    errors.push('auth.roles must grant at least one role to at least one group');
-  }
+  const roles =
+    parseRoles(authRaw.roles, 'auth.roles', errors) ??
+    ({ reader: [], editor: [], committer: [] } as Record<Role, string[]>);
 
   const headersRaw = (authRaw.headers ?? {}) as Record<string, any>;
   const headers = { ...DEFAULT_HEADERS };
@@ -182,18 +274,73 @@ export function validateConfig(raw: unknown): { config: ServerConfig | null; err
     headers[key] = (headersRaw[key] as string).toLowerCase();
   }
 
-  // ---- commit ----
-  const commitRaw = (root.commit ?? {}) as Record<string, any>;
-  const policy = commitRaw.requireGovernanceClean ?? 'warn';
-  if (policy !== 'block' && policy !== 'warn' && policy !== 'off') {
-    errors.push('commit.requireGovernanceClean must be "block", "warn", or "off"');
+  // ---- commit (the server-wide default a project may override) ----
+  const commit = parseCommit(root.commit, 'commit', errors, {
+    requireActiveJob: true,
+    requireGovernanceClean: 'warn',
+    pushRetries: 3,
+  });
+
+  // ---- projects (MPT-1) ----
+  const projects: ProjectConfig[] = [];
+  if (root.projects !== undefined && root.repo !== undefined) {
+    errors.push('declare either "projects" or a single "repo", not both');
+  } else if (root.projects !== undefined) {
+    if (!Array.isArray(root.projects)) {
+      errors.push('projects must be an array');
+    } else if (root.projects.length === 0) {
+      errors.push('projects must not be empty');
+    } else {
+      const seen = new Set<string>();
+      root.projects.forEach((entry: unknown, i: number) => {
+        const where = `projects[${i}]`;
+        if (typeof entry !== 'object' || entry === null || Array.isArray(entry)) {
+          errors.push(`${where} must be an object`);
+          return;
+        }
+        const raw = entry as Record<string, any>;
+        const id = raw.id;
+        if (typeof id !== 'string' || !PROJECT_ID.test(id)) {
+          errors.push(
+            `${where}.id is required and must contain only letters, digits, ".", "-" and "_"`,
+          );
+        } else if (seen.has(id)) {
+          // Two projects answering to one name is unroutable, and the second would
+          // silently shadow the first: refuse rather than pick.
+          errors.push(`${where}.id "${id}" is already used by another project`);
+        } else {
+          seen.add(id);
+        }
+        projects.push({
+          id: typeof id === 'string' ? id : `#${i}`,
+          title: typeof raw.title === 'string' && raw.title.trim() !== '' ? raw.title : String(id ?? `#${i}`),
+          repo: parseRepo(raw, where, errors),
+          roles: parseRoles(raw.roles, `${where}.roles`, errors) ?? roles,
+          commit: parseCommit(raw.commit, `${where}.commit`, errors, commit),
+        });
+      });
+    }
+  } else {
+    // Legacy single-repository shape, read as a one-project deployment (MPT-2).
+    const repoRaw = (root.repo ?? {}) as Record<string, any>;
+    const id = typeof repoRaw.id === 'string' && repoRaw.id.trim() !== '' ? repoRaw.id : 'default';
+    if (!PROJECT_ID.test(id)) {
+      errors.push('repo.id must contain only letters, digits, ".", "-" and "_"');
+    }
+    projects.push({
+      id,
+      title: typeof repoRaw.title === 'string' && repoRaw.title.trim() !== '' ? repoRaw.title : id,
+      repo: parseRepo(repoRaw, 'repo', errors),
+      roles,
+      commit,
+    });
   }
-  if (commitRaw.requireActiveJob !== undefined && typeof commitRaw.requireActiveJob !== 'boolean') {
-    errors.push('commit.requireActiveJob must be a boolean');
-  }
-  const pushRetries = commitRaw.pushRetries ?? 3;
-  if (typeof pushRetries !== 'number' || !Number.isInteger(pushRetries) || pushRetries < 0) {
-    errors.push('commit.pushRetries must be a non-negative integer');
+
+  // A server nobody can sign in to is a misconfiguration, not a secure default. Checked
+  // across the deployment: a project-level map is enough to make the server usable.
+  const anyRole = (map: Record<Role, string[]>) => ROLES.some((r) => map[r].length > 0);
+  if (provider !== 'dev' && !anyRole(roles) && !projects.some((p) => anyRole(p.roles))) {
+    errors.push('auth.roles must grant at least one role to at least one group');
   }
 
   // ---- server ----
@@ -209,13 +356,7 @@ export function validateConfig(raw: unknown): { config: ServerConfig | null; err
 
   return {
     config: {
-      repo: {
-        url: repoRaw.url,
-        branch: repoRaw.branch,
-        credentialFile: repoRaw.credentialFile,
-        // Normalize to a trailing-slash-free, forward-slash form for prefix matching.
-        paths: paths.map((p) => p.replace(/\\/g, '/').replace(/\/+$/, '')),
-      },
+      projects,
       auth: {
         provider,
         trustedPeers,
@@ -229,11 +370,7 @@ export function validateConfig(raw: unknown): { config: ServerConfig | null; err
         },
         oidc: authRaw.oidc,
       },
-      commit: {
-        requireActiveJob: commitRaw.requireActiveJob ?? true,
-        requireGovernanceClean: policy as GovernancePolicy,
-        pushRetries,
-      },
+      commit,
       workDir: root.workDir,
       port,
       bind,

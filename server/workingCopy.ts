@@ -14,7 +14,7 @@ import { classifyDocFilename, serializeDocument } from '../src/transports/types'
 import type { DocumentListItem } from '../src/transports/types';
 import { Git } from './git';
 import type { MergeConflict } from '../src/shared';
-import type { ServerConfig } from './config';
+import type { ProjectConfig } from './config';
 import type { Principal } from './auth';
 import { resolveInProject } from './paths';
 import { checkCommit, buildCommitMessage } from './commitGate';
@@ -53,7 +53,7 @@ export interface StatusReport {
 export class WorkingCopy {
   constructor(
     private readonly git: Git,
-    private readonly config: ServerConfig,
+    private readonly config: ProjectConfig,
     /** Absolute path to the worktree root. */
     private readonly root: string,
   ) {}

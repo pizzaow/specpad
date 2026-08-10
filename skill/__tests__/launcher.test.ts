@@ -39,6 +39,19 @@ describe('launcher template', () => {
   it('keeps the project-name placeholder', () => {
     expect(template).toContain('PROJECT_NAME');
   });
+
+  // MPT-10: one server can host several repositories' projects, so a launcher has to
+  // be able to say which one it belongs to.
+  it('carries a placeholder for the server project id, and passes it on when set', () => {
+    expect(template).toContain('EDITOR_PROJECT_ID');
+    expect(template).toMatch(/PROJECT_ID \?\s*'&project=' \+ encodeURIComponent\(PROJECT_ID\)/);
+  });
+
+  it('names no project when the index configures none, so a single-project server is untouched', () => {
+    // The id is only appended when non-empty — an empty substitution must not produce
+    // "&project=", which a server would read as a request for a project called "".
+    expect(template).toMatch(/PROJECT_ID \? '&project=/);
+  });
 });
 
 describe('SKILL.md launcher instructions', () => {
@@ -50,5 +63,10 @@ describe('SKILL.md launcher instructions', () => {
 
   it('says to regenerate the launcher when the base changes', () => {
     expect(skill).toMatch(/regenerate the launcher/i);
+  });
+
+  it('tells the skill where the server project id comes from (MPT-10)', () => {
+    expect(skill).toContain('EDITOR_PROJECT_ID');
+    expect(skill).toMatch(/editorProjectId/);
   });
 });

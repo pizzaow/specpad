@@ -19,7 +19,7 @@ describe('validateConfig — accepting a good configuration', () => {
 
     expect(errors).toEqual([]);
     expect(config).not.toBeNull();
-    expect(config!.repo.paths).toEqual(['docs/specpad']);
+    expect(config!.projects[0].repo.paths).toEqual(['docs/specpad']);
     expect(config!.commit).toEqual({
       requireActiveJob: true,
       requireGovernanceClean: 'warn',
@@ -35,7 +35,7 @@ describe('validateConfig — accepting a good configuration', () => {
       repo: { ...valid.repo, paths: ['docs/specpad/', 'docs\\extra\\'] },
     });
 
-    expect(config!.repo.paths).toEqual(['docs/specpad', 'docs/extra']);
+    expect(config!.projects[0].repo.paths).toEqual(['docs/specpad', 'docs/extra']);
   });
 
   it('lets an operator override the identity header names', () => {
@@ -156,7 +156,7 @@ describe('validateConfig — refusing a bad configuration', () => {
 
 describe('loadConfig', () => {
   it('returns the configuration when it is valid', () => {
-    expect(loadConfig(valid).repo.branch).toBe('main');
+    expect(loadConfig(valid).projects[0].repo.branch).toBe('main');
   });
 
   it('throws with every problem listed, so startup fails loudly', () => {

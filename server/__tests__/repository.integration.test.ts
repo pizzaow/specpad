@@ -4,7 +4,7 @@ import { promises as fs } from 'node:fs';
 import { execFile } from 'node:child_process';
 import os from 'node:os';
 import path from 'node:path';
-import { Repository, worktreeName } from '../repository';
+import { Repository, worktreeName, projectWorkDir } from '../repository';
 import { Git, execGitRunner } from '../git';
 import { validateConfig } from '../config';
 import type { ServerConfig } from '../config';
@@ -133,17 +133,27 @@ beforeEach(async () => {
   config = c;
 });
 
+/** The repository for the deployment's only project. */
+function makeRepository(cfg: ServerConfig = config): Repository {
+  const project = cfg.projects[0];
+  return new Repository(project, projectWorkDir(cfg.workDir, project.id));
+}
+
 afterEach(async () => {
   if (root) await fs.rm(root, { recursive: true, force: true }).catch(() => undefined);
 });
 
 describe.skipIf(!gitAvailable)('Repository — provisioning (SRV-3, CMT-1)', () => {
   it('sparse-checks-out only the allowlisted paths, so source is physically absent', async () => {
-    const repository = new Repository(config);
+    const repository = makeRepository();
     await repository.ensureClone();
     const wc = await repository.workingCopyFor(jane);
 
-    const dir = path.join(config.workDir, 'work', worktreeName(jane.id));
+    const dir = path.join(
+      projectWorkDir(config.workDir, config.projects[0].id),
+      'work',
+      worktreeName(jane.id),
+    );
     const spec = await fs.stat(path.join(dir, 'docs', 'specpad')).catch(() => null);
     const src = await fs.stat(path.join(dir, 'src')).catch(() => null);
 
@@ -153,7 +163,7 @@ describe.skipIf(!gitAvailable)('Repository — provisioning (SRV-3, CMT-1)', () 
   });
 
   it('gives each user their own working copy, invisible to the other', async () => {
-    const repository = new Repository(config);
+    const repository = makeRepository();
     await repository.ensureClone();
     const janeCopy = await repository.workingCopyFor(jane);
     const kimCopy = await repository.workingCopyFor(kim);
@@ -174,7 +184,7 @@ describe.skipIf(!gitAvailable)('Repository — provisioning (SRV-3, CMT-1)', () 
 
 describe.skipIf(!gitAvailable)('Repository — status and the pending diff (CMT-2, CMT-7)', () => {
   it('reports an autosaved edit as pending, without committing it', async () => {
-    const repository = new Repository(config);
+    const repository = makeRepository();
     await repository.ensureClone();
     const wc = await repository.workingCopyFor(jane);
 
@@ -209,7 +219,7 @@ describe.skipIf(!gitAvailable)('Repository — status and the pending diff (CMT-
 
 describe.skipIf(!gitAvailable)('Repository — publishing (CMT-3, CMT-5, AUTH-6)', () => {
   it('commits as the human, with a Job trailer, and pushes to the branch', async () => {
-    const repository = new Repository(config);
+    const repository = makeRepository();
     await repository.ensureClone();
     const wc = await repository.workingCopyFor(jane);
 
@@ -232,7 +242,7 @@ describe.skipIf(!gitAvailable)('Repository — publishing (CMT-3, CMT-5, AUTH-6)
   });
 
   it('refuses to publish a change that breaks governance, and pushes nothing', async () => {
-    const repository = new Repository(config);
+    const repository = makeRepository();
     await repository.ensureClone();
     const wc = await repository.workingCopyFor(jane);
 
@@ -246,7 +256,7 @@ describe.skipIf(!gitAvailable)('Repository — publishing (CMT-3, CMT-5, AUTH-6)
   });
 
   it('refuses to publish with no active job when policy requires one', async () => {
-    const repository = new Repository(config);
+    const repository = makeRepository();
     await repository.ensureClone();
     const wc = await repository.workingCopyFor(jane);
 
@@ -259,7 +269,7 @@ describe.skipIf(!gitAvailable)('Repository — publishing (CMT-3, CMT-5, AUTH-6)
   });
 
   it('says there is nothing to commit rather than making an empty commit', async () => {
-    const repository = new Repository(config);
+    const repository = makeRepository();
     await repository.ensureClone();
     const wc = await repository.workingCopyFor(jane);
 
@@ -272,7 +282,7 @@ describe.skipIf(!gitAvailable)('Repository — publishing (CMT-3, CMT-5, AUTH-6)
 
 describe.skipIf(!gitAvailable)('Repository — concurrent editors (CMT-6, MRG-5)', () => {
   it('merges two people editing different requirements, with no conflict', async () => {
-    const repository = new Repository(config);
+    const repository = makeRepository();
     await repository.ensureClone();
     const janeCopy = await repository.workingCopyFor(jane);
     const kimCopy = await repository.workingCopyFor(kim);
@@ -310,7 +320,7 @@ describe.skipIf(!gitAvailable)('Repository — concurrent editors (CMT-6, MRG-5)
   });
 
   it('reports a conflict when two people rewrite the same field, and pushes nothing', async () => {
-    const repository = new Repository(config);
+    const repository = makeRepository();
     await repository.ensureClone();
     const janeCopy = await repository.workingCopyFor(jane);
     const kimCopy = await repository.workingCopyFor(kim);
@@ -339,7 +349,7 @@ describe.skipIf(!gitAvailable)('Repository — concurrent editors (CMT-6, MRG-5)
   });
 
   it('never leaves conflict markers in a document, whatever happens', async () => {
-    const repository = new Repository(config);
+    const repository = makeRepository();
     await repository.ensureClone();
     const janeCopy = await repository.workingCopyFor(jane);
     const kimCopy = await repository.workingCopyFor(kim);
@@ -367,7 +377,7 @@ describe.skipIf(!gitAvailable)('Repository — concurrent editors (CMT-6, MRG-5)
 
 describe.skipIf(!gitAvailable)('Repository — discard (CMT-7)', () => {
   it('reverts one user without touching another', async () => {
-    const repository = new Repository(config);
+    const repository = makeRepository();
     await repository.ensureClone();
     const janeCopy = await repository.workingCopyFor(jane);
     const kimCopy = await repository.workingCopyFor(kim);

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { handleApi, versionTag } from '../api';
 import type { ApiRequest } from '../api';
 import { validateConfig } from '../config';
-import type { ServerConfig, Role } from '../config';
+import type { ProjectConfig, Role } from '../config';
 import type { Session } from '../auth';
 import type { WorkingCopy } from '../workingCopy';
 import type { SrsDoc } from '../../src/shared';
@@ -18,7 +18,7 @@ const srs: SrsDoc = {
   items: [{ id: 'r_1', text: 'The system shall work.' }],
 };
 
-function config(): ServerConfig {
+function project(): ProjectConfig {
   const { config: c } = validateConfig({
     repo: { url: 'git@x:y.git', branch: 'main' },
     workDir: '/srv/specpad',
@@ -29,7 +29,7 @@ function config(): ServerConfig {
     },
   });
   if (!c) throw new Error('bad test config');
-  return c;
+  return c.projects[0];
 }
 
 function session(role: Role): Session {
@@ -71,7 +71,7 @@ const call = (req: Partial<ApiRequest>, role: Role = 'committer') =>
     { method: 'GET', path: '/', query: new URLSearchParams(), ...req },
     session(role),
     wc as unknown as WorkingCopy,
-    config(),
+    project(),
   );
 
 beforeEach(() => {

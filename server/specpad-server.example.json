@@ -1,10 +1,29 @@
 {
-  "repo": {
-    "url": "git@git.corp.internal:product/acme.git",
-    "branch": "main",
-    "credentialFile": "/run/secrets/specpad-deploy-key",
-    "paths": ["docs/specpad/"]
-  },
+  "projects": [
+    {
+      "id": "acme",
+      "title": "Acme Infusion Pump",
+      "url": "git@git.corp.internal:product/acme.git",
+      "branch": "main",
+      "credentialFile": "/run/secrets/specpad-acme-key",
+      "paths": ["docs/specpad/"]
+    },
+    {
+      "id": "beacon",
+      "title": "Beacon Monitor",
+      "url": "git@git.corp.internal:product/beacon.git",
+      "branch": "main",
+      "credentialFile": "/run/secrets/specpad-beacon-key",
+      "paths": ["docs/specpad/"],
+      "roles": {
+        "committer": ["grp-beacon-quality"],
+        "reader": ["grp-all-staff"]
+      },
+      "commit": {
+        "requireGovernanceClean": "block"
+      }
+    }
+  ],
   "auth": {
     "provider": "proxy",
     "trustedPeers": ["10.0.0.0/8"],
