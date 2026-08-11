@@ -567,7 +567,7 @@
       "description": "Release v1.5 — the self-hosted multi-user server, multi-project tenancy, and the fixes that landed after v1.4.",
       "technical_notes": "Release bookkeeping. Closed JOB-35..42 and set their version to v1.5; regenerated every closed job’s before/after/commits caches from git; moved the v1.4 full-document snapshot to .specpad/snapshots/v1.4 and regenerated .specpad/baseline from the v1.5 tag, freezing the verification run into it as the release’s design-verification evidence. JOB-1 stays open (perpetual foundational). JOB-35 and JOB-36 were committed with a Job: <code> trailer rather than Job: <id>, so their commit caches are recovered by matching on the code as well.",
       "version": "v1.5",
-      "status": "open"
+      "status": "closed"
     }
   ]
 }
