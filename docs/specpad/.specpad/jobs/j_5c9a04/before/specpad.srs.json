@@ -3332,7 +3332,7 @@
       "tags": [
         "design"
       ],
-      "text": "The editor shall present the detailed design as one continuous document, with an outline that indicates the section currently in view and scrolls to a section on request, and with each section rendering its own body, source paths and referencing requirements."
+      "text": "The editor shall present the detailed design as a navigable list of sections with the selected section rendered, embedding its diagrams inline."
     },
     {
       "id": "r_dd12",
@@ -3343,7 +3343,7 @@
       "tags": [
         "design"
       ],
-      "text": "The editor shall allow a section's title, code, source paths and body to be edited in place within the document, and shall allow sections to be added, reordered — including by dragging — and deleted."
+      "text": "The editor shall allow editing a section's title, code, source paths and body, and adding, reordering and deleting sections."
     },
     {
       "id": "r_dd13",
@@ -3379,29 +3379,6 @@
         "editor"
       ],
       "text": "Whether the session may edit shall be a single derived condition applied to every document view, so no view can present an editing affordance the session cannot honour."
-    },
-    {
-      "id": "r_dd15",
-      "code": "DD-15",
-      "design": [
-        "d_ddv001",
-        "d_sch001"
-      ],
-      "tags": [
-        "design"
-      ],
-      "text": "A section boundary in the detailed design shall be a stored item with its own identity, not a heading inferred from the section body, so that a continuous rendering never changes what a requirement traces to."
-    },
-    {
-      "id": "r_dd16",
-      "code": "DD-16",
-      "design": [
-        "d_ddv001"
-      ],
-      "tags": [
-        "design"
-      ],
-      "text": "Editing a section in the detailed design shall leave the surrounding sections rendered, so the reader keeps their position in the document."
     }
   ]
 }

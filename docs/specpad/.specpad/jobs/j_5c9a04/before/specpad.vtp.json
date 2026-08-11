@@ -3889,13 +3889,13 @@
       "verifies": [
         "r_dd11"
       ],
-      "text": "Open the Detailed Design tab, scroll the document, and use the outline to reach a section.",
-      "expected": "Every section is rendered in order in one scrolling document; the outline lists them all, marks the one in view, and scrolls to a section when it is chosen. Each section shows its own source paths and the requirements implementing it.",
+      "text": "Open the Detailed Design tab for a project with a detailed design, select sections from the list, and view one containing an embedded diagram.",
+      "expected": "Every section is listed and selectable; the selected section renders its title, source paths and markdown body, with a referenced diagram inline and a missing one named rather than silently dropped.",
       "automation": [
         {
           "runner": "vitest",
           "file": "src/components/__tests__/DetailedDesignView.test.tsx",
-          "selector": "DetailedDesignView — the document"
+          "selector": "DetailedDesignView — display"
         }
       ]
     },
@@ -3905,18 +3905,13 @@
       "verifies": [
         "r_dd12"
       ],
-      "text": "Edit a section's title, code, source paths and body in the document; add a section, reorder one by drag and by the move controls, and delete one.",
-      "expected": "Each edit is reported with the section's id unchanged; a new section gets a fresh unique id; drag handles are offered per outline entry when editing is permitted and absent when it is not; deletion removes only that section.",
+      "text": "Edit a section's title, code and source paths, add a section, reorder one, and delete one; then repeat with the editor read-only.",
+      "expected": "Each edit is reported to the shell with the section's id unchanged; a new section gets a fresh unique id; order changes as requested; deletion removes only that section. Read-only offers no edit affordance at all.",
       "automation": [
         {
           "runner": "vitest",
           "file": "src/components/__tests__/DetailedDesignView.test.tsx",
-          "selector": "DetailedDesignView — editing in place"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/DetailedDesignView.test.tsx",
-          "selector": "DetailedDesignView — structure"
+          "selector": "DetailedDesignView — editing"
         }
       ]
     },
@@ -4001,43 +3996,6 @@
           "runner": "vitest",
           "file": "src/components/__tests__/DetailedDesignView.test.tsx",
           "selector": "DetailedDesignView — editing"
-        }
-      ]
-    },
-    {
-      "id": "t_dd15",
-      "code": "TEST-239",
-      "verifies": [
-        "r_dd15"
-      ],
-      "text": "Inspect how a section boundary is stored, and place a markdown heading inside a section body.",
-      "expected": "Each section is a stored item with its own id, which is what a requirement references. A heading within a body is sub-structure and carries no id, so nothing can trace to it and the continuous rendering leaves every trace intact.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/sdd.test.ts",
-          "selector": "SDD — the identity guarantee"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/DetailedDesignView.test.tsx",
-          "selector": "DetailedDesignView — the document"
-        }
-      ]
-    },
-    {
-      "id": "t_dd16",
-      "code": "TEST-240",
-      "verifies": [
-        "r_dd16"
-      ],
-      "text": "Open one section for editing and inspect the sections around it.",
-      "expected": "The chosen section becomes editable in place while the sections before and after it stay rendered as prose.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/DetailedDesignView.test.tsx",
-          "selector": "opens the clicked section for editing and leaves its neighbours rendered"
         }
       ]
     }

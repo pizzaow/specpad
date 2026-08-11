@@ -1,23 +1,43 @@
 /**
- * DetailedDesignView — the Detailed Design tab: the SDD's sections, with Display and
- * Edit sub-tabs (the same shape as the Architecture tab).
+ * DetailedDesignView — the Detailed Design tab.
  *
- *  - Display: renders the section's markdown body, with `![alt](name.svg)` resolved
- *    inline from the loaded diagram map, exactly as the arc42 document does.
- *  - Edit: CodeMirror for the body, plus the section's title, code and source paths.
+ * The SDD is presented as one continuous document, which is how it is read and how it
+ * exports. A sticky outline tracks the section in view; editing happens in place on the
+ * section you are reading, so there is no document-level edit mode and nothing to scroll
+ * back to.
  *
- * The panel that matters most is neither of those: every section shows **which
- * requirements reference it**. That is the re-review rule made visible — changing a
- * section puts each of those requirements in question, and you cannot act on that if
- * you cannot see them (DD-8).
+ * Section boundaries are data, not formatting: `SrsItem.design` points at a section id,
+ * so a continuous rendering changes presentation only. A `##` inside a body is
+ * sub-structure within that section and cannot be traced to.
+ *
+ * Each section shows the requirements referencing it. Editing one says those
+ * requirements are now in question; deleting one names what would be left unresolved
+ * (DD-8, DD-13).
  */
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import CodeMirror from '@uiw/react-codemirror';
 import { markdown } from '@codemirror/lang-markdown';
+import {
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import type { SddDoc, SddSection, SrsDoc, SrsItem } from '../shared';
 import { createSddSection } from '../shared';
+import RowMenu from './RowMenu';
 
 interface DetailedDesignViewProps {
   doc: SddDoc | null;
@@ -69,6 +89,60 @@ function referencesBySection(srsDoc: SrsDoc | null | undefined): Map<string, Srs
   return map;
 }
 
+const label = (s: SddSection) => `${s.code ? `${s.code} · ` : ''}${s.title || '(untitled)'}`;
+
+/** One outline entry. Draggable by its handle so a click still navigates. */
+const OutlineEntry: React.FC<{
+  section: SddSection;
+  active: boolean;
+  draggable: boolean;
+  onSelect: () => void;
+}> = ({ section, active, draggable, onSelect }) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: section.id,
+    disabled: !draggable,
+  });
+
+  return (
+    <li
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.4 : 1,
+        marginLeft: (section.level ?? 0) * 10,
+        display: 'flex',
+        alignItems: 'baseline',
+        gap: 4,
+      }}
+    >
+      {draggable && (
+        <span
+          className="dd-drag"
+          aria-label={`Reorder ${label(section)}`}
+          style={{ cursor: 'grab', color: 'var(--muted, #999)', fontSize: '0.85em' }}
+          {...attributes}
+          {...listeners}
+        >
+          ⠿
+        </span>
+      )}
+      <a
+        href={`#${section.id}`}
+        className={`dd-outline-item${active ? ' active' : ''}`}
+        aria-current={active || undefined}
+        onClick={(e) => {
+          e.preventDefault();
+          onSelect();
+        }}
+        style={{ fontWeight: section.heading ? 'bold' : 'normal', flex: 1, padding: '2px 0' }}
+      >
+        {label(section)}
+      </a>
+    </li>
+  );
+};
+
 const DetailedDesignView: React.FC<DetailedDesignViewProps> = ({
   doc,
   srsDoc,
@@ -76,37 +150,52 @@ const DetailedDesignView: React.FC<DetailedDesignViewProps> = ({
   onChange,
   readOnly,
 }) => {
-  const [mode, setMode] = useState<'display' | 'edit'>('display');
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const nodes = useRef(new Map<string, HTMLElement>());
 
   const refs = useMemo(() => referencesBySection(srsDoc), [srsDoc]);
   const sections = doc?.items ?? [];
-  const selected = sections.find((s) => s.id === selectedId) ?? sections.find((s) => !s.heading) ?? null;
   const canEdit = !readOnly && !!onChange;
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  // Track which section is in view so the outline follows the reader (scrollspy).
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+        if (visible) setActiveId(visible.target.id);
+      },
+      { rootMargin: '-10% 0px -70% 0px', threshold: 0 },
+    );
+    for (const node of nodes.current.values()) observer.observe(node);
+    return () => observer.disconnect();
+  }, [sections.length]);
 
   if (!doc) {
     return <div className="alert alert-info">No detailed design for this project.</div>;
   }
 
-  const update = (id: string, patch: Partial<SddSection>) => {
+  const update = (id: string, patch: Partial<SddSection>) =>
     onChange?.({ ...doc, items: sections.map((s) => (s.id === id ? { ...s, ...patch } : s)) });
-  };
 
-  const addSection = (heading: boolean) => {
-    const section = createSddSection(sections.map((s) => s.id));
+  const insertAt = (at: number, heading: boolean, level = 0) => {
+    const fresh = createSddSection(sections.map((s) => s.id), level);
     const next: SddSection = heading
-      ? { id: section.id, title: 'New group', heading: true }
-      : { ...section, title: 'New section' };
-    const at = selected ? sections.findIndex((s) => s.id === selected.id) + 1 : sections.length;
-    const items = [...sections.slice(0, at), next, ...sections.slice(at)];
-    onChange?.({ ...doc, items });
-    setSelectedId(next.id);
+      ? { id: fresh.id, title: 'New group', heading: true, ...(level ? { level } : {}) }
+      : { ...fresh, title: 'New section' };
+    onChange?.({ ...doc, items: [...sections.slice(0, at), next, ...sections.slice(at)] });
+    setEditingId(next.id);
   };
 
-  const removeSection = (section: SddSection) => {
+  const remove = (section: SddSection) => {
     const referencing = refs.get(section.id) ?? [];
-    // Deleting a referenced section is the one action that genuinely breaks a trace, so
-    // it names the requirements that would be left dangling rather than just asking.
     const warning = referencing.length
       ? `${referencing.length} requirement(s) reference this section (${referencing
           .map((r) => r.code ?? r.id)
@@ -114,170 +203,190 @@ const DetailedDesignView: React.FC<DetailedDesignViewProps> = ({
       : `Delete "${section.title}"?`;
     if (!window.confirm(warning)) return;
     onChange?.({ ...doc, items: sections.filter((s) => s.id !== section.id) });
-    setSelectedId(null);
+    if (editingId === section.id) setEditingId(null);
   };
 
-  const move = (section: SddSection, delta: number) => {
-    const from = sections.findIndex((s) => s.id === section.id);
-    const to = from + delta;
+  const nudge = (index: number, delta: number) => {
+    const to = index + delta;
     if (to < 0 || to >= sections.length) return;
+    const items = [...sections];
+    const [moved] = items.splice(index, 1);
+    items.splice(to, 0, moved);
+    onChange?.({ ...doc, items });
+  };
+
+  const setLevel = (section: SddSection, delta: number) =>
+    update(section.id, { level: Math.max(0, (section.level ?? 0) + delta) });
+
+  const scrollTo = (id: string) => {
+    setActiveId(id);
+    nodes.current.get(id)?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  };
+
+  const onDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const from = sections.findIndex((s) => s.id === active.id);
+    const to = sections.findIndex((s) => s.id === over.id);
+    if (from < 0 || to < 0) return;
     const items = [...sections];
     const [moved] = items.splice(from, 1);
     items.splice(to, 0, moved);
     onChange?.({ ...doc, items });
   };
 
-  const referencing = selected ? refs.get(selected.id) ?? [] : [];
-
   return (
-    <div className="dd-view">
-      {canEdit && (
-        <ul className="nav nav-pills arch-subtabs" style={{ marginBottom: 12 }}>
-          {(['display', 'edit'] as const).map((m) => (
-            <li
-              key={m}
-              className={m === mode ? 'active' : ''}
-              style={{ display: 'inline-block', marginRight: 6 }}
-            >
-              <a
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setMode(m);
-                }}
-                style={{ fontWeight: m === mode ? 'bold' : 'normal' }}
+    <div className="dd-view" style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
+      <nav
+        className="dd-outline"
+        aria-label="Design sections"
+        style={{ flex: '0 0 240px', position: 'sticky', top: 8, maxHeight: '80vh', overflowY: 'auto' }}
+      >
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+          <SortableContext items={sections.map((s) => s.id)} strategy={verticalListSortingStrategy}>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+              {sections.map((s) => (
+                <OutlineEntry
+                  key={s.id}
+                  section={s}
+                  active={s.id === activeId}
+                  draggable={canEdit}
+                  onSelect={() => scrollTo(s.id)}
+                />
+              ))}
+            </ul>
+          </SortableContext>
+        </DndContext>
+        {canEdit && (
+          <button
+            type="button"
+            className="btn btn-default btn-xs"
+            style={{ marginTop: 10 }}
+            onClick={() => insertAt(sections.length, false)}
+          >
+            Add section
+          </button>
+        )}
+      </nav>
+
+      <article className="dd-doc" style={{ flex: 1, minWidth: 0 }}>
+        {sections.length === 0 && <p className="text-muted">This detailed design has no sections yet.</p>}
+
+        {sections.map((section, index) => {
+          const referencing = refs.get(section.id) ?? [];
+          const editing = editingId === section.id;
+          const menu = canEdit && (
+            <RowMenu
+              noun="section"
+              infoLabel="Edit section"
+              onAddAbove={() => insertAt(index, false, section.level)}
+              onAddBelow={() => insertAt(index + 1, false, section.level)}
+              onAddChild={() => insertAt(index + 1, false, (section.level ?? 0) + 1)}
+              onAddHeading={() => insertAt(index + 1, true, section.level)}
+              onIndent={() => setLevel(section, 1)}
+              onOutdent={() => setLevel(section, -1)}
+              onDelete={() => remove(section)}
+              onViewInfo={() => setEditingId(editing ? null : section.id)}
+              canOutdent={(section.level ?? 0) > 0}
+            />
+          );
+
+          if (section.heading) {
+            return (
+              <section
+                key={section.id}
+                id={section.id}
+                ref={(el) => { if (el) nodes.current.set(section.id, el); else nodes.current.delete(section.id); }}
+                className="dd-group"
+                style={{ marginTop: index === 0 ? 0 : 28 }}
               >
-                {m === 'display' ? 'Display' : 'Edit'}
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      <div className="dd-layout" style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-        <nav className="dd-outline" aria-label="Design sections" style={{ flex: '0 0 260px' }}>
-          <ul className="dd-outline-list" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-            {sections.map((s) => (
-              <li key={s.id} style={{ marginLeft: (s.level ?? 0) * 10 }}>
-                <a
-                  href="#"
-                  className={s.id === selected?.id ? 'dd-outline-item active' : 'dd-outline-item'}
-                  aria-current={s.id === selected?.id || undefined}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setSelectedId(s.id);
-                  }}
-                  style={{ fontWeight: s.heading ? 'bold' : 'normal', display: 'block', padding: '2px 0' }}
-                >
-                  {s.code ? `${s.code} · ` : ''}
-                  {s.title || <span className="text-muted">(untitled)</span>}
-                </a>
-              </li>
-            ))}
-          </ul>
-          {mode === 'edit' && canEdit && (
-            <div style={{ marginTop: 10 }}>
-              <button type="button" className="btn btn-default btn-xs" onClick={() => addSection(false)}>
-                Add section
-              </button>{' '}
-              <button type="button" className="btn btn-default btn-xs" onClick={() => addSection(true)}>
-                Add group
-              </button>
-            </div>
-          )}
-        </nav>
-
-        <section className="dd-section" style={{ flex: 1, minWidth: 0 }}>
-          {!selected ? (
-            <p className="text-muted">This detailed design has no sections yet.</p>
-          ) : mode === 'edit' && canEdit ? (
-            <div className="dd-edit">
-              <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-                <input
-                  className="form-control"
-                  aria-label="Section code"
-                  placeholder="Code (e.g. SDD-12)"
-                  style={{ flex: '0 0 160px' }}
-                  value={selected.code ?? ''}
-                  onChange={(e) => update(selected.id, { code: e.target.value })}
-                />
-                <input
-                  className="form-control"
-                  aria-label="Section title"
-                  placeholder="Title — the unit or design view"
-                  style={{ flex: 1 }}
-                  value={selected.title}
-                  onChange={(e) => update(selected.id, { title: e.target.value })}
-                />
-              </div>
-              <input
-                className="form-control"
-                aria-label="Source paths"
-                placeholder="Source paths, comma separated (e.g. src/shared/merge.ts)"
-                style={{ marginBottom: 8 }}
-                value={(selected.source ?? []).join(', ')}
-                onChange={(e) =>
-                  update(selected.id, {
-                    source: e.target.value
-                      .split(',')
-                      .map((p) => p.trim())
-                      .filter(Boolean),
-                  })
-                }
-              />
-
-              {referencing.length > 0 && (
-                <div className="alert alert-warning" style={{ padding: '6px 10px' }}>
-                  <strong>{referencing.length} requirement(s) reference this section.</strong> Changing
-                  it puts each of them in question — re-check them in this same job:{' '}
-                  {referencing.map((r) => r.code ?? r.id).join(', ')}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <h2 style={{ flex: 1, margin: 0, fontSize: '1.3em' }}>
+                    {editing ? (
+                      <input
+                        className="form-control"
+                        aria-label="Group title"
+                        value={section.title}
+                        autoFocus
+                        onChange={(e) => update(section.id, { title: e.target.value })}
+                        onBlur={() => setEditingId(null)}
+                      />
+                    ) : (
+                      <span
+                        onClick={() => canEdit && setEditingId(section.id)}
+                        style={{ cursor: canEdit ? 'text' : 'default' }}
+                      >
+                        {section.title || <span className="text-muted">(untitled group)</span>}
+                      </span>
+                    )}
+                  </h2>
+                  {menu}
                 </div>
-              )}
+                <hr style={{ marginTop: 6 }} />
+              </section>
+            );
+          }
 
-              {!selected.heading && (
-                <CodeMirror
-                  value={selected.body ?? ''}
-                  height="380px"
-                  extensions={[markdown()]}
-                  onChange={(v) => update(selected.id, { body: v })}
-                />
-              )}
-
-              <div style={{ marginTop: 8 }}>
-                <button type="button" className="btn btn-default btn-xs" onClick={() => move(selected, -1)}>
-                  Move up
-                </button>{' '}
-                <button type="button" className="btn btn-default btn-xs" onClick={() => move(selected, 1)}>
-                  Move down
-                </button>{' '}
-                <button type="button" className="btn btn-danger btn-xs" onClick={() => removeSection(selected)}>
-                  Delete section
-                </button>
+          return (
+            <section
+              key={section.id}
+              id={section.id}
+              ref={(el) => { if (el) nodes.current.set(section.id, el); else nodes.current.delete(section.id); }}
+              className={`dd-section${activeId === section.id ? ' active' : ''}`}
+              style={{ marginTop: 20, marginLeft: (section.level ?? 0) * 16, scrollMarginTop: 12 }}
+            >
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                <h3 style={{ flex: 1, margin: 0, fontSize: '1.1em' }}>
+                  {editing ? (
+                    <span style={{ display: 'flex', gap: 8 }}>
+                      <input
+                        className="form-control"
+                        aria-label="Section code"
+                        placeholder="Code"
+                        style={{ flex: '0 0 140px' }}
+                        value={section.code ?? ''}
+                        onChange={(e) => update(section.id, { code: e.target.value })}
+                      />
+                      <input
+                        className="form-control"
+                        aria-label="Section title"
+                        placeholder="Title — the unit or design view"
+                        style={{ flex: 1 }}
+                        value={section.title}
+                        onChange={(e) => update(section.id, { title: e.target.value })}
+                      />
+                    </span>
+                  ) : (
+                    label(section)
+                  )}
+                </h3>
+                {menu}
               </div>
-              <p className="text-muted" style={{ marginTop: 8 }}>
-                Place diagrams with <code>![caption](name.svg)</code>; author them in draw.io and drop in
-                the SVG export. Renaming or rewriting a section never breaks a reference — the link is on
-                its identity, not its title.
-              </p>
-            </div>
-          ) : (
-            <div className="dd-display">
-              <h3 style={{ marginTop: 0 }}>
-                {selected.code ? `${selected.code} · ` : ''}
-                {selected.title}
-              </h3>
 
-              {(selected.source ?? []).length > 0 && (
-                <p className="text-muted" style={{ marginTop: -4 }}>
-                  {(selected.source ?? []).map((p) => (
-                    <code key={p} style={{ marginRight: 8 }}>
-                      {p}
-                    </code>
-                  ))}
-                </p>
+              {editing ? (
+                <input
+                  className="form-control"
+                  aria-label="Source paths"
+                  placeholder="Source paths, comma separated"
+                  style={{ margin: '6px 0' }}
+                  value={(section.source ?? []).join(', ')}
+                  onChange={(e) =>
+                    update(section.id, {
+                      source: e.target.value.split(',').map((p) => p.trim()).filter(Boolean),
+                    })
+                  }
+                />
+              ) : (
+                (section.source ?? []).length > 0 && (
+                  <p className="text-muted" style={{ margin: '2px 0' }}>
+                    {(section.source ?? []).map((p) => (
+                      <code key={p} style={{ marginRight: 8 }}>{p}</code>
+                    ))}
+                  </p>
+                )
               )}
 
-              <div className="dd-refs" style={{ marginBottom: 10 }}>
+              <div className="dd-refs" style={{ margin: '4px 0 8px' }}>
                 {referencing.length > 0 ? (
                   <span>
                     <strong>Implements:</strong>{' '}
@@ -288,23 +397,54 @@ const DetailedDesignView: React.FC<DetailedDesignViewProps> = ({
                     ))}
                   </span>
                 ) : (
-                  !selected.heading && (
-                    <span className="text-muted">
-                      No requirement references this section yet.
-                    </span>
-                  )
+                  <span className="text-muted">No requirement references this section yet.</span>
                 )}
               </div>
 
-              {selected.body ? (
-                <Markdown md={selected.body} diagrams={diagrams} />
-              ) : (
-                !selected.heading && <p className="text-muted">This section has no content yet.</p>
+              {editing && referencing.length > 0 && (
+                <div className="alert alert-warning" style={{ padding: '6px 10px' }}>
+                  <strong>{referencing.length} requirement(s) reference this section.</strong> Changing
+                  it puts each of them in question — re-check them in this same job:{' '}
+                  {referencing.map((r) => r.code ?? r.id).join(', ')}
+                </div>
               )}
-            </div>
-          )}
-        </section>
-      </div>
+
+              {editing ? (
+                <>
+                  <CodeMirror
+                    value={section.body ?? ''}
+                    height="320px"
+                    extensions={[markdown()]}
+                    onChange={(v) => update(section.id, { body: v })}
+                  />
+                  <div style={{ marginTop: 6 }}>
+                    <button type="button" className="btn btn-default btn-xs" onClick={() => setEditingId(null)}>
+                      Done
+                    </button>{' '}
+                    <button type="button" className="btn btn-default btn-xs" onClick={() => nudge(index, -1)}>
+                      Move up
+                    </button>{' '}
+                    <button type="button" className="btn btn-default btn-xs" onClick={() => nudge(index, 1)}>
+                      Move down
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div
+                  onClick={() => canEdit && setEditingId(section.id)}
+                  style={{ cursor: canEdit ? 'text' : 'default' }}
+                >
+                  {section.body ? (
+                    <Markdown md={section.body} diagrams={diagrams} />
+                  ) : (
+                    <p className="text-muted">This section has no content yet.</p>
+                  )}
+                </div>
+              )}
+            </section>
+          );
+        })}
+      </article>
     </div>
   );
 };

@@ -23,6 +23,7 @@ export interface RowMenuProps {
   onViewInfo: () => void;
   canOutdent?: boolean; // default true; false disables Outdent (already at level 0)
   noun?: string; // what's being added (default 'requirement'); e.g. 'product requirement', 'test'
+  infoLabel?: string; // label for the info action (default 'View information')
 }
 
 const RowMenu: React.FC<RowMenuProps> = (props) => {
@@ -94,7 +95,7 @@ const RowMenu: React.FC<RowMenuProps> = (props) => {
                 </a>
               </li>
               <li role="separator" className="divider" />
-              <li><a href="#" onClick={pick(props.onViewInfo)}>View information</a></li>
+              <li><a href="#" onClick={pick(props.onViewInfo)}>{props.infoLabel ?? 'View information'}</a></li>
               <li><a href="#" className="text-danger" onClick={pick(props.onDelete)}>Delete</a></li>
             </ul>
           </>,

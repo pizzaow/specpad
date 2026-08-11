@@ -1,14 +1,14 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import DetailedDesignView from '../DetailedDesignView';
 import type { SddDoc, SrsDoc } from '../../shared';
 
 /**
- * The Detailed Design tab (DD-11..13).
+ * The Detailed Design tab (DD-11..13, DD-15..16).
  *
- * The assertions that matter are about the trace, not the chrome: a section shows which
- * requirements point at it, editing one warns that those requirements are now in
- * question, and deleting one says exactly what it would break.
+ * The document is continuous: every section is rendered, and editing happens on the
+ * section in place rather than in a separate pane. The assertions that matter are the
+ * trace ones — what references a section, and what a change to it puts in question.
  */
 
 const doc: SddDoc = {
@@ -21,11 +21,11 @@ const doc: SddDoc = {
     {
       id: 'd_aaa111',
       code: 'SDD-1',
-      title: 'auth — session establishment',
+      title: 'auth',
       source: ['src/auth.ts'],
-      body: '## Secret\nWhich identity provider is in use.\n\n![Flow](acme.auth.svg)',
+      body: 'Establishes a session.\n\n![Flow](acme.auth.svg)',
     },
-    { id: 'd_bbb222', code: 'SDD-2', title: 'report — rendering', body: 'Renders to PDF.' },
+    { id: 'd_bbb222', code: 'SDD-2', title: 'report', body: 'Renders to PDF.' },
   ],
 };
 
@@ -35,36 +35,64 @@ const srsDoc: SrsDoc = {
   name: 'AcmeApp',
   title: 'Requirements',
   items: [
-    { id: 'r_1', code: 'SSO-1', text: 'The system shall authenticate via SAML.', design: ['d_aaa111'] },
-    { id: 'r_2', code: 'SSO-2', text: 'The system shall expire a session.', design: ['d_aaa111'] },
-    { id: 'r_3', code: 'PDF-1', text: 'The system shall render a report.', design: ['d_bbb222'] },
+    { id: 'r_1', code: 'SSO-1', text: 'Authenticate via SAML.', design: ['d_aaa111'] },
+    { id: 'r_2', code: 'SSO-2', text: 'Expire a session.', design: ['d_aaa111'] },
+    { id: 'r_3', code: 'PDF-1', text: 'Render a report.', design: ['d_bbb222'] },
   ],
 };
 
-afterEach(() => vi.restoreAllMocks());
+beforeEach(() => {
+  // jsdom has neither; the view uses one for scrollspy and one for outline navigation.
+  vi.stubGlobal(
+    'IntersectionObserver',
+    class {
+      observe() {}
+      disconnect() {}
+      unobserve() {}
+    },
+  );
+  Element.prototype.scrollIntoView = vi.fn();
+});
 
-describe('DetailedDesignView — display', () => {
-  it('lists every section and opens one', () => {
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.restoreAllMocks();
+});
+
+/** The section element for a code, so assertions are scoped to one section. */
+const section = (code: string) =>
+  screen.getByRole('heading', { name: new RegExp(code) }).closest('section') as HTMLElement;
+
+describe('DetailedDesignView — the document', () => {
+  it('renders every section at once, in order, rather than one at a time', () => {
     render(<DetailedDesignView doc={doc} srsDoc={srsDoc} />);
 
-    expect(screen.getByRole('navigation', { name: 'Design sections' })).toHaveTextContent('SDD-2');
-    fireEvent.click(screen.getByRole('link', { name: /SDD-2/ }));
-
-    expect(screen.getByRole('heading', { name: /report — rendering/ })).toBeInTheDocument();
+    expect(screen.getByText('Establishes a session.')).toBeInTheDocument();
     expect(screen.getByText('Renders to PDF.')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Design views' })).toBeInTheDocument();
   });
 
-  it('shows which requirements the section implements', () => {
+  it('lists every section in the outline and scrolls to one on click', () => {
     render(<DetailedDesignView doc={doc} srsDoc={srsDoc} />);
-    fireEvent.click(screen.getByRole('link', { name: /SDD-1/ }));
+    const outline = screen.getByRole('navigation', { name: 'Design sections' });
 
-    expect(screen.getByText('SSO-1')).toBeInTheDocument();
-    expect(screen.getByText('SSO-2')).toBeInTheDocument();
-    expect(screen.queryByText('PDF-1')).toBeNull();
+    fireEvent.click(within(outline).getByRole('link', { name: /SDD-2/ }));
+
+    expect(Element.prototype.scrollIntoView).toHaveBeenCalled();
   });
 
-  it('says so when nothing references a section, rather than showing an empty row', () => {
-    const orphan: SddDoc = { ...doc, items: [{ id: 'd_ccc333', title: 'unreferenced' }] };
+  it('shows each section its own source paths and the requirements it implements', () => {
+    render(<DetailedDesignView doc={doc} srsDoc={srsDoc} />);
+
+    const auth = section('SDD-1');
+    expect(auth).toHaveTextContent('src/auth.ts');
+    expect(within(auth).getByText('SSO-1')).toBeInTheDocument();
+    expect(within(auth).getByText('SSO-2')).toBeInTheDocument();
+    expect(within(auth).queryByText('PDF-1')).toBeNull();
+  });
+
+  it('says when nothing references a section', () => {
+    const orphan: SddDoc = { ...doc, items: [{ id: 'd_ccc333', code: 'SDD-9', title: 'unused' }] };
     render(<DetailedDesignView doc={orphan} srsDoc={srsDoc} />);
 
     expect(screen.getByText(/No requirement references this section/i)).toBeInTheDocument();
@@ -72,80 +100,96 @@ describe('DetailedDesignView — display', () => {
 
   it('renders an embedded diagram inline, and names a missing one', () => {
     const { rerender } = render(
-      <DetailedDesignView doc={doc} srsDoc={srsDoc} diagrams={{ 'acme.auth.svg': '<svg><title>flow</title></svg>' }} />,
+      <DetailedDesignView doc={doc} srsDoc={srsDoc} diagrams={{ 'acme.auth.svg': '<svg />' }} />,
     );
-    fireEvent.click(screen.getByRole('link', { name: /SDD-1/ }));
     expect(screen.getByRole('img', { name: 'Flow' })).toBeInTheDocument();
 
     rerender(<DetailedDesignView doc={doc} srsDoc={srsDoc} diagrams={{}} />);
-    fireEvent.click(screen.getByRole('link', { name: /SDD-1/ }));
     expect(screen.getByText('[diagram: acme.auth.svg]')).toBeInTheDocument();
   });
 
-  it('reports an absent detailed design without offering an editor', () => {
+  it('reports an absent detailed design', () => {
     render(<DetailedDesignView doc={null} onChange={vi.fn()} />);
-
     expect(screen.getByText(/No detailed design for this project/i)).toBeInTheDocument();
-    expect(screen.queryByText('Edit')).toBeNull();
   });
 });
 
-describe('DetailedDesignView — editing', () => {
-  const openEdit = (onChange = vi.fn()) => {
+describe('DetailedDesignView — editing in place', () => {
+  it('opens the clicked section for editing and leaves its neighbours rendered', () => {
+    render(<DetailedDesignView doc={doc} srsDoc={srsDoc} onChange={vi.fn()} />);
+
+    fireEvent.click(screen.getByText('Establishes a session.'));
+
+    // The edited section gained inputs; the other section is still shown as prose.
+    expect(within(section('SDD-1')).getByLabelText('Section title')).toBeInTheDocument();
+    expect(screen.getByText('Renders to PDF.')).toBeInTheDocument();
+  });
+
+  it('edits title, code and source without changing the section id', () => {
+    const onChange = vi.fn();
     render(<DetailedDesignView doc={doc} srsDoc={srsDoc} onChange={onChange} />);
-    fireEvent.click(screen.getByText('Edit'));
-    return onChange;
-  };
+    fireEvent.click(screen.getByText('Renders to PDF.'));
 
-  it('edits a section title without touching its identity', () => {
-    const onChange = openEdit();
-    fireEvent.click(screen.getByRole('link', { name: /SDD-2/ }));
-    fireEvent.change(screen.getByLabelText('Section title'), { target: { value: 'renamed entirely' } });
+    fireEvent.change(within(section('SDD-2')).getByLabelText('Section title'), {
+      target: { value: 'renamed' },
+    });
+    let next = onChange.mock.calls.at(-1)![0] as SddDoc;
+    expect(next.items.find((s) => s.id === 'd_bbb222')).toMatchObject({ id: 'd_bbb222', title: 'renamed' });
 
-    const next = onChange.mock.calls.at(-1)![0] as SddDoc;
-    const edited = next.items.find((s) => s.id === 'd_bbb222')!;
-    expect(edited.title).toBe('renamed entirely');
-    expect(edited.id).toBe('d_bbb222'); // the link target is untouched
+    fireEvent.change(within(section('SDD-2')).getByLabelText('Source paths'), {
+      target: { value: 'src/report.ts, src/pdf.ts' },
+    });
+    next = onChange.mock.calls.at(-1)![0] as SddDoc;
+    expect(next.items.find((s) => s.id === 'd_bbb222')!.source).toEqual(['src/report.ts', 'src/pdf.ts']);
   });
 
   it('warns that the referencing requirements are now in question (DD-8)', () => {
-    openEdit();
-    fireEvent.click(screen.getByRole('link', { name: /SDD-1/ }));
+    render(<DetailedDesignView doc={doc} srsDoc={srsDoc} onChange={vi.fn()} />);
 
-    const warning = screen.getByText(/2 requirement\(s\) reference this section/i);
-    expect(warning).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Establishes a session.'));
+
+    const warning = within(section('SDD-1')).getByText(/2 requirement\(s\) reference this section/i);
     expect(warning.parentElement).toHaveTextContent('SSO-1');
     expect(warning.parentElement).toHaveTextContent('SSO-2');
   });
 
-  it('records source paths as a list', () => {
-    const onChange = openEdit();
-    fireEvent.click(screen.getByRole('link', { name: /SDD-2/ }));
-    fireEvent.change(screen.getByLabelText('Source paths'), {
-      target: { value: 'src/report.ts, src/pdf.ts' },
-    });
+  it('does not warn for a section nothing references', () => {
+    const withOrphan: SddDoc = {
+      ...doc,
+      items: [...doc.items, { id: 'd_ddd444', code: 'SDD-9', title: 'unused', body: 'Nothing points here.' }],
+    };
+    render(<DetailedDesignView doc={withOrphan} srsDoc={srsDoc} onChange={vi.fn()} />);
+    fireEvent.click(screen.getByText('Nothing points here.'));
 
-    const next = onChange.mock.calls.at(-1)![0] as SddDoc;
-    expect(next.items.find((s) => s.id === 'd_bbb222')!.source).toEqual(['src/report.ts', 'src/pdf.ts']);
+    expect(within(section('SDD-9')).queryByText(/requirement\(s\) reference this section/i)).toBeNull();
   });
+});
 
-  it('adds a section with a fresh id after the selected one', () => {
-    const onChange = openEdit();
-    fireEvent.click(screen.getByRole('link', { name: /SDD-1/ }));
-    fireEvent.click(screen.getByRole('button', { name: 'Add section' }));
+describe('DetailedDesignView — structure', () => {
+  const openMenu = (code: string) => {
+    const menu = within(section(code)).getByLabelText(/row actions/i);
+    fireEvent.click(menu);
+  };
+
+  it('adds a section below with a fresh id', () => {
+    const onChange = vi.fn();
+    render(<DetailedDesignView doc={doc} srsDoc={srsDoc} onChange={onChange} />);
+
+    openMenu('SDD-1');
+    fireEvent.click(screen.getByText('Below'));
 
     const next = onChange.mock.calls.at(-1)![0] as SddDoc;
     expect(next.items).toHaveLength(4);
     expect(next.items[2].id).toMatch(/^d_[0-9a-f]{6}$/);
-    expect(next.items[2].id).not.toBe('d_aaa111');
   });
 
   it('names the requirements a deletion would leave dangling, and abandons on cancel', () => {
     const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
-    const onChange = openEdit();
-    fireEvent.click(screen.getByRole('link', { name: /SDD-1/ }));
-    onChange.mockClear();
-    fireEvent.click(screen.getByRole('button', { name: 'Delete section' }));
+    const onChange = vi.fn();
+    render(<DetailedDesignView doc={doc} srsDoc={srsDoc} onChange={onChange} />);
+
+    openMenu('SDD-1');
+    fireEvent.click(screen.getByText(/delete/i));
 
     expect(confirmSpy.mock.calls[0][0]).toContain('SSO-1');
     expect(confirmSpy.mock.calls[0][0]).toContain('SSO-2');
@@ -154,27 +198,46 @@ describe('DetailedDesignView — editing', () => {
 
   it('deletes when confirmed', () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true);
-    const onChange = openEdit();
-    fireEvent.click(screen.getByRole('link', { name: /SDD-2/ }));
-    fireEvent.click(screen.getByRole('button', { name: 'Delete section' }));
+    const onChange = vi.fn();
+    render(<DetailedDesignView doc={doc} srsDoc={srsDoc} onChange={onChange} />);
+
+    openMenu('SDD-2');
+    fireEvent.click(screen.getByText(/delete/i));
 
     const next = onChange.mock.calls.at(-1)![0] as SddDoc;
     expect(next.items.map((s) => s.id)).not.toContain('d_bbb222');
   });
 
-  it('reorders sections', () => {
-    const onChange = openEdit();
-    fireEvent.click(screen.getByRole('link', { name: /SDD-2/ }));
-    fireEvent.click(screen.getByRole('button', { name: 'Move up' }));
+  it('reorders with the move controls', () => {
+    const onChange = vi.fn();
+    render(<DetailedDesignView doc={doc} srsDoc={srsDoc} onChange={onChange} />);
+    fireEvent.click(screen.getByText('Renders to PDF.'));
+
+    fireEvent.click(within(section('SDD-2')).getByRole('button', { name: 'Move up' }));
 
     const next = onChange.mock.calls.at(-1)![0] as SddDoc;
     expect(next.items.map((s) => s.id)).toEqual(['h_1', 'd_bbb222', 'd_aaa111']);
   });
 
-  it('offers no editing at all when read-only', () => {
-    render(<DetailedDesignView doc={doc} srsDoc={srsDoc} readOnly onChange={vi.fn()} />);
+  it('offers a drag handle per outline entry when editable', () => {
+    const { rerender } = render(<DetailedDesignView doc={doc} srsDoc={srsDoc} onChange={vi.fn()} />);
+    expect(screen.getAllByLabelText(/^Reorder /).length).toBe(doc.items.length);
 
-    expect(screen.queryByText('Edit')).toBeNull();
+    rerender(<DetailedDesignView doc={doc} srsDoc={srsDoc} onChange={vi.fn()} readOnly />);
+    expect(screen.queryByLabelText(/^Reorder /)).toBeNull();
+  });
+});
+
+describe('DetailedDesignView — read-only (EDR-3)', () => {
+  it('offers no menu, no drag handle, and does not open a section when clicked', () => {
+    const onChange = vi.fn();
+    render(<DetailedDesignView doc={doc} srsDoc={srsDoc} onChange={onChange} readOnly />);
+
+    fireEvent.click(screen.getByText('Establishes a session.'));
+
+    expect(screen.queryByLabelText(/row actions/i)).toBeNull();
+    expect(screen.queryByLabelText('Section title')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Add section' })).toBeNull();
+    expect(onChange).not.toHaveBeenCalled();
   });
 });

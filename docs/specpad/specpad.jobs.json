@@ -607,6 +607,19 @@
       "description": "The demo is now a sandbox: every document can be edited, changes live only in the browser and reset on reload, and Save offers the file as a download. Separately, someone signed in to a server with a read-only role now actually sees a read-only editor, rather than being allowed to type into changes the server would refuse.",
       "technical_notes": "Both halves had the same cause: nothing answered \"may I edit in this session\". readOnly was passed to some views from launch.demo and to none from the server session, so the demo blocked editing on PRD/SAD/SDD/Results while leaving SRS/VTP fully editable, and a server reader could type into every table. Now one derived value - the session capability - flows to every view, and demo is no longer read-only at all. SRSTable and VTPTable gain the readOnly prop the others already had. Persisting in demo mode downloads the document instead of writing, so the sandbox has an exit. Also closes the rendering half of EDR-3, which was previously verified only at the transport level.",
       "status": "open"
+    },
+    {
+      "id": "j_5c9a04",
+      "code": "JOB-47",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Detailed design reads as a document, and is written like one",
+      "description": "The detailed design is now one continuous document you scroll, with a sticky outline that follows where you are, editing in place on the section you are reading, and drag-to-reorder. Its text has been rewritten to read like reference documentation rather than a filled-in template.",
+      "technical_notes": "Two halves. (1) The view: outline-plus-single-section did not suit 55 short sections - a long index against short articles, with the editor always at the top of the pane and the management controls stranded below it. Replaced with a continuous document, scrollspy outline, per-section hover menu, and inline editing; section boundaries stay hard data because SrsItem.design points at a section id, so this is a rendering change only. (2) The prose: the guide prescribed a content checklist and the generator turned it into a form - 48 of 55 sections opened Secret: and 50 closed Acceptance:, and 69 percent sat within a third of the median length. The guide now frames the SDD as reference documentation (Diataxis: describe and only describe), names the tells to avoid, and states that length follows the unit rather than the template.",
+      "status": "open"
     }
   ]
 }

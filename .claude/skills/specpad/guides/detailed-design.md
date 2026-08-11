@@ -66,6 +66,66 @@ ones that carry information; skip the ones that would be empty:
 A design decision that was hard, contested, or is likely to be revisited deserves its own section
 whether or not a viewpoint covers it. That is the section a maintainer will actually come looking for.
 
+## How to write it
+
+**An SDD is reference documentation.** Not a narrative, not a design rationale, not a pitch. The
+governing rule, from Diátaxis: *describe and only describe*. A reader consults it while working and
+needs facts they can rely on, so the voice is austere — neutral, factual, present tense, third person.
+Describe what the software **is**, not what "we decided" or why it was clever.
+
+**Length follows the unit, not this guide.** A wrapper around one library call needs two sentences.
+A merge algorithm needs a page and possibly a diagram. There is no target length, and there is no
+section that must exist in every entry.
+
+> **Uniform section length is a defect.** If every section is roughly the same size, a template wrote
+> them, not an engineer. The content checklist below is a list of questions to answer *where they are
+> non-obvious* — not a form to fill in for every unit.
+
+Answer these where they carry information, and skip them where they do not:
+
+- What the unit is responsible for, and what it hides.
+- Its interface, and its behaviour on invalid input (§5.4.3) — say this whenever misuse is possible.
+- Algorithm, data owned, error handling, timing (§5.4.2) — say this where any of it is non-obvious.
+- Acceptance criteria (§5.5.3) — say this where "does it work" is not self-evident from the interface.
+
+### Cut these
+
+They are the difference between documentation and commentary:
+
+| Don't write | Write |
+|---|---|
+| "The load-bearing part is…", "the interesting part is…" | the fact itself |
+| "deliberately", "quite", "simply", "of course" | nothing — delete the word |
+| "Two things are worth knowing here" | the two things |
+| "This is the whole reason X exists" | X's responsibility, stated plainly |
+| Em-dash asides stacked two and three to a paragraph | separate sentences |
+| A closing flourish that restates the opening | stop when the facts run out |
+
+Rationale belongs in a **design-decision section of its own** when a choice was genuinely contested, or
+in the job that made it. Threading it through every unit description is what turns reference into essay.
+
+### ✍ The same section, twice
+
+❌ **Commentary:**
+> Secret: **that documents are merged by item id, never as text.** A line-based merge of a formatted
+> JSON array produces plausible-looking garbage — duplicated ids, orphaned references, silently dropped
+> items — and the failure is invisible in review. Interface: `mergeDocs(base, ours, theirs)`. Pure.
+> Acceptance: different-field edits combine; same-field edits conflict.
+
+✅ **Reference:**
+> `mergeDocs(base, ours, theirs)` returns the merged document and a list of conflicts. Pure; performs
+> no I/O.
+>
+> Items are matched by `id`. Field-level changes from both sides are combined. A conflict is reported
+> when both sides set the same field to different values, or one side deletes an item the other
+> modified. Item order is not compared. A document with no `items[]` array is rejected.
+>
+> Documents are never merged as text: a line-based merge of a formatted JSON array can produce
+> duplicated ids, references to deleted items, and dropped items, none visible in a diff review.
+
+Same information. The second is shorter, states the interface first, and has nothing in it that exists
+to sound insightful.
+
 ## Choosing units — the hard part
 
 62304 says only: *"the granularity of software units is defined by the manufacturer."* A unit is a
@@ -153,6 +213,8 @@ and it cannot see intent.
 - For each proposed unit, state the decision it appears to hide, and mark that line for the author to
   confirm. A guess about a secret is the most valuable and least reliable thing in the draft.
 - Fill `source` from real paths, so every section is checkable.
+- **Vary the length.** A draft where every section is the same size is a draft nobody thought about;
+  say less about the units that warrant less.
 - Tag drafted sections `draft` and leave them for review. An unreviewed generated SDD is worse than
   none: it looks like a design input and is really a summary of the code, which cannot verify itself.
 
