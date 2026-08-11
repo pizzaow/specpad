@@ -49,7 +49,7 @@ The registry says *what types can exist and how they behave*; the index says *wh
   PRD + SRS + VTP + starter SAD); `createProjectDoc` builds `documents[]` from `REGISTER_TYPES`.
 - **The deploy demo manifest**: any `<name>.<type>.json` except the sidecars.
 
-## 4. Recipe — adding a new pillar (e.g. SOUP / cybersecurity / SDD)
+## 4. Recipe — adding a new pillar (e.g. SOUP / cybersecurity / risk)
 
 For an id-keyed **register** type, the minimum:
 
@@ -67,6 +67,13 @@ with `PrdTable`. (A future generic register table could remove even this step.)
 
 Prose/asset pillars (like a new diagram set) attach to the architecture file group rather than the
 register path.
+
+**Worked example — the detailed design (JOB-44).** `sdd` was added exactly this way: a schema, a
+registry entry, two opt-in governance rules, and an entry in the project index. Snapshots, per-job
+diffs, the redline, the baseline and the demo manifest all picked it up with no edit. It also showed
+that a register's items need not be *fields*: an SDD section is a markdown body with a stable id, which
+is enough to be diffed, redlined and referenced while staying free-form enough for flowcharts. Its
+editor view is still outstanding — that remains the one manual step.
 
 ## 5. Non-goals / notes
 

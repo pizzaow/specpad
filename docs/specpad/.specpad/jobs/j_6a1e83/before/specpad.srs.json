@@ -18,9 +18,6 @@
       ],
       "tags": [
         "schema"
-      ],
-      "design": [
-        "d_inf001"
       ]
     },
     {
@@ -29,38 +26,22 @@
       "text": "Every document file shall carry a schemaVersion of \"1.0\" and a type of \"project\", \"srs\", or \"vtp\".",
       "tags": [
         "schema"
-      ],
-      "design": [
-        "d_inf001",
-        "d_sch001"
       ]
     },
     {
       "id": "r_a103",
       "code": "DOC-3",
-      "text": "Every document shall include a short system name and a human-readable title.",
-      "design": [
-        "d_inf001",
-        "d_sch001"
-      ]
+      "text": "Every document shall include a short system name and a human-readable title."
     },
     {
       "id": "r_a104",
       "code": "DOC-4",
-      "text": "Every SRS and VTP item shall have a required, stable id and required text; all other fields are optional.",
-      "design": [
-        "d_inf001",
-        "d_sch001"
-      ]
+      "text": "Every SRS and VTP item shall have a required, stable id and required text; all other fields are optional."
     },
     {
       "id": "r_a105",
       "code": "DOC-5",
-      "text": "A VTP item's result, when present, shall be one of \"\", \"not_tested\", \"passed\", or \"failed\".",
-      "design": [
-        "d_inf001",
-        "d_sch001"
-      ]
+      "text": "A VTP item's result, when present, shall be one of \"\", \"not_tested\", \"passed\", or \"failed\"."
     },
     {
       "id": "h_d0c1",
@@ -73,38 +54,22 @@
       "text": "Every item shall have a stable identifier that is generated once and never changes.",
       "tags": [
         "id"
-      ],
-      "design": [
-        "d_pat001",
-        "d_ids001"
       ]
     },
     {
       "id": "r_a202",
       "code": "ID-2",
-      "text": "Item identifiers shall use a typed prefix (\"r_\" for requirements, \"t_\" for tests, \"h_\" for headings) followed by a random suffix.",
-      "design": [
-        "d_pat001",
-        "d_ids001"
-      ]
+      "text": "Item identifiers shall use a typed prefix (\"r_\" for requirements, \"t_\" for tests, \"h_\" for headings) followed by a random suffix."
     },
     {
       "id": "r_a203",
       "code": "ID-3",
-      "text": "All cross-references (a test's verifies list) shall target item ids, never human-readable code labels.",
-      "design": [
-        "d_ids001",
-        "d_dif001"
-      ]
+      "text": "All cross-references (a test's verifies list) shall target item ids, never human-readable code labels."
     },
     {
       "id": "r_a204",
       "code": "ID-4",
-      "text": "Renaming an item's human label (code) shall never alter its id or break an existing reference.",
-      "design": [
-        "d_pat001",
-        "d_ids001"
-      ]
+      "text": "Renaming an item's human label (code) shall never alter its id or break an existing reference."
     },
     {
       "id": "h_d0c2",
@@ -117,9 +82,6 @@
       "text": "Derived values such as per-requirement test counts shall be computed on read and never stored in the files.",
       "tags": [
         "governance"
-      ],
-      "design": [
-        "d_inf001"
       ]
     },
     {
@@ -128,9 +90,6 @@
       "text": "The files shall not store edit history (author, timestamps, change lists); git is the history layer.",
       "satisfies": [
         "p_gh01"
-      ],
-      "design": [
-        "d_inf001"
       ]
     },
     {
@@ -144,18 +103,12 @@
       "text": "A shared validation module shall structurally validate each document against the v1 JSON Schema for its type.",
       "tags": [
         "validation"
-      ],
-      "design": [
-        "d_val001"
       ]
     },
     {
       "id": "r_a402",
       "code": "VAL-2",
-      "text": "Structural validation shall enforce required fields, value types, and the result enum, but not policy rules.",
-      "design": [
-        "d_val001"
-      ]
+      "text": "Structural validation shall enforce required fields, value types, and the result enum, but not policy rules."
     },
     {
       "id": "r_a403",
@@ -166,34 +119,22 @@
       ],
       "tags": [
         "governance"
-      ],
-      "design": [
-        "d_gov001"
       ]
     },
     {
       "id": "r_a404",
       "code": "GOV-2",
-      "text": "Governance shall enforce referential integrity: every verifies entry resolves to an existing requirement id.",
-      "design": [
-        "d_gov001"
-      ]
+      "text": "Governance shall enforce referential integrity: every verifies entry resolves to an existing requirement id."
     },
     {
       "id": "r_a405",
       "code": "GOV-3",
-      "text": "Governance shall enforce expected-result presence: every non-heading test has a non-empty expected value.",
-      "design": [
-        "d_gov001"
-      ]
+      "text": "Governance shall enforce expected-result presence: every non-heading test has a non-empty expected value."
     },
     {
       "id": "r_a406",
       "code": "GOV-4",
-      "text": "Heading items shall be exempt from the traceability and expected-result governance checks.",
-      "design": [
-        "d_gov001"
-      ]
+      "text": "Heading items shall be exempt from the traceability and expected-result governance checks."
     },
     {
       "id": "r_a407",
@@ -201,9 +142,6 @@
       "text": "The editor and the skill shall enforce the same governance rules from a single source of truth.",
       "satisfies": [
         "p_pc01"
-      ],
-      "design": [
-        "d_gov001"
       ]
     },
     {
@@ -217,55 +155,32 @@
       "text": "The editor shall read and write the JSON files locally via the File System Access API, with an upload/download fallback for unsupported browsers.",
       "tags": [
         "editor"
-      ],
-      "design": [
-        "d_tlc001"
       ]
     },
     {
       "id": "r_a502",
       "code": "ED-2",
-      "text": "The editor shall display each requirement's verifying-test count, computed on read from the VTP verifies references.",
-      "design": [
-        "d_app001",
-        "d_api001"
-      ]
+      "text": "The editor shall display each requirement's verifying-test count, computed on read from the VTP verifies references."
     },
     {
       "id": "r_a503",
       "code": "ED-3",
-      "text": "The editor shall record test results and notes on VTP items.",
-      "design": [
-        "d_app001",
-        "d_api001"
-      ]
+      "text": "The editor shall record test results and notes on VTP items."
     },
     {
       "id": "r_a504",
       "code": "ED-4",
-      "text": "The editor shall surface structural errors and governance warnings to the user live.",
-      "design": [
-        "d_app001",
-        "d_api001"
-      ]
+      "text": "The editor shall surface structural errors and governance warnings to the user live."
     },
     {
       "id": "r_a505",
       "code": "ED-5",
-      "text": "The editor shall flag a test whose verifies reference does not resolve to a requirement.",
-      "design": [
-        "d_app001",
-        "d_api001"
-      ]
+      "text": "The editor shall flag a test whose verifies reference does not resolve to a requirement."
     },
     {
       "id": "r_a506",
       "code": "ED-6",
-      "text": "The editor shall open the document indicated by the launcher's deep-link parameters and preserve item ids across a load/edit/save round-trip.",
-      "design": [
-        "d_lch001",
-        "d_lnc001"
-      ]
+      "text": "The editor shall open the document indicated by the launcher's deep-link parameters and preserve item ids across a load/edit/save round-trip."
     },
     {
       "id": "h_d0c5",
@@ -281,18 +196,12 @@
       ],
       "tags": [
         "skill"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
       "id": "r_a602",
       "code": "SKILL-2",
-      "text": "The skill shall validate structure and governance before reporting a task complete.",
-      "design": [
-        "d_skl001"
-      ]
+      "text": "The skill shall validate structure and governance before reporting a task complete."
     },
     {
       "id": "r_a603",
@@ -300,18 +209,12 @@
       "text": "The skill shall generate a launcher (index.html) that redirects to the version-pinned hosted editor at specpad.com/v01/.",
       "satisfies": [
         "p_ed01"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
       "id": "r_ms001",
       "code": "SKILL-4",
-      "text": "The schema reference page shall be generated at build time from the shared schema and governance modules, and the build shall fail if any schema field lacks a description.",
-      "design": [
-        "d_skl001"
-      ]
+      "text": "The schema reference page shall be generated at build time from the shared schema and governance modules, and the build shall fail if any schema field lacks a description."
     },
     {
       "id": "r_ms002",
@@ -319,9 +222,6 @@
       "text": "The distributable skill shall be downloadable from the site as a zip archive rebuilt from the repository at every deploy.",
       "satisfies": [
         "p_oss01"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -335,10 +235,6 @@
       "text": "The editor shall show which requirements and tests have changed since the latest release by diffing the working documents against the cached baseline snapshot.",
       "tags": [
         "change-tracking"
-      ],
-      "design": [
-        "d_chg001",
-        "d_skl001"
       ]
     },
     {
@@ -347,9 +243,6 @@
       "text": "Differences shall be computed by stable id, so renaming a code label or reordering items is not reported as a change.",
       "tags": [
         "change-tracking"
-      ],
-      "design": [
-        "d_dif001"
       ]
     },
     {
@@ -358,10 +251,6 @@
       "text": "The editor shall compute all change views; the skill shall not compute diffs, so both halves share one diff implementation and cannot disagree.",
       "tags": [
         "change-tracking"
-      ],
-      "design": [
-        "d_chg001",
-        "d_skl001"
       ]
     },
     {
@@ -370,10 +259,6 @@
       "text": "The skill shall maintain a committed, regenerable cache of raw document snapshots plus a release manifest under docs/specpad/; no computed diffs shall be stored.",
       "tags": [
         "change-tracking"
-      ],
-      "design": [
-        "d_chg001",
-        "d_skl001"
       ]
     },
     {
@@ -382,10 +267,6 @@
       "text": "The release manifest shall record, for each release, its version, git ref, date, and the author of the tagged commit.",
       "tags": [
         "change-tracking"
-      ],
-      "design": [
-        "d_chg001",
-        "d_skl001"
       ]
     },
     {
@@ -394,9 +275,6 @@
       "text": "The editor shall derive per-item attribution (the version an item was added in and last changed in) from the cached snapshots and show the responsible release author.",
       "tags": [
         "change-tracking"
-      ],
-      "design": [
-        "d_chg001"
       ]
     },
     {
@@ -405,10 +283,6 @@
       "text": "The editor shall present the release history from the manifest, indicating the current baseline.",
       "tags": [
         "change-tracking"
-      ],
-      "design": [
-        "d_chg001",
-        "d_skl001"
       ]
     },
     {
@@ -417,10 +291,6 @@
       "text": "Spec changes shall be associated with a development job via a current-job marker and a commit trailer, never by a field stored on individual items.",
       "tags": [
         "change-tracking"
-      ],
-      "design": [
-        "d_chg001",
-        "d_skl001"
       ]
     },
     {
@@ -429,10 +299,6 @@
       "text": "When the change-tracking cache is absent, the editor shall remain fully editable and indicate that history is unavailable.",
       "tags": [
         "change-tracking"
-      ],
-      "design": [
-        "d_deg001",
-        "d_chg001"
       ]
     },
     {
@@ -441,10 +307,6 @@
       "text": "The skill shall always cache the latest release snapshot and pull older release snapshots only on demand.",
       "tags": [
         "change-tracking"
-      ],
-      "design": [
-        "d_chg001",
-        "d_skl001"
       ]
     },
     {
@@ -460,9 +322,6 @@
       "level": 1,
       "tags": [
         "editor"
-      ],
-      "design": [
-        "d_tbl001"
       ]
     },
     {
@@ -472,9 +331,6 @@
       "level": 1,
       "tags": [
         "editor"
-      ],
-      "design": [
-        "d_tbl001"
       ]
     },
     {
@@ -484,9 +340,6 @@
       "level": 1,
       "tags": [
         "editor"
-      ],
-      "design": [
-        "d_tbl001"
       ]
     },
     {
@@ -496,9 +349,6 @@
       "level": 1,
       "tags": [
         "editor"
-      ],
-      "design": [
-        "d_chr001"
       ]
     },
     {
@@ -508,9 +358,6 @@
       "level": 1,
       "tags": [
         "editor"
-      ],
-      "design": [
-        "d_tbl001"
       ]
     },
     {
@@ -520,9 +367,6 @@
       "level": 1,
       "tags": [
         "editor"
-      ],
-      "design": [
-        "d_tbl001"
       ]
     },
     {
@@ -533,10 +377,6 @@
       "tags": [
         "editor",
         "change-tracking"
-      ],
-      "design": [
-        "d_chg001",
-        "d_tbl001"
       ]
     },
     {
@@ -546,9 +386,6 @@
       "level": 1,
       "tags": [
         "editor"
-      ],
-      "design": [
-        "d_tbl001"
       ]
     },
     {
@@ -567,10 +404,6 @@
       ],
       "tags": [
         "editor"
-      ],
-      "design": [
-        "d_chr001",
-        "d_app001"
       ]
     },
     {
@@ -580,10 +413,6 @@
       "level": 1,
       "tags": [
         "editor"
-      ],
-      "design": [
-        "d_chr001",
-        "d_app001"
       ]
     },
     {
@@ -593,10 +422,6 @@
       "level": 1,
       "tags": [
         "editor"
-      ],
-      "design": [
-        "d_app001",
-        "d_chr001"
       ]
     },
     {
@@ -606,10 +431,6 @@
       "level": 1,
       "tags": [
         "editor"
-      ],
-      "design": [
-        "d_chr001",
-        "d_app001"
       ]
     },
     {
@@ -620,10 +441,6 @@
       "tags": [
         "editor",
         "validation"
-      ],
-      "design": [
-        "d_chr001",
-        "d_app001"
       ]
     },
     {
@@ -634,10 +451,6 @@
       "tags": [
         "editor",
         "change-tracking"
-      ],
-      "design": [
-        "d_chr001",
-        "d_app001"
       ]
     },
     {
@@ -647,9 +460,6 @@
       "level": 1,
       "tags": [
         "editor"
-      ],
-      "design": [
-        "d_hst001"
       ]
     },
     {
@@ -666,10 +476,6 @@
       "level": 2,
       "tags": [
         "editor"
-      ],
-      "design": [
-        "d_chr001",
-        "d_app001"
       ]
     },
     {
@@ -679,10 +485,6 @@
       "level": 2,
       "tags": [
         "editor"
-      ],
-      "design": [
-        "d_chr001",
-        "d_app001"
       ]
     },
     {
@@ -692,10 +494,6 @@
       "level": 2,
       "tags": [
         "editor"
-      ],
-      "design": [
-        "d_chr001",
-        "d_app001"
       ]
     },
     {
@@ -712,9 +510,6 @@
       "level": 2,
       "tags": [
         "editor"
-      ],
-      "design": [
-        "d_tdm001"
       ]
     },
     {
@@ -724,9 +519,6 @@
       "level": 2,
       "tags": [
         "editor"
-      ],
-      "design": [
-        "d_tdm001"
       ]
     },
     {
@@ -744,10 +536,6 @@
       "tags": [
         "jobs",
         "change-tracking"
-      ],
-      "design": [
-        "d_skl001",
-        "d_jbv001"
       ]
     },
     {
@@ -757,10 +545,6 @@
       "tags": [
         "jobs",
         "change-tracking"
-      ],
-      "design": [
-        "d_skl001",
-        "d_jbv001"
       ]
     },
     {
@@ -773,10 +557,6 @@
       "tags": [
         "jobs",
         "change-tracking"
-      ],
-      "design": [
-        "d_skl001",
-        "d_jbv001"
       ]
     },
     {
@@ -786,10 +566,6 @@
       "tags": [
         "jobs",
         "governance"
-      ],
-      "design": [
-        "d_skl001",
-        "d_jbv001"
       ]
     },
     {
@@ -799,10 +575,6 @@
       "tags": [
         "jobs",
         "editor"
-      ],
-      "design": [
-        "d_skl001",
-        "d_jbv001"
       ]
     },
     {
@@ -811,10 +583,6 @@
       "text": "A closed job's scope shall be sealed: the skill shall not reactivate a closed job for new work but shall create a new job record instead.",
       "tags": [
         "jobs"
-      ],
-      "design": [
-        "d_skl001",
-        "d_jbv001"
       ]
     },
     {
@@ -824,10 +592,6 @@
       "tags": [
         "jobs",
         "governance"
-      ],
-      "design": [
-        "d_skl001",
-        "d_jbv001"
       ]
     },
     {
@@ -837,10 +601,6 @@
       "tags": [
         "jobs",
         "governance"
-      ],
-      "design": [
-        "d_skl001",
-        "d_jbv001"
       ]
     },
     {
@@ -850,10 +610,6 @@
       "tags": [
         "jobs",
         "governance"
-      ],
-      "design": [
-        "d_skl001",
-        "d_jbv001"
       ]
     },
     {
@@ -863,10 +619,6 @@
       "tags": [
         "jobs",
         "skill"
-      ],
-      "design": [
-        "d_skl001",
-        "d_jbv001"
       ]
     },
     {
@@ -876,10 +628,6 @@
       "tags": [
         "jobs",
         "skill"
-      ],
-      "design": [
-        "d_skl001",
-        "d_jbv001"
       ]
     },
     {
@@ -889,10 +637,6 @@
       "tags": [
         "jobs",
         "skill"
-      ],
-      "design": [
-        "d_skl001",
-        "d_jbv001"
       ]
     },
     {
@@ -902,10 +646,6 @@
       "tags": [
         "jobs",
         "editor"
-      ],
-      "design": [
-        "d_skl001",
-        "d_jbv001"
       ]
     },
     {
@@ -923,10 +663,6 @@
       "tags": [
         "skill",
         "onboarding"
-      ],
-      "design": [
-        "d_skl001",
-        "d_tpl001"
       ]
     },
     {
@@ -936,10 +672,6 @@
       "tags": [
         "skill",
         "onboarding"
-      ],
-      "design": [
-        "d_skl001",
-        "d_tpl001"
       ]
     },
     {
@@ -949,10 +681,6 @@
       "tags": [
         "skill",
         "onboarding"
-      ],
-      "design": [
-        "d_skl001",
-        "d_tpl001"
       ]
     },
     {
@@ -965,10 +693,6 @@
       "tags": [
         "skill",
         "onboarding"
-      ],
-      "design": [
-        "d_skl001",
-        "d_tpl001"
       ]
     },
     {
@@ -986,9 +710,6 @@
       "tags": [
         "skill",
         "onboarding"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -998,9 +719,6 @@
       "tags": [
         "skill",
         "onboarding"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -1010,9 +728,6 @@
       "tags": [
         "skill",
         "onboarding"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -1022,9 +737,6 @@
       "tags": [
         "skill",
         "onboarding"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -1034,9 +746,6 @@
       "tags": [
         "skill",
         "onboarding"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -1049,9 +758,6 @@
       "tags": [
         "skill",
         "onboarding"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -1069,9 +775,6 @@
       "tags": [
         "skill",
         "governance"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -1081,9 +784,6 @@
       "tags": [
         "skill",
         "governance"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -1093,9 +793,6 @@
       "tags": [
         "skill",
         "governance"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -1105,9 +802,6 @@
       "tags": [
         "skill",
         "governance"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -1117,9 +811,6 @@
       "tags": [
         "skill",
         "governance"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -1134,9 +825,6 @@
       "tags": [
         "editor",
         "jobs"
-      ],
-      "design": [
-        "d_jbv001"
       ]
     },
     {
@@ -1146,9 +834,6 @@
       "tags": [
         "editor",
         "jobs"
-      ],
-      "design": [
-        "d_jbv001"
       ]
     },
     {
@@ -1158,9 +843,6 @@
       "tags": [
         "editor",
         "jobs"
-      ],
-      "design": [
-        "d_jbv001"
       ]
     },
     {
@@ -1170,9 +852,6 @@
       "tags": [
         "editor",
         "jobs"
-      ],
-      "design": [
-        "d_jbv001"
       ]
     },
     {
@@ -1187,10 +866,6 @@
       "tags": [
         "skill",
         "change-tracking"
-      ],
-      "design": [
-        "d_jbv001",
-        "d_skl001"
       ]
     },
     {
@@ -1200,10 +875,6 @@
       "tags": [
         "jobs",
         "skill"
-      ],
-      "design": [
-        "d_jbv001",
-        "d_skl001"
       ]
     },
     {
@@ -1213,10 +884,6 @@
       "tags": [
         "jobs",
         "change-tracking"
-      ],
-      "design": [
-        "d_jbv001",
-        "d_skl001"
       ]
     },
     {
@@ -1226,10 +893,6 @@
       "tags": [
         "editor",
         "jobs"
-      ],
-      "design": [
-        "d_jbv001",
-        "d_skl001"
       ]
     },
     {
@@ -1242,10 +905,6 @@
       "tags": [
         "skill",
         "change-tracking"
-      ],
-      "design": [
-        "d_jbv001",
-        "d_skl001"
       ]
     },
     {
@@ -1258,10 +917,6 @@
       "tags": [
         "editor",
         "jobs"
-      ],
-      "design": [
-        "d_jbv001",
-        "d_skl001"
       ]
     },
     {
@@ -1274,10 +929,6 @@
       "tags": [
         "editor",
         "architecture"
-      ],
-      "design": [
-        "d_jbv001",
-        "d_skl001"
       ]
     },
     {
@@ -1295,9 +946,6 @@
       "tags": [
         "skill",
         "change-tracking"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -1307,9 +955,6 @@
       "tags": [
         "skill",
         "change-tracking"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -1319,9 +964,6 @@
       "tags": [
         "editor",
         "jobs"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -1339,9 +981,6 @@
       "tags": [
         "architecture",
         "skill"
-      ],
-      "design": [
-        "d_arv001"
       ]
     },
     {
@@ -1351,9 +990,6 @@
       "tags": [
         "architecture",
         "editor"
-      ],
-      "design": [
-        "d_arv001"
       ]
     },
     {
@@ -1363,9 +999,6 @@
       "tags": [
         "architecture",
         "change-tracking"
-      ],
-      "design": [
-        "d_arv001"
       ]
     },
     {
@@ -1375,9 +1008,6 @@
       "tags": [
         "architecture",
         "change-tracking"
-      ],
-      "design": [
-        "d_arv001"
       ]
     },
     {
@@ -1387,10 +1017,6 @@
       "tags": [
         "architecture",
         "skill"
-      ],
-      "design": [
-        "d_arv001",
-        "d_arc001"
       ]
     },
     {
@@ -1401,9 +1027,6 @@
         "architecture",
         "skill",
         "onboarding"
-      ],
-      "design": [
-        "d_arv001"
       ]
     },
     {
@@ -1416,9 +1039,6 @@
       "tags": [
         "architecture",
         "skill"
-      ],
-      "design": [
-        "d_arv001"
       ]
     },
     {
@@ -1429,9 +1049,6 @@
         "architecture",
         "skill",
         "editor"
-      ],
-      "design": [
-        "d_arv001"
       ]
     },
     {
@@ -1441,9 +1058,6 @@
       "tags": [
         "architecture",
         "editor"
-      ],
-      "design": [
-        "d_arv001"
       ]
     },
     {
@@ -1453,9 +1067,6 @@
       "tags": [
         "architecture",
         "editor"
-      ],
-      "design": [
-        "d_arv001"
       ]
     },
     {
@@ -1465,9 +1076,6 @@
       "tags": [
         "architecture",
         "editor"
-      ],
-      "design": [
-        "d_arv001"
       ]
     },
     {
@@ -1477,9 +1085,6 @@
       "tags": [
         "architecture",
         "change-tracking"
-      ],
-      "design": [
-        "d_arv001"
       ]
     },
     {
@@ -1492,10 +1097,6 @@
       "tags": [
         "architecture",
         "editor"
-      ],
-      "design": [
-        "d_arv001",
-        "d_deg001"
       ]
     },
     {
@@ -1505,10 +1106,6 @@
       "tags": [
         "architecture",
         "editor"
-      ],
-      "design": [
-        "d_arv001",
-        "d_deg001"
       ]
     },
     {
@@ -1518,10 +1115,6 @@
       "tags": [
         "architecture",
         "editor"
-      ],
-      "design": [
-        "d_arv001",
-        "d_deg001"
       ]
     },
     {
@@ -1531,10 +1124,6 @@
       "tags": [
         "architecture",
         "editor"
-      ],
-      "design": [
-        "d_arv001",
-        "d_deg001"
       ]
     },
     {
@@ -1544,10 +1133,6 @@
       "tags": [
         "architecture",
         "change-tracking"
-      ],
-      "design": [
-        "d_jbv001",
-        "d_arc001"
       ]
     },
     {
@@ -1557,10 +1142,6 @@
       "tags": [
         "architecture",
         "editor"
-      ],
-      "design": [
-        "d_jbv001",
-        "d_arc001"
       ]
     },
     {
@@ -1578,9 +1159,6 @@
       "tags": [
         "skill",
         "packaging"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -1590,9 +1168,6 @@
       "tags": [
         "skill",
         "packaging"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -1602,9 +1177,6 @@
       "tags": [
         "skill",
         "packaging"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -1623,9 +1195,6 @@
       "tags": [
         "change-tracking",
         "skill"
-      ],
-      "design": [
-        "d_rel001"
       ]
     },
     {
@@ -1635,10 +1204,6 @@
       "tags": [
         "change-tracking",
         "skill"
-      ],
-      "design": [
-        "d_rel001",
-        "d_skl001"
       ]
     },
     {
@@ -1648,10 +1213,6 @@
       "tags": [
         "editor",
         "change-tracking"
-      ],
-      "design": [
-        "d_rel001",
-        "d_skl001"
       ]
     },
     {
@@ -1664,10 +1225,6 @@
       "tags": [
         "skill",
         "releases"
-      ],
-      "design": [
-        "d_rel001",
-        "d_skl001"
       ]
     },
     {
@@ -1685,10 +1242,6 @@
       "tags": [
         "prd",
         "schema"
-      ],
-      "design": [
-        "d_tbl001",
-        "d_gov001"
       ]
     },
     {
@@ -1701,10 +1254,6 @@
       "tags": [
         "prd",
         "schema"
-      ],
-      "design": [
-        "d_tbl001",
-        "d_gov001"
       ]
     },
     {
@@ -1717,10 +1266,6 @@
       "tags": [
         "prd",
         "governance"
-      ],
-      "design": [
-        "d_tbl001",
-        "d_gov001"
       ]
     },
     {
@@ -1733,10 +1278,6 @@
       "tags": [
         "prd",
         "governance"
-      ],
-      "design": [
-        "d_tbl001",
-        "d_gov001"
       ]
     },
     {
@@ -1749,10 +1290,6 @@
       "tags": [
         "editor",
         "prd"
-      ],
-      "design": [
-        "d_tbl001",
-        "d_gov001"
       ]
     },
     {
@@ -1765,10 +1302,6 @@
       "tags": [
         "editor",
         "prd"
-      ],
-      "design": [
-        "d_tbl001",
-        "d_gov001"
       ]
     },
     {
@@ -1786,10 +1319,6 @@
       "tags": [
         "editor",
         "audit"
-      ],
-      "design": [
-        "d_avw001",
-        "d_aud001"
       ]
     },
     {
@@ -1802,10 +1331,6 @@
       "tags": [
         "editor",
         "audit"
-      ],
-      "design": [
-        "d_avw001",
-        "d_aud001"
       ]
     },
     {
@@ -1818,10 +1343,6 @@
       "tags": [
         "editor",
         "audit"
-      ],
-      "design": [
-        "d_avw001",
-        "d_aud001"
       ]
     },
     {
@@ -1834,10 +1355,6 @@
       "tags": [
         "editor",
         "audit"
-      ],
-      "design": [
-        "d_avw001",
-        "d_aud001"
       ]
     },
     {
@@ -1850,10 +1367,6 @@
       "tags": [
         "editor",
         "audit"
-      ],
-      "design": [
-        "d_avw001",
-        "d_aud001"
       ]
     },
     {
@@ -1866,10 +1379,6 @@
       "tags": [
         "editor",
         "prd"
-      ],
-      "design": [
-        "d_avw001",
-        "d_aud001"
       ]
     },
     {
@@ -1887,9 +1396,6 @@
       "tags": [
         "editor",
         "audit"
-      ],
-      "design": [
-        "d_dsc001"
       ]
     },
     {
@@ -1902,9 +1408,6 @@
       "tags": [
         "editor",
         "audit"
-      ],
-      "design": [
-        "d_dsc001"
       ]
     },
     {
@@ -1922,9 +1425,6 @@
       "tags": [
         "editor",
         "visual"
-      ],
-      "design": [
-        "d_thm001"
       ]
     },
     {
@@ -1937,9 +1437,6 @@
       "tags": [
         "editor",
         "visual"
-      ],
-      "design": [
-        "d_thm001"
       ]
     },
     {
@@ -1952,9 +1449,6 @@
       "tags": [
         "editor",
         "visual"
-      ],
-      "design": [
-        "d_chr001"
       ]
     },
     {
@@ -1967,9 +1461,6 @@
       "tags": [
         "editor",
         "visual"
-      ],
-      "design": [
-        "d_ovw001"
       ]
     },
     {
@@ -1982,9 +1473,6 @@
       "tags": [
         "editor",
         "visual"
-      ],
-      "design": [
-        "d_ovw001"
       ]
     },
     {
@@ -1998,9 +1486,6 @@
         "editor",
         "visual",
         "audit"
-      ],
-      "design": [
-        "d_chr001"
       ]
     },
     {
@@ -2018,9 +1503,6 @@
       "tags": [
         "skill",
         "authoring"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -2033,9 +1515,6 @@
       "tags": [
         "skill",
         "authoring"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -2048,9 +1527,6 @@
       "tags": [
         "skill",
         "authoring"
-      ],
-      "design": [
-        "d_skl001"
       ]
     },
     {
@@ -2068,9 +1544,6 @@
       "tags": [
         "schema",
         "registry"
-      ],
-      "design": [
-        "d_dct001"
       ]
     },
     {
@@ -2083,9 +1556,6 @@
       "tags": [
         "validation",
         "registry"
-      ],
-      "design": [
-        "d_dct001"
       ]
     },
     {
@@ -2099,9 +1569,6 @@
         "skill",
         "registry",
         "change-tracking"
-      ],
-      "design": [
-        "d_dct001"
       ]
     },
     {
@@ -2115,9 +1582,6 @@
         "editor",
         "registry",
         "change-tracking"
-      ],
-      "design": [
-        "d_dct001"
       ]
     },
     {
@@ -2131,9 +1595,6 @@
         "skill",
         "registry",
         "process"
-      ],
-      "design": [
-        "d_dct001"
       ]
     },
     {
@@ -2147,9 +1608,6 @@
         "schema",
         "registry",
         "architecture"
-      ],
-      "design": [
-        "d_dct001"
       ]
     },
     {
@@ -2167,9 +1625,6 @@
       "tags": [
         "editor",
         "authoring"
-      ],
-      "design": [
-        "d_tbl001"
       ]
     },
     {
@@ -2182,9 +1637,6 @@
       "tags": [
         "editor",
         "authoring"
-      ],
-      "design": [
-        "d_tbl001"
       ]
     },
     {
@@ -2197,9 +1649,6 @@
       "tags": [
         "editor",
         "authoring"
-      ],
-      "design": [
-        "d_tbl001"
       ]
     },
     {
@@ -2211,9 +1660,6 @@
       ],
       "tags": [
         "editor"
-      ],
-      "design": [
-        "d_tbl001"
       ]
     },
     {
@@ -2231,9 +1677,6 @@
       "tags": [
         "schema",
         "verification"
-      ],
-      "design": [
-        "d_ver001"
       ]
     },
     {
@@ -2246,9 +1689,6 @@
       "tags": [
         "schema",
         "verification"
-      ],
-      "design": [
-        "d_vrf001"
       ]
     },
     {
@@ -2260,10 +1700,6 @@
       ],
       "tags": [
         "verification"
-      ],
-      "design": [
-        "d_ver001",
-        "d_tst001"
       ]
     },
     {
@@ -2276,10 +1712,6 @@
       "tags": [
         "editor",
         "verification"
-      ],
-      "design": [
-        "d_ver001",
-        "d_tst001"
       ]
     },
     {
@@ -2292,10 +1724,6 @@
       "tags": [
         "skill",
         "verification"
-      ],
-      "design": [
-        "d_vrf001",
-        "d_skl001"
       ]
     },
     {
@@ -2308,10 +1736,6 @@
       "tags": [
         "editor",
         "verification"
-      ],
-      "design": [
-        "d_ver001",
-        "d_tst001"
       ]
     },
     {
@@ -2324,10 +1748,6 @@
       "tags": [
         "editor",
         "verification"
-      ],
-      "design": [
-        "d_jbv001",
-        "d_ver001"
       ]
     },
     {
@@ -2340,9 +1760,6 @@
       "tags": [
         "editor",
         "verification"
-      ],
-      "design": [
-        "d_aud001"
       ]
     },
     {
@@ -2365,10 +1782,6 @@
       ],
       "tags": [
         "server"
-      ],
-      "design": [
-        "d_sap001",
-        "d_ent001"
       ]
     },
     {
@@ -2381,9 +1794,6 @@
       "tags": [
         "server",
         "security"
-      ],
-      "design": [
-        "d_pth001"
       ]
     },
     {
@@ -2396,9 +1806,6 @@
       "tags": [
         "server",
         "security"
-      ],
-      "design": [
-        "d_rpo001"
       ]
     },
     {
@@ -2410,10 +1817,6 @@
       ],
       "tags": [
         "server"
-      ],
-      "design": [
-        "d_sap001",
-        "d_ent001"
       ]
     },
     {
@@ -2426,10 +1829,6 @@
       "tags": [
         "server",
         "contract"
-      ],
-      "design": [
-        "d_gov001",
-        "d_cgt001"
       ]
     },
     {
@@ -2441,9 +1840,6 @@
       ],
       "tags": [
         "server"
-      ],
-      "design": [
-        "d_scf001"
       ]
     },
     {
@@ -2455,10 +1851,6 @@
       ],
       "tags": [
         "server"
-      ],
-      "design": [
-        "d_scf001",
-        "d_ent001"
       ]
     },
     {
@@ -2471,9 +1863,6 @@
       "tags": [
         "server",
         "deployment"
-      ],
-      "design": [
-        "d_ent001"
       ]
     },
     {
@@ -2492,9 +1881,6 @@
       "tags": [
         "server",
         "auth"
-      ],
-      "design": [
-        "d_ath001"
       ]
     },
     {
@@ -2508,9 +1894,6 @@
         "server",
         "auth",
         "security"
-      ],
-      "design": [
-        "d_ath001"
       ]
     },
     {
@@ -2523,9 +1906,6 @@
       "tags": [
         "server",
         "auth"
-      ],
-      "design": [
-        "d_ath001"
       ]
     },
     {
@@ -2539,9 +1919,6 @@
         "server",
         "auth",
         "security"
-      ],
-      "design": [
-        "d_ath001"
       ]
     },
     {
@@ -2554,9 +1931,6 @@
       "tags": [
         "server",
         "auth"
-      ],
-      "design": [
-        "d_ath001"
       ]
     },
     {
@@ -2569,10 +1943,6 @@
       "tags": [
         "server",
         "auth"
-      ],
-      "design": [
-        "d_ath001",
-        "d_wcp001"
       ]
     },
     {
@@ -2591,9 +1961,6 @@
       "tags": [
         "server",
         "commit"
-      ],
-      "design": [
-        "d_rpo001"
       ]
     },
     {
@@ -2606,10 +1973,6 @@
       "tags": [
         "server",
         "commit"
-      ],
-      "design": [
-        "d_wcp001",
-        "d_cgt001"
       ]
     },
     {
@@ -2623,10 +1986,6 @@
         "server",
         "commit",
         "editor"
-      ],
-      "design": [
-        "d_chr001",
-        "d_wcp001"
       ]
     },
     {
@@ -2640,10 +1999,6 @@
         "server",
         "commit",
         "governance"
-      ],
-      "design": [
-        "d_wcp001",
-        "d_cgt001"
       ]
     },
     {
@@ -2657,10 +2012,6 @@
         "server",
         "commit",
         "jobs"
-      ],
-      "design": [
-        "d_wcp001",
-        "d_cgt001"
       ]
     },
     {
@@ -2673,10 +2024,6 @@
       "tags": [
         "server",
         "commit"
-      ],
-      "design": [
-        "d_wcp001",
-        "d_git001"
       ]
     },
     {
@@ -2690,10 +2037,6 @@
         "server",
         "commit",
         "editor"
-      ],
-      "design": [
-        "d_chr001",
-        "d_wcp001"
       ]
     },
     {
@@ -2712,10 +2055,6 @@
       "tags": [
         "server",
         "concurrency"
-      ],
-      "design": [
-        "d_trm001",
-        "d_sap001"
       ]
     },
     {
@@ -2728,10 +2067,6 @@
       "tags": [
         "server",
         "concurrency"
-      ],
-      "design": [
-        "d_mrg001",
-        "d_rpo001"
       ]
     },
     {
@@ -2744,10 +2079,6 @@
       "tags": [
         "server",
         "concurrency"
-      ],
-      "design": [
-        "d_prs001",
-        "d_trm001"
       ]
     },
     {
@@ -2760,10 +2091,6 @@
       "tags": [
         "server",
         "concurrency"
-      ],
-      "design": [
-        "d_prs001",
-        "d_trm001"
       ]
     },
     {
@@ -2776,9 +2103,6 @@
       "tags": [
         "contract",
         "merge"
-      ],
-      "design": [
-        "d_mrg001"
       ]
     },
     {
@@ -2791,9 +2115,6 @@
       "tags": [
         "contract",
         "merge"
-      ],
-      "design": [
-        "d_mrg001"
       ]
     },
     {
@@ -2806,9 +2127,6 @@
       "tags": [
         "contract",
         "merge"
-      ],
-      "design": [
-        "d_mrg001"
       ]
     },
     {
@@ -2821,9 +2139,6 @@
       "tags": [
         "contract",
         "merge"
-      ],
-      "design": [
-        "d_mrg001"
       ]
     },
     {
@@ -2836,10 +2151,6 @@
       "tags": [
         "server",
         "merge"
-      ],
-      "design": [
-        "d_mrg001",
-        "d_wcp001"
       ]
     },
     {
@@ -2853,10 +2164,6 @@
         "server",
         "merge",
         "editor"
-      ],
-      "design": [
-        "d_wcp001",
-        "d_chr001"
       ]
     },
     {
@@ -2875,10 +2182,6 @@
       "tags": [
         "editor",
         "server"
-      ],
-      "design": [
-        "d_ifc001",
-        "d_api001"
       ]
     },
     {
@@ -2892,10 +2195,6 @@
         "editor",
         "server",
         "auth"
-      ],
-      "design": [
-        "d_api001",
-        "d_trm001"
       ]
     },
     {
@@ -2909,10 +2208,6 @@
         "editor",
         "server",
         "auth"
-      ],
-      "design": [
-        "d_sap001",
-        "d_chr001"
       ]
     },
     {
@@ -2925,10 +2220,6 @@
       "tags": [
         "skill",
         "server"
-      ],
-      "design": [
-        "d_lnc001",
-        "d_tpl001"
       ]
     },
     {
@@ -2946,9 +2237,6 @@
       ],
       "tags": [
         "server"
-      ],
-      "design": [
-        "d_scf001"
       ]
     },
     {
@@ -2960,9 +2248,6 @@
       ],
       "tags": [
         "server"
-      ],
-      "design": [
-        "d_scf001"
       ]
     },
     {
@@ -2974,9 +2259,6 @@
       ],
       "tags": [
         "server"
-      ],
-      "design": [
-        "d_rot001"
       ]
     },
     {
@@ -2988,9 +2270,6 @@
       ],
       "tags": [
         "server"
-      ],
-      "design": [
-        "d_rpo001"
       ]
     },
     {
@@ -3002,10 +2281,6 @@
       ],
       "tags": [
         "server"
-      ],
-      "design": [
-        "d_scf001",
-        "d_ath001"
       ]
     },
     {
@@ -3017,9 +2292,6 @@
       ],
       "tags": [
         "server"
-      ],
-      "design": [
-        "d_ath001"
       ]
     },
     {
@@ -3031,10 +2303,6 @@
       ],
       "tags": [
         "server"
-      ],
-      "design": [
-        "d_sap001",
-        "d_reg001"
       ]
     },
     {
@@ -3046,10 +2314,6 @@
       ],
       "tags": [
         "server"
-      ],
-      "design": [
-        "d_reg001",
-        "d_prs001"
       ]
     },
     {
@@ -3061,10 +2325,6 @@
       ],
       "tags": [
         "server"
-      ],
-      "design": [
-        "d_lch001",
-        "d_trm001"
       ]
     },
     {
@@ -3076,10 +2336,6 @@
       ],
       "tags": [
         "server"
-      ],
-      "design": [
-        "d_tpl001",
-        "d_lnc001"
       ]
     },
     {
@@ -3091,11 +2347,7 @@
       "tags": [
         "server"
       ],
-      "text": "The editor shall let a signed-in user open any project they may read from within the editor itself, without re-entering a URL.",
-      "design": [
-        "d_chr001",
-        "d_trm001"
-      ]
+      "text": "The editor shall let a signed-in user open any project they may read from within the editor itself, without re-entering a URL."
     },
     {
       "id": "r_mp12",
@@ -3106,11 +2358,7 @@
       "tags": [
         "server"
       ],
-      "text": "Switching to another project shall reload the editor from that project, and shall leave the URL naming it so that reloading the page returns to the same project.",
-      "design": [
-        "d_app001",
-        "d_trm001"
-      ]
+      "text": "Switching to another project shall reload the editor from that project, and shall leave the URL naming it so that reloading the page returns to the same project."
     },
     {
       "id": "r_mp13",
@@ -3121,10 +2369,7 @@
       "tags": [
         "server"
       ],
-      "text": "When a server hosts more than one project, the editor shall show which project is being edited.",
-      "design": [
-        "d_chr001"
-      ]
+      "text": "When a server hosts more than one project, the editor shall show which project is being edited."
     },
     {
       "id": "h_sv070",
@@ -3141,10 +2386,7 @@
       "tags": [
         "server"
       ],
-      "text": "The server shall remove a user's working copy for a project once it has been idle for a configured period, so a deployment does not retain a checkout per user per project indefinitely.",
-      "design": [
-        "d_rpo001"
-      ]
+      "text": "The server shall remove a user's working copy for a project once it has been idle for a configured period, so a deployment does not retain a checkout per user per project indefinitely."
     },
     {
       "id": "r_wc2",
@@ -3155,10 +2397,7 @@
       "tags": [
         "server"
       ],
-      "text": "A working copy holding uncommitted changes shall never be removed by idle reaping, however long it has been idle.",
-      "design": [
-        "d_rpo001"
-      ]
+      "text": "A working copy holding uncommitted changes shall never be removed by idle reaping, however long it has been idle."
     },
     {
       "id": "r_wc3",
@@ -3169,10 +2408,7 @@
       "tags": [
         "server"
       ],
-      "text": "A removed working copy shall be re-provisioned on next use, so reaping is not observable to a user who returns.",
-      "design": [
-        "d_rpo001"
-      ]
+      "text": "A removed working copy shall be re-provisioned on next use, so reaping is not observable to a user who returns."
     },
     {
       "id": "r_wc4",
@@ -3183,133 +2419,7 @@
       "tags": [
         "server"
       ],
-      "text": "The idle period before reaping shall be configurable, and reaping shall be disableable.",
-      "design": [
-        "d_scf001",
-        "d_rpo001"
-      ]
-    },
-    {
-      "id": "h_dd000",
-      "heading": true,
-      "level": 1,
-      "text": "Detailed design (SDD)"
-    },
-    {
-      "id": "r_dd1",
-      "code": "DD-1",
-      "design": [
-        "d_dct001",
-        "d_sch001"
-      ],
-      "text": "The system shall support an optional detailed-design document as a registered document type whose items are design sections.",
-      "tags": [
-        "design"
-      ]
-    },
-    {
-      "id": "r_dd2",
-      "code": "DD-2",
-      "design": [
-        "d_pat001",
-        "d_sch001"
-      ],
-      "text": "Each design section shall carry a stable immutable id, so that retitling, recoding, reordering, or rewriting a section does not break any reference to it.",
-      "tags": [
-        "design"
-      ]
-    },
-    {
-      "id": "r_dd3",
-      "code": "DD-3",
-      "design": [
-        "d_sch001",
-        "d_arv001"
-      ],
-      "text": "A design section's content shall be markdown able to embed images and diagrams, so the design can hold flowcharts and figures rather than fixed fields.",
-      "tags": [
-        "design"
-      ]
-    },
-    {
-      "id": "r_dd4",
-      "code": "DD-4",
-      "design": [
-        "d_inf001",
-        "d_sch001"
-      ],
-      "text": "An SRS requirement shall record the design sections that implement it as a list of section ids, so the trace is authored on the requirement and read as requirement → design.",
-      "tags": [
-        "design"
-      ]
-    },
-    {
-      "id": "r_dd5",
-      "code": "DD-5",
-      "design": [
-        "d_gov001"
-      ],
-      "text": "When a detailed design is present, every design reference on a requirement shall resolve to an existing design section.",
-      "tags": [
-        "design"
-      ]
-    },
-    {
-      "id": "r_dd6",
-      "code": "DD-6",
-      "design": [
-        "d_gov001"
-      ],
-      "text": "When a detailed design is present, every non-heading requirement shall reference at least one design section, and this shall be checked at full rigor irrespective of any safety class or documentation level.",
-      "tags": [
-        "design"
-      ]
-    },
-    {
-      "id": "r_dd7",
-      "code": "DD-7",
-      "design": [
-        "d_dct001",
-        "d_jbv001"
-      ],
-      "text": "The detailed design shall be captured in release baselines and in each job's before/after cache, and a job's detail shall present the design sections it changed.",
-      "tags": [
-        "design"
-      ]
-    },
-    {
-      "id": "r_dd8",
-      "code": "DD-8",
-      "design": [
-        "d_skl001"
-      ],
-      "text": "When a job changes a design section, the skill shall re-review every requirement referencing that section in the same job, and report which ones it checked.",
-      "tags": [
-        "design"
-      ]
-    },
-    {
-      "id": "r_dd9",
-      "code": "DD-9",
-      "design": [
-        "d_skl001"
-      ],
-      "text": "The baseline generator shall draft a detailed design from the existing code, proposing sections from module boundaries rather than from source files or the call flow, and tagging each generated section as a draft.",
-      "tags": [
-        "design"
-      ]
-    },
-    {
-      "id": "r_dd10",
-      "code": "DD-10",
-      "design": [
-        "d_app001",
-        "d_gov001"
-      ],
-      "text": "The editor shall load the detailed design when the project index lists one, and include it in the live governance it reports.",
-      "tags": [
-        "design"
-      ]
+      "text": "The idle period before reaping shall be configurable, and reaping shall be disableable."
     }
   ]
 }

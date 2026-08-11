@@ -12,6 +12,7 @@ import type {
   SrsDoc,
   VtpDoc,
   PrdDoc,
+  SddDoc,
   SpecPadDoc,
   ReleasesDoc,
   JobDoc,
@@ -277,6 +278,11 @@ export async function loadDocument(type: 'srs' | 'vtp', name: string): Promise<S
 /** Load the optional PRD register `<name>.prd.json` (caller guards on its presence). */
 export async function loadPrd(name: string): Promise<PrdDoc> {
   return (await requireJson(`${name}.prd.json`)) as PrdDoc;
+}
+
+/** Load the optional detailed design `<name>.sdd.json` (caller guards on its presence). */
+export async function loadSdd(name: string): Promise<SddDoc> {
+  return (await requireJson(`${name}.sdd.json`)) as SddDoc;
 }
 
 export async function saveDocument(doc: SrsDoc | VtpDoc | PrdDoc | ProjectDoc): Promise<void> {

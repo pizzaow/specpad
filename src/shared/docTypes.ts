@@ -9,7 +9,7 @@
  * Sidecars (project index, releases, job marker, jobs register) are infrastructure,
  * not content documents, so they live outside this registry (see validate.ts).
  */
-import { srsSchema, vtpSchema, prdSchema } from './schema';
+import { srsSchema, vtpSchema, prdSchema, sddSchema } from './schema';
 
 // register: id-keyed JSON with an `items[]` array (diffable by the shared diffItems).
 // prose: tracked markdown/text (line-diffed). asset: binary-ish file (coarse, changed/yes-no).
@@ -35,6 +35,11 @@ export const DOC_TYPES: DocTypeSpec[] = [
   // Architecture is prose (arc42 markdown + draw.io diagrams), not an id-keyed register — it has no
   // JSON schema and is diffed by line/coarse, but it IS a registered document type a job can impact.
   { type: 'sad', label: 'Architecture', kind: 'prose', optional: true, inBaseline: true, generate: 'optional' },
+  // The detailed design sits below the architecture: an id-keyed register whose items are prose
+  // SECTIONS (markdown bodies, embedded diagrams). It is a register rather than prose because the
+  // stable per-section id is what SRS.design points at — that identity is the entire mechanism that
+  // lets the design be rewritten freely without breaking the trace.
+  { type: 'sdd', label: 'Detailed Design', kind: 'register', optional: true, inBaseline: true, generate: 'optional', schema: sddSchema as Record<string, unknown> },
 ];
 
 /** All id-keyed register types (srs, vtp, prd, …) — the diffable/redline-able docs. */

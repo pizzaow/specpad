@@ -568,6 +568,19 @@
       "technical_notes": "Release bookkeeping. Closed JOB-35..42 and set their version to v1.5; regenerated every closed job’s before/after/commits caches from git; moved the v1.4 full-document snapshot to .specpad/snapshots/v1.4 and regenerated .specpad/baseline from the v1.5 tag, freezing the verification run into it as the release’s design-verification evidence. JOB-1 stays open (perpetual foundational). JOB-35 and JOB-36 were committed with a Job: <code> trailer rather than Job: <id>, so their commit caches are recovered by matching on the code as well.",
       "version": "v1.5",
       "status": "closed"
+    },
+    {
+      "id": "j_6a1e83",
+      "code": "JOB-44",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Software Detailed Design (SDD) pillar",
+      "description": "SpecPad now tracks a Software Detailed Design alongside the requirements and tests. Each design section has a permanent identity, so requirements link to the design and the link survives any amount of rewriting, and the design itself stays free-form enough to hold diagrams and flowcharts. Requirements that point at a design section are flagged for re-review whenever that section changes.",
+      "technical_notes": "The fourth register pillar, and the first that is section-and-prose rather than field-per-item. Sections carry a stable id + renameable code/title + a markdown body (images, draw.io SVGs, flowcharts), so the trace anchor is the id and headings stay free to change. Trace direction is SRS -> SDD (SrsItem.design[]), matching SrsItem.satisfies -> PRD: tests keep verifying requirements, and the matrix renders PRD -> SRS -> SDD and SRS -> VTP so the reviewer reads the path. Authoring is always at the maximum rigor (62304 Class C / FDA Enhanced); omission is an export-time decision, which keeps class/rigor out of the schema entirely and survives 62304 Ed 2 replacing A/B/C with rigor levels I/II. Section skeleton follows IEEE 1016 design viewpoints; decomposition rules in the guide follow Parnas (hide the decision likely to change; never decompose from the call flow) plus the independently-testable and safety-risk-isolation tests.",
+      "status": "open"
     }
   ]
 }

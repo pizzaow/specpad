@@ -12,7 +12,13 @@ const referenced = Array.from(skill.matchAll(/guides\/([\w-]+\.md)/g)).map((m) =
 describe('on-demand authoring guides', () => {
   it('ships a guide for each document type', () => {
     expect(new Set(guideFiles)).toEqual(
-      new Set(['requirements.md', 'tests.md', 'product-requirements.md', 'architecture.md']),
+      new Set([
+        'requirements.md',
+        'tests.md',
+        'product-requirements.md',
+        'architecture.md',
+        'detailed-design.md',
+      ]),
     );
   });
 

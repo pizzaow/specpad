@@ -1,4 +1,4 @@
-import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, JobsDoc, JobDoc } from './schema';
+import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, JobsDoc, JobDoc } from './schema';
 
 export type GovernanceRuleId =
   | 'traceability'
@@ -7,7 +7,9 @@ export type GovernanceRuleId =
   | 'active-job-open'
   | 'active-job-known'
   | 'prd-referential-integrity'
-  | 'prd-coverage';
+  | 'prd-coverage'
+  | 'sdd-referential-integrity'
+  | 'sdd-coverage';
 
 /** Normalize the active-job marker to a list, tolerating the legacy single `job`. */
 export function activeJobIds(job: JobDoc | null | undefined): string[] {
@@ -66,6 +68,18 @@ export const GOVERNANCE_RULES: GovernanceRule[] = [
     description:
       'When a PRD register is present, every non-heading PRD item marked `status: "implemented"` must be referenced by at least one SRS requirement via `satisfies`. Items that are `proposed` (or have no status) are roadmap/vision and exempt.',
   },
+  {
+    id: 'sdd-referential-integrity',
+    title: 'Design references resolve',
+    description:
+      'When an SDD is present, every SRS `design` entry must resolve to an existing SDD section id.',
+  },
+  {
+    id: 'sdd-coverage',
+    title: 'Every requirement reaches the design',
+    description:
+      'When an SDD is present, every non-heading SRS requirement must reference at least one SDD section via `design` — the evidence that the design implements the requirements (IEC 62304 5.4; FDA SDS).',
+  },
 ];
 
 export interface ProjectBundle {
@@ -73,6 +87,7 @@ export interface ProjectBundle {
   srs?: SrsDoc | null;
   vtp?: VtpDoc | null;
   prd?: PrdDoc | null;
+  sdd?: SddDoc | null;
   jobs?: JobsDoc | null;
   job?: JobDoc | null;
 }
@@ -160,6 +175,37 @@ export function checkGovernance(bundle: ProjectBundle): GovernanceViolation[] {
           rule: 'prd-coverage',
           itemId: prd.id,
           message: `Implemented product requirement ${prd.id} is not satisfied by any SRS requirement.`,
+        });
+      }
+    }
+  }
+
+  // sdd-{referential-integrity,coverage}: only when an SDD is present (opt-in), the same
+  // way PRD governance is. A project with no detailed design pays nothing.
+  //
+  // Coverage is checked at full rigor unconditionally: 62304 makes the per-unit detailed
+  // design Class C only and FDA submits the SDS only at Enhanced, but deciding what to
+  // OMIT belongs to the export, not to the author. See guides/detailed-design.md.
+  if (bundle.sdd) {
+    const sddIds = new Set((bundle.sdd.items ?? []).map((s) => s.id));
+    for (const req of srsItems) {
+      for (const ref of req.design ?? []) {
+        if (!sddIds.has(ref)) {
+          violations.push({
+            rule: 'sdd-referential-integrity',
+            itemId: req.id,
+            message: `Requirement ${req.id} points at design section "${ref}", which is not a known SDD section id.`,
+          });
+        }
+      }
+    }
+    for (const req of srsItems) {
+      if (req.heading) continue;
+      if ((req.design ?? []).length === 0) {
+        violations.push({
+          rule: 'sdd-coverage',
+          itemId: req.id,
+          message: `Requirement ${req.id} does not reference any design section.`,
         });
       }
     }

@@ -7,7 +7,7 @@
 
 ## 1. Introduction and Goals
 SpecPad governs structured software documentation — **product requirements (user needs), software
-requirements, verification tests, architecture, and detailed design** — as files in a git repo, edited by a Claude Code
+requirements, verification tests, and architecture** — as files in a git repo, edited by a Claude Code
 skill and a hosted visual editor under one shared contract, producing change-tracked, exportable design
 evidence. The set of document types is **open** (a registry): SOUP/SBOM, cybersecurity, and SDD are
 planned pillars that plug into the same machinery. Quality goals: **low install friction**, a
@@ -33,17 +33,10 @@ clone on their behalf.
 
 ## 4. Solution Strategy
 - **Contract-first:** `src/shared/` is the single source of truth both halves obey.
-- **A design section is prose with an identity.** The detailed design (`sdd`) is an id-keyed register
-  whose items are markdown *sections*, not fields: the design must be free to hold flowcharts and
-  figures, while the stable per-section id is what requirements point at. Trace direction is
-  **requirement → design** (`SrsItem.design`), so tests keep verifying requirements and the matrix
-  renders PRD → SRS → SDD and SRS → VTP. The detailed design is authored at **maximum rigor always**;
-  omitting it for a lower safety class or documentation level is an export decision, which is why no
-  class or rigor level appears anywhere in the contract.
 - **A document-type registry (`src/shared/docTypes.ts`) is the source of truth for which content
   document types exist** and how each behaves (id-keyed register vs prose vs asset). Validation, the
   snapshot/diff/redline, the generator, and the per-job impact evaluation all derive from it, so a new
-  pillar (SOUP, cybersecurity, risk) is one registration — as the detailed design was. The per-project list is the project index
+  pillar (SOUP, cybersecurity, SDD) is one registration. The per-project list is the project index
   (`proj.json documents[]`).
 - **Skill writes programmatically; humans edit visually; git merges.**
 - **One transport seam, three sources.** Every view reaches documents through a four-method
@@ -69,7 +62,7 @@ Top-level units and the key interfaces between them:
 | Shared contract (`src/shared`) | Types + JSON Schemas, governance, id-keyed diff, **document-type registry** (`docTypes.ts`) | imported by editor; mirrored by skill |
 | Editor (`src/`) | React SPA: Overview, PRD, SRS, VTP, Results, Architecture, **Auditor (design-control map)**, **Traceability**, Releases, Jobs views; selectable **themes**; local file I/O | File System Access API; the contract |
 | Skill (`skill/specpad`) | Scaffold, govern, cache, draft (generator), export; git plumbing | git; the contract; the eQMS export |
-| Spec files + cache (`docs/specpad`) | proj/**prd**/srs/vtp/**sdd** JSON, sad.md + diagrams, `.specpad/` baselines & job caches | git |
+| Spec files + cache (`docs/specpad`) | proj/**prd**/srs/vtp JSON, sad.md + diagrams, `.specpad/` baselines & job caches | git |
 | Transport seam (`src/fileApi.ts`, `src/transports/`) | The editor's one door to documents: local / demo / remote implementations of `FileApi` | one conformance suite across all three |
 | Server (`server/`) | Optional self-hosted multi-project server: identity, per-project authorization, per-user worktrees, the commit gate, HTTP API + SSE | the contract; git; an upstream SSO gateway |
 
@@ -116,9 +109,8 @@ coupling for architecture (no req↔arch matrix); architecture authored as arc42
 diagrams (Structurizr C4 DSL optional); enforcement via an opt-in pre-push hook. **A document-type
 registry makes document types extensible**: snapshots, per-job diffs, the redline, validation, the
 reference page, the generator, and the per-job impact evaluation all derive from it, so a new pillar is
-a registration rather than edits across the codebase. PRD↔SRS trace is by `satisfies` (ids) and SRS↔SDD by `design` (ids), both authored on the requirement
-so each edge has one home; the Auditor view maps the evidence to design-control elements
-(IEC 62304 / 21 CFR 820.30).
+a registration rather than edits across the codebase. PRD↔SRS trace is by `satisfies` (ids); the Auditor
+view maps the evidence to design-control elements (IEC 62304 / 21 CFR 820.30).
 
 ## 10. Quality Requirements
 Install friction (one `init`); contract integrity (editor ↔ skill governance parity, parity-tested);
@@ -133,14 +125,11 @@ Per-job architecture diffs are coarse (file changed + SAD line diff, no in-diagr
 prose and can drift — mitigated by the working loop's per-job impact evaluation across every registered
 document type, but not hard-enforced by the pre-push gate; diagrams (draw.io SVGs) are updated by hand
 and can lag the prose. The eQMS export format is not finalized; third-party components (SOUP/SBOM),
-cybersecurity architecture, threat model, and software risk are planned pillars, not yet built. The
-detailed design has no editor view yet — it is authored by the skill, governed, snapshotted and diffed,
-but not editable in the browser.
+cybersecurity architecture, and the SDD are registered/planned pillars, not yet built.
 
 ## 12. Glossary
 PRD (product requirements / user needs), SRS (software requirements), VTP (verification tests), SAD
-(this document), SDD (software detailed design — the units and design views implementing the
-requirements; IEC 62304 5.4, FDA Software Design Specification, IEEE 1016 views), project (on a self-hosted server: one repository
+(this document), SDD (detailed design — future), project (on a self-hosted server: one repository
 it hosts, and the routing/authorization boundary around it), document-type registry (`docTypes.ts` — the source of
 truth for content document types), Auditor view (the design-control map: IEC 62304 / 21 CFR 820.30 →
 where evidence lives), Job (a design change), Release (a design checkpoint), SOUP/OTS (third-party

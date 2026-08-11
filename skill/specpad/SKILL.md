@@ -39,6 +39,10 @@ into the SRS/VTP **spec-first**, attributed to a job, alongside the code. For ea
    - **Architecture (SAD)** — when the job adds or changes a component, module, interface, or contract
      (e.g. a new view, a new shared module, a new pillar): update `<name>.sad.md` and its diagrams. Most
      within-a-component tweaks don't; structural changes do. Don't let the SAD drift.
+   - **Detailed design (SDD)** — when the job changes how a unit works inside, its interface, or the
+     data it owns; and whenever it adds a requirement (a new requirement needs a design section to
+     point at). **Changing a section obliges you to re-review every requirement that references it** —
+     see *Detailed design* below.
    - **Any other registered pillar** (SOUP, cybersecurity, SDD, …) — same question, same rule.
 
    Capture **intent, not transcript**. Most jobs touch SRS+VTP; surface which document types you judged
@@ -69,6 +73,7 @@ them here; read the one you need when you reach that step:
 - Verification tests → `guides/tests.md`
 - Product requirements (PRD) → `guides/product-requirements.md`
 - Architecture (SAD) → `guides/architecture.md`
+- Detailed design (SDD) → `guides/detailed-design.md`
 
 ## Files and naming
 
@@ -77,6 +82,8 @@ them here; read the one you need when you reach that step:
 - `docs/specpad/<name>.vtp.json` — verification tests
 - `docs/specpad/<name>.prd.json` — optional product requirements (user needs / product intent) that
   SRS requirements trace up to via `satisfies` (see Product requirements below)
+- `docs/specpad/<name>.sdd.json` — optional detailed design: the software units and design views that
+  implement the requirements, which SRS items point down at via `design` (see Detailed design below)
 - `docs/specpad/<name>.sad.md` — optional architecture document (arc42 skeleton, markdown)
 - `docs/specpad/<name>.<diagram>.svg` — optional diagrams (draw.io SVG exports) the SAD references inline
 - `docs/specpad/<name>.workspace.dsl` — optional C4 model (Structurizr DSL — an alternative to draw.io)
@@ -198,11 +205,17 @@ a pillar added later (SOUP, cybersecurity, SDD) is drafted the same way once con
    overview** and a **building-block** diagram (draw.io SVG) reflecting the modules and interfaces
    surveyed in step 2 — load-bearing decisions and contracts, not every class. (Read
    `guides/architecture.md`; use the architecture profile from `init`.)
-7. **Keep it governance-clean**: every requirement has a verifying VTP entry, every test an `expected`,
-   and (when a PRD exists) every implemented PRD item is satisfied by a requirement.
-8. **Report coverage** explicitly — what you covered and what you could not (areas too unclear to spec),
+7. **Draft a detailed design (default).** Propose SDD sections from the module boundaries surveyed in
+   step 2 — one per software unit, plus the cross-cutting design views — and point each requirement at
+   the sections implementing it via `design`. Never one section per file across a large tree, and never
+   decompose from the call flow. Tag every generated section `draft`: the structure is derivable, the
+   *decision each unit hides* is a guess only the author can confirm. (Read `guides/detailed-design.md`.)
+8. **Keep it governance-clean**: every requirement has a verifying VTP entry, every test an `expected`,
+   (when a PRD exists) every implemented PRD item is satisfied by a requirement, and (when an SDD
+   exists) every requirement reaches a design section.
+9. **Report coverage** explicitly — what you covered and what you could not (areas too unclear to spec),
    and which document types you drafted vs deferred — rather than silently truncating.
-9. **Surface for ratification.** Say it is a draft, summarize the sections and the `draft` / `not_tested`
+10. **Surface for ratification.** Say it is a draft, summarize the sections and the `draft` / `not_tested`
    counts (and the proposed PRD items and the SAD), and invite edits. This is the cold-start form of the
    requirement audit; the commit-time audit then keeps it in sync as the code evolves.
 
@@ -238,13 +251,15 @@ same over a single staged diff); both **propose, never auto-apply**.
 ## The v1 shape
 
 Shared envelope on every file: `schemaVersion` ("1.0"), `type`
-("project" | "srs" | "vtp" | "prd"), `name`, `title`.
+("project" | "srs" | "vtp" | "prd" | "sdd"), `name`, `title`.
 
-SRS item — REQUIRED `id`, `text`. Optional `code`, `satisfies`, `tags`, `hazards`, `heading`.
+SRS item — REQUIRED `id`, `text`. Optional `code`, `satisfies`, `design`, `tags`, `hazards`, `heading`.
 VTP item — REQUIRED `id`, `text`. Optional `code`, `verifies`, `expected`, `result`,
 `notes`, `tags`, `heading`. `result` is one of "" | "not_tested" | "passed" | "failed".
 PRD item — REQUIRED `id`, `text`. Optional `code`, `tags`, `heading`. (PRD is the optional
 product-requirements register; same item shape as the SRS.)
+SDD section — REQUIRED `id`, `title`. Optional `code`, `body` (markdown), `source`, `tags`,
+`heading`, `level`. (The detailed design; sections are prose, not fields — see below.)
 
 ## Product requirements (PRD) — optional upward trace
 
@@ -264,6 +279,35 @@ diff, table, and governance machinery.
   hold the full roadmap without manufacturing false coverage gaps.
 - **Opt-in governance:** when a PRD register is present, `prd-referential-integrity` and
   `prd-coverage` apply (see Governance). A project with no PRD register pays nothing.
+
+## Detailed design (SDD) — optional downward trace
+
+A project may add an optional **detailed design** (`<name>.sdd.json`, `type: "sdd"`): the software
+units and design views that implement the requirements (IEC 62304 5.4; FDA Software Design
+Specification; IEEE 1016 design views). Read `guides/detailed-design.md` before authoring one.
+
+- **Sections are prose with a stable identity.** Each item is a section: an immutable `id`, a
+  renameable `code`/`title`, a markdown **`body`**, and optional **`source`** (the repository paths it
+  describes). The body carries the design — what the unit hides, its algorithm and data, interface
+  behaviour for **valid and invalid** input, unit acceptance criteria — and may embed images and
+  diagrams the way the SAD does. Deliberately *not* a field-per-unit record: the design has to be free
+  to hold flowcharts and prose, and the `id` is what keeps it linkable while it changes.
+- **The requirement points down.** An SRS requirement sets **`design`** to the SDD section **ids** that
+  implement it (ids, never `code`) — mirroring `satisfies` → PRD. Tests keep verifying *requirements*;
+  the trace matrix then renders PRD → SRS → SDD and SRS → VTP, so the reviewer reads the path without
+  anyone having to trace a test to a design function. **Never** add a reverse link from section to
+  requirement: one direction, one place to maintain, the reverse is derived on read.
+- **Author at maximum rigor, always.** 62304 makes the per-unit design Class C only, and FDA submits the
+  SDS only at Enhanced — SpecPad does not gate on either. Deciding what to *omit* belongs to the export.
+  This is also why no safety class or documentation level appears anywhere in the schema.
+- **Re-review rule (the important one).** When you change an SDD section, **every requirement whose
+  `design` references it becomes suspect** — the design moved; whether the requirement still holds as
+  written is now an open question. In the same job: list those requirements, decide for each whether it
+  still holds, and fix the requirement or the design where it does not. This is the drift the pillar
+  exists to catch, so do it explicitly rather than assuming. The reverse check too: after a code change,
+  look at the sections whose `source` paths you touched.
+- **Opt-in governance:** when an SDD is present, `sdd-referential-integrity` and `sdd-coverage` apply
+  (see Governance). A project with no SDD pays nothing.
 
 ## Hierarchy (sections and sub-requirements)
 
@@ -285,7 +329,7 @@ level deeper than its parent.
 
 - Every item has a stable `id`, generated once and **immutable**.
 - Format: a typed prefix + 6 random hex digits — `r_` for requirements, `t_` for tests,
-  `h_` for headings (e.g. `r_7f3a9c`, `t_a12b`).
+  `p_` for product requirements, `d_` for design sections, `h_` for headings (e.g. `r_7f3a9c`, `d_a12b4c`).
 - Generate by picking 6 random hex digits; if the id already exists in that file, pick
   again. Never reuse a human label as an id.
 - **All references use `id`.** A VTP test's `verifies` array holds SRS item `id`s, never
@@ -530,6 +574,12 @@ declaring a task done:
   `status: "implemented"` is satisfied by at least one SRS requirement (via `satisfies`). `proposed`
   items (or items with no status) are roadmap/vision and exempt. With no PRD register, neither PRD rule
   applies — PRD is opt-in.
+- `sdd-referential-integrity`: When an SDD is present, every SRS `design` entry resolves to an existing
+  SDD section id.
+- `sdd-coverage`: When an SDD is present, every non-heading SRS requirement references at least one SDD
+  section via `design` — the evidence that the design implements the requirements. With no SDD, neither
+  rule applies — the detailed design is opt-in, but once adopted it is checked at full rigor (see
+  *Detailed design*).
 
 Also confirm structural validity: required fields present, `result` within its enum,
 `schemaVersion` is "1.0".

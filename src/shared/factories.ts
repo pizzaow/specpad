@@ -1,9 +1,9 @@
 import { SCHEMA_VERSION } from './schema';
-import type { ProjectDoc, ProjectDocRef, SrsDoc, VtpDoc, PrdDoc, SrsItem, VtpItem, PrdItem, JobsDoc, JobRecord } from './schema';
+import type { ProjectDoc, ProjectDocRef, SrsDoc, VtpDoc, PrdDoc, SddDoc, SrsItem, VtpItem, PrdItem, SddSection, JobsDoc, JobRecord } from './schema';
 import { generateId, ID_PREFIX } from './ids';
 import { REGISTER_TYPES } from './docTypes';
 
-// The default document set is the registry's register types (prd/srs/vtp today), so a new project
+// The default document set is the registry's register types (prd/srs/vtp/sdd today), so a new project
 // gets the full design-control set and a future pillar is included by registering it.
 export function createProjectDoc(name: string, title: string): ProjectDoc {
   return {
@@ -22,6 +22,10 @@ export function createProjectDoc(name: string, title: string): ProjectDoc {
 
 export function createSrsDoc(name: string, title: string): SrsDoc {
   return { schemaVersion: SCHEMA_VERSION, type: 'srs', name, title, items: [] };
+}
+
+export function createSddDoc(name: string, title: string): SddDoc {
+  return { schemaVersion: SCHEMA_VERSION, type: 'sdd', name, title, items: [] };
 }
 
 export function createVtpDoc(name: string, title: string): VtpDoc {
@@ -52,6 +56,13 @@ export function createPrdDoc(name: string, title: string): PrdDoc {
 
 export function createPrdItem(existingIds: Iterable<string>, level = 0): PrdItem {
   const item: PrdItem = { id: generateId(ID_PREFIX.product, existingIds), text: '', status: 'proposed' };
+  if (level > 0) item.level = level;
+  return item;
+}
+
+/** A new detailed-design section. Ids are `d_…` and, once issued, never change (SRS.design targets them). */
+export function createSddSection(existingIds: Iterable<string>, level = 0): SddSection {
+  const item: SddSection = { id: generateId(ID_PREFIX.design, existingIds), title: '', body: '' };
   if (level > 0) item.level = level;
   return item;
 }

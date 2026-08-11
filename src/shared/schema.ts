@@ -3,11 +3,11 @@
 
 export const SCHEMA_VERSION = '1.0' as const;
 export type SchemaVersion = typeof SCHEMA_VERSION;
-export type DocType = 'project' | 'srs' | 'vtp' | 'prd';
+export type DocType = 'project' | 'srs' | 'vtp' | 'prd' | 'sdd';
 export type TestResult = '' | 'not_tested' | 'passed' | 'failed';
 
 export interface ProjectDocRef {
-  type: 'srs' | 'vtp' | 'prd';
+  type: 'srs' | 'vtp' | 'prd' | 'sdd';
   path: string;
   title: string;
 }
@@ -33,6 +33,7 @@ export interface SrsItem {
   heading?: boolean;
   level?: number;
   satisfies?: string[]; // ids of PRD items this requirement satisfies (upward trace; ids, never codes)
+  design?: string[]; // ids of SDD sections implementing this requirement (downward trace; ids, never codes)
   tags?: string[];
   hazards?: string[];
 }
@@ -107,7 +108,38 @@ export interface PrdDoc {
   items: PrdItem[];
 }
 
-export type SpecPadDoc = ProjectDoc | SrsDoc | VtpDoc | PrdDoc;
+/**
+ * One section of the software detailed design (IEC 62304 5.4; FDA Software Design
+ * Specification; IEEE 1016 design view).
+ *
+ * A section is prose, not a field-per-unit record: `body` is markdown and may embed
+ * diagrams the same way the architecture document does. What makes it linkable is the
+ * stable `id` — requirements point at it, and the link survives any amount of renaming
+ * or rewriting, which is the whole reason the design can stay free-form.
+ */
+export interface SddSection {
+  id: string;
+  code?: string;
+  /** Section heading — freely renameable, because nothing references it. */
+  title: string;
+  heading?: boolean;
+  level?: number;
+  /** Markdown: the design itself. Images and diagrams resolve like the SAD's. */
+  body?: string;
+  /** Repository paths this section describes — what makes it checkable against code. */
+  source?: string[];
+  tags?: string[];
+}
+
+export interface SddDoc {
+  schemaVersion: SchemaVersion;
+  type: 'sdd';
+  name: string;
+  title: string;
+  items: SddSection[];
+}
+
+export type SpecPadDoc = ProjectDoc | SrsDoc | VtpDoc | PrdDoc | SddDoc;
 
 const stringArray = { type: 'array', items: { type: 'string' } } as const;
 
@@ -130,7 +162,7 @@ export const projectSchema = {
         type: 'object',
         required: ['type', 'path', 'title'],
         properties: {
-          type: { enum: ['srs', 'vtp', 'prd'], description: 'Which kind of document this entry points at: "srs", "vtp", or "prd".' },
+          type: { enum: ['srs', 'vtp', 'prd', 'sdd'], description: 'Which kind of document this entry points at: "srs", "vtp", "prd", or "sdd".' },
           path: { type: 'string', description: 'Path of the document file, relative to the project index.' },
           title: { type: 'string', description: 'Display title for the document.' },
         },
@@ -161,6 +193,7 @@ export const srsSchema = {
           heading: { type: 'boolean', description: 'True when this item is a section heading rather than a requirement/test.' },
           level: { type: 'integer', minimum: 0, description: 'Indent depth for hierarchy; absent means 0. Headings form dotted section codes.' },
           satisfies: { ...stringArray, description: 'Ids of the PRD product requirements this requirement satisfies — ids, never codes, so renames cannot break the upward trace. Empty/absent unless a PRD register is in use.' },
+          design: { ...stringArray, description: 'Ids of the SDD sections that implement this requirement — the downward trace (IEC 62304 5.4; FDA SDS). Ids, never codes, so a section can be retitled or rewritten without breaking the link. Empty/absent unless an SDD is in use.' },
           tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
           hazards: { ...stringArray, description: 'Reserved hazard labels (legacy v1 field; the editor no longer surfaces it).' },
         },
@@ -237,6 +270,36 @@ export const prdSchema = {
           level: { type: 'integer', minimum: 0, description: 'Indent depth for hierarchy; absent means 0. Headings form dotted section codes.' },
           status: { enum: ['proposed', 'implemented'], description: 'Lifecycle: "implemented" (realized — must trace down to >=1 SRS requirement, enforced by prd-coverage) or "proposed" (approved intent not yet allocated; roadmap/vision, exempt from coverage). Absent is treated as not-yet-implemented (exempt).' },
           tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
+        },
+      },
+    },
+  },
+} as const;
+
+export const sddSchema = {
+  $id: 'specpad/v1/sdd',
+  type: 'object',
+  required: ['schemaVersion', 'type', 'name', 'title', 'items'],
+  properties: {
+    schemaVersion: { const: '1.0', description: 'Contract version of this file; "1.0" documents open in the pinned editor build at /v01/.' },
+    type: { const: 'sdd', description: 'Document discriminator; selects the schema this file is validated against.' },
+    name: { type: 'string', description: 'Short system name; also the filename stem ([name].sdd.json).' },
+    title: { type: 'string', description: 'Human-readable document title.' },
+    items: {
+      type: 'array',
+      description: 'Ordered list of detailed-design sections: one per software unit (IEC 62304 5.4.2), plus the cross-cutting design views a per-unit walk cannot express (IEEE 1016 viewpoints).',
+      items: {
+        type: 'object',
+        required: ['id', 'title'],
+        properties: {
+          id: { type: 'string', minLength: 1, description: 'Stable machine identifier, generated once and never changed; SRS design references target it. This is what lets the section be retitled, reordered, or rewritten without breaking the trace.' },
+          code: { type: 'string', description: 'Human-facing label (e.g. "SDD-12"); freely renameable because references never use it.' },
+          title: { type: 'string', description: 'Section heading — the software unit or design view this section describes.' },
+          heading: { type: 'boolean', description: 'True when this item groups sections rather than describing a design.' },
+          level: { type: 'integer', minimum: 0, description: 'Indent depth for hierarchy; absent means 0.' },
+          body: { type: 'string', description: 'The design, as markdown: what the unit hides, its algorithm and data, interface behaviour for valid and invalid input (5.4.3), and unit acceptance criteria (5.5.3). May embed images and diagrams like the architecture document.' },
+          source: { ...stringArray, description: 'Repository paths this section describes, so the design can be checked against the code it claims to describe.' },
+          tags: { ...stringArray, description: 'Free-form labels; "draft" marks a generated section awaiting author review.' },
         },
       },
     },
