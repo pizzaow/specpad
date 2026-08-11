@@ -25,6 +25,8 @@ interface VTPTableProps {
   onEditingItem?: (itemId: string | null) => void;
   /** Other people currently editing rows of this document, keyed by item id (CE-3). */
   presence?: Map<string, string[]>;
+  /** No editing affordance at all when the session may not write (EDR-3). */
+  readOnly?: boolean;
 }
 
 type EditField = 'code' | 'text' | 'verifies' | 'expected';
@@ -40,6 +42,7 @@ const VTPTable: React.FC<VTPTableProps> = ({
   attribution,
   onEditingItem,
   presence,
+  readOnly,
 }) => {
   const data = doc;
   const update = (items: VtpItem[]) => onChange({ ...doc, items });
@@ -65,6 +68,7 @@ const VTPTable: React.FC<VTPTableProps> = ({
   const ids = () => data.items.map((i) => i.id);
 
   const startEdit = (index: number, field: EditField) => {
+    if (readOnly) return;
     const value = data.items[index][field];
     setEditing({ index, field });
     setEditValue(Array.isArray(value) ? value.join(', ') : value ?? '');
@@ -142,7 +146,7 @@ const VTPTable: React.FC<VTPTableProps> = ({
     const raw = data.items[index][field];
     const shown = display ?? (Array.isArray(raw) ? raw.join(', ') : raw);
     return (
-      <div className="editable-cell" style={{ cursor: 'pointer', minHeight: 20, whiteSpace: 'pre-wrap' }} onClick={() => startEdit(index, field)}>
+      <div className="editable-cell" style={{ cursor: readOnly ? 'default' : 'pointer', minHeight: 20, whiteSpace: 'pre-wrap' }} onClick={() => startEdit(index, field)}>
         {shown || <span style={{ color: '#ccc' }}>(empty)</span>}
       </div>
     );
@@ -155,7 +159,7 @@ const VTPTable: React.FC<VTPTableProps> = ({
       <div style={{ marginBottom: 10 }}>
         <h2>{data.title || 'Verification Tests'}</h2>
         <strong>Document:</strong> {data.name}
-        {data.items.length === 0 && (
+        {!readOnly && data.items.length === 0 && (
           <span style={{ marginLeft: 14 }}>
             <button className="btn btn-default btn-xs" onClick={() => update([createVtpItem(ids())])}>+ Test</button>
           </span>
@@ -184,10 +188,12 @@ const VTPTable: React.FC<VTPTableProps> = ({
                   <td colSpan={2} style={{ fontWeight: 'bold' }}>{renderCell(index, 'text')}</td>
                   <td />
                   <td>
+                    {!readOnly && (
                     <RowMenu noun="test"
                       onAddAbove={() => addAbove(index)} onAddBelow={() => addBelow(index)} onAddChild={() => addChild(index)}
                       onAddHeading={() => addHeading(index)} onIndent={() => indent(index)} onOutdent={() => outdent(index)}
                       onDelete={() => deleteRow(index)} onViewInfo={() => setInfoIndex(index)} canOutdent={(item.level ?? 0) > 0} />
+                    )}
                   </td>
                 </tr>
               );
@@ -216,10 +222,12 @@ const VTPTable: React.FC<VTPTableProps> = ({
                   </td>
                   <td className={isCellChanged(entry, 'expected') ? 'ct-changed' : undefined}>{renderCell(index, 'expected')}</td>
                   <td>
+                    {!readOnly && (
                     <RowMenu noun="test"
                       onAddAbove={() => addAbove(index)} onAddBelow={() => addBelow(index)} onAddChild={() => addChild(index)}
                       onAddHeading={() => addHeading(index)} onIndent={() => indent(index)} onOutdent={() => outdent(index)}
                       onDelete={() => deleteRow(index)} onViewInfo={() => setInfoIndex(index)} canOutdent={(item.level ?? 0) > 0} />
+                    )}
                   </td>
                 </tr>
                 {open && (

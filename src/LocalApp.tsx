@@ -760,14 +760,29 @@ const LocalApp: React.FC = () => {
   const handlePrdChange = (next: PrdDoc) => { setPrdDoc(next); setDirtyPrd(true); };
   const handleSddChange = (next: SddDoc) => { setSddDoc(next); setDirtySdd(true); };
 
+  /**
+   * May this session edit? One answer, used by every view (EDR-3).
+   *
+   * A server role that cannot write is the only thing that makes the editor read-only.
+   * The demo is deliberately NOT read-only: it is a sandbox whose edits live in memory
+   * and are offered as a download rather than written anywhere.
+   */
+  const sessionReadOnly = !!serverSession && !serverSession.capabilities.write;
+
   const persist = async (doc: SrsDoc | VtpDoc | PrdDoc | SddDoc) => {
+    // The demo has nowhere to write: hand the document back as a file instead, so the
+    // sandbox has an exit and an edit is never silently lost.
+    if (launch.demo) {
+      saveFileFallback(serializeDocument(doc), `${doc.name}.${doc.type}.json`);
+      return;
+    }
     // Server mode writes over HTTP, so it needs no File System Access support — without
     // this a Firefox user on a server would silently get a download instead of a save.
     if (isServerMode() || (supportsFileSystemAccess && hasOpenDirectory())) await saveDocument(doc);
     else saveFileFallback(serializeDocument(doc), `${doc.name}.${doc.type}.json`);
   };
 
-  const dirty = dirtySrs || dirtyVtp || dirtyPrd || dirtyJobs || dirtySad || dirtyDsl;
+  const dirty = dirtySrs || dirtyVtp || dirtyPrd || dirtySdd || dirtyJobs || dirtySad || dirtyDsl;
 
   // ---- Presence, resolved for display (CE-3) ----
 
@@ -826,7 +841,7 @@ const LocalApp: React.FC = () => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
         e.preventDefault();
-        if (!launch.demo && shortcutRef.current.dirty) void shortcutRef.current.save();
+        if (shortcutRef.current.dirty) void shortcutRef.current.save();
       }
     };
     const onBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -991,10 +1006,10 @@ const LocalApp: React.FC = () => {
             onNavigate={setCurrentView}
           />
         )}
-        {currentView === 'prd' && prdDoc && <PrdTable key={selectedDocName} doc={prdDoc} srs={srsDoc} onChange={handlePrdChange} baseline={prdBaseline} attribution={prdSnapshots.length ? prdAttribution : undefined} readOnly={launch.demo} />}
-        {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onChange={handleChange} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} onEditingItem={serverSession ? announceEditing : undefined} presence={presenceByItem} />}
-        {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onChange={handleChange} redline={vtpRedline} attribution={vtpSnapshots.length ? vtpAttribution : undefined} onEditingItem={serverSession ? announceEditing : undefined} presence={presenceByItem} />}
-        {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} run={runRecord} onChange={handleChange} readOnly={launch.demo} />}
+        {currentView === 'prd' && prdDoc && <PrdTable key={selectedDocName} doc={prdDoc} srs={srsDoc} onChange={handlePrdChange} baseline={prdBaseline} attribution={prdSnapshots.length ? prdAttribution : undefined} readOnly={sessionReadOnly} />}
+        {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onChange={handleChange} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} onEditingItem={serverSession ? announceEditing : undefined} presence={presenceByItem} readOnly={sessionReadOnly} />}
+        {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onChange={handleChange} redline={vtpRedline} attribution={vtpSnapshots.length ? vtpAttribution : undefined} onEditingItem={serverSession ? announceEditing : undefined} presence={presenceByItem} readOnly={sessionReadOnly} />}
+        {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} run={runRecord} onChange={handleChange} readOnly={sessionReadOnly} />}
         {currentView === 'releases' && isDirectoryOpen && (
           <ReleasesView releases={releases} jobs={jobsDoc?.jobs ?? []} />
         )}
@@ -1015,7 +1030,7 @@ const LocalApp: React.FC = () => {
             sad={sad} dsl={dsl} guide={sadGuide} diagrams={diagrams}
             onChangeSad={(v) => { setSad(v); setDirtySad(true); }}
             onChangeDsl={(v) => { setDsl(v); setDirtyDsl(true); }}
-            readOnly={launch.demo}
+            readOnly={sessionReadOnly}
           />
         )}
         {currentView === 'sdd' && isDirectoryOpen && (
@@ -1024,7 +1039,7 @@ const LocalApp: React.FC = () => {
             srsDoc={srsDoc}
             diagrams={diagrams}
             onChange={handleSddChange}
-            readOnly={launch.demo}
+            readOnly={sessionReadOnly}
           />
         )}
         {currentView === 'jobs' && isDirectoryOpen && (
@@ -1041,7 +1056,7 @@ const LocalApp: React.FC = () => {
             activeArch={activeArch}
             onChange={handleJobsChange}
             onSetActive={handleSetJob}
-            readOnly={launch.demo}
+            readOnly={sessionReadOnly}
           />
         )}
 

@@ -149,3 +149,26 @@ describe('SRSTable advisory presence (CE-3, CE-4)', () => {
     expect(screen.queryByTitle(/editing this now/)).toBeNull();
   });
 });
+
+
+// EDR-3: a role that cannot write gets a read-only editor, not one that lets you type
+// into changes the server would refuse.
+describe('SRSTable — read-only (EDR-3)', () => {
+  it('offers no row menu', () => {
+    const { rerender } = render(<SRSTable doc={srs} vtpDoc={vtp} onChange={vi.fn()} />);
+    expect(screen.getAllByLabelText(/row actions/i).length).toBeGreaterThan(0);
+
+    rerender(<SRSTable doc={srs} vtpDoc={vtp} onChange={vi.fn()} readOnly />);
+    expect(screen.queryByLabelText(/row actions/i)).toBeNull();
+  });
+
+  it('does not open a cell for editing when clicked', () => {
+    const onChange = vi.fn();
+    render(<SRSTable doc={srs} vtpDoc={vtp} onChange={onChange} readOnly />);
+
+    fireEvent.click(screen.getByText('Shall authenticate.'));
+
+    expect(screen.queryByDisplayValue('Shall authenticate.')).toBeNull();
+    expect(onChange).not.toHaveBeenCalled();
+  });
+});

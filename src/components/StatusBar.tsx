@@ -38,7 +38,11 @@ const StatusBar: React.FC<StatusBarProps> = ({ path, srsDoc, vtpDoc, projectDoc,
   return (
     <div className="status-bar">
       <span className="status-path">{path}</span>
-      {demo && <span className="status-demo">Demo — read-only</span>}
+      {demo && (
+        <span className="status-demo" title="Edits live in this browser only and are lost on reload; Save downloads the file.">
+          Demo — sandbox, nothing is saved
+        </span>
+      )}
       <span className="status-spacer" />
       {clean ? (
         <span className="status-ok">✓ No problems found</span>

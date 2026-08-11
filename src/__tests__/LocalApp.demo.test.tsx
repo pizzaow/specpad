@@ -75,10 +75,10 @@ vi.mock('../fileApi', () => ({
 }));
 
 import LocalApp from '../LocalApp';
-import { enableDemoMode, openDemoProject, saveDocument } from '../fileApi';
+import { enableDemoMode, openDemoProject, saveDocument, saveFileFallback } from '../fileApi';
 
 describe('LocalApp demo mode', () => {
-  it('auto-loads the demo project read-only', async () => {
+  it('auto-loads the demo project as an editable sandbox', async () => {
     render(<LocalApp />);
 
     // Demo project loads without any picker interaction, opening on the Overview;
@@ -88,15 +88,33 @@ describe('LocalApp demo mode', () => {
     expect(enableDemoMode).toHaveBeenCalledWith('/demo/');
     expect(openDemoProject).toHaveBeenCalled();
 
-    // Read-only indicator is visible.
-    expect(screen.getByText(/Demo — read-only/)).toBeInTheDocument();
+    // The banner says what the sandbox is, rather than claiming read-only.
+    expect(screen.getByText(/Demo — sandbox, nothing is saved/)).toBeInTheDocument();
 
-    // No write affordances: no Save button and no File menu at all in demo.
-    expect(screen.queryByLabelText('Save')).toBeNull();
+    // Editing IS offered: the row menu is present, which it was not when the demo was
+    // read-only. Opening a project folder is still not offered — there is nothing to open.
+    expect(screen.getAllByLabelText(/row actions/i).length).toBeGreaterThan(0);
     expect(screen.queryByText('File ▾')).toBeNull();
 
-    // Ctrl+S is a no-op in demo mode — saveDocument must never be called.
+    // Nothing is ever written back: the demo has nowhere to write to.
     fireEvent.keyDown(window, { key: 's', ctrlKey: true });
+    expect(saveDocument).not.toHaveBeenCalled();
+  });
+
+  it('hands an edited document back as a download instead of saving it', async () => {
+    render(<LocalApp />);
+    fireEvent.click(await screen.findByText('SRS'));
+
+    // Edit a cell, then use the Download control the sandbox offers in place of Save.
+    fireEvent.click(screen.getByText('Demo requirement text'));
+    const field = await screen.findByDisplayValue('Demo requirement text');
+    fireEvent.change(field, { target: { value: 'Edited in the sandbox' } });
+    fireEvent.blur(field);
+    expect(await screen.findByText('Edited in the sandbox')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByLabelText('Download'));
+
+    expect(saveFileFallback).toHaveBeenCalled();
     expect(saveDocument).not.toHaveBeenCalled();
   });
 

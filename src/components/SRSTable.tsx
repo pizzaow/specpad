@@ -26,6 +26,8 @@ interface SRSTableProps {
   onEditingItem?: (itemId: string | null) => void;
   /** Other people currently in this document, keyed by item id (CE-3). */
   presence?: Map<string, string[]>;
+  /** No editing affordance at all when the session may not write (EDR-3). */
+  readOnly?: boolean;
 }
 
 type EditField = 'code' | 'text' | 'tags';
@@ -41,6 +43,7 @@ const SRSTable: React.FC<SRSTableProps> = ({
   attribution,
   onEditingItem,
   presence,
+  readOnly,
 }) => {
   const data = doc;
   const [editing, setEditing] = useState<EditTarget>(null);
@@ -81,6 +84,7 @@ const SRSTable: React.FC<SRSTableProps> = ({
   }, [editingId]);
 
   const startEdit = (index: number, field: EditField) => {
+    if (readOnly) return;
     const value = data.items[index][field];
     setEditing({ index, field });
     setEditValue(Array.isArray(value) ? value.join(', ') : value ?? '');
@@ -163,7 +167,7 @@ const SRSTable: React.FC<SRSTableProps> = ({
     const raw = data.items[index][field];
     const shown = display ?? (Array.isArray(raw) ? raw.join(', ') : raw);
     return (
-      <div className="editable-cell" style={{ cursor: 'pointer', minHeight: 20, whiteSpace: 'pre-wrap' }}
+      <div className="editable-cell" style={{ cursor: readOnly ? 'default' : 'pointer', minHeight: 20, whiteSpace: 'pre-wrap' }}
         onClick={() => startEdit(index, field)}>
         {shown || <span style={{ color: '#ccc' }}>(empty)</span>}
       </div>
@@ -250,6 +254,7 @@ const SRSTable: React.FC<SRSTableProps> = ({
                     )}
                   </td>
                   <td>
+                    {!readOnly && (
                     <RowMenu
                       onAddAbove={() => addAbove(index)}
                       onAddBelow={() => addBelow(index)}
@@ -261,6 +266,7 @@ const SRSTable: React.FC<SRSTableProps> = ({
                       onViewInfo={() => setInfoIndex(index)}
                       canOutdent={(item.level ?? 0) > 0}
                     />
+                    )}
                   </td>
                 </tr>
                 {open && !item.heading && (

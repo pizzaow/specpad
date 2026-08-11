@@ -708,7 +708,7 @@
     {
       "id": "r_ed0b10",
       "code": "EDS-10",
-      "text": "When launched with the demo query parameter, the editor shall load the project over HTTP from the hosted /demo/ directory, with the document tables, testing view, validation, version history, redlines, and the job indicator all available.",
+      "text": "When launched with the demo query parameter, the editor shall load the project read-only over HTTP from the hosted /demo/ directory, with the document tables, testing view, validation, version history, redlines, and the job indicator all available.",
       "level": 2,
       "tags": [
         "editor"
@@ -720,14 +720,13 @@
     {
       "id": "r_ed0b11",
       "code": "EDS-11",
-      "text": "Demo mode shall be a sandbox: every document shall be editable, edits shall be held in the browser only and lost on reload, the editor shall display a visible indicator saying so, and the save control shall offer the document as a file download rather than writing it anywhere.",
+      "text": "In demo mode the editor shall disable all writes (save, new document, set job) and display a visible read-only indicator.",
       "level": 2,
       "tags": [
         "editor"
       ],
       "design": [
-        "d_tdm001",
-        "d_app001"
+        "d_tdm001"
       ]
     },
     {
@@ -2913,7 +2912,7 @@
     {
       "id": "r_rx3",
       "code": "EDR-3",
-      "text": "When the signed-in role does not permit editing, the editor shall render every document view without an editing affordance — no row-actions menu, and no cell that opens for editing — and shall not offer the Commit action when the role does not permit committing.",
+      "text": "The editor shall render read-only when the user's role does not permit editing, and shall not offer the Commit action when the role does not permit committing.",
       "satisfies": [
         "p_sv01"
       ],
@@ -2923,7 +2922,7 @@
         "auth"
       ],
       "design": [
-        "d_app001",
+        "d_sap001",
         "d_chr001"
       ]
     },
@@ -3368,17 +3367,6 @@
         "design"
       ],
       "text": "The Auditor view shall count the detailed design as Design Outputs evidence alongside the architecture, reporting the element as complete only when both are present, and shall report how many requirements do not yet reach a design section."
-    },
-    {
-      "id": "r_ro1",
-      "code": "RO-1",
-      "design": [
-        "d_app001"
-      ],
-      "tags": [
-        "editor"
-      ],
-      "text": "Whether the session may edit shall be a single derived condition applied to every document view, so no view can present an editing affordance the session cannot honour."
     }
   ]
 }

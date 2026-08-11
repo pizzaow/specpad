@@ -90,9 +90,18 @@ const MenuBar: React.FC<MenuBarProps> = (p) => {
         </span>
       )}
 
-      {p.isDirectoryOpen && !p.demo && (
-        <button type="button" className={chip} aria-label="Save" disabled={!p.dirty} onClick={p.onSave}>
-          💾 Save{p.dirty ? ' ●' : ''}
+      {p.isDirectoryOpen && (
+        // In the demo there is nowhere to save, so the same control hands the document
+        // back as a file — the sandbox needs an exit, or an edit is simply lost.
+        <button
+          type="button"
+          className={chip}
+          aria-label={p.demo ? 'Download' : 'Save'}
+          title={p.demo ? 'Download this document — the demo saves nothing' : undefined}
+          disabled={!p.dirty}
+          onClick={p.onSave}
+        >
+          {p.demo ? '⬇ Download' : '💾 Save'}{p.dirty ? ' ●' : ''}
         </button>
       )}
 

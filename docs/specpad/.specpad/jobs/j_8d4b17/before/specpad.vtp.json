@@ -884,16 +884,15 @@
     {
       "id": "t_ed0b11",
       "code": "TEST-55",
-      "text": "Open the editor in demo mode, edit a document, use the save control, and reload the page.",
+      "text": "In demo mode, confirm no Save button or File menu is offered, Ctrl+S does nothing, and the read-only indicator is shown.",
       "verifies": [
         "r_ed0b11"
       ],
-      "expected": "Every document is editable; the indicator states that nothing is saved; the save control offers the document as a file download and never writes it back; reloading discards the edits.",
+      "expected": "All write affordances are absent or inert and a \"Demo — read-only\" indicator is visible.",
       "automation": [
         {
           "runner": "vitest",
-          "file": "src/__tests__/LocalApp.demo.test.tsx",
-          "selector": "LocalApp demo mode"
+          "file": "src/__tests__/LocalApp.demo.test.tsx"
         }
       ]
     },
@@ -3337,27 +3336,22 @@
       "verifies": [
         "r_rx3"
       ],
-      "expected": "A reader sees no row-actions menu in any document view and no cell opens for editing when clicked; an editor and a committer do. Commit is offered only to a committer, and the server refuses a write from a reader regardless of what the client rendered.",
+      "expected": "The reader sees read-only views with no editing affordances; the editor role can edit but is offered no Commit action; the committer sees both. Server-side checks reject writes from a reader regardless of what the client renders.",
       "automation": [
         {
           "runner": "vitest",
-          "file": "src/components/__tests__/SRSTable.test.tsx",
-          "selector": "read-only (EDR-3)"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/VTPTable.test.tsx",
-          "selector": "read-only (EDR-3)"
+          "file": "server/__tests__/api.test.ts",
+          "selector": "writes and roles (EDR-3)"
         },
         {
           "runner": "vitest",
           "file": "src/components/__tests__/ServerBar.test.tsx",
-          "selector": "the Commit affordance"
+          "selector": "ServerBar — the Commit affordance (EDR-3)"
         },
         {
           "runner": "vitest",
           "file": "src/transports/__tests__/remote.test.ts",
-          "selector": "role-driven read-only"
+          "selector": "role-driven read-only (EDR-3)"
         }
       ]
     },
@@ -3965,37 +3959,6 @@
           "runner": "vitest",
           "file": "src/__tests__/designControls.test.ts",
           "selector": "Design Outputs covers architecture and detailed design"
-        }
-      ]
-    },
-    {
-      "id": "t_ro1",
-      "code": "TEST-238",
-      "verifies": [
-        "r_ro1"
-      ],
-      "text": "Inspect every document view for the condition that governs its editing affordances.",
-      "expected": "All of them take one derived session condition; none derives its own from the demo flag or the transport. A view added later that ignores it is visible as such, because the condition is passed in rather than looked up.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/SRSTable.test.tsx",
-          "selector": "read-only (EDR-3)"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/VTPTable.test.tsx",
-          "selector": "read-only (EDR-3)"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/PrdTable.test.tsx",
-          "selector": "PrdTable"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/DetailedDesignView.test.tsx",
-          "selector": "DetailedDesignView — editing"
         }
       ]
     }

@@ -594,6 +594,19 @@
       "description": "The document tabs now read as the acronyms a regulated team already uses — PRD, SRS, SAD, SDD, VTP — with the full name on hover. The Auditor view also recognises the detailed design: Design Outputs is no longer permanently partial once both the architecture and the detailed design are present.",
       "technical_notes": "Two consistency fixes after the SDD landed. (1) Tab labels become acronyms; the full name moves to a title attribute so nothing is lost for a reader who does not know them. TAB-1 is reworded accordingly. (2) designControls gains the SDD: Design Outputs derives present/partial/gap from architecture AND detailed design rather than hard-coding the SDD as roadmap, which it stopped being in JOB-44. DC-2 reworded. Deliberately NOT in scope: making the PRD, SAD and SDD editable in every phase — that is the next job.",
       "status": "open"
+    },
+    {
+      "id": "j_8d4b17",
+      "code": "JOB-46",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "One notion of read-only: demo becomes a sandbox, and a reader sees a read-only editor",
+      "description": "The demo is now a sandbox: every document can be edited, changes live only in the browser and reset on reload, and Save offers the file as a download. Separately, someone signed in to a server with a read-only role now actually sees a read-only editor, rather than being allowed to type into changes the server would refuse.",
+      "technical_notes": "Both halves had the same cause: nothing answered \"may I edit in this session\". readOnly was passed to some views from launch.demo and to none from the server session, so the demo blocked editing on PRD/SAD/SDD/Results while leaving SRS/VTP fully editable, and a server reader could type into every table. Now one derived value - the session capability - flows to every view, and demo is no longer read-only at all. SRSTable and VTPTable gain the readOnly prop the others already had. Persisting in demo mode downloads the document instead of writing, so the sandbox has an exit. Also closes the rendering half of EDR-3, which was previously verified only at the transport level.",
+      "status": "open"
     }
   ]
 }

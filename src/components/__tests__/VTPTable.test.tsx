@@ -71,3 +71,32 @@ describe('VTPTable change tracking', () => {
     expect(screen.getByText('v1.0 · Sam')).toBeInTheDocument();
   });
 });
+
+// EDR-3: a role that cannot write gets a read-only editor, not one that lets you type
+// into changes the server would refuse.
+describe('VTPTable — read-only (EDR-3)', () => {
+  it('offers no row menu', () => {
+    const { rerender } = render(<VTPTable doc={vtp} srsDoc={srs} onChange={vi.fn()} />);
+    expect(screen.getAllByLabelText(/row actions/i).length).toBeGreaterThan(0);
+
+    rerender(<VTPTable doc={vtp} srsDoc={srs} onChange={vi.fn()} readOnly />);
+    expect(screen.queryByLabelText(/row actions/i)).toBeNull();
+  });
+
+  it('does not open a cell for editing when clicked', () => {
+    const onChange = vi.fn();
+    render(<VTPTable doc={vtp} srsDoc={srs} onChange={onChange} readOnly />);
+
+    fireEvent.click(screen.getByText('Login'));
+
+    expect(screen.queryByDisplayValue('Login')).toBeNull();
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('offers no add-first-test button on an empty document', () => {
+    const empty: VtpDoc = { ...vtp, items: [] };
+    render(<VTPTable doc={empty} srsDoc={srs} onChange={vi.fn()} readOnly />);
+
+    expect(screen.queryByText('+ Test')).toBeNull();
+  });
+});
