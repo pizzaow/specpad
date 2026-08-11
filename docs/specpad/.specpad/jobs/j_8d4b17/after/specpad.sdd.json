@@ -1,0 +1,556 @@
+{
+  "schemaVersion": "1.0",
+  "type": "sdd",
+  "name": "specpad",
+  "title": "Detailed Design",
+  "items": [
+    {
+      "id": "h_sd000",
+      "title": "Design views",
+      "heading": true
+    },
+    {
+      "id": "d_ctx001",
+      "code": "SDD-1",
+      "title": "Context",
+      "source": [
+        "docs/design/specpad-v1-design.md"
+      ],
+      "body": "What is outside SpecPad, and how each boundary is reached.\n\n- **A git repository** — the only durable store. SpecPad writes files into `docs/specpad/` and reads\n  history through the `git` binary. There is no database anywhere in the product.\n- **The browser's File System Access API** — how the hosted editor reaches a local checkout. Absent in\n  Firefox and Safari, so every write path has an upload/download fallback.\n- **A SpecPad server** (optional) — holds the clone on behalf of someone with no checkout, and speaks\n  the same document operations over HTTP.\n- **Claude Code** — runs the skill, which edits the same files programmatically.\n- **An eQMS** — consumes exported evidence. Out of scope for the software itself.\n\nThe invariant across all four: the *files* are the interface. Any actor that can read and write the\nJSON and markdown under `docs/specpad/` is a first-class client."
+    },
+    {
+      "id": "d_cmp001",
+      "code": "SDD-2",
+      "title": "Composition",
+      "source": [
+        "src/shared",
+        "src",
+        "server",
+        "skill/specpad"
+      ],
+      "body": "How the units below group into the architecture's blocks (see the SAD building-block view).\n\n| Block | Units |\n|---|---|\n| Shared contract | schema, docTypes, validate, governance, ids, factories, diff, merge, verification, launcher |\n| Editor shell | LocalApp, fileApi, transports (local/demo/remote), launchParams, theme, handleStore |\n| Editor views | register tables, TestingView, ArchitectureView, JobsView, ReleasesView, Auditor, Traceability, Overview, chrome |\n| Editor derivations | changeTracking, archDiff, auditReport, designControls, outline |\n| Server | config, registry, routing, auth, paths, git, repository, workingCopy, commitGate, api, entry point, presence, events, branchWatcher |\n| Skill | SKILL.md procedures, templates, verification adapter, mirror sync |\n\nGrouping is by *what changes together*, not by directory: `fileApi` sits with the shell rather than\nthe transports because it owns file conventions, which change with the document set rather than with\nthe storage medium."
+    },
+    {
+      "id": "d_dep001",
+      "code": "SDD-3",
+      "title": "Dependency",
+      "source": [
+        "src/shared/index.ts"
+      ],
+      "body": "Dependency direction, and the one rule that matters: **everything depends on the shared contract; the\ncontract depends on nothing.**\n\n- Editor → `src/shared`. Server → `src/shared`. Skill mirrors the contract *in prose* and is held to\n  it by a parity test rather than an import, because it is a prompt, not a program.\n- No edge runs the other way. A contract module that needed to know about a view or an endpoint would\n  mean the rule the editor and the server are supposed to share had been split in two.\n- The server declares no copy of validation, governance, merge or diff — enforced by\n  `server/__tests__/contract-parity.test.ts`, the same guard the skill has.\n\nAcceptance: both parity tests pass, and `src/shared` imports nothing from `src/`, `server/` or\n`site/`."
+    },
+    {
+      "id": "d_inf001",
+      "code": "SDD-4",
+      "title": "Information model",
+      "source": [
+        "src/shared/schema.ts"
+      ],
+      "body": "What SpecPad stores, and what it refuses to store.\n\nEvery document shares an envelope — `schemaVersion`, `type`, `name`, `title` — and register\ndocuments carry an ordered `items[]`. An item has a **stable id** and an optional renameable **code**.\nReferences always target ids: `verifies` → SRS, `satisfies` → PRD, `design` → SDD.\n\nThree refusals, each load-bearing:\n\n- **No history fields.** No author, no modified date, no changelist. Git owns history; anything stored\n  would be a second, wrong copy.\n- **Nothing derived.** Test counts, result roll-ups, release→job mapping and coverage are computed on\n  read. A stored roll-up is a cache that can disagree with its source.\n- **No reverse links.** The reverse of every trace is derived when the matrix is rendered, so there is\n  exactly one place to maintain each edge.\n\nThe regenerable caches under `.specpad/` look like an exception and are not: they hold verbatim past\ncopies of these same files, never derived data, and can be rebuilt from git at any time."
+    },
+    {
+      "id": "d_ifc001",
+      "code": "SDD-5",
+      "title": "External interfaces",
+      "source": [
+        "src/transports/types.ts",
+        "server/api.ts"
+      ],
+      "body": "The four boundaries the software crosses, and what each guarantees.\n\n- **`FileApi`** (`src/transports/types.ts`) — four methods: `listDocuments`, `readJson`,\n  `readText`, `writeText`. Absent is `null`, never an exception; an unreadable path is absent too,\n  so one bad diagram reference cannot abort opening a project. Every transport passes one conformance\n  suite.\n- **HTTP API** (`/api/v1/…`, optionally under `/p/<project>`) — mirrors those operations, plus\n  session, status, commit, discard, presence, events. Refusals carry data the UI renders (a 409 commit\n  result), which is why they are not thrown.\n- **The git CLI** — every git call goes through an injectable runner, so the pipeline is testable\n  without a repository and there is exactly one place where the process boundary is crossed.\n- **Server-sent events** — advisory presence and an upstream-moved signal. Failure of this interface is\n  defined as normal: the editor says less."
+    },
+    {
+      "id": "d_pat001",
+      "code": "SDD-6",
+      "title": "Conventions used throughout",
+      "source": [
+        "src/shared/ids.ts"
+      ],
+      "body": "Rules applied in many units, written once here rather than repeated in each.\n\n- **Ids are generated once and immutable** — a typed prefix plus six hex digits (`r_`, `t_`, `p_`,\n  `d_`, `h_`, `j_`), unique within a file, from `ids.ts`. Nothing else may mint an id.\n- **Codes are labels.** Renaming a code is always safe, because nothing resolves by code. Where a legacy\n  commit trailer used a code instead of an id, matching it back requires an end-anchored search — an\n  unanchored `JOB-3` also matches `JOB-35`.\n- **Governance is opt-in per pillar.** A rule that depends on an optional register only runs when that\n  register is present, so a project that does not use PRD or SDD pays nothing.\n- **Advisory features never block.** Presence, the branch watcher, and the project switcher all degrade\n  to silence rather than to an error.\n- **Absent, refused and broken are three different answers**, and conflating them is the defect this\n  convention exists to prevent."
+    },
+    {
+      "id": "d_deg001",
+      "code": "SDD-7",
+      "title": "Degradation and failure behaviour",
+      "source": [
+        "src/fileApi.ts"
+      ],
+      "body": "How the software behaves when something it depends on is missing — the design decisions that let one\ncodebase serve a static host, a local checkout, and a server.\n\n- **No File System Access API** → upload/download fallback, and in server mode the API is used instead,\n  so a Firefox user on a server saves normally rather than silently downloading a file.\n- **No `EventSource`** → presence subscription becomes a no-op.\n- **No server** → the session probe must distinguish a real server from a static host answering an\n  unknown path with `index.html`; it requires JSON *and* a session shape.\n- **An unresolvable diagram reference** → the project still opens, with that diagram missing.\n- **An unreachable project on a multi-project server** → the other projects still serve.\n\nAcceptance: each degraded path has a test asserting the *degraded* behaviour, not merely the absence of\na crash."
+    },
+    {
+      "id": "h_sd010",
+      "title": "Shared contract",
+      "heading": true
+    },
+    {
+      "id": "d_sch001",
+      "code": "SDD-10",
+      "title": "schema — types and JSON Schemas",
+      "source": [
+        "src/shared/schema.ts"
+      ],
+      "body": "Secret: the wire format. Every document type's TypeScript type and JSON Schema live here together, so\nthe two cannot drift apart.\n\nInterface: `projectSchema`, `srsSchema`, `vtpSchema`, `prdSchema`, `sddSchema`, plus the\nmatching types and `SCHEMA_VERSION`.\n\nStructure only — no policy. Whether a reference *resolves* is governance's job, not the schema's;\nmixing them would put half the rules where the editor can enforce them and half where it cannot.\nDescriptions on every property are load-bearing: the published schema reference is generated from them.\n\nAcceptance: every schema validates its factory's output; every property carries a description\n(`schema-descriptions.test.ts`)."
+    },
+    {
+      "id": "d_dct001",
+      "code": "SDD-11",
+      "title": "docTypes — the document-type registry",
+      "source": [
+        "src/shared/docTypes.ts"
+      ],
+      "body": "Secret: **which content document types exist**, and how each behaves — register / prose / asset,\noptional, in-baseline, generated.\n\nThis is the extensibility mechanism. Validation, the schema reference, snapshots, per-job diffs, the\nredline, and the generator all iterate the registry, so adding a pillar is a registration plus a schema\nrather than an edit in each of those places. Adding the SDD exercised exactly that: no snapshot, diff or\ngenerator code changed.\n\nInterface: `DOC_TYPES`, `REGISTER_TYPES`, `docTypeFor`, `isRegisterType`,\n`registerTypesInIndex`. An unknown type resolves to `undefined` rather than throwing — callers treat\nunknown types as \"not mine\".\n\nAcceptance: a newly-registered type flows into snapshots, per-job diffs, redline and the generator with\nno other change (`docTypes.test.ts`)."
+    },
+    {
+      "id": "d_val001",
+      "code": "SDD-12",
+      "title": "validate — structural validation",
+      "source": [
+        "src/shared/validate.ts"
+      ],
+      "body": "Secret: how a document is checked against its schema, and which schema applies to which `type`.\n\nInterface: `validate(doc) → string[]`. An empty array means structurally valid. It returns *every*\nproblem rather than the first, because an author fixing one error at a time is the slowest way to fix\nfive.\n\nDeliberately says nothing about policy: a document can be structurally perfect and still violate\ntraceability. Keeping the two separate is what lets the schema stay a pure description of shape.\n\nAcceptance: valid fixtures return `[]`; each malformed fixture names its own field."
+    },
+    {
+      "id": "d_gov001",
+      "code": "SDD-13",
+      "title": "governance — policy",
+      "source": [
+        "src/shared/governance.ts"
+      ],
+      "body": "Secret: **the rules that make a document set trustworthy**, as opposed to merely well-formed —\ntraceability, referential integrity, expected results, active-job discipline, and the opt-in PRD and SDD\nrules.\n\nInterface: `GOVERNANCE_RULES` (the canonical list) and `checkGovernance(bundle) → violations`. Pure\nover data, which is what lets the editor, the skill and the server all run it and never disagree; the\nskill is held to the same list by a parity test.\n\nRules that need `HEAD` — \"spec changes require an active job\" — deliberately live in the skill's\npre-commit gate instead, because a browser has no git.\n\nOpt-in rules run only when their register is present. Where a rule has a rigor dimension (the SDD), it\nis checked at maximum rigor unconditionally; omission is an export decision.\n\nAcceptance: each rule has a test that trips it and one that does not; the skill documents every rule id."
+    },
+    {
+      "id": "d_ids001",
+      "code": "SDD-14",
+      "title": "ids — identity",
+      "source": [
+        "src/shared/ids.ts"
+      ],
+      "body": "Secret: the id format, and that it is random rather than sequential.\n\nInterface: `generateId(prefix, existing)` and `ID_PREFIX`. Collides-and-retries against the ids\nalready in the file; gives up after a bounded number of attempts rather than looping forever.\n\nRandom, not sequential: two people adding an item offline must not mint the same id, and a sequential\ncounter is state that would have to be stored and merged.\n\nAcceptance: generated ids match the typed-prefix format and never collide with the supplied set."
+    },
+    {
+      "id": "d_fac001",
+      "code": "SDD-15",
+      "title": "factories — new documents and items",
+      "source": [
+        "src/shared/factories.ts"
+      ],
+      "body": "Secret: what a *new* empty document and a *new* item look like, including which fields are seeded.\n\nInterface: `createProjectDoc`, `createSrsDoc`, `createVtpDoc`, `createSddDoc`, and the per-item\nfactories. The project factory builds `documents[]` from the registry, so a newly registered pillar is\npart of the default document set without touching this unit.\n\nAcceptance: every factory's output validates; new items carry a fresh unique id."
+    },
+    {
+      "id": "d_dif001",
+      "code": "SDD-16",
+      "title": "diff — item-level comparison",
+      "source": [
+        "src/shared/diff.ts"
+      ],
+      "body": "Secret: what \"changed\" means for an id-keyed register — added, removed, modified, keyed on id, with\norder never counting as a change.\n\nInterface: `diffItems(before, after)`, `diffDocs`, `valuesEqual`. Exported `valuesEqual` is why\n\"changed\" means one thing everywhere: the redline, the merge and the pending-change summary all use it.\n\nReordering is not a change. Treating it as one would make every reorder look like a rewrite of the whole\ndocument.\n\nAcceptance: reordering yields no differences; a field change yields exactly one modified item."
+    },
+    {
+      "id": "d_mrg001",
+      "code": "SDD-17",
+      "title": "merge — three-way structural merge",
+      "source": [
+        "src/shared/merge.ts"
+      ],
+      "body": "Secret: **that SpecPad documents are merged by item id, never as text.** A line-based merge of a\nformatted JSON array produces plausible-looking garbage — duplicated ids, orphaned references, silently\ndropped items — and the failure is invisible in review.\n\nInterface: `mergeDocs(base, ours, theirs) → { doc, conflicts }`. Pure. Changes to different fields of\none item combine; a conflict is raised only where both sides set the same field differently, or one side\ndeletes what the other modified. Order is never a conflict.\n\nInvalid input: a document that is not an id-keyed register is refused rather than merged.\n\nAcceptance: different-field edits combine with no conflict; same-field edits conflict; a delete-modify\npair conflicts; no output ever contains conflict markers."
+    },
+    {
+      "id": "d_ver001",
+      "code": "SDD-18",
+      "title": "verification — run matching",
+      "source": [
+        "src/shared/verification.ts"
+      ],
+      "body": "Secret: how a VTP item's `automation` links resolve against a captured run — and that SpecPad is\nframework-agnostic, treating `runner` and `selector` as opaque.\n\nInterface: the matcher and result derivation — automated tests derive passed/failed/skipped/not-run from\nthe run; manual tests fall back to a stored result; roll-ups computed, never stored.\n\nA link with no matching result is **not run**, which is distinct from failed. Collapsing those two would\nmake a missing test look like a passing one or a broken one, and neither is true.\n\nAcceptance: each status derives correctly; an unmatched link reports not-run."
+    },
+    {
+      "id": "d_lnc001",
+      "code": "SDD-19",
+      "title": "launcher — where the editor lives",
+      "source": [
+        "src/shared/launcher.ts"
+      ],
+      "body": "Secret: the mapping from contract version to editor build path — `\"1.0\"` → `/v01/` — and that it is\n*derived*, never configured.\n\nInterface: `editorVersionPath`, `editorUrl`, `DEFAULT_EDITOR_BASE`. A blank or absent base falls\nback to the hosted editor, so an existing project is untouched. The server imports this rather than\nderiving its own copy.\n\nInvalid input: a `schemaVersion` with no numeric major throws at once, rather than producing a path\nthat would 404 later.\n\nAcceptance: the version path is derived from the contract; a configured base changes the host but never\nthe version segment."
+    },
+    {
+      "id": "h_sd020",
+      "title": "Editor — shell and transports",
+      "heading": true
+    },
+    {
+      "id": "d_app001",
+      "code": "SDD-20",
+      "title": "LocalApp — the editor shell",
+      "source": [
+        "src/LocalApp.tsx"
+      ],
+      "body": "Secret: how a session gets from \"a page loaded\" to \"a project is open\" — and which of the three\ntransports it is talking to.\n\nOwns the open project, the active view, the loaded document set and every piece of derived state the\nviews read. On load it probes for a server, then the demo, then falls back to local files.\n\nDeliberately the only place that decides *where* documents come from; a view never knows.\n\nInvalid input: an unopenable project sets an error and leaves the editor closed rather than half-loaded.\n\nAcceptance: each of the three entry paths opens a project; switching documents re-seeds the tables;\nnavigation between views preserves the loaded set."
+    },
+    {
+      "id": "d_api001",
+      "code": "SDD-21",
+      "title": "fileApi — document conventions",
+      "source": [
+        "src/fileApi.ts"
+      ],
+      "body": "Secret: **SpecPad's file conventions** — which filename holds the SRS, where a snapshot lives, what\n\"absent\" means for an optional sidecar — kept separate from *how* bytes are read.\n\nInterface: the load/save functions every view uses, plus the server-mode operations. Delegates all I/O to\nthe active `FileApi`.\n\nThis split is why adding a transport changed no view, and why adding a document type changes no\ntransport.\n\nAcceptance: the same conventions hold across all three transports (one conformance suite)."
+    },
+    {
+      "id": "d_tlc001",
+      "code": "SDD-22",
+      "title": "local transport — File System Access",
+      "source": [
+        "src/transports/local.ts"
+      ],
+      "body": "Secret: the browser's directory-handle model, including permission re-prompting and the upload/download\nfallback where the API is unavailable.\n\nInvalid input: a revoked or stale handle is reported as \"not open\" rather than throwing at the first\nread, so the editor can offer to re-pick the folder.\n\nAcceptance: passes the transport conformance suite; a persisted handle reopens without a picker when its\ngrant survived."
+    },
+    {
+      "id": "d_tdm001",
+      "code": "SDD-23",
+      "title": "demo transport — read-only hosted content",
+      "source": [
+        "src/transports/demo.ts"
+      ],
+      "body": "Secret: that the demo is a static file listing fetched over HTTP, and that it is read-only.\n\nEvery write is refused with a message naming the demo, rather than failing at the storage layer, so the\nUI never has to special-case demo mode.\n\nAcceptance: reads resolve against the manifest; every write is refused."
+    },
+    {
+      "id": "d_trm001",
+      "code": "SDD-24",
+      "title": "remote transport — a SpecPad server",
+      "source": [
+        "src/transports/remote.ts"
+      ],
+      "body": "Secret: the HTTP protocol, and the optimistic-concurrency bookkeeping — version tags seen on read are\nreplayed on write so a stale edit is refused by the server rather than silently overwriting someone.\n\nInterface: the `FileApi` methods plus session, status, commit, discard, presence, events, and project\ndiscovery. The API base carries the project (`/api/v1/p/<id>`), so the same transport serves a\nsingle-project and a multi-project deployment.\n\nInvalid input, and the distinction that caused a real defect: **404 is absent (null); 409 is a refusal\ncarrying data** the dialog renders. Conflating them returned the error body as though it were the\ndocument.\n\nAcceptance: passes the conformance suite; a stale write is refused; a refused commit yields renderable\ndata; the probe is not fooled by a static host."
+    },
+    {
+      "id": "d_lch001",
+      "code": "SDD-25",
+      "title": "launchParams — reading the launch URL",
+      "source": [
+        "src/launchParams.ts"
+      ],
+      "body": "Secret: that the local folder path travels in the URL *fragment*, which browsers never send to a server,\nwhile `demo` and `project` are read from the query string.\n\nInvalid input: an unrecognised view name is ignored rather than opening a broken tab.\n\nAcceptance: fragment and query forms both parse; an invalid `open` value is dropped."
+    },
+    {
+      "id": "d_thm001",
+      "code": "SDD-26",
+      "title": "theme — appearance",
+      "source": [
+        "src/theme.ts",
+        "src/specpad.less"
+      ],
+      "body": "Secret: the token layer. Themes are CSS custom properties under `[data-theme]`, so a new theme is a\nblock of variables rather than a sweep through component styles.\n\nApplied pre-paint by an inline script so there is no flash of the wrong theme, and persisted to\nlocalStorage. An unknown stored theme falls back to the default rather than rendering unstyled.\n\nAcceptance: each theme applies; an unknown persisted value degrades to the default."
+    },
+    {
+      "id": "d_hst001",
+      "code": "SDD-27",
+      "title": "handleStore — recent projects",
+      "source": [
+        "src/handleStore.ts"
+      ],
+      "body": "Secret: that directory handles persist in IndexedDB, and that a persisted handle may have lost its\npermission grant.\n\nInterface: remember, list, and re-verify. Unsupported browsers get an empty list, never an error.\n\nAcceptance: a remembered project reappears; a handle whose grant lapsed is offered for re-picking rather\nthan silently failing."
+    },
+    {
+      "id": "h_sd030",
+      "title": "Editor — derivations",
+      "heading": true
+    },
+    {
+      "id": "d_chg001",
+      "code": "SDD-30",
+      "title": "changeTracking — redline and attribution",
+      "source": [
+        "src/changeTracking.ts",
+        "src/changeTrackingView.ts"
+      ],
+      "body": "Secret: how a redline is computed from two snapshots, and how attribution is assembled from a sequence\nof them — entirely on read, from committed verbatim copies.\n\nInterface: `buildRedline`, `computeAttribution`, and the cached-release helpers. Pure over documents,\nso there is no git in the browser and no stored diff anywhere.\n\nMissing snapshot: yields no redline rather than an empty one, so \"unchanged\" and \"unknown\" stay\ndistinguishable.\n\nAcceptance: a redline matches the underlying item diff; attribution orders by snapshot sequence."
+    },
+    {
+      "id": "d_arc001",
+      "code": "SDD-31",
+      "title": "archDiff — section-level markdown diff",
+      "source": [
+        "src/archDiff.ts"
+      ],
+      "body": "Secret: that architecture changes are reported by *heading section* rather than by line, because \"§6\nRuntime View changed\" is what a reviewer can act on and \"line 214 changed\" is not.\n\nInterface: `mdSectionDiff(before, after)`. Diagrams stay coarse — changed or not — deliberately: no\nregulator tracks in-diagram deltas, and semantic diagram diffing is a research problem.\n\nAcceptance: a reworded paragraph reports its section; an unchanged document reports nothing."
+    },
+    {
+      "id": "d_aud001",
+      "code": "SDD-32",
+      "title": "auditReport — coverage and roll-ups",
+      "source": [
+        "src/auditReport.ts"
+      ],
+      "body": "Secret: how coverage, the trace matrix and test roll-ups are computed — including that automated results\ncome from the *run*, not from a stored field.\n\nInterface: `buildAuditReport(docs, run)`. Run-aware by construction: passing the run in was the fix for\nroll-ups that broke when stored results were cleared in favour of captured ones.\n\nAcceptance: roll-ups match the run; a requirement with no test is reported unverified."
+    },
+    {
+      "id": "d_dsc001",
+      "code": "SDD-33",
+      "title": "designControls — the regulatory map",
+      "source": [
+        "src/designControls.ts"
+      ],
+      "body": "Secret: the mapping from design-control elements to where their evidence lives, with IEC 62304 and\n21 CFR 820.30 citations — deliberately in core rather than in the medical add-on, because a reviewer's\nfirst question (\"where are your design inputs?\") must be answerable in any project.\n\nInterface: `buildDesignControls(docs)` → elements with a live status of present / partial / gap.\n\nStatus is derived, never stored, so it cannot claim evidence that is no longer there.\n\nAcceptance: a project missing a pillar reports that element as a gap."
+    },
+    {
+      "id": "d_out001",
+      "code": "SDD-34",
+      "title": "outline — heading hierarchy",
+      "source": [
+        "src/outline.ts"
+      ],
+      "body": "Secret: how a flat `items[]` with `level` renders as a numbered hierarchy, and how a heading's dotted\ncode is composed from its ancestors.\n\nKeeping items flat is what makes reordering, diffing and merging simple; the tree exists only at render\ntime.\n\nAcceptance: nested headings compose dotted codes; a flat document is unaffected."
+    },
+    {
+      "id": "h_sd040",
+      "title": "Editor — views",
+      "heading": true
+    },
+    {
+      "id": "d_tbl001",
+      "code": "SDD-40",
+      "title": "Register tables — SRS, VTP, PRD",
+      "source": [
+        "src/components/SRSTable.tsx",
+        "src/components/VTPTable.tsx",
+        "src/components/PrdTable.tsx"
+      ],
+      "body": "Secret: the editing model for an id-keyed register — inline edit, row actions, expandable reference\ncells, redline decoration, and presence markers.\n\nThree tables rather than one generic one, deliberately: each register has a different set of columns\nthat matter, and the shared abstraction that would cover all three was worse than the duplication.\n\nInvalid input: an edit that would break a reference is prevented at the cell rather than saved and\nreported later.\n\nAcceptance: each table edits its register, renders its redline, and surfaces its own trace column."
+    },
+    {
+      "id": "d_tst001",
+      "code": "SDD-41",
+      "title": "TestingView — the evidence chain",
+      "source": [
+        "src/components/TestingView.tsx"
+      ],
+      "body": "Secret: the presentation of the chain **VTP item → automated test → captured run**, including run\nprovenance and the manual-result fallback.\n\nAutomated rows show a derived badge and are not hand-editable; manual rows keep a control. Making the\nderived value editable would let someone type a passing result over a failing run.\n\nAcceptance: a run-backed row shows the derived status; a manual row keeps its stored result; an\nunmatched link shows not-run."
+    },
+    {
+      "id": "d_arv001",
+      "code": "SDD-42",
+      "title": "ArchitectureView — authoring and display",
+      "source": [
+        "src/components/ArchitectureView.tsx"
+      ],
+      "body": "Secret: that the SAD is markdown with diagrams *placed inline by the document*, and that editing and\ndisplay are separate sub-views (CodeMirror; react-markdown with SVGs resolved from the project folder).\n\nInvalid input: an unresolvable diagram reference renders as missing and never aborts opening the project.\n\nAcceptance: referenced diagrams render inline; a missing one degrades locally."
+    },
+    {
+      "id": "d_jbv001",
+      "code": "SDD-43",
+      "title": "JobsView — change tracking",
+      "source": [
+        "src/components/JobsView.tsx"
+      ],
+      "body": "Secret: how a job's impact is assembled for display — per-document-type diffs from the frozen caches,\narchitecture changes, commits, and the verification roll-up — plus the active job's *in-progress* diff\nagainst its before-snapshot.\n\nIterates the registered document types, so a new pillar's changes appear here with no edit. That is how\nSDD changes show up in a job.\n\nAcceptance: a closed job renders its diffs and commits; the active job renders uncommitted changes; a new\nregister type appears without code change."
+    },
+    {
+      "id": "d_rel001",
+      "code": "SDD-44",
+      "title": "ReleasesView — release notes",
+      "source": [
+        "src/components/ReleasesView.tsx"
+      ],
+      "body": "Secret: that a release's job list is *derived* from each job's version rather than stored, and grouped\nfor reading as release notes.\n\nAcceptance: jobs group under their release; unreleased work is shown as such."
+    },
+    {
+      "id": "d_avw001",
+      "code": "SDD-45",
+      "title": "Auditor and Traceability views",
+      "source": [
+        "src/components/AuditView.tsx",
+        "src/components/TraceabilityView.tsx"
+      ],
+      "body": "Secret: the split between *orientation* (the design-control map: which formal element lives where) and\n*evidence* (the trace matrix, coverage and gaps). They were one view and were separated because a\nreviewer arriving cold needs the map first.\n\nBoth render a scope disclaimer: this is evidence supporting design controls, not a quality system.\n\nAcceptance: the map links to each tab; the matrix flags unverified requirements and unresolved links."
+    },
+    {
+      "id": "d_ovw001",
+      "code": "SDD-46",
+      "title": "OverviewView — the landing view",
+      "source": [
+        "src/components/OverviewView.tsx"
+      ],
+      "body": "Secret: which four things answer \"what is the state of this project\" — coverage headline, in-progress\njobs, latest release, quick jumps — and that all four are derived on read.\n\nAcceptance: renders from documents alone; degrades cleanly when an optional pillar is absent."
+    },
+    {
+      "id": "d_chr001",
+      "code": "SDD-47",
+      "title": "Editor chrome — menubar, tabs, status, server bar, dialogs",
+      "source": [
+        "src/components/MenuBar.tsx",
+        "src/components/ViewTabs.tsx",
+        "src/components/StatusBar.tsx",
+        "src/components/ServerBar.tsx",
+        "src/components/CommitDialog.tsx"
+      ],
+      "body": "Secret: the navigation model — tabs grouped and ordered by design-control phase, with phase bands above\nthem — and the server-session affordances.\n\nThe tab strip is a CSS grid rather than a list so a band can span several tabs. The ServerBar answers\nwho am I, what may I do, how much is unpublished, and which project. The CommitDialog shows the pending\nchange set at **item** level plus the governance result *before* anything is committed.\n\nA row menu renders in a portal so it cannot be clipped by the table it sits in.\n\nAcceptance: tabs and bands render for the available document set; a reader is offered no Commit; the\ndialog renders refusals and conflicts rather than discarding them."
+    },
+    {
+      "id": "d_ddv001",
+      "code": "SDD-48",
+      "title": "DetailedDesignView — the design tab",
+      "source": [
+        "src/components/DetailedDesignView.tsx"
+      ],
+      "body": "Secret: how a *sectioned prose* register is edited — an outline beside one section at a time, with\nDisplay and Edit sub-views, the same shape the Architecture tab uses. A row-per-section table was\nrejected: a markdown body with an embedded flowchart does not belong in a table cell.\n\nThe load-bearing part is neither pane. Every section shows **which requirements reference it**,\nderived on read from `SrsItem.design`, which is the re-review rule made visible: editing a section\nwarns that those requirements are now in question, and deleting one names exactly what it would\nleave dangling. Without that, the rule exists only in a guide nobody has open at the time.\n\nInvalid input: a section with no body renders as empty rather than blank-but-broken; an unresolvable\ndiagram reference names the missing file, exactly as the architecture view does.\n\nAcceptance: sections list and open; the referencing requirements appear on the section and in the\nedit warning; a delete names the requirements it would break and abandons on cancel; identity\nsurvives every edit; read-only mode offers no editing affordance at all."
+    },
+    {
+      "id": "h_sd050",
+      "title": "Server",
+      "heading": true
+    },
+    {
+      "id": "d_scf001",
+      "code": "SDD-50",
+      "title": "server/config — the deployment declaration",
+      "source": [
+        "server/config.ts"
+      ],
+      "body": "Secret: the shape of a deployment — projects, identity, roles, commit policy, working-copy lifecycle —\nand that validation is exhaustive and startup-blocking.\n\nInterface: `validateConfig` (collects every problem) and `loadConfig` (throws with all of them).\n\nInvalid input is the main behaviour: a half-configured server holding push access to a real repository is\nworse than one that refuses to start. A single-repository config is still accepted and read as a\none-project deployment.\n\nAcceptance: a valid config yields resolved projects; each malformed field is named; every problem is\nreported at once."
+    },
+    {
+      "id": "d_reg001",
+      "code": "SDD-51",
+      "title": "server/registry — the hosted projects",
+      "source": [
+        "server/registry.ts"
+      ],
+      "body": "Secret: that per-project state is *per project* — one clone, presence registry, event bus and branch\nwatcher each — and that one unreachable repository must not stop the others being served.\n\nInterface: `get`, `list`, `sole`, `ensureClones` (returns failures rather than throwing), `tick`,\n`reapIdle`, `closeAll`.\n\nAcceptance: each project gets its own runtime; a failing clone is reported and the others still serve."
+    },
+    {
+      "id": "d_rot001",
+      "code": "SDD-52",
+      "title": "server/routing — which project a request is for",
+      "source": [
+        "server/routing.ts"
+      ],
+      "body": "Secret: the URL shape `/p/<id>/…`, and the rule that an unnamed project resolves **only** when the\ndeployment has exactly one.\n\nPure string functions, so the routing rule is testable without a server, a clone, or a request.\n\nInvalid input: an unknown project is a 404; no project named on a multi-project server is a 400 carrying\nthe list, never an arbitrary choice.\n\nAcceptance: prefixed and unprefixed paths resolve per the rule; the ambiguous case refuses."
+    },
+    {
+      "id": "d_ath001",
+      "code": "SDD-53",
+      "title": "server/auth — identity and authorization",
+      "source": [
+        "server/auth.ts"
+      ],
+      "body": "Secret: **that SpecPad implements no authentication.** An upstream the company already runs asserts the\nidentity; providers normalise it to one `Principal`, and nothing downstream knows which provider ran.\n\nAlso secret, and separate: **identity is not the git credential.** The human is the commit *author*; a\nmachine credential does the push.\n\nAuthentication is deployment-wide, authorization is per project, so they are two steps: `authenticate`\nthen `sessionFor(principal, roles)`. No role in one project says nothing about another.\n\nInvalid input: header-asserted identity from an untrusted peer is ignored outright; the dev provider\nrefuses any non-loopback bind.\n\nAcceptance: each provider yields a principal or null; role precedence picks the strongest match; an\nuntrusted peer cannot assert an identity."
+    },
+    {
+      "id": "d_pth001",
+      "code": "SDD-54",
+      "title": "server/paths — path confinement",
+      "source": [
+        "server/paths.ts"
+      ],
+      "body": "Secret: the client-path grammar, and that **every function here is a security control**.\n\nClient paths are relative to the project root; there is deliberately no way to express an absolute path\nor a parent traversal. Absolute paths and `..` are refused outright rather than reinterpreted, because\nsilently serving a reinterpreted path hides the caller's bug.\n\nSecond line of defence: sparse-checkout means the tree physically cannot contain application source.\n\nAcceptance: traversal, absolute, null-byte and drive-letter forms are each refused; the staged diff is\nre-checked before a commit."
+    },
+    {
+      "id": "d_git001",
+      "code": "SDD-55",
+      "title": "server/git — git plumbing",
+      "source": [
+        "server/git.ts"
+      ],
+      "body": "Secret: the git command surface, behind an injectable runner so the pipeline is testable without a\nrepository.\n\nInterface: `run` (throws) and `tryRun` (returns a result) — the distinction matters because \"the file\ndoes not exist at this ref\" is an ordinary answer, not an error.\n\nNever force-pushes. Note the subtlety in `conflictedFile`: during a *rebase* git's index stages are\ninverted relative to how a user thinks about them; this unit returns them the way the user means.\n\nAcceptance: commands compose against a fake runner; a rebase conflict reports the right side as \"theirs\"."
+    },
+    {
+      "id": "d_rpo001",
+      "code": "SDD-56",
+      "title": "server/repository — clone and worktrees",
+      "source": [
+        "server/repository.ts"
+      ],
+      "body": "Secret: the on-disk layout — one bare clone per project, one sparse worktree per user under\n`workDir/projects/<id>/` — and the worktree lifecycle.\n\nProvisioning is serialized so two concurrent requests cannot race one worktree, and lazy so a user who\nnever opens a project costs nothing.\n\nReaping has two refusals that are the point of the unit: a copy holding **uncommitted changes** is never\nremoved (that work exists in no git object), and a copy the process has **not seen used** is never\nremoved (so a restart cannot delete everyone's drafts).\n\nAcceptance: sparse checkout excludes source; two users get independent copies; an idle clean copy is\nreaped; a dirty one never is; a reaped copy is re-provisioned invisibly."
+    },
+    {
+      "id": "d_wcp001",
+      "code": "SDD-57",
+      "title": "server/workingCopy — reads, writes, publication",
+      "source": [
+        "server/workingCopy.ts"
+      ],
+      "body": "Secret: the commit pipeline — stage, gate, commit as the human, rebase, retry, push — and the structural\nconflict resolution that replaces a textual merge.\n\nInterface: read/write/list, `status`, `pendingDiff` (item-level, so the dialog can say \"REQ-14\nmodified\" rather than name a file), `publish`, `discard`.\n\nInvalid input: a refused commit returns an outcome describing the refusal; it never throws, because the\nrefusal is data the dialog renders. Nothing is ever force-pushed, and no document ever ends up holding\nconflict markers.\n\nAcceptance: an autosaved edit is pending and absent from the repository until Commit; two people editing\ndifferent requirements both land; same-field edits conflict without loss."
+    },
+    {
+      "id": "d_cgt001",
+      "code": "SDD-58",
+      "title": "server/commitGate — validate and govern before publishing",
+      "source": [
+        "server/commitGate.ts"
+      ],
+      "body": "Secret: what must be true before a change may enter the repository — structural validity, governance,\nan active job — and the policy that decides whether a violation blocks or warns.\n\nPure function over the changed documents plus policy, which is what makes it testable without git.\n\n**Runs server-side because the client is not trusted.** For someone who will never run the test suite,\nthis gate *is* the dogfood rule.\n\nAcceptance: an invalid document is blocked; a governance breach blocks under `block` and warns under\n`warn`; a change with no active job is refused when the policy requires one."
+    },
+    {
+      "id": "d_sap001",
+      "code": "SDD-59",
+      "title": "server/api — the HTTP surface",
+      "source": [
+        "server/api.ts"
+      ],
+      "body": "Secret: the endpoint set and **where authorization is enforced** — here, not in the browser. The\neditor's read-only rendering is a courtesy; a reader's write request is refused server-side regardless\nof what the client chose to display.\n\nInterface: session, documents, status, doc/text read and write, commit, discard, presence.\n\nInvalid input: a bad path becomes 400; a missing document 404; a stale write 409 carrying the current\nversion; an unknown endpoint 404 naming the method and path.\n\nAcceptance: each endpoint enforces its capability; a reader is refused a write; a stale write is refused."
+    },
+    {
+      "id": "d_ent001",
+      "code": "SDD-60",
+      "title": "server entry point — process and static serving",
+      "source": [
+        "server/index.ts",
+        "Dockerfile"
+      ],
+      "body": "Secret: that one process serves the version-pinned editor build **and** the API from a single origin —\nwhich is what removes CORS, third-party cookies, cross-domain redirects, and any dependency on\nspecpad.com being reachable inside a corporate network.\n\nAlso owns shutdown, and the non-obvious part: an open SSE stream never ends on its own, so the streams\nmust be ended before `close()` or the process hangs until it is killed.\n\nInvalid input: an invalid config exits non-zero with every problem listed, having listened on nothing.\n\nAcceptance: the process starts from a config file and answers over HTTP end to end; SIGTERM shuts down\nwithout hanging; static paths never escape the build directory."
+    },
+    {
+      "id": "d_prs001",
+      "code": "SDD-61",
+      "title": "server/presence, events, branchWatcher — advisory signals",
+      "source": [
+        "server/presence.ts",
+        "server/events.ts",
+        "server/branchWatcher.ts"
+      ],
+      "body": "Secret: **that all three are deliberately weak**, and the design decisions that keep them from becoming\nload-bearing.\n\nClaims expire on their own after 45 seconds; nothing blocks on them; losing the registry to a restart\ncosts a moment of silence. A lock that vanishes when someone shuts a laptop lid must never be\nload-bearing.\n\nThe branch watcher's two non-events are the interesting part: a first observation is not a change, and an\nunreachable remote is not a change. Either mistake would tell every open editor to reload for nothing.\n\nEvents are scoped per project, so a claim in one project cannot wake another's subscribers. Dead\nsubscribers are dropped rather than thrown.\n\nAcceptance: claims expire unreleased; a repeated heartbeat does not re-broadcast; a dying sink is\ndropped; a malformed frame is ignored; cross-project events are not delivered."
+    },
+    {
+      "id": "h_sd070",
+      "title": "Skill and tooling",
+      "heading": true
+    },
+    {
+      "id": "d_skl001",
+      "code": "SDD-70",
+      "title": "The skill — procedures as a prompt",
+      "source": [
+        "skill/specpad/SKILL.md"
+      ],
+      "body": "Secret: that the skill is **prose, not a program** — an agent procedure with no CLI — and that this is a\ndeliberate distribution choice, not an unfinished one.\n\nIt mirrors the contract in words: the same governance rule ids, the same file conventions, the same id\ndiscipline. Nothing enforces that at compile time, so a parity test holds it to the shared module.\n\nContains the working loop, `init`, the baseline generator, the requirement audit, change-tracking cache\nmaintenance, the release-cut procedure, and verification-run capture.\n\nAcceptance: every governance rule id appears in SKILL.md; every shipped guide is routed to and no guide\nbody is inlined."
+    },
+    {
+      "id": "d_tpl001",
+      "code": "SDD-71",
+      "title": "Templates and the pre-push hook",
+      "source": [
+        "skill/specpad/templates"
+      ],
+      "body": "Secret: what a newly scaffolded project contains, and the enforcement backstop.\n\nThe launcher template is generated per project: it hardcodes no editor host, substituting both the base\nURL and the optional server project id in *both* the redirect and the no-JavaScript fallback — a\nlauncher that redirects correctly but links wrongly is worse than one consistently wrong, because the\nfallback is what a blocked-script user sees.\n\nThe pre-push hook blocks a commit with no `Job:` trailer and warns on code without spec. It skips\nmerges, tag pushes and pre-adoption history, and has an explicit waiver and bypass, because a gate with\nno escape hatch gets disabled entirely.\n\nAcceptance: the launcher substitutes both occurrences; the hook blocks, warns, skips and waives as\nspecified."
+    },
+    {
+      "id": "d_vrf001",
+      "code": "SDD-72",
+      "title": "Verification adapter and tooling",
+      "source": [
+        "scripts/specpad-verify.mjs",
+        "scripts/sync-skill.mjs"
+      ],
+      "body": "Secret: the boundary between SpecPad and a test framework. The adapter converts one runner's machine\nreport into the normalized run record; the core never parses a test framework, so another runner is a\nsibling adapter rather than a change to the contract.\n\n`sync-skill` mirrors the distributable skill into the repo's own `.claude/skills/` so this repo runs\nthe skill it ships. The mirror is committed and gated on push, because a mirror that can drift is worse\nthan none.\n\nAcceptance: a vitest run produces a valid run record whose links resolve; the mirror matches the source."
+    },
+    {
+      "id": "d_sit001",
+      "code": "SDD-73",
+      "title": "Marketing site and generated reference",
+      "source": [
+        "site/src/generate-reference.ts",
+        "site/index.html"
+      ],
+      "body": "Secret: that the published schema reference is **generated from the live contract at build time**, not\nmaintained by hand — which is why it cannot describe a version of the schema that does not exist.\n\nA second Vite build, deployed to the apex while the editor is deployed under its version path.\n\nAcceptance: the reference is generated from the registry and its schemas; site links resolve."
+    }
+  ]
+}

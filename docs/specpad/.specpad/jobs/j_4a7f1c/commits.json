@@ -1,0 +1,38 @@
+[
+  {
+    "hash": "58c340043b0b21bf14348f574df2ab654d36e8d8",
+    "subject": "feat(skill): the SpecPad working loop — primary in-loop requirement capture",
+    "author": "Geoff Pollard",
+    "date": "2026-06-17"
+  },
+  {
+    "hash": "1c085d9f7b43cd938fcfd511c0cf9a7fd422fc7e",
+    "subject": "feat(skill): pre-push commit-check hook + requirement-audit protocol (JOBS-7..9)",
+    "author": "Geoff Pollard",
+    "date": "2026-06-17"
+  },
+  {
+    "hash": "4f91760441f364bac52dfb9cd84e656c992bc921",
+    "subject": "docs(specpad): record the jobs feature as SRS/VTP requirements (JOBS-1..8)",
+    "author": "Geoff Pollard",
+    "date": "2026-06-16"
+  },
+  {
+    "hash": "c51938a4f9db6f14ba8efbd2a5fd376d63820251",
+    "subject": "feat(editor): configurable demo base (VITE_DEMO_BASE) for staging deploys",
+    "author": "Geoff Pollard",
+    "date": "2026-06-16"
+  },
+  {
+    "hash": "0770b8a90f404a7d9522c46fcf324c70f245a01b",
+    "subject": "feat(jobs): multi-job support + workflow-assumption audit",
+    "author": "Geoff Pollard",
+    "date": "2026-06-16"
+  },
+  {
+    "hash": "b5cfe83da42ab20eed9126e9af197ec75259cce8",
+    "subject": "feat(jobs): SpecPad-owned jobs register with change-tracking traceability",
+    "author": "Geoff Pollard",
+    "date": "2026-06-16"
+  }
+]
