@@ -83,6 +83,7 @@ import VTPTable from './components/VTPTable';
 import TestingView from './components/TestingView';
 import JobsView from './components/JobsView';
 import ArchitectureView from './components/ArchitectureView';
+import DetailedDesignView from './components/DetailedDesignView';
 import ReleasesView from './components/ReleasesView';
 import AuditView from './components/AuditView';
 import TraceabilityView from './components/TraceabilityView';
@@ -93,7 +94,7 @@ import type { ThemeId } from './theme';
 import StatusBar from './components/StatusBar';
 import ViewTabs from './components/ViewTabs';
 
-type ViewMode = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'releases' | 'audit' | 'trace';
+type ViewMode = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'sdd' | 'releases' | 'audit' | 'trace';
 type OpenResult = { name: string; documents: DocumentListItem[] };
 // Items of any id-keyed register document (srs/vtp/prd/…); a per-job diff is keyed by doc type,
 // so newly-registered register types are diffed without changing this code.
@@ -190,6 +191,7 @@ const LocalApp: React.FC = () => {
   const [prdBaseline, setPrdBaseline] = useState<PrdDoc | null>(null);
   const [runRecord, setRunRecord] = useState<RunRecord | null>(null);
   const [dirtyPrd, setDirtyPrd] = useState(false);
+  const [dirtySdd, setDirtySdd] = useState(false);
   const [currentView, setCurrentView] = useState<ViewMode>('overview');
   const [theme, setTheme] = useState<ThemeId>(readStoredTheme);
   const [loading, setLoading] = useState(false);
@@ -450,6 +452,7 @@ const LocalApp: React.FC = () => {
     setDirtySrs(false);
     setDirtyVtp(false);
     setDirtyPrd(false);
+    setDirtySdd(false);
   };
 
   // Variant used right after open(), before `documents` state has settled.
@@ -469,6 +472,7 @@ const LocalApp: React.FC = () => {
     setDirtySrs(false);
     setDirtyVtp(false);
     setDirtyPrd(false);
+    setDirtySdd(false);
   };
 
   // Apply a freshly-opened project: set state, auto-load a single/requested doc,
@@ -754,8 +758,9 @@ const LocalApp: React.FC = () => {
     else { setVtpDoc(next); setDirtyVtp(true); }
   };
   const handlePrdChange = (next: PrdDoc) => { setPrdDoc(next); setDirtyPrd(true); };
+  const handleSddChange = (next: SddDoc) => { setSddDoc(next); setDirtySdd(true); };
 
-  const persist = async (doc: SrsDoc | VtpDoc | PrdDoc) => {
+  const persist = async (doc: SrsDoc | VtpDoc | PrdDoc | SddDoc) => {
     // Server mode writes over HTTP, so it needs no File System Access support — without
     // this a Firefox user on a server would silently get a download instead of a save.
     if (isServerMode() || (supportsFileSystemAccess && hasOpenDirectory())) await saveDocument(doc);
@@ -800,6 +805,7 @@ const LocalApp: React.FC = () => {
       if (dirtySrs && srsDoc) { await persist(srsDoc); setDirtySrs(false); }
       if (dirtyVtp && vtpDoc) { await persist(vtpDoc); setDirtyVtp(false); }
       if (dirtyPrd && prdDoc) { await persist(prdDoc); setDirtyPrd(false); }
+      if (dirtySdd && sddDoc) { await persist(sddDoc); setDirtySdd(false); }
       if (dirtyJobs && jobsDoc) { await saveJobs(name, jobsDoc); setDirtyJobs(false); }
       if (dirtySad && sad !== null) { await saveProjectText(`${name}.sad.md`, sad); setDirtySad(false); }
       if (dirtyDsl && dsl !== null) { await saveProjectText(`${name}.workspace.dsl`, dsl); setDirtyDsl(false); }
@@ -967,7 +973,7 @@ const LocalApp: React.FC = () => {
       {isDirectoryOpen && (
         <ViewTabs
           current={currentView}
-          enabled={{ overview: true, prd: !!prdDoc, srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl), releases: !!releases, audit: !!srsDoc, trace: !!srsDoc }}
+          enabled={{ overview: true, prd: !!prdDoc, srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl), sdd: !!sddDoc, releases: !!releases, audit: !!srsDoc, trace: !!srsDoc }}
           onSelect={setCurrentView}
         />
       )}
@@ -1008,6 +1014,15 @@ const LocalApp: React.FC = () => {
             sad={sad} dsl={dsl} guide={sadGuide} diagrams={diagrams}
             onChangeSad={(v) => { setSad(v); setDirtySad(true); }}
             onChangeDsl={(v) => { setDsl(v); setDirtyDsl(true); }}
+            readOnly={launch.demo}
+          />
+        )}
+        {currentView === 'sdd' && isDirectoryOpen && (
+          <DetailedDesignView
+            doc={sddDoc}
+            srsDoc={srsDoc}
+            diagrams={diagrams}
+            onChange={handleSddChange}
             readOnly={launch.demo}
           />
         )}

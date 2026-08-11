@@ -385,6 +385,15 @@
       "body": "Secret: the navigation model — tabs grouped and ordered by design-control phase, with phase bands above\nthem — and the server-session affordances.\n\nThe tab strip is a CSS grid rather than a list so a band can span several tabs. The ServerBar answers\nwho am I, what may I do, how much is unpublished, and which project. The CommitDialog shows the pending\nchange set at **item** level plus the governance result *before* anything is committed.\n\nA row menu renders in a portal so it cannot be clipped by the table it sits in.\n\nAcceptance: tabs and bands render for the available document set; a reader is offered no Commit; the\ndialog renders refusals and conflicts rather than discarding them."
     },
     {
+      "id": "d_ddv001",
+      "code": "SDD-48",
+      "title": "DetailedDesignView — the design tab",
+      "source": [
+        "src/components/DetailedDesignView.tsx"
+      ],
+      "body": "Secret: how a *sectioned prose* register is edited — an outline beside one section at a time, with\nDisplay and Edit sub-views, the same shape the Architecture tab uses. A row-per-section table was\nrejected: a markdown body with an embedded flowchart does not belong in a table cell.\n\nThe load-bearing part is neither pane. Every section shows **which requirements reference it**,\nderived on read from `SrsItem.design`, which is the re-review rule made visible: editing a section\nwarns that those requirements are now in question, and deleting one names exactly what it would\nleave dangling. Without that, the rule exists only in a guide nobody has open at the time.\n\nInvalid input: a section with no body renders as empty rather than blank-but-broken; an unresolvable\ndiagram reference names the missing file, exactly as the architecture view does.\n\nAcceptance: sections list and open; the referencing requirements appear on the section and in the\nedit warning; a delete names the requirements it would break and abandons on cancel; identity\nsurvives every edit; read-only mode offers no editing affordance at all."
+    },
+    {
       "id": "h_sd050",
       "title": "Server",
       "heading": true

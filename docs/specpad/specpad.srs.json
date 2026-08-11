@@ -3310,6 +3310,40 @@
       "tags": [
         "design"
       ]
+    },
+    {
+      "id": "r_dd11",
+      "code": "DD-11",
+      "design": [
+        "d_ddv001"
+      ],
+      "tags": [
+        "design"
+      ],
+      "text": "The editor shall present the detailed design as a navigable list of sections with the selected section rendered, embedding its diagrams inline."
+    },
+    {
+      "id": "r_dd12",
+      "code": "DD-12",
+      "design": [
+        "d_ddv001"
+      ],
+      "tags": [
+        "design"
+      ],
+      "text": "The editor shall allow editing a section's title, code, source paths and body, and adding, reordering and deleting sections."
+    },
+    {
+      "id": "r_dd13",
+      "code": "DD-13",
+      "design": [
+        "d_ddv001",
+        "d_gov001"
+      ],
+      "tags": [
+        "design"
+      ],
+      "text": "The editor shall show, for each design section, the requirements that reference it, and shall name those requirements when the section is edited or deleted."
     }
   ]
 }

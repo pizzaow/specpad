@@ -67,7 +67,7 @@ Top-level units and the key interfaces between them:
 | Unit | Responsibility | Key interfaces |
 |------|----------------|----------------|
 | Shared contract (`src/shared`) | Types + JSON Schemas, governance, id-keyed diff, **document-type registry** (`docTypes.ts`) | imported by editor; mirrored by skill |
-| Editor (`src/`) | React SPA: Overview, PRD, SRS, VTP, Results, Architecture, **Auditor (design-control map)**, **Traceability**, Releases, Jobs views; selectable **themes**; local file I/O | File System Access API; the contract |
+| Editor (`src/`) | React SPA: Overview, PRD, SRS, VTP, Results, Architecture, **Detailed Design**, **Auditor (design-control map)**, **Traceability**, Releases, Jobs views; selectable **themes**; local file I/O | File System Access API; the contract |
 | Skill (`skill/specpad`) | Scaffold, govern, cache, draft (generator), export; git plumbing | git; the contract; the eQMS export |
 | Spec files + cache (`docs/specpad`) | proj/**prd**/srs/vtp/**sdd** JSON, sad.md + diagrams, `.specpad/` baselines & job caches | git |
 | Transport seam (`src/fileApi.ts`, `src/transports/`) | The editor's one door to documents: local / demo / remote implementations of `FileApi` | one conformance suite across all three |
@@ -134,8 +134,7 @@ prose and can drift — mitigated by the working loop's per-job impact evaluatio
 document type, but not hard-enforced by the pre-push gate; diagrams (draw.io SVGs) are updated by hand
 and can lag the prose. The eQMS export format is not finalized; third-party components (SOUP/SBOM),
 cybersecurity architecture, threat model, and software risk are planned pillars, not yet built. The
-detailed design has no editor view yet — it is authored by the skill, governed, snapshotted and diffed,
-but not editable in the browser.
+detailed design is complete: authored by the skill or in the browser, governed, snapshotted and diffed.
 
 ## 12. Glossary
 PRD (product requirements / user needs), SRS (software requirements), VTP (verification tests), SAD

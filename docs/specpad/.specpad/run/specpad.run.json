@@ -3,11 +3,11 @@
   "type": "run",
   "name": "specpad",
   "runner": "vitest",
-  "ref": "cb01bc6ce9aefc5b3bee8cb877eea7cf8c487c55",
+  "ref": "7ff17bb97661f6c98161c9e700678b299b0efb44",
   "ranAt": "2026-08-10",
   "summary": {
-    "total": 734,
-    "passed": 734,
+    "total": 747,
+    "passed": 747,
     "failed": 0,
     "skipped": 0
   },
@@ -16,7 +16,7 @@
       "file": "src/__tests__/LocalApp.demo.test.tsx",
       "selector": "LocalApp demo mode auto-loads the demo project read-only",
       "status": "passed",
-      "durationMs": 116
+      "durationMs": 132
     },
     {
       "file": "src/__tests__/LocalApp.demo.test.tsx",
@@ -28,55 +28,55 @@
       "file": "src/__tests__/LocalApp.nav.test.tsx",
       "selector": "LocalApp in-view navigation Overview jump buttons switch the active view",
       "status": "passed",
-      "durationMs": 161
+      "durationMs": 152
     },
     {
       "file": "src/__tests__/LocalApp.nav.test.tsx",
       "selector": "LocalApp in-view navigation Auditor \"View →\" links switch the active view",
       "status": "passed",
-      "durationMs": 104
+      "durationMs": 102
     },
     {
       "file": "src/__tests__/LocalApp.nav.test.tsx",
       "selector": "LocalApp in-view navigation Auditor → Traceability pointer switches to the matrix",
       "status": "passed",
-      "durationMs": 183
+      "durationMs": 155
     },
     {
       "file": "src/__tests__/LocalApp.recent.test.tsx",
       "selector": "LocalApp recent-project auto-open silently reopens the launcher folder when its grant persisted",
       "status": "passed",
-      "durationMs": 104
+      "durationMs": 93
     },
     {
       "file": "src/__tests__/LocalApp.test.tsx",
       "selector": "LocalApp document switching re-seeds the table when the selected document changes",
       "status": "passed",
-      "durationMs": 271
+      "durationMs": 322
     },
     {
       "file": "src/__tests__/LocalApp.test.tsx",
       "selector": "LocalApp document switching opens on the Overview by default",
       "status": "passed",
-      "durationMs": 27
+      "durationMs": 48
     },
     {
       "file": "src/__tests__/LocalApp.test.tsx",
       "selector": "LocalApp document switching asks which project to open rather than picking one or falling back to files",
       "status": "passed",
-      "durationMs": 56
+      "durationMs": 62
     },
     {
       "file": "src/__tests__/LocalApp.test.tsx",
       "selector": "LocalApp document switching reloads from the newly-selected project and rewrites the URL to name it",
       "status": "passed",
-      "durationMs": 125
+      "durationMs": 141
     },
     {
       "file": "src/__tests__/archDiff.test.ts",
       "selector": "mdSectionDiff reports only the sections that changed, by heading, with +/- lines",
       "status": "passed",
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "file": "src/__tests__/archDiff.test.ts",
@@ -100,7 +100,7 @@
       "file": "src/__tests__/auditReport.test.ts",
       "selector": "buildAuditReport computes requirement, test, and PRD coverage",
       "status": "passed",
-      "durationMs": 5
+      "durationMs": 4
     },
     {
       "file": "src/__tests__/auditReport.test.ts",
@@ -118,7 +118,7 @@
       "file": "src/__tests__/auditReport.test.ts",
       "selector": "buildAuditReport rolls up failed over passed, and flags dangling PRD references",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/__tests__/auditReport.test.ts",
@@ -142,13 +142,13 @@
       "file": "src/__tests__/changeTracking.test.ts",
       "selector": "buildRedline returns an empty redline when there is no baseline",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "file": "src/__tests__/changeTracking.test.ts",
       "selector": "buildRedline marks added, modified (with changedFields), and removed vs the baseline",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "file": "src/__tests__/changeTracking.test.ts",
@@ -202,19 +202,19 @@
       "file": "src/__tests__/changeTracking.test.ts",
       "selector": "buildRedlineRows tags added and modified rows in working order",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/__tests__/changeTracking.test.ts",
       "selector": "buildRedlineRows interleaves a removed row at its baseline position",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/__tests__/changeTracking.test.ts",
       "selector": "buildRedlineRows places a removed first item before everything",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/__tests__/changeTrackingView.test.ts",
@@ -232,7 +232,7 @@
       "file": "src/__tests__/changeTrackingView.test.ts",
       "selector": "isCellChanged is true only for a modified entry whose changedFields includes the field",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/__tests__/changeTrackingView.test.ts",
@@ -298,13 +298,13 @@
       "file": "src/__tests__/fileApi.demo.test.ts",
       "selector": "demo mode openDemoProject loads the manifest and classifies documents",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "file": "src/__tests__/fileApi.demo.test.ts",
       "selector": "demo mode openDemoProject throws a friendly error when the manifest is missing",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "file": "src/__tests__/fileApi.demo.test.ts",
@@ -352,7 +352,7 @@
       "file": "src/__tests__/fileApi.demo.test.ts",
       "selector": "demo mode openDemoProject handles an empty manifest",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/__tests__/fileApi.demo.test.ts",
@@ -364,7 +364,7 @@
       "file": "src/__tests__/fileApi.test.ts",
       "selector": "fileApi serialization round-trips an srs doc preserving ids",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "file": "src/__tests__/fileApi.test.ts",
@@ -388,7 +388,7 @@
       "file": "src/__tests__/fileApi.test.ts",
       "selector": "loadProjectText fault tolerance (DGM-4) resolves a nested reference by walking into the subdirectory",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "file": "src/__tests__/fileApi.test.ts",
@@ -418,25 +418,25 @@
       "file": "src/__tests__/handleStore.test.ts",
       "selector": "handleStore remembers a project and lists it",
       "status": "passed",
-      "durationMs": 11
+      "durationMs": 10
     },
     {
       "file": "src/__tests__/handleStore.test.ts",
       "selector": "handleStore dedupes by folder identity, not by name",
       "status": "passed",
-      "durationMs": 4
+      "durationMs": 2
     },
     {
       "file": "src/__tests__/handleStore.test.ts",
       "selector": "handleStore keeps distinct folders that share a project name",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "file": "src/__tests__/handleStore.test.ts",
       "selector": "handleStore orders most-recent first",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "file": "src/__tests__/handleStore.test.ts",
@@ -448,7 +448,7 @@
       "file": "src/__tests__/launchParams.test.ts",
       "selector": "parseLaunchParams reads name/open/dir from the URL fragment",
       "status": "passed",
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "file": "src/__tests__/launchParams.test.ts",
@@ -460,7 +460,7 @@
       "file": "src/__tests__/launchParams.test.ts",
       "selector": "parseLaunchParams prefers the fragment when both are present",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/__tests__/launchParams.test.ts",
@@ -526,7 +526,7 @@
       "file": "src/__tests__/outline.test.ts",
       "selector": "deriveHeadingCodes joins ancestor segments with dots for nested headings",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/__tests__/outline.test.ts",
@@ -670,7 +670,7 @@
       "file": "src/shared/__tests__/diff.test.ts",
       "selector": "diffDocs throws when the two documents are of different types",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "file": "src/shared/__tests__/docTypes.test.ts",
@@ -688,7 +688,7 @@
       "file": "src/shared/__tests__/docTypes.test.ts",
       "selector": "document-type registry validation is built from the registry — every register type validates, alongside the sidecars (REG-2)",
       "status": "passed",
-      "durationMs": 6
+      "durationMs": 4
     },
     {
       "file": "src/shared/__tests__/docTypes.test.ts",
@@ -700,7 +700,7 @@
       "file": "src/shared/__tests__/docTypes.test.ts",
       "selector": "document-type registry any id-keyed register diffs via the shared diffItems — type-generic per-job/redline diff (REG-4)",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 1
     },
     {
       "file": "src/shared/__tests__/docTypes.test.ts",
@@ -724,7 +724,7 @@
       "file": "src/shared/__tests__/dogfood.test.ts",
       "selector": "SpecPad self-documentation (dogfood) keeps every active job pointed at an open record in the register",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/shared/__tests__/factories.test.ts",
@@ -754,7 +754,7 @@
       "file": "src/shared/__tests__/factories.test.ts",
       "selector": "factories creates vtp items with t_ ids",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/shared/__tests__/factories.test.ts",
@@ -766,7 +766,7 @@
       "file": "src/shared/__tests__/factories.test.ts",
       "selector": "factories creates open job records with unique j_ ids",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/shared/__tests__/fixtures.test.ts",
@@ -862,7 +862,7 @@
       "file": "src/shared/__tests__/governance.test.ts",
       "selector": "activeJobIds prefers the jobs array, falls back to legacy job, else empty",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/shared/__tests__/ids.test.ts",
@@ -874,7 +874,7 @@
       "file": "src/shared/__tests__/ids.test.ts",
       "selector": "generateId is deterministic given a fixed rng",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/shared/__tests__/ids.test.ts",
@@ -898,7 +898,7 @@
       "file": "src/shared/__tests__/launcher.test.ts",
       "selector": "editorVersionPath maps a contract version to its pinned build path",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "file": "src/shared/__tests__/launcher.test.ts",
@@ -916,7 +916,7 @@
       "file": "src/shared/__tests__/launcher.test.ts",
       "selector": "editorUrl falls back to the public hosted editor when the project sets no base",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/shared/__tests__/launcher.test.ts",
@@ -1000,19 +1000,19 @@
       "file": "src/shared/__tests__/merge.test.ts",
       "selector": "mergeItems — clean merges merges changes to different fields of the same item without conflict (MRG-2)",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/shared/__tests__/merge.test.ts",
       "selector": "mergeItems — clean merges accepts the same field changed to the same value on both sides",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/shared/__tests__/merge.test.ts",
       "selector": "mergeItems — clean merges keeps items added on either side",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/shared/__tests__/merge.test.ts",
@@ -1024,7 +1024,7 @@
       "file": "src/shared/__tests__/merge.test.ts",
       "selector": "mergeItems — clean merges applies a deletion made on both sides",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/shared/__tests__/merge.test.ts",
@@ -1036,7 +1036,7 @@
       "file": "src/shared/__tests__/merge.test.ts",
       "selector": "mergeItems — clean merges does not treat a difference in item order as a conflict (MRG-4)",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "file": "src/shared/__tests__/merge.test.ts",
@@ -1120,7 +1120,7 @@
       "file": "src/shared/__tests__/merge.test.ts",
       "selector": "mergeDocs merges the items of two divergent documents",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/shared/__tests__/merge.test.ts",
@@ -1144,13 +1144,13 @@
       "file": "src/shared/__tests__/prd.test.ts",
       "selector": "PRD register — structure accepts a well-formed PRD document",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "file": "src/shared/__tests__/prd.test.ts",
       "selector": "PRD register — structure rejects a PRD document missing items",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/shared/__tests__/prd.test.ts",
@@ -1192,7 +1192,7 @@
       "file": "src/shared/__tests__/prd.test.ts",
       "selector": "PRD register — governance flags an implemented PRD item that no requirement satisfies",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/shared/__tests__/prd.test.ts",
@@ -1216,7 +1216,7 @@
       "file": "src/shared/__tests__/schema-descriptions.test.ts",
       "selector": "schema field descriptions srs schema describes every field",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/shared/__tests__/schema-descriptions.test.ts",
@@ -1276,7 +1276,7 @@
       "file": "src/shared/__tests__/sdd.test.ts",
       "selector": "SDD — structure accepts a well-formed detailed design",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "file": "src/shared/__tests__/sdd.test.ts",
@@ -1300,7 +1300,7 @@
       "file": "src/shared/__tests__/sdd.test.ts",
       "selector": "SDD — registered as a document type is an id-keyed register, so snapshots and per-job diffs need no new code",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "file": "src/shared/__tests__/sdd.test.ts",
@@ -1342,7 +1342,7 @@
       "file": "src/shared/__tests__/sdd.test.ts",
       "selector": "SDD — governance (opt-in) checks coverage at full rigor regardless of any safety class or documentation level",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/shared/__tests__/sdd.test.ts",
@@ -1360,19 +1360,19 @@
       "file": "src/shared/__tests__/sidecars.test.ts",
       "selector": "sidecar schemas accepts a well-formed releases doc (with per-release author)",
       "status": "passed",
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "file": "src/shared/__tests__/sidecars.test.ts",
       "selector": "sidecar schemas accepts baseline: null with no releases yet",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/shared/__tests__/sidecars.test.ts",
       "selector": "sidecar schemas rejects a releases doc missing tagPattern",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/shared/__tests__/sidecars.test.ts",
@@ -1384,7 +1384,7 @@
       "file": "src/shared/__tests__/sidecars.test.ts",
       "selector": "sidecar schemas rejects a release entry whose author is not an object",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/shared/__tests__/sidecars.test.ts",
@@ -1408,13 +1408,13 @@
       "file": "src/shared/__tests__/sidecars.test.ts",
       "selector": "sidecar schemas a job record stores only record fields — no change associations (r_jb002)",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/shared/__tests__/sidecars.test.ts",
       "selector": "sidecar schemas accepts a job record with type/version/owner and rejects a bad type",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/shared/__tests__/sidecars.test.ts",
@@ -1450,7 +1450,7 @@
       "file": "src/shared/__tests__/validate.test.ts",
       "selector": "validate returns no errors for a valid srs doc",
       "status": "passed",
-      "durationMs": 5
+      "durationMs": 2
     },
     {
       "file": "src/shared/__tests__/validate.test.ts",
@@ -1534,7 +1534,7 @@
       "file": "src/shared/__tests__/verification.test.ts",
       "selector": "verification — rollup + run schema counts non-heading tests by status and automated/manual",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/shared/__tests__/verification.test.ts",
@@ -1552,25 +1552,25 @@
       "file": "src/components/__tests__/ArchitectureView.test.tsx",
       "selector": "ArchitectureView renders the arc42 markdown as HTML headings and the C4 source",
       "status": "passed",
-      "durationMs": 87
+      "durationMs": 69
     },
     {
       "file": "src/components/__tests__/ArchitectureView.test.tsx",
       "selector": "ArchitectureView renders a markdown-placed diagram SVG inline",
       "status": "passed",
-      "durationMs": 23
+      "durationMs": 17
     },
     {
       "file": "src/components/__tests__/ArchitectureView.test.tsx",
       "selector": "ArchitectureView shows the C4 DSL section only when a DSL is present (optional)",
       "status": "passed",
-      "durationMs": 20
+      "durationMs": 18
     },
     {
       "file": "src/components/__tests__/ArchitectureView.test.tsx",
       "selector": "ArchitectureView shows Edit/Display sub-tabs only when editing is enabled, and emits edits",
       "status": "passed",
-      "durationMs": 30
+      "durationMs": 26
     },
     {
       "file": "src/components/__tests__/ArchitectureView.test.tsx",
@@ -1582,7 +1582,7 @@
       "file": "src/components/__tests__/ArchitectureView.test.tsx",
       "selector": "ArchitectureView surfaces the authoring guide in a panel when provided",
       "status": "passed",
-      "durationMs": 16
+      "durationMs": 14
     },
     {
       "file": "src/components/__tests__/ArchitectureView.test.tsx",
@@ -1594,31 +1594,31 @@
       "file": "src/components/__tests__/AuditView.test.tsx",
       "selector": "AuditView shows the scope disclaimer and the design-control map with citations",
       "status": "passed",
-      "durationMs": 120
+      "durationMs": 88
     },
     {
       "file": "src/components/__tests__/AuditView.test.tsx",
       "selector": "AuditView shows a status badge per element (including honest gaps)",
       "status": "passed",
-      "durationMs": 35
+      "durationMs": 25
     },
     {
       "file": "src/components/__tests__/AuditView.test.tsx",
       "selector": "AuditView links an element to the tab that holds its evidence",
       "status": "passed",
-      "durationMs": 119
+      "durationMs": 103
     },
     {
       "file": "src/components/__tests__/AuditView.test.tsx",
       "selector": "AuditView lists the roadmap (proposed PRD items) but not the trace matrix",
       "status": "passed",
-      "durationMs": 28
+      "durationMs": 26
     },
     {
       "file": "src/components/__tests__/CommitDialog.test.tsx",
       "selector": "CommitDialog — the pending change summary (CMT-7) names the changed items, not just the changed files",
       "status": "passed",
-      "durationMs": 75
+      "durationMs": 83
     },
     {
       "file": "src/components/__tests__/CommitDialog.test.tsx",
@@ -1636,37 +1636,37 @@
       "file": "src/components/__tests__/CommitDialog.test.tsx",
       "selector": "CommitDialog — the pending change summary (CMT-7) says so when there is nothing to commit",
       "status": "passed",
-      "durationMs": 4
+      "durationMs": 5
     },
     {
       "file": "src/components/__tests__/CommitDialog.test.tsx",
       "selector": "CommitDialog — committing (CMT-3) requires a message before the commit button works",
       "status": "passed",
-      "durationMs": 68
+      "durationMs": 80
     },
     {
       "file": "src/components/__tests__/CommitDialog.test.tsx",
       "selector": "CommitDialog — committing (CMT-3) commits the typed message and reports success",
       "status": "passed",
-      "durationMs": 50
+      "durationMs": 65
     },
     {
       "file": "src/components/__tests__/CommitDialog.test.tsx",
       "selector": "CommitDialog — committing (CMT-3) never commits without the user pressing Commit",
       "status": "passed",
-      "durationMs": 13
+      "durationMs": 15
     },
     {
       "file": "src/components/__tests__/CommitDialog.test.tsx",
       "selector": "CommitDialog — refusals (CMT-4) shows why a blocked commit was refused",
       "status": "passed",
-      "durationMs": 53
+      "durationMs": 63
     },
     {
       "file": "src/components/__tests__/CommitDialog.test.tsx",
       "selector": "CommitDialog — refusals (CMT-4) shows a plain refusal message when there is no gate detail",
       "status": "passed",
-      "durationMs": 29
+      "durationMs": 36
     },
     {
       "file": "src/components/__tests__/CommitDialog.test.tsx",
@@ -1678,25 +1678,25 @@
       "file": "src/components/__tests__/CommitDialog.test.tsx",
       "selector": "CommitDialog — conflicts (MRG-6) shows both values for a field two people changed",
       "status": "passed",
-      "durationMs": 33
+      "durationMs": 36
     },
     {
       "file": "src/components/__tests__/CommitDialog.test.tsx",
       "selector": "CommitDialog — conflicts (MRG-6) explains a delete/modify conflict in words rather than showing empty values",
       "status": "passed",
-      "durationMs": 31
+      "durationMs": 34
     },
     {
       "file": "src/components/__tests__/CommitDialog.test.tsx",
       "selector": "CommitDialog — discarding (CMT-7) discards after confirmation",
       "status": "passed",
-      "durationMs": 18
+      "durationMs": 21
     },
     {
       "file": "src/components/__tests__/CommitDialog.test.tsx",
       "selector": "CommitDialog — discarding (CMT-7) does nothing when the confirmation is declined",
       "status": "passed",
-      "durationMs": 16
+      "durationMs": 18
     },
     {
       "file": "src/components/__tests__/CommitDialog.test.tsx",
@@ -1705,10 +1705,88 @@
       "durationMs": 9
     },
     {
+      "file": "src/components/__tests__/DetailedDesignView.test.tsx",
+      "selector": "DetailedDesignView — display lists every section and opens one",
+      "status": "passed",
+      "durationMs": 188
+    },
+    {
+      "file": "src/components/__tests__/DetailedDesignView.test.tsx",
+      "selector": "DetailedDesignView — display shows which requirements the section implements",
+      "status": "passed",
+      "durationMs": 33
+    },
+    {
+      "file": "src/components/__tests__/DetailedDesignView.test.tsx",
+      "selector": "DetailedDesignView — display says so when nothing references a section, rather than showing an empty row",
+      "status": "passed",
+      "durationMs": 5
+    },
+    {
+      "file": "src/components/__tests__/DetailedDesignView.test.tsx",
+      "selector": "DetailedDesignView — display renders an embedded diagram inline, and names a missing one",
+      "status": "passed",
+      "durationMs": 54
+    },
+    {
+      "file": "src/components/__tests__/DetailedDesignView.test.tsx",
+      "selector": "DetailedDesignView — display reports an absent detailed design without offering an editor",
+      "status": "passed",
+      "durationMs": 4
+    },
+    {
+      "file": "src/components/__tests__/DetailedDesignView.test.tsx",
+      "selector": "DetailedDesignView — editing edits a section title without touching its identity",
+      "status": "passed",
+      "durationMs": 164
+    },
+    {
+      "file": "src/components/__tests__/DetailedDesignView.test.tsx",
+      "selector": "DetailedDesignView — editing warns that the referencing requirements are now in question (DD-8)",
+      "status": "passed",
+      "durationMs": 68
+    },
+    {
+      "file": "src/components/__tests__/DetailedDesignView.test.tsx",
+      "selector": "DetailedDesignView — editing records source paths as a list",
+      "status": "passed",
+      "durationMs": 72
+    },
+    {
+      "file": "src/components/__tests__/DetailedDesignView.test.tsx",
+      "selector": "DetailedDesignView — editing adds a section with a fresh id after the selected one",
+      "status": "passed",
+      "durationMs": 89
+    },
+    {
+      "file": "src/components/__tests__/DetailedDesignView.test.tsx",
+      "selector": "DetailedDesignView — editing names the requirements a deletion would leave dangling, and abandons on cancel",
+      "status": "passed",
+      "durationMs": 72
+    },
+    {
+      "file": "src/components/__tests__/DetailedDesignView.test.tsx",
+      "selector": "DetailedDesignView — editing deletes when confirmed",
+      "status": "passed",
+      "durationMs": 74
+    },
+    {
+      "file": "src/components/__tests__/DetailedDesignView.test.tsx",
+      "selector": "DetailedDesignView — editing reorders sections",
+      "status": "passed",
+      "durationMs": 66
+    },
+    {
+      "file": "src/components/__tests__/DetailedDesignView.test.tsx",
+      "selector": "DetailedDesignView — editing offers no editing at all when read-only",
+      "status": "passed",
+      "durationMs": 11
+    },
+    {
       "file": "src/components/__tests__/ItemInfo.test.tsx",
       "selector": "ItemInfo shows the item metadata",
       "status": "passed",
-      "durationMs": 56
+      "durationMs": 54
     },
     {
       "file": "src/components/__tests__/ItemInfo.test.tsx",
@@ -1720,67 +1798,67 @@
       "file": "src/components/__tests__/ItemInfo.test.tsx",
       "selector": "ItemInfo calls onClose from the close button and the backdrop",
       "status": "passed",
-      "durationMs": 14
+      "durationMs": 15
     },
     {
       "file": "src/components/__tests__/JobControl.test.tsx",
       "selector": "JobControl shows the current job when set",
       "status": "passed",
-      "durationMs": 37
+      "durationMs": 42
     },
     {
       "file": "src/components/__tests__/JobControl.test.tsx",
       "selector": "JobControl calls onSet with the entered job id (as a single-element array) and title",
       "status": "passed",
-      "durationMs": 26
+      "durationMs": 27
     },
     {
       "file": "src/components/__tests__/JobControl.test.tsx",
       "selector": "JobControl register mode: checks multiple open records and sets them active by id",
       "status": "passed",
-      "durationMs": 16
+      "durationMs": 17
     },
     {
       "file": "src/components/__tests__/JobsView.test.tsx",
       "selector": "JobsView — in progress vs released separates open jobs (In progress) from closed jobs (Released)",
       "status": "passed",
-      "durationMs": 80
+      "durationMs": 89
     },
     {
       "file": "src/components/__tests__/JobsView.test.tsx",
       "selector": "JobsView — in progress vs released renders a closed job's cached SRS/VTP changes in its detail",
       "status": "passed",
-      "durationMs": 64
+      "durationMs": 66
     },
     {
       "file": "src/components/__tests__/JobsView.test.tsx",
       "selector": "JobsView — in progress vs released shows a closed job's architecture changes (coarse files + section-level SAD diff)",
       "status": "passed",
-      "durationMs": 46
+      "durationMs": 50
     },
     {
       "file": "src/components/__tests__/JobsView.test.tsx",
       "selector": "JobsView — in progress vs released lists a closed job's commits in its detail",
       "status": "passed",
-      "durationMs": 36
+      "durationMs": 35
     },
     {
       "file": "src/components/__tests__/JobsView.test.tsx",
       "selector": "JobsView — in progress vs released shows a closed job's run-derived verification of its changed tests (VER-7)",
       "status": "passed",
-      "durationMs": 34
+      "durationMs": 35
     },
     {
       "file": "src/components/__tests__/JobsView.test.tsx",
       "selector": "JobsView — in progress vs released renders technical_notes in the detail view but not in the release-notes list (JOBS-13)",
       "status": "passed",
-      "durationMs": 23
+      "durationMs": 25
     },
     {
       "file": "src/components/__tests__/JobsView.test.tsx",
       "selector": "JobsView — in progress vs released shows owner and derived (read-only) version in the detail",
       "status": "passed",
-      "durationMs": 24
+      "durationMs": 26
     },
     {
       "file": "src/components/__tests__/JobsView.test.tsx",
@@ -1792,43 +1870,43 @@
       "file": "src/components/__tests__/JobsView.test.tsx",
       "selector": "JobsView — in progress vs released renders the active open job's in-progress changes (before vs working copy)",
       "status": "passed",
-      "durationMs": 22
+      "durationMs": 33
     },
     {
       "file": "src/components/__tests__/JobsView.test.tsx",
       "selector": "JobsView — in progress vs released renders the active open job's in-progress architecture changes",
       "status": "passed",
-      "durationMs": 27
+      "durationMs": 31
     },
     {
       "file": "src/components/__tests__/JobsView.test.tsx",
       "selector": "JobsView — in progress vs released adds a new feature job and opens its detail",
       "status": "passed",
-      "durationMs": 9
+      "durationMs": 13
     },
     {
       "file": "src/components/__tests__/JobsView.test.tsx",
       "selector": "JobsView — in progress vs released hides editing controls when read-only",
       "status": "passed",
-      "durationMs": 11
+      "durationMs": 9
     },
     {
       "file": "src/components/__tests__/MenuBar.test.tsx",
       "selector": "MenuBar shows the brand and project name",
       "status": "passed",
-      "durationMs": 41
+      "durationMs": 42
     },
     {
       "file": "src/components/__tests__/MenuBar.test.tsx",
       "selector": "MenuBar Save is disabled when clean and enabled with a dot when dirty",
       "status": "passed",
-      "durationMs": 96
+      "durationMs": 91
     },
     {
       "file": "src/components/__tests__/MenuBar.test.tsx",
       "selector": "MenuBar calls onSave when Save is clicked while dirty",
       "status": "passed",
-      "durationMs": 21
+      "durationMs": 19
     },
     {
       "file": "src/components/__tests__/MenuBar.test.tsx",
@@ -1840,13 +1918,13 @@
       "file": "src/components/__tests__/MenuBar.test.tsx",
       "selector": "MenuBar switches project from the brand dropdown when there are several",
       "status": "passed",
-      "durationMs": 10
+      "durationMs": 14
     },
     {
       "file": "src/components/__tests__/MenuBar.test.tsx",
       "selector": "MenuBar opens the job popover and sets a job",
       "status": "passed",
-      "durationMs": 16
+      "durationMs": 18
     },
     {
       "file": "src/components/__tests__/MenuBar.test.tsx",
@@ -1864,19 +1942,19 @@
       "file": "src/components/__tests__/OverviewView.test.tsx",
       "selector": "OverviewView shows the coverage headline, in-progress jobs, and latest release",
       "status": "passed",
-      "durationMs": 65
+      "durationMs": 63
     },
     {
       "file": "src/components/__tests__/OverviewView.test.tsx",
       "selector": "OverviewView reports open governance findings (the unverified requirement)",
       "status": "passed",
-      "durationMs": 12
+      "durationMs": 11
     },
     {
       "file": "src/components/__tests__/OverviewView.test.tsx",
       "selector": "OverviewView navigates into a view from the quick-jump buttons",
       "status": "passed",
-      "durationMs": 17
+      "durationMs": 18
     },
     {
       "file": "src/components/__tests__/OverviewView.test.tsx",
@@ -1888,31 +1966,31 @@
       "file": "src/components/__tests__/OverviewView.test.tsx",
       "selector": "OverviewView handles an empty project (no releases, no open jobs)",
       "status": "passed",
-      "durationMs": 10
+      "durationMs": 11
     },
     {
       "file": "src/components/__tests__/PrdTable.test.tsx",
       "selector": "PrdTable renders PRD items but hides the Status and Tags columns",
       "status": "passed",
-      "durationMs": 67
+      "durationMs": 63
     },
     {
       "file": "src/components/__tests__/PrdTable.test.tsx",
       "selector": "PrdTable flags a proposed item with a bold PROPOSED note (implemented items have none)",
       "status": "passed",
-      "durationMs": 14
+      "durationMs": 13
     },
     {
       "file": "src/components/__tests__/PrdTable.test.tsx",
       "selector": "PrdTable offers row actions (add/move/delete/view info) via the hamburger",
       "status": "passed",
-      "durationMs": 47
+      "durationMs": 43
     },
     {
       "file": "src/components/__tests__/PrdTable.test.tsx",
       "selector": "PrdTable shows the since-baseline redline (added rows highlighted)",
       "status": "passed",
-      "durationMs": 15
+      "durationMs": 17
     },
     {
       "file": "src/components/__tests__/PrdTable.test.tsx",
@@ -1924,43 +2002,43 @@
       "file": "src/components/__tests__/PrdTable.test.tsx",
       "selector": "PrdTable flags an implemented PRD item with no satisfying requirement as a gap",
       "status": "passed",
-      "durationMs": 10
+      "durationMs": 11
     },
     {
       "file": "src/components/__tests__/PrdTable.test.tsx",
       "selector": "PrdTable is read-only in demo mode (no row actions)",
       "status": "passed",
-      "durationMs": 9
+      "durationMs": 10
     },
     {
       "file": "src/components/__tests__/ReleasesView.test.tsx",
       "selector": "ReleasesView shows each release newest-first with its jobs as release notes",
       "status": "passed",
-      "durationMs": 89
+      "durationMs": 70
     },
     {
       "file": "src/components/__tests__/ReleasesView.test.tsx",
       "selector": "ReleasesView lists a closed job with no version under Unreleased; open jobs are excluded",
       "status": "passed",
-      "durationMs": 14
+      "durationMs": 10
     },
     {
       "file": "src/components/__tests__/ReleasesView.test.tsx",
       "selector": "ReleasesView shows an empty state with no releases",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "file": "src/components/__tests__/RowMenu.test.tsx",
       "selector": "RowMenu hides the menu until the trigger is clicked",
       "status": "passed",
-      "durationMs": 60
+      "durationMs": 71
     },
     {
       "file": "src/components/__tests__/RowMenu.test.tsx",
       "selector": "RowMenu fires the matching callback and closes on selection",
       "status": "passed",
-      "durationMs": 15
+      "durationMs": 13
     },
     {
       "file": "src/components/__tests__/RowMenu.test.tsx",
@@ -1972,43 +2050,43 @@
       "file": "src/components/__tests__/RowMenu.test.tsx",
       "selector": "RowMenu renders the open menu in a body portal at popover z-index (EDA-8)",
       "status": "passed",
-      "durationMs": 14
+      "durationMs": 13
     },
     {
       "file": "src/components/__tests__/RowMenu.test.tsx",
       "selector": "RowMenu closes via the backdrop without firing a callback",
       "status": "passed",
-      "durationMs": 11
+      "durationMs": 15
     },
     {
       "file": "src/components/__tests__/SRSTable.test.tsx",
       "selector": "SRSTable structure renders requirement text and code, no Hazards column",
       "status": "passed",
-      "durationMs": 77
+      "durationMs": 73
     },
     {
       "file": "src/components/__tests__/SRSTable.test.tsx",
       "selector": "SRSTable structure shows a derived dotted code for headings (not the word \"heading\")",
       "status": "passed",
-      "durationMs": 15
+      "durationMs": 14
     },
     {
       "file": "src/components/__tests__/SRSTable.test.tsx",
       "selector": "SRSTable structure uses a per-row hamburger menu instead of action buttons",
       "status": "passed",
-      "durationMs": 15
+      "durationMs": 14
     },
     {
       "file": "src/components/__tests__/SRSTable.test.tsx",
       "selector": "SRSTable structure test count column shows the verifying-test count",
       "status": "passed",
-      "durationMs": 13
+      "durationMs": 10
     },
     {
       "file": "src/components/__tests__/SRSTable.test.tsx",
       "selector": "SRSTable hierarchy + menu actions adds a child below at level+1 via the menu",
       "status": "passed",
-      "durationMs": 36
+      "durationMs": 37
     },
     {
       "file": "src/components/__tests__/SRSTable.test.tsx",
@@ -2020,25 +2098,25 @@
       "file": "src/components/__tests__/SRSTable.test.tsx",
       "selector": "SRSTable hierarchy + menu actions outdent is disabled for a level-0 row",
       "status": "passed",
-      "durationMs": 14
+      "durationMs": 23
     },
     {
       "file": "src/components/__tests__/SRSTable.test.tsx",
       "selector": "SRSTable show-tests + info expands the verifying tests inline for a requirement",
       "status": "passed",
-      "durationMs": 18
+      "durationMs": 25
     },
     {
       "file": "src/components/__tests__/SRSTable.test.tsx",
       "selector": "SRSTable show-tests + info opens the info modal from the menu",
       "status": "passed",
-      "durationMs": 69
+      "durationMs": 76
     },
     {
       "file": "src/components/__tests__/SRSTable.test.tsx",
       "selector": "SRSTable redline (Word-style) marks modified inline and shows removed rows struck through (no panel)",
       "status": "passed",
-      "durationMs": 12
+      "durationMs": 16
     },
     {
       "file": "src/components/__tests__/SRSTable.test.tsx",
@@ -2050,43 +2128,43 @@
       "file": "src/components/__tests__/SRSTable.test.tsx",
       "selector": "SRSTable advisory presence (CE-3, CE-4) marks a row someone else is editing, naming them",
       "status": "passed",
-      "durationMs": 6
+      "durationMs": 10
     },
     {
       "file": "src/components/__tests__/SRSTable.test.tsx",
       "selector": "SRSTable advisory presence (CE-3, CE-4) never prevents editing a row someone else has claimed (CE-4)",
       "status": "passed",
-      "durationMs": 19
+      "durationMs": 24
     },
     {
       "file": "src/components/__tests__/SRSTable.test.tsx",
       "selector": "SRSTable advisory presence (CE-3, CE-4) reports which row is open so the shell can announce it",
       "status": "passed",
-      "durationMs": 17
+      "durationMs": 16
     },
     {
       "file": "src/components/__tests__/SRSTable.test.tsx",
       "selector": "SRSTable advisory presence (CE-3, CE-4) renders no presence marker when nobody else is in the document",
       "status": "passed",
-      "durationMs": 13
+      "durationMs": 9
     },
     {
       "file": "src/components/__tests__/ServerBar.test.tsx",
       "selector": "ServerBar — identity (EDR-2) shows the signed-in user and the branch being edited",
       "status": "passed",
-      "durationMs": 50
+      "durationMs": 56
     },
     {
       "file": "src/components/__tests__/ServerBar.test.tsx",
       "selector": "ServerBar — identity (EDR-2) labels a reader as read-only",
       "status": "passed",
-      "durationMs": 5
+      "durationMs": 9
     },
     {
       "file": "src/components/__tests__/ServerBar.test.tsx",
       "selector": "ServerBar — the Commit affordance (EDR-3) offers Commit to a committer",
       "status": "passed",
-      "durationMs": 64
+      "durationMs": 81
     },
     {
       "file": "src/components/__tests__/ServerBar.test.tsx",
@@ -2098,19 +2176,19 @@
       "file": "src/components/__tests__/ServerBar.test.tsx",
       "selector": "ServerBar — the Commit affordance (EDR-3) offers no Commit to a reader",
       "status": "passed",
-      "durationMs": 5
+      "durationMs": 7
     },
     {
       "file": "src/components/__tests__/ServerBar.test.tsx",
       "selector": "ServerBar — presence (CE-3) names the one other person and the row they are in",
       "status": "passed",
-      "durationMs": 4
+      "durationMs": 7
     },
     {
       "file": "src/components/__tests__/ServerBar.test.tsx",
       "selector": "ServerBar — presence (CE-3) says someone is here when they are in no particular row",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "file": "src/components/__tests__/ServerBar.test.tsx",
@@ -2122,7 +2200,7 @@
       "file": "src/components/__tests__/ServerBar.test.tsx",
       "selector": "ServerBar — presence (CE-3) shows nothing when nobody else is around",
       "status": "passed",
-      "durationMs": 6
+      "durationMs": 4
     },
     {
       "file": "src/components/__tests__/ServerBar.test.tsx",
@@ -2134,139 +2212,139 @@
       "file": "src/components/__tests__/ServerBar.test.tsx",
       "selector": "ServerBar — the pending badge disables Commit with nothing to publish, and explains why",
       "status": "passed",
-      "durationMs": 12
+      "durationMs": 17
     },
     {
       "file": "src/components/__tests__/ServerBar.test.tsx",
       "selector": "ServerBar — the pending badge opens the commit dialog when pressed",
       "status": "passed",
-      "durationMs": 14
+      "durationMs": 16
     },
     {
       "file": "src/components/__tests__/ServerBar.test.tsx",
       "selector": "ServerBar — the pending badge tolerates a status it has not fetched yet",
       "status": "passed",
-      "durationMs": 7
+      "durationMs": 11
     },
     {
       "file": "src/components/__tests__/ServerBar.test.tsx",
       "selector": "ServerBar — the project switcher (MPT-11, MPT-13) names the project being edited when there is a choice of them",
       "status": "passed",
-      "durationMs": 13
+      "durationMs": 15
     },
     {
       "file": "src/components/__tests__/ServerBar.test.tsx",
       "selector": "ServerBar — the project switcher (MPT-11, MPT-13) offers every project the user may open, with its branch and their role",
       "status": "passed",
-      "durationMs": 22
+      "durationMs": 25
     },
     {
       "file": "src/components/__tests__/ServerBar.test.tsx",
       "selector": "ServerBar — the project switcher (MPT-11, MPT-13) asks to switch when another project is chosen",
       "status": "passed",
-      "durationMs": 19
+      "durationMs": 25
     },
     {
       "file": "src/components/__tests__/ServerBar.test.tsx",
       "selector": "ServerBar — the project switcher (MPT-11, MPT-13) does not re-open the project already open",
       "status": "passed",
-      "durationMs": 13
+      "durationMs": 15
     },
     {
       "file": "src/components/__tests__/ServerBar.test.tsx",
       "selector": "ServerBar — the project switcher (MPT-11, MPT-13) offers no switcher on a single-project server — one project is not a decision",
       "status": "passed",
-      "durationMs": 4
+      "durationMs": 6
     },
     {
       "file": "src/components/__tests__/StatusBar.test.tsx",
       "selector": "StatusBar shows the path and a clean status when there are no problems",
       "status": "passed",
-      "durationMs": 41
+      "durationMs": 35
     },
     {
       "file": "src/components/__tests__/StatusBar.test.tsx",
       "selector": "StatusBar summarizes problems and expands details on click",
       "status": "passed",
-      "durationMs": 21
+      "durationMs": 19
     },
     {
       "file": "src/components/__tests__/TestingView.test.tsx",
       "selector": "TestingView lists only non-heading tests",
       "status": "passed",
-      "durationMs": 88
+      "durationMs": 79
     },
     {
       "file": "src/components/__tests__/TestingView.test.tsx",
       "selector": "TestingView reports a manual result change to onChange",
       "status": "passed",
-      "durationMs": 79
+      "durationMs": 78
     },
     {
       "file": "src/components/__tests__/TestingView.test.tsx",
       "selector": "TestingView — verification chain (VER-4) groups Manual above Automated and omits the verifies trace",
       "status": "passed",
-      "durationMs": 24
+      "durationMs": 21
     },
     {
       "file": "src/components/__tests__/TestingView.test.tsx",
       "selector": "TestingView — verification chain (VER-4) derives an automated test status from the run and shows run provenance",
       "status": "passed",
-      "durationMs": 19
+      "durationMs": 22
     },
     {
       "file": "src/components/__tests__/TestingView.test.tsx",
       "selector": "TestingView — verification chain (VER-4) shows the automation link read-only by default and the match count",
       "status": "passed",
-      "durationMs": 20
+      "durationMs": 24
     },
     {
       "file": "src/components/__tests__/TestingView.test.tsx",
       "selector": "TestingView — verification chain (VER-4) shows \"not run\" for an automated test when no run is loaded",
       "status": "passed",
-      "durationMs": 16
+      "durationMs": 22
     },
     {
       "file": "src/components/__tests__/TestingView.test.tsx",
       "selector": "TestingView — verification chain (VER-4) reveals inputs on click and reports an edited link to onChange",
       "status": "passed",
-      "durationMs": 28
+      "durationMs": 27
     },
     {
       "file": "src/components/__tests__/TestingView.test.tsx",
       "selector": "TestingView — run-detail dialog (VER-6) opens a run-detail dialog listing per-test outcomes",
       "status": "passed",
-      "durationMs": 34
+      "durationMs": 40
     },
     {
       "file": "src/components/__tests__/TraceabilityView.test.tsx",
       "selector": "TraceabilityView renders coverage and the matrix linking PRD → requirement → test",
       "status": "passed",
-      "durationMs": 69
+      "durationMs": 64
     },
     {
       "file": "src/components/__tests__/TraceabilityView.test.tsx",
       "selector": "TraceabilityView flags an unverified requirement and lists the governance finding",
       "status": "passed",
-      "durationMs": 20
+      "durationMs": 26
     },
     {
       "file": "src/components/__tests__/TraceabilityView.test.tsx",
       "selector": "TraceabilityView reports governance-clean when there are no violations",
       "status": "passed",
-      "durationMs": 12
+      "durationMs": 11
     },
     {
       "file": "src/components/__tests__/TraceabilityView.test.tsx",
       "selector": "TraceabilityView works without a PRD register",
       "status": "passed",
-      "durationMs": 14
+      "durationMs": 12
     },
     {
       "file": "src/components/__tests__/VTPTable.test.tsx",
       "selector": "VTPTable shows verifies as an expandable toggle that reveals the verified requirement label",
       "status": "passed",
-      "durationMs": 92
+      "durationMs": 85
     },
     {
       "file": "src/components/__tests__/VTPTable.test.tsx",
@@ -2284,19 +2362,19 @@
       "file": "src/components/__tests__/VTPTable.test.tsx",
       "selector": "VTPTable offers SRS-style row actions via the hamburger",
       "status": "passed",
-      "durationMs": 16
+      "durationMs": 17
     },
     {
       "file": "src/components/__tests__/VTPTable.test.tsx",
       "selector": "VTPTable change tracking marks a modified row, lists removed tests, and surfaces attribution in the info dialog",
       "status": "passed",
-      "durationMs": 40
+      "durationMs": 47
     },
     {
       "file": "src/components/__tests__/VersionHistoryDialog.test.tsx",
       "selector": "VersionHistoryDialog lists releases and closes",
       "status": "passed",
-      "durationMs": 62
+      "durationMs": 61
     },
     {
       "file": "src/components/__tests__/VersionHistoryDialog.test.tsx",
@@ -2314,19 +2392,19 @@
       "file": "src/components/__tests__/VersionTimeline.test.tsx",
       "selector": "VersionTimeline lists each release with its date and author, flagging the baseline",
       "status": "passed",
-      "durationMs": 42
+      "durationMs": 31
     },
     {
       "file": "src/components/__tests__/ViewTabs.test.tsx",
       "selector": "ViewTabs renders the tabs and marks the active one",
       "status": "passed",
-      "durationMs": 56
+      "durationMs": 64
     },
     {
       "file": "src/components/__tests__/ViewTabs.test.tsx",
       "selector": "ViewTabs orders the tabs chronologically through the design-control phases",
       "status": "passed",
-      "durationMs": 8
+      "durationMs": 9
     },
     {
       "file": "src/components/__tests__/ViewTabs.test.tsx",
@@ -2338,25 +2416,25 @@
       "file": "src/components/__tests__/ViewTabs.test.tsx",
       "selector": "ViewTabs selects a tab on click",
       "status": "passed",
-      "durationMs": 13
+      "durationMs": 19
     },
     {
       "file": "src/components/__tests__/ViewTabs.test.tsx",
       "selector": "ViewTabs disables a tab whose document is absent and does not select it",
       "status": "passed",
-      "durationMs": 11
+      "durationMs": 12
     },
     {
       "file": "src/transports/__tests__/conformance.test.ts",
       "selector": "FileApi conformance — 'local (File System Access)' reports an open project",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "file": "src/transports/__tests__/conformance.test.ts",
       "selector": "FileApi conformance — 'local (File System Access)' lists the project documents, classified by type",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "file": "src/transports/__tests__/conformance.test.ts",
@@ -2386,7 +2464,7 @@
       "file": "src/transports/__tests__/conformance.test.ts",
       "selector": "FileApi conformance — 'local (File System Access)' reads a text file",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/transports/__tests__/conformance.test.ts",
@@ -2434,7 +2512,7 @@
       "file": "src/transports/__tests__/conformance.test.ts",
       "selector": "FileApi conformance — 'demo (read-only HTTP)' lists the project documents, classified by type",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/transports/__tests__/conformance.test.ts",
@@ -2506,7 +2584,7 @@
       "file": "src/transports/__tests__/conformance.test.ts",
       "selector": "FileApi conformance — 'remote (SpecPad server)' does not list non-document files",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/transports/__tests__/conformance.test.ts",
@@ -2590,25 +2668,25 @@
       "file": "src/transports/__tests__/remote.test.ts",
       "selector": "connectToServer (EDR-2) returns null when the JSON does not look like a session",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/transports/__tests__/remote.test.ts",
       "selector": "connectToServer (EDR-2) returns null when the network call fails outright",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/transports/__tests__/remote.test.ts",
       "selector": "reaching a multi-project server (MPT-9) addresses the project named in the URL",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/transports/__tests__/remote.test.ts",
       "selector": "reaching a multi-project server (MPT-9) returns the project list when the server hosts several and none was named",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "file": "src/transports/__tests__/remote.test.ts",
@@ -2620,7 +2698,7 @@
       "file": "src/transports/__tests__/remote.test.ts",
       "selector": "role-driven read-only (EDR-3) is read-only for a reader",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/transports/__tests__/remote.test.ts",
@@ -2632,7 +2710,7 @@
       "file": "src/transports/__tests__/remote.test.ts",
       "selector": "optimistic concurrency (CE-1) replays the version tag it saw on read when writing",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "file": "src/transports/__tests__/remote.test.ts",
@@ -2650,7 +2728,7 @@
       "file": "src/transports/__tests__/remote.test.ts",
       "selector": "writes route by kind sends a document through the document endpoint",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/transports/__tests__/remote.test.ts",
@@ -2668,7 +2746,7 @@
       "file": "src/transports/__tests__/remote.test.ts",
       "selector": "commit (CMT-3) returns the commit on success",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/transports/__tests__/remote.test.ts",
@@ -2692,7 +2770,7 @@
       "file": "src/transports/__tests__/remote.test.ts",
       "selector": "presence (CE-3, CE-4) announces where the user is editing",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/transports/__tests__/remote.test.ts",
@@ -2734,7 +2812,7 @@
       "file": "src/transports/__tests__/remote.test.ts",
       "selector": "listing the projects a user may open (MPT-11) asks the deployment root, not the project currently open",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/transports/__tests__/remote.test.ts",
@@ -2758,7 +2836,7 @@
       "file": "skill/__tests__/architecture.test.ts",
       "selector": "skill documents the architecture spec documents job/release coupling and no requirement↔architecture matrix",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "skill/__tests__/architecture.test.ts",
@@ -2770,13 +2848,13 @@
       "file": "skill/__tests__/architecture.test.ts",
       "selector": "architecture profiles & templates core ships the generic SAD template; the medical one lives in the add-on",
       "status": "passed",
-      "durationMs": 7
+      "durationMs": 13
     },
     {
       "file": "skill/__tests__/architecture.test.ts",
       "selector": "architecture profiles & templates ships a multi-view C4 workspace template and per-profile authoring guides",
       "status": "passed",
-      "durationMs": 15
+      "durationMs": 18
     },
     {
       "file": "skill/__tests__/architecture.test.ts",
@@ -2788,13 +2866,13 @@
       "file": "skill/__tests__/architecture.test.ts",
       "selector": "architecture profiles & templates the medical add-on extends core (62304/FDA) without forking the contract/editor",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "skill/__tests__/architecture.test.ts",
       "selector": "architecture profiles & templates documents draw.io SVG diagrams, coarse change tracking, and the Edit/Display view",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "skill/__tests__/architecture.test.ts",
@@ -2806,19 +2884,19 @@
       "file": "skill/__tests__/architecture.test.ts",
       "selector": "SpecPad dogfoods its own architecture spec places multiple diagrams via markdown image refs, and the SVGs exist and render",
       "status": "passed",
-      "durationMs": 14
+      "durationMs": 18
     },
     {
       "file": "skill/__tests__/architecture.test.ts",
       "selector": "SpecPad dogfoods its own architecture spec no longer ships the optional C4 DSL in the dogfood (it is opt-in via the template)",
       "status": "passed",
-      "durationMs": 4
+      "durationMs": 6
     },
     {
       "file": "skill/__tests__/audit.test.ts",
       "selector": "skill documents the requirement audit reconciles the spec against the whole codebase, noting the staged-diff form",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "file": "skill/__tests__/audit.test.ts",
@@ -2866,7 +2944,7 @@
       "file": "skill/__tests__/baseline.test.ts",
       "selector": "skill documents the baseline generator reports coverage rather than silently truncating",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "skill/__tests__/baseline.test.ts",
@@ -2902,37 +2980,37 @@
       "file": "skill/__tests__/change-tracking.test.ts",
       "selector": "skill documents the change-tracking plumbing snapshots/caches every document in the project index, not a fixed list (REG-3)",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "skill/__tests__/change-tracking.test.ts",
       "selector": "skill documents the change-tracking plumbing documents the source-traceability export (job → commits → code) and the commits cache",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "skill/__tests__/change-tracking.test.ts",
       "selector": "dogfood job caches caches a before snapshot for every job, and before+after+commits for closed jobs",
       "status": "passed",
-      "durationMs": 2494
+      "durationMs": 2259
     },
     {
       "file": "skill/__tests__/change-tracking.test.ts",
       "selector": "dogfood job caches snapshots a job's before at creation, so the active open job has one",
       "status": "passed",
-      "durationMs": 24
+      "durationMs": 23
     },
     {
       "file": "skill/__tests__/change-tracking.test.ts",
       "selector": "dogfood job caches a release is a full-doc checkpoint that maps to its jobs",
       "status": "passed",
-      "durationMs": 35
+      "durationMs": 36
     },
     {
       "file": "skill/__tests__/change-tracking.test.ts",
       "selector": "dogfood job caches captures the architecture file change for the job that created the SAD",
       "status": "passed",
-      "durationMs": 26
+      "durationMs": 21
     },
     {
       "file": "skill/__tests__/change-tracking.test.ts",
@@ -2956,7 +3034,7 @@
       "file": "skill/__tests__/guides.test.ts",
       "selector": "on-demand authoring guides SKILL.md routes to each guide by path (and the routing stays in sync)",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "skill/__tests__/guides.test.ts",
@@ -2968,37 +3046,37 @@
       "file": "skill/__tests__/guides.test.ts",
       "selector": "on-demand authoring guides each guide covers what-to-capture and good/bad examples",
       "status": "passed",
-      "durationMs": 39
+      "durationMs": 35
     },
     {
       "file": "skill/__tests__/init.test.ts",
       "selector": "specpad init documents the one-step init procedure and its artifacts",
       "status": "passed",
-      "durationMs": 5
+      "durationMs": 3
     },
     {
       "file": "skill/__tests__/init.test.ts",
       "selector": "specpad init ships a CLAUDE directive carrying the idempotency sentinel and the loop",
       "status": "passed",
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "file": "skill/__tests__/init.test.ts",
       "selector": "specpad init scaffolds the full default document set, including the PRD register (INIT-4)",
       "status": "passed",
-      "durationMs": 12
+      "durationMs": 6
     },
     {
       "file": "skill/__tests__/init.test.ts",
       "selector": "specpad init documents safe, non-destructive re-runs",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "skill/__tests__/launcher.test.ts",
       "selector": "launcher template carries a placeholder for the editor base URL",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 1
     },
     {
       "file": "skill/__tests__/launcher.test.ts",
@@ -3040,7 +3118,7 @@
       "file": "skill/__tests__/launcher.test.ts",
       "selector": "SKILL.md launcher instructions tells the skill to replace every occurrence, and where the value comes from",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "skill/__tests__/launcher.test.ts",
@@ -3058,7 +3136,7 @@
       "file": "skill/__tests__/parity.test.ts",
       "selector": "skill ↔ module governance parity documents every governance rule id from the shared module",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 4
     },
     {
       "file": "skill/__tests__/parity.test.ts",
@@ -3070,43 +3148,43 @@
       "file": "skill/__tests__/pre-push.test.ts",
       "selector": "pre-push hook blocks a code commit with no Job: trailer",
       "status": "passed",
-      "durationMs": 106
+      "durationMs": 102
     },
     {
       "file": "skill/__tests__/pre-push.test.ts",
       "selector": "pre-push hook allows a commit that carries a Job trailer and a spec change",
       "status": "passed",
-      "durationMs": 94
+      "durationMs": 112
     },
     {
       "file": "skill/__tests__/pre-push.test.ts",
       "selector": "pre-push hook warns (but does not block) when code changes without an SRS/VTP touch",
       "status": "passed",
-      "durationMs": 81
+      "durationMs": 108
     },
     {
       "file": "skill/__tests__/pre-push.test.ts",
       "selector": "pre-push hook suppresses the warning with a Spec: none trailer (e.g. a refactor)",
       "status": "passed",
-      "durationMs": 84
+      "durationMs": 108
     },
     {
       "file": "skill/__tests__/pre-push.test.ts",
       "selector": "pre-push hook skips tag pushes (they point at already-pushed commits)",
       "status": "passed",
-      "durationMs": 126
+      "durationMs": 159
     },
     {
       "file": "skill/__tests__/pre-push.test.ts",
       "selector": "pre-push hook is fully bypassed with SPECPAD_SKIP=1",
       "status": "passed",
-      "durationMs": 130
+      "durationMs": 174
     },
     {
       "file": "skill/__tests__/release.test.ts",
       "selector": "skill documents the release-cut job closing itself (REL-4) has a Cutting a release procedure",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "file": "skill/__tests__/release.test.ts",
@@ -3118,7 +3196,7 @@
       "file": "skill/__tests__/release.test.ts",
       "selector": "skill documents the release-cut job closing itself (REL-4) treats an open release-cut job after the release as a process error",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "skill/__tests__/verification.test.ts",
@@ -3142,13 +3220,13 @@
       "file": "skill/__tests__/verification.test.ts",
       "selector": "skill documents verification runs (VTP -> test -> run) derives automated results and keeps manual results",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "skill/__tests__/verification.test.ts",
       "selector": "skill documents verification runs (VTP -> test -> run) freezes the run for key deliverables (release baseline + closed job after)",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "skill/__tests__/working-loop.test.ts",
@@ -3172,7 +3250,7 @@
       "file": "skill/__tests__/working-loop.test.ts",
       "selector": "skill documents the SpecPad working loop (primary capture) directs the job to evaluate impact across every registered document type, naming PRD + architecture (REG-5)",
       "status": "passed",
-      "durationMs": 8
+      "durationMs": 6
     },
     {
       "file": "site/src/__tests__/generate-reference.test.ts",
@@ -3202,25 +3280,25 @@
       "file": "site/src/__tests__/site-links.test.ts",
       "selector": "landing page link integrity references only existing targets",
       "status": "passed",
-      "durationMs": 53
+      "durationMs": 51
     },
     {
       "file": "site/src/__tests__/site-links.test.ts",
       "selector": "landing page link integrity has the three core CTAs",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "file": "site/src/__tests__/site-links.test.ts",
       "selector": "landing page link integrity og-image.png exists in public/",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "file": "server/__tests__/api.test.ts",
       "selector": "GET /session (EDR-2) returns the signed-in identity, role, and capabilities",
       "status": "passed",
-      "durationMs": 6
+      "durationMs": 7
     },
     {
       "file": "server/__tests__/api.test.ts",
@@ -3256,13 +3334,13 @@
       "file": "server/__tests__/api.test.ts",
       "selector": "reads (SRV-4) skips the item-level diff when there is nothing pending",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 1
     },
     {
       "file": "server/__tests__/api.test.ts",
       "selector": "reads (SRV-4) rejects a path that escapes the project root (SRV-2)",
       "status": "passed",
-      "durationMs": 5
+      "durationMs": 3
     },
     {
       "file": "server/__tests__/api.test.ts",
@@ -3304,19 +3382,19 @@
       "file": "server/__tests__/api.test.ts",
       "selector": "optimistic concurrency (CE-1) derives the tag from content, so identical content tags identically",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "server/__tests__/api.test.ts",
       "selector": "POST /commit (CMT-3) publishes and returns the new commit",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 4
     },
     {
       "file": "server/__tests__/api.test.ts",
       "selector": "POST /commit (CMT-3) requires a commit message",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "server/__tests__/api.test.ts",
@@ -3382,13 +3460,13 @@
       "file": "server/__tests__/auth.test.ts",
       "selector": "ProxyAuthProvider (AUTH-2) reads the header names the operator configured",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "server/__tests__/auth.test.ts",
       "selector": "DevAuthProvider (AUTH-4) returns the fixed development identity",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "server/__tests__/auth.test.ts",
@@ -3508,25 +3586,25 @@
       "file": "server/__tests__/boot.integration.test.ts",
       "selector": "the server process (SRV-1) starts from a config file and listens",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "file": "server/__tests__/boot.integration.test.ts",
       "selector": "the server process (SRV-1) serves the editor build from the same origin as the API",
       "status": "passed",
-      "durationMs": 30
+      "durationMs": 27
     },
     {
       "file": "server/__tests__/boot.integration.test.ts",
       "selector": "the server process (SRV-1) falls back to the editor index for a client-side route",
       "status": "passed",
-      "durationMs": 7
+      "durationMs": 6
     },
     {
       "file": "server/__tests__/boot.integration.test.ts",
       "selector": "the API over HTTP (SRV-4) answers the session probe the editor uses to find a server",
       "status": "passed",
-      "durationMs": 64
+      "durationMs": 58
     },
     {
       "file": "server/__tests__/boot.integration.test.ts",
@@ -3568,31 +3646,31 @@
       "file": "server/__tests__/boot.integration.test.ts",
       "selector": "the event stream (CE-3, CE-4) opens an SSE stream and greets the subscriber with the current state",
       "status": "passed",
-      "durationMs": 58
+      "durationMs": 57
     },
     {
       "file": "server/__tests__/boot.integration.test.ts",
       "selector": "the event stream (CE-3, CE-4) broadcasts a presence claim naming the item being edited",
       "status": "passed",
-      "durationMs": 63
+      "durationMs": 60
     },
     {
       "file": "server/__tests__/boot.integration.test.ts",
       "selector": "the event stream (CE-3, CE-4) leaves the caller out of their own list, and releases on request",
       "status": "passed",
-      "durationMs": 59
+      "durationMs": 60
     },
     {
       "file": "server/__tests__/boot.integration.test.ts",
       "selector": "the event stream (CE-3, CE-4) drops the subscriber when the client goes away",
       "status": "passed",
-      "durationMs": 130
+      "durationMs": 129
     },
     {
       "file": "server/__tests__/boot.integration.test.ts",
       "selector": "request to commit, over HTTP (CMT-2, CMT-3) writes to the working copy, reports it pending, then publishes it to the branch",
       "status": "passed",
-      "durationMs": 229
+      "durationMs": 217
     },
     {
       "file": "server/__tests__/boot.integration.test.ts",
@@ -3604,13 +3682,13 @@
       "file": "server/__tests__/boot.integration.test.ts",
       "selector": "request to commit, over HTTP (CMT-2, CMT-3) refuses a commit that breaks governance, and pushes nothing (CMT-4)",
       "status": "passed",
-      "durationMs": 63
+      "durationMs": 56
     },
     {
       "file": "server/__tests__/boot.integration.test.ts",
       "selector": "request to commit, over HTTP (CMT-2, CMT-3) discards pending changes on request (CMT-7)",
       "status": "passed",
-      "durationMs": 73
+      "durationMs": 69
     },
     {
       "file": "server/__tests__/boot.integration.test.ts",
@@ -3622,7 +3700,7 @@
       "file": "server/__tests__/commitGate.test.ts",
       "selector": "checkCommit — a clean commit permits a valid, governance-clean, attributed commit",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "file": "server/__tests__/commitGate.test.ts",
@@ -3706,7 +3784,7 @@
       "file": "server/__tests__/config.test.ts",
       "selector": "validateConfig — accepting a good configuration accepts a minimal valid configuration and applies defaults",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "file": "server/__tests__/config.test.ts",
@@ -3730,7 +3808,7 @@
       "file": "server/__tests__/config.test.ts",
       "selector": "validateConfig — refusing a bad configuration requires a repository and a branch",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "file": "server/__tests__/config.test.ts",
@@ -3790,7 +3868,7 @@
       "file": "server/__tests__/config.test.ts",
       "selector": "loadConfig throws with every problem listed, so startup fails loudly",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "file": "server/__tests__/config.test.ts",
@@ -3808,7 +3886,7 @@
       "file": "server/__tests__/contract-parity.test.ts",
       "selector": "the server imports the contract rather than restating it resolves conflicts with the shared three-way merge",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "server/__tests__/contract-parity.test.ts",
@@ -3844,7 +3922,7 @@
       "file": "server/__tests__/contract-parity.test.ts",
       "selector": "the server defines no second copy of a contract rule does not declare its own checkGovernance",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "server/__tests__/contract-parity.test.ts",
@@ -3856,7 +3934,7 @@
       "file": "server/__tests__/contract-parity.test.ts",
       "selector": "the server defines no second copy of a contract rule does not declare its own mergeItems",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "server/__tests__/contract-parity.test.ts",
@@ -3874,7 +3952,7 @@
       "file": "server/__tests__/multiProject.integration.test.ts",
       "selector": "one server, several projects (MPT-3) serves each project from its own repository",
       "status": "passed",
-      "durationMs": 163
+      "durationMs": 150
     },
     {
       "file": "server/__tests__/multiProject.integration.test.ts",
@@ -3898,19 +3976,19 @@
       "file": "server/__tests__/multiProject.integration.test.ts",
       "selector": "working copies are per project (MPT-4) does not leak one project's uncommitted draft into another",
       "status": "passed",
-      "durationMs": 127
+      "durationMs": 114
     },
     {
       "file": "server/__tests__/multiProject.integration.test.ts",
       "selector": "working copies are per project (MPT-4) gives each project its own directory of per-user worktrees",
       "status": "passed",
-      "durationMs": 9
+      "durationMs": 8
     },
     {
       "file": "server/__tests__/multiProject.integration.test.ts",
       "selector": "a role in one project is not a role in another (MPT-6) refuses the project the user has no role in, and serves the one they do",
       "status": "passed",
-      "durationMs": 57
+      "durationMs": 52
     },
     {
       "file": "server/__tests__/multiProject.integration.test.ts",
@@ -3934,25 +4012,25 @@
       "file": "server/__tests__/multiProject.integration.test.ts",
       "selector": "project discovery (MPT-7) answers without the caller having to name a project",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "file": "server/__tests__/multiProject.integration.test.ts",
       "selector": "events are scoped to one project (MPT-8) does not wake a project's subscribers with another project's presence",
       "status": "passed",
-      "durationMs": 436
+      "durationMs": 428
     },
     {
       "file": "server/__tests__/multiProject.integration.test.ts",
       "selector": "events are scoped to one project (MPT-8) delivers the project's own presence to its subscribers",
       "status": "passed",
-      "durationMs": 417
+      "durationMs": 413
     },
     {
       "file": "server/__tests__/multiProject.test.ts",
       "selector": "configuration — several projects (MPT-1) accepts a list of projects, each with its own repository and branch",
       "status": "passed",
-      "durationMs": 4
+      "durationMs": 5
     },
     {
       "file": "server/__tests__/multiProject.test.ts",
@@ -3988,7 +4066,7 @@
       "file": "server/__tests__/multiProject.test.ts",
       "selector": "configuration — the existing single-repository shape (MPT-2) reads a single repo as a one-project deployment, asking nothing new of the operator",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "file": "server/__tests__/multiProject.test.ts",
@@ -4000,7 +4078,7 @@
       "file": "server/__tests__/multiProject.test.ts",
       "selector": "configuration — per-project policy (MPT-5) lets a project declare its own roles, and inherits the server-wide map otherwise",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "server/__tests__/multiProject.test.ts",
@@ -4096,7 +4174,7 @@
       "file": "server/__tests__/paths.test.ts",
       "selector": "resolveInProject — permitted paths resolves nested segments",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "server/__tests__/paths.test.ts",
@@ -4126,7 +4204,7 @@
       "file": "server/__tests__/paths.test.ts",
       "selector": "resolveInProject — refused paths refuses an absolute path",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "server/__tests__/paths.test.ts",
@@ -4204,7 +4282,7 @@
       "file": "server/__tests__/presence.test.ts",
       "selector": "PresenceRegistry refreshes an existing claim without reporting a change",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "server/__tests__/presence.test.ts",
@@ -4234,7 +4312,7 @@
       "file": "server/__tests__/presence.test.ts",
       "selector": "PresenceRegistry orders the list stably, so subscribers see no spurious changes",
       "status": "passed",
-      "durationMs": 13
+      "durationMs": 10
     },
     {
       "file": "server/__tests__/presence.test.ts",
@@ -4252,7 +4330,7 @@
       "file": "server/__tests__/presence.test.ts",
       "selector": "EventBus drops a subscriber whose socket has died rather than throwing",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "file": "server/__tests__/presence.test.ts",
@@ -4270,7 +4348,7 @@
       "file": "server/__tests__/presence.test.ts",
       "selector": "EventBus sends a heartbeat comment that carries no event",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "server/__tests__/presence.test.ts",
@@ -4318,103 +4396,103 @@
       "file": "server/__tests__/repository.integration.test.ts",
       "selector": "Repository — provisioning (SRV-3, CMT-1) sparse-checks-out only the allowlisted paths, so source is physically absent",
       "status": "passed",
-      "durationMs": 286
+      "durationMs": 270
     },
     {
       "file": "server/__tests__/repository.integration.test.ts",
       "selector": "Repository — provisioning (SRV-3, CMT-1) gives each user their own working copy, invisible to the other",
       "status": "passed",
-      "durationMs": 370
+      "durationMs": 333
     },
     {
       "file": "server/__tests__/repository.integration.test.ts",
       "selector": "Repository — provisioning (SRV-3, CMT-1) does not name a worktree directory after the raw principal id",
       "status": "passed",
-      "durationMs": 164
+      "durationMs": 162
     },
     {
       "file": "server/__tests__/repository.integration.test.ts",
       "selector": "Repository — status and the pending diff (CMT-2, CMT-7) reports an autosaved edit as pending, without committing it",
       "status": "passed",
-      "durationMs": 301
+      "durationMs": 289
     },
     {
       "file": "server/__tests__/repository.integration.test.ts",
       "selector": "Repository — publishing (CMT-3, CMT-5, AUTH-6) commits as the human, with a Job trailer, and pushes to the branch",
       "status": "passed",
-      "durationMs": 474
+      "durationMs": 401
     },
     {
       "file": "server/__tests__/repository.integration.test.ts",
       "selector": "Repository — publishing (CMT-3, CMT-5, AUTH-6) refuses to publish a change that breaks governance, and pushes nothing",
       "status": "passed",
-      "durationMs": 304
+      "durationMs": 289
     },
     {
       "file": "server/__tests__/repository.integration.test.ts",
       "selector": "Repository — publishing (CMT-3, CMT-5, AUTH-6) refuses to publish with no active job when policy requires one",
       "status": "passed",
-      "durationMs": 285
+      "durationMs": 271
     },
     {
       "file": "server/__tests__/repository.integration.test.ts",
       "selector": "Repository — publishing (CMT-3, CMT-5, AUTH-6) says there is nothing to commit rather than making an empty commit",
       "status": "passed",
-      "durationMs": 312
+      "durationMs": 259
     },
     {
       "file": "server/__tests__/repository.integration.test.ts",
       "selector": "Repository — concurrent editors (CMT-6, MRG-5) merges two people editing different requirements, with no conflict",
       "status": "passed",
-      "durationMs": 638
+      "durationMs": 609
     },
     {
       "file": "server/__tests__/repository.integration.test.ts",
       "selector": "Repository — concurrent editors (CMT-6, MRG-5) reports a conflict when two people rewrite the same field, and pushes nothing",
       "status": "passed",
-      "durationMs": 655
+      "durationMs": 605
     },
     {
       "file": "server/__tests__/repository.integration.test.ts",
       "selector": "Repository — concurrent editors (CMT-6, MRG-5) never leaves conflict markers in a document, whatever happens",
       "status": "passed",
-      "durationMs": 651
+      "durationMs": 592
     },
     {
       "file": "server/__tests__/repository.integration.test.ts",
       "selector": "Repository — discard (CMT-7) reverts one user without touching another",
       "status": "passed",
-      "durationMs": 386
+      "durationMs": 356
     },
     {
       "file": "server/__tests__/repository.integration.test.ts",
       "selector": "Repository — reaping idle working copies (WCL-1..4) removes a copy idle past the timeout, and leaves a recently-used one alone",
       "status": "passed",
-      "durationMs": 373
+      "durationMs": 381
     },
     {
       "file": "server/__tests__/repository.integration.test.ts",
       "selector": "Repository — reaping idle working copies (WCL-1..4) never removes a copy holding uncommitted changes, however idle (WCL-2)",
       "status": "passed",
-      "durationMs": 294
+      "durationMs": 280
     },
     {
       "file": "server/__tests__/repository.integration.test.ts",
       "selector": "Repository — reaping idle working copies (WCL-1..4) re-provisions a reaped copy on next use, so the user notices nothing (WCL-3)",
       "status": "passed",
-      "durationMs": 372
+      "durationMs": 346
     },
     {
       "file": "server/__tests__/repository.integration.test.ts",
       "selector": "Repository — reaping idle working copies (WCL-1..4) reaps nothing when reaping is disabled (WCL-4)",
       "status": "passed",
-      "durationMs": 288
+      "durationMs": 254
     },
     {
       "file": "server/__tests__/repository.integration.test.ts",
       "selector": "Repository — reaping idle working copies (WCL-1..4) does not reap a copy it has never seen used, so a restart cannot delete drafts",
       "status": "passed",
-      "durationMs": 324
+      "durationMs": 277
     }
   ]
 }

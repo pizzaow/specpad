@@ -72,8 +72,9 @@ register path.
 registry entry, two opt-in governance rules, and an entry in the project index. Snapshots, per-job
 diffs, the redline, the baseline and the demo manifest all picked it up with no edit. It also showed
 that a register's items need not be *fields*: an SDD section is a markdown body with a stable id, which
-is enough to be diffed, redlined and referenced while staying free-form enough for flowcharts. Its
-editor view is still outstanding — that remains the one manual step.
+is enough to be diffed, redlined and referenced while staying free-form enough for flowcharts. Its editor
+view was the one manual step, added in the same job: a sectioned register needs an outline-and-body
+view rather than a table, which is why the "generic register table" idea does not cover every pillar.
 
 ## 5. Non-goals / notes
 

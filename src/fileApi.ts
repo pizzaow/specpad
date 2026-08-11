@@ -285,7 +285,7 @@ export async function loadSdd(name: string): Promise<SddDoc> {
   return (await requireJson(`${name}.sdd.json`)) as SddDoc;
 }
 
-export async function saveDocument(doc: SrsDoc | VtpDoc | PrdDoc | ProjectDoc): Promise<void> {
+export async function saveDocument(doc: SrsDoc | VtpDoc | PrdDoc | SddDoc | ProjectDoc): Promise<void> {
   assertWritable();
   // The schema uses type 'project', but the filename suffix is 'proj'.
   const kind = doc.type === 'project' ? 'proj' : doc.type;

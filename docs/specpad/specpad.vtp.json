@@ -3876,6 +3876,59 @@
           "selector": "StatusBar"
         }
       ]
+    },
+    {
+      "id": "t_dd11",
+      "code": "TEST-233",
+      "verifies": [
+        "r_dd11"
+      ],
+      "text": "Open the Detailed Design tab for a project with a detailed design, select sections from the list, and view one containing an embedded diagram.",
+      "expected": "Every section is listed and selectable; the selected section renders its title, source paths and markdown body, with a referenced diagram inline and a missing one named rather than silently dropped.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/DetailedDesignView.test.tsx",
+          "selector": "DetailedDesignView — display"
+        }
+      ]
+    },
+    {
+      "id": "t_dd12",
+      "code": "TEST-234",
+      "verifies": [
+        "r_dd12"
+      ],
+      "text": "Edit a section's title, code and source paths, add a section, reorder one, and delete one; then repeat with the editor read-only.",
+      "expected": "Each edit is reported to the shell with the section's id unchanged; a new section gets a fresh unique id; order changes as requested; deletion removes only that section. Read-only offers no edit affordance at all.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/DetailedDesignView.test.tsx",
+          "selector": "DetailedDesignView — editing"
+        }
+      ]
+    },
+    {
+      "id": "t_dd13",
+      "code": "TEST-235",
+      "verifies": [
+        "r_dd13"
+      ],
+      "text": "View a section referenced by two requirements, then edit it, then attempt to delete it and cancel.",
+      "expected": "The section lists both requirements; editing warns that they are now in question and names them; the deletion prompt names them as references that would be left unresolved, and cancelling changes nothing. A section nothing references says so.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/DetailedDesignView.test.tsx",
+          "selector": "DetailedDesignView — display"
+        },
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/DetailedDesignView.test.tsx",
+          "selector": "DetailedDesignView — editing"
+        }
+      ]
     }
   ]
 }
