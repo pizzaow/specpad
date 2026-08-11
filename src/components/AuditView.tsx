@@ -5,7 +5,7 @@
  * Traceability tab rather than containing the matrix. Computed live.
  */
 import React, { useMemo } from 'react';
-import type { PrdDoc, SrsDoc, VtpDoc, ReleasesDoc, JobRecord } from '../shared';
+import type { PrdDoc, SrsDoc, VtpDoc, SddDoc, ReleasesDoc, JobRecord } from '../shared';
 import { buildAuditReport } from '../auditReport';
 import { buildDesignControls } from '../designControls';
 import type { ControlStatus } from '../designControls';
@@ -17,16 +17,17 @@ interface AuditViewProps {
   vtp: VtpDoc | null;
   jobs: JobRecord[];
   releases: ReleasesDoc | null;
+  sdd?: SddDoc | null;
   hasArchitecture: boolean;
   onNavigate: (key: ViewKey) => void;
 }
 
 const STATUS_LABEL: Record<ControlStatus, string> = { present: 'present', partial: 'partial', gap: 'gap' };
 
-const AuditView: React.FC<AuditViewProps> = ({ prd, srs, vtp, jobs, releases, hasArchitecture, onNavigate }) => {
+const AuditView: React.FC<AuditViewProps> = ({ prd, srs, vtp, sdd, jobs, releases, hasArchitecture, onNavigate }) => {
   const controls = useMemo(
-    () => buildDesignControls({ prd, srs, vtp, jobs, releases, hasArchitecture }),
-    [prd, srs, vtp, jobs, releases, hasArchitecture],
+    () => buildDesignControls({ prd, srs, vtp, sdd, jobs, releases, hasArchitecture }),
+    [prd, srs, vtp, sdd, jobs, releases, hasArchitecture],
   );
   const roadmap = useMemo(() => buildAuditReport({ prd, srs, vtp }).roadmap, [prd, srs, vtp]);
 

@@ -581,6 +581,19 @@
       "description": "SpecPad now tracks a Software Detailed Design alongside the requirements and tests. Each design section has a permanent identity, so requirements link to the design and the link survives any amount of rewriting, and the design itself stays free-form enough to hold diagrams and flowcharts. Requirements that point at a design section are flagged for re-review whenever that section changes.",
       "technical_notes": "The fourth register pillar, and the first that is section-and-prose rather than field-per-item. Sections carry a stable id + renameable code/title + a markdown body (images, draw.io SVGs, flowcharts), so the trace anchor is the id and headings stay free to change. Trace direction is SRS -> SDD (SrsItem.design[]), matching SrsItem.satisfies -> PRD: tests keep verifying requirements, and the matrix renders PRD -> SRS -> SDD and SRS -> VTP so the reviewer reads the path. Authoring is always at the maximum rigor (62304 Class C / FDA Enhanced); omission is an export-time decision, which keeps class/rigor out of the schema entirely and survives 62304 Ed 2 replacing A/B/C with rigor levels I/II. Section skeleton follows IEEE 1016 design viewpoints; decomposition rules in the guide follow Parnas (hide the decision likely to change; never decompose from the call flow) plus the independently-testable and safety-risk-isolation tests.",
       "status": "open"
+    },
+    {
+      "id": "j_3f6c25",
+      "code": "JOB-45",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Document tabs by acronym, and the Auditor recognises the detailed design",
+      "description": "The document tabs now read as the acronyms a regulated team already uses — PRD, SRS, SAD, SDD, VTP — with the full name on hover. The Auditor view also recognises the detailed design: Design Outputs is no longer permanently partial once both the architecture and the detailed design are present.",
+      "technical_notes": "Two consistency fixes after the SDD landed. (1) Tab labels become acronyms; the full name moves to a title attribute so nothing is lost for a reader who does not know them. TAB-1 is reworded accordingly. (2) designControls gains the SDD: Design Outputs derives present/partial/gap from architecture AND detailed design rather than hard-coding the SDD as roadmap, which it stopped being in JOB-44. DC-2 reworded. Deliberately NOT in scope: making the PRD, SAD and SDD editable in every phase — that is the next job.",
+      "status": "open"
     }
   ]
 }

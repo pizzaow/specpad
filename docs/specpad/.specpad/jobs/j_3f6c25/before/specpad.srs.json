@@ -1895,7 +1895,7 @@
     {
       "id": "r_dc002",
       "code": "DC-2",
-      "text": "Each design-control element's status shall be derived from the loaded project where determinable — Design Inputs present when requirements exist, Design Outputs reflecting the presence of both the architecture and the detailed design, Design Verification reflecting test coverage, Design Changes present when jobs exist, Design History present when releases exist — and elements not yet built (Design Validation, Risk Management) shall be marked as gaps.",
+      "text": "Each design-control element's status shall be derived from the loaded project where determinable — Design Inputs present when requirements exist, Design Verification reflecting test coverage, Design Changes present when jobs exist, Design History present when releases exist — and elements not yet built (Design Validation, Risk Management) shall be marked as gaps.",
       "satisfies": [
         "p_pr004"
       ],
@@ -1945,7 +1945,7 @@
     {
       "id": "r_vs003",
       "code": "TAB-1",
-      "text": "The document tabs shall be ordered chronologically through the design-control phases: Overview, then Design Inputs (PRD, SRS), Design Outputs (SAD, SDD), Design Verification (VTP, Results), Design Controls (Auditor), Traceability, Design History (Releases), and Design Changes (Jobs).",
+      "text": "The document tabs shall be ordered chronologically through the design-control phases: Overview, then Design Inputs (Product Requirements, Software Requirements), Design Outputs (Architecture), Design Verification (Verification Tests, Results), Design Controls (Auditor), Traceability, Design History (Releases), and Design Changes (Jobs).",
       "satisfies": [
         "p_pr003"
       ],
@@ -2002,17 +2002,6 @@
       "design": [
         "d_chr001"
       ]
-    },
-    {
-      "id": "r_tab3",
-      "code": "TAB-3",
-      "design": [
-        "d_chr001"
-      ],
-      "tags": [
-        "editor"
-      ],
-      "text": "Each document tab shall be labelled by its acronym (PRD, SRS, SAD, SDD, VTP), and shall carry the full document name as hover text so a reader unfamiliar with the acronym can still identify it."
     },
     {
       "id": "h_gd000",
@@ -3355,18 +3344,6 @@
         "design"
       ],
       "text": "The editor shall show, for each design section, the requirements that reference it, and shall name those requirements when the section is edited or deleted."
-    },
-    {
-      "id": "r_dd14",
-      "code": "DD-14",
-      "design": [
-        "d_dsc001",
-        "d_ddv001"
-      ],
-      "tags": [
-        "design"
-      ],
-      "text": "The Auditor view shall count the detailed design as Design Outputs evidence alongside the architecture, reporting the element as complete only when both are present, and shall report how many requirements do not yet reach a design section."
     }
   ]
 }

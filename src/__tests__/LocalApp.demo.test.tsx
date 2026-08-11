@@ -82,8 +82,8 @@ describe('LocalApp demo mode', () => {
     render(<LocalApp />);
 
     // Demo project loads without any picker interaction, opening on the Overview;
-    // switch to the Software Requirements tab to see the spec table.
-    fireEvent.click(await screen.findByText('Software Requirements'));
+    // switch to the SRS tab to see the spec table.
+    fireEvent.click(await screen.findByText('SRS'));
     expect(await screen.findByText('Demo requirement text')).toBeInTheDocument();
     expect(enableDemoMode).toHaveBeenCalledWith('/demo/');
     expect(openDemoProject).toHaveBeenCalled();

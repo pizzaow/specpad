@@ -13,14 +13,17 @@ export type ViewKey = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'arch' | 
 // the same adjacent phase share one band. Overview has none (it's the home view).
 // Ordered chronologically through the design-control phases: Inputs → Outputs →
 // Verification → Controls → Traceability → History → Changes.
-const TABS: { key: ViewKey; label: string; phase?: string }[] = [
+// Documents are labelled by the acronym a regulated team already uses; the full name
+// rides along as a tooltip so nothing is lost on a reader who does not know them yet.
+// Views that are not a document (Overview, Auditor, …) keep their word.
+const TABS: { key: ViewKey; label: string; title?: string; phase?: string }[] = [
   { key: 'overview', label: 'Overview' },
-  { key: 'prd', label: 'Product Requirements', phase: 'Design Inputs' },
-  { key: 'srs', label: 'Software Requirements', phase: 'Design Inputs' },
-  { key: 'arch', label: 'Architecture', phase: 'Design Outputs' },
-  { key: 'sdd', label: 'Detailed Design', phase: 'Design Outputs' },
-  { key: 'vtp', label: 'Verification Tests', phase: 'Design Verification' },
-  { key: 'testing', label: 'Results', phase: 'Design Verification' },
+  { key: 'prd', label: 'PRD', title: 'Product Requirements', phase: 'Design Inputs' },
+  { key: 'srs', label: 'SRS', title: 'Software Requirements', phase: 'Design Inputs' },
+  { key: 'arch', label: 'SAD', title: 'Software Architecture Document', phase: 'Design Outputs' },
+  { key: 'sdd', label: 'SDD', title: 'Software Detailed Design', phase: 'Design Outputs' },
+  { key: 'vtp', label: 'VTP', title: 'Verification Test Plan', phase: 'Design Verification' },
+  { key: 'testing', label: 'Results', title: 'Verification results', phase: 'Design Verification' },
   { key: 'audit', label: 'Auditor', phase: 'Design Controls' },
   { key: 'trace', label: 'Traceability', phase: 'Traceability' },
   { key: 'releases', label: 'Releases', phase: 'Design History' },
@@ -53,6 +56,7 @@ const ViewTabs: React.FC<ViewTabsProps> = ({ current, enabled, onSelect }) => (
           href="#"
           role="tab"
           className={cls}
+          title={t.title}
           style={{ gridColumn: i + 1, gridRow: 1 }}
           onClick={(e) => { e.preventDefault(); if (isEnabled) onSelect(t.key); }}
         >

@@ -1002,6 +1002,7 @@ const LocalApp: React.FC = () => {
           <AuditView
             prd={prdDoc} srs={srsDoc} vtp={vtpDoc}
             jobs={jobsDoc?.jobs ?? []} releases={releases}
+            sdd={sddDoc}
             hasArchitecture={!!(sad || dsl)}
             onNavigate={setCurrentView}
           />

@@ -5,7 +5,7 @@
  * tab that holds the evidence. This is the surface an engineer uses to answer an
  * auditor's "where are your design inputs / verification / …?".
  */
-import type { PrdDoc, SrsDoc, VtpDoc, ReleasesDoc, JobRecord } from './shared';
+import type { PrdDoc, SrsDoc, VtpDoc, SddDoc, ReleasesDoc, JobRecord } from './shared';
 import { buildAuditReport } from './auditReport';
 import type { ViewKey } from './components/ViewTabs';
 
@@ -25,9 +25,20 @@ export interface DesignControlsInput {
   prd?: PrdDoc | null;
   srs?: SrsDoc | null;
   vtp?: VtpDoc | null;
+  sdd?: SddDoc | null;
   jobs?: JobRecord[];
   releases?: ReleasesDoc | null;
   hasArchitecture?: boolean;
+}
+
+/** Plain-language "where this stands", so the status is never a bare word. */
+function describeOutputs(hasArch: boolean, hasSdd: boolean, sections: number, undesigned: number): string {
+  if (!hasArch && !hasSdd) return 'No architecture or detailed design yet';
+  if (hasArch && !hasSdd) return 'Architecture documented; no detailed design yet';
+  if (!hasArch && hasSdd) return `${sections} design sections; no architecture document yet`;
+  return undesigned > 0
+    ? `Architecture documented · ${sections} design sections · ${undesigned} requirement(s) not yet traced to a design section`
+    : `Architecture documented · ${sections} design sections · every requirement traced to a design section`;
 }
 
 export function buildDesignControls(input: DesignControlsInput): ControlElement[] {
@@ -36,6 +47,14 @@ export function buildDesignControls(input: DesignControlsInput): ControlElement[
   const jobs = input.jobs ?? [];
   const releaseCount = input.releases?.releases.length ?? 0;
   const hasArch = !!input.hasArchitecture;
+  // A detailed design counts only once it says something: an empty register is a file,
+  // not a design output.
+  const designSections = (input.sdd?.items ?? []).filter((s) => !s.heading);
+  const hasSdd = designSections.length > 0;
+  // 62304 5.3 (architecture) and 5.4 (detailed design) are both Design Outputs, so the
+  // element is complete only with both, and partial with either alone.
+  const outputsStatus: ControlStatus = hasArch && hasSdd ? 'present' : hasArch || hasSdd ? 'partial' : 'gap';
+  const undesigned = reqs.total > 0 ? (input.srs?.items ?? []).filter((r) => !r.heading && (r.design ?? []).length === 0).length : 0;
 
   const verifyStatus: ControlStatus =
     reqs.total === 0 ? 'gap' : reqs.verified === reqs.total ? 'present' : 'partial';
@@ -57,12 +76,10 @@ export function buildDesignControls(input: DesignControlsInput): ControlElement[
       key: 'outputs',
       name: 'Design Outputs',
       cite: 'IEC 62304 §5.3–5.4 · 21 CFR 820.30(d)',
-      statement: 'The realized design — software architecture (and detailed design).',
-      status: hasArch ? 'partial' : 'gap',
-      detail: hasArch
-        ? 'Architecture documented; detailed design (SDD) is roadmap'
-        : 'No architecture document yet',
-      link: hasArch ? 'arch' : undefined,
+      statement: 'The realized design — the software architecture and the detailed design.',
+      status: outputsStatus,
+      detail: describeOutputs(hasArch, hasSdd, designSections.length, undesigned),
+      link: hasSdd && !hasArch ? 'sdd' : hasArch ? 'arch' : undefined,
     },
     {
       key: 'verification',
