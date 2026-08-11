@@ -154,7 +154,7 @@
       "source": [
         "src/shared/verification.ts"
       ],
-      "body": "Resolves a VTP item's `automation` links against a captured run and derives its result.\n\n`runner` and `selector` are opaque strings, so the contract is independent of any test framework.\nAutomated tests derive `passed`, `failed`, `skipped` or `not_run`; manual tests fall back to their\nstored `result`. Roll-ups are computed, not stored.\n\nA link with no matching result is `not_run`, which is distinct from `failed`."
+      "body": "Resolves a VTP item's `automation` links against a captured run and derives its result.\n\n`runner` and `selector` are opaque strings, so the contract is independent of any test framework.\nAutomated tests derive `passed`, `failed`, `skipped` or `not_run`; manual tests fall back to their\nstored `result`. Roll-ups are computed, not stored.\n\nA selector may name a single test or a group of them. A result answers a selector when its name\nequals it or begins with it at a word boundary, so a link naming a `describe` block resolves to every\ntest beneath it, and adding a test to that group needs no change to the verification plan. The\nboundary check prevents a selector matching a longer name it merely prefixes.\n\nA group is `failed` if any test beneath it failed, and `skipped` only if all of them were.\n\nA link with no matching result is `not_run`, which is distinct from `failed`."
     },
     {
       "id": "d_lnc001",
@@ -533,7 +533,7 @@
       "source": [
         "skill/specpad/templates"
       ],
-      "body": "Scaffolding for a new project, and the enforcement backstop.\n\nThe launcher template hardcodes no editor host. The skill substitutes the base URL and the optional\nserver project id in both the redirect and the no-JavaScript fallback link; the fallback is what a\nblocked-script user sees, so a launcher correct in one place and wrong in the other is worse than one\nconsistently wrong.\n\nThe pre-push hook blocks a commit with no `Job:` trailer and warns on code without spec. It skips\nmerges, tag pushes and pre-adoption history, and provides a waiver and a bypass — a gate with no escape\nhatch is disabled entirely."
+      "body": "Scaffolding for a new project, and the enforcement backstop.\n\nThe launcher template hardcodes no editor host. The skill substitutes the base URL and the optional\nserver project id in both the redirect and the no-JavaScript fallback link; the fallback is what a\nblocked-script user sees, so a launcher correct in one place and wrong in the other is worse than one\nconsistently wrong.\n\nThe pre-push hook blocks a commit with no `Job:` trailer and warns on code without spec. It skips\nmerges, tag pushes and pre-adoption history, and provides a waiver and a bypass — a gate with no escape\nhatch is disabled entirely.\n\n`stale-design.mjs`, called by the hook per commit, reports design that may no longer describe the\ncode. It reads each section's `source` paths from the detailed design **as it stood at that commit**,\nand names any changed file whose claiming section is itself unchanged. It reports and never decides:\nwhether the design actually moved is the author's judgement, so this warns rather than blocks. Without\nnode, or without a detailed design, it is silent."
     },
     {
       "id": "d_vrf001",
