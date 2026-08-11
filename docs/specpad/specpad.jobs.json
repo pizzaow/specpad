@@ -13,7 +13,8 @@
       },
       "title": "Jobs register & change-tracking traceability",
       "description": "Add a SpecPad-owned jobs register (jobs.json) with an open/closed lifecycle, the active-job governance rule, the editor Jobs view and active-job picker, and the skill git plumbing so every spec change traces to a job. Baselined at v1.1.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.6"
     },
     {
       "id": "j_9b2e07",
@@ -580,7 +581,8 @@
       "title": "Software Detailed Design (SDD) pillar",
       "description": "SpecPad now tracks a Software Detailed Design alongside the requirements and tests. Each design section has a permanent identity, so requirements link to the design and the link survives any amount of rewriting, and the design itself stays free-form enough to hold diagrams and flowcharts. Requirements that point at a design section are flagged for re-review whenever that section changes.",
       "technical_notes": "The fourth register pillar, and the first that is section-and-prose rather than field-per-item. Sections carry a stable id + renameable code/title + a markdown body (images, draw.io SVGs, flowcharts), so the trace anchor is the id and headings stay free to change. Trace direction is SRS -> SDD (SrsItem.design[]), matching SrsItem.satisfies -> PRD: tests keep verifying requirements, and the matrix renders PRD -> SRS -> SDD and SRS -> VTP so the reviewer reads the path. Authoring is always at the maximum rigor (62304 Class C / FDA Enhanced); omission is an export-time decision, which keeps class/rigor out of the schema entirely and survives 62304 Ed 2 replacing A/B/C with rigor levels I/II. Section skeleton follows IEEE 1016 design viewpoints; decomposition rules in the guide follow Parnas (hide the decision likely to change; never decompose from the call flow) plus the independently-testable and safety-risk-isolation tests.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.6"
     },
     {
       "id": "j_3f6c25",
@@ -593,7 +595,8 @@
       "title": "Document tabs by acronym, and the Auditor recognises the detailed design",
       "description": "The document tabs now read as the acronyms a regulated team already uses — PRD, SRS, SAD, SDD, VTP — with the full name on hover. The Auditor view also recognises the detailed design: Design Outputs is no longer permanently partial once both the architecture and the detailed design are present.",
       "technical_notes": "Two consistency fixes after the SDD landed. (1) Tab labels become acronyms; the full name moves to a title attribute so nothing is lost for a reader who does not know them. TAB-1 is reworded accordingly. (2) designControls gains the SDD: Design Outputs derives present/partial/gap from architecture AND detailed design rather than hard-coding the SDD as roadmap, which it stopped being in JOB-44. DC-2 reworded. Deliberately NOT in scope: making the PRD, SAD and SDD editable in every phase — that is the next job.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.6"
     },
     {
       "id": "j_8d4b17",
@@ -606,7 +609,8 @@
       "title": "One notion of read-only: demo becomes a sandbox, and a reader sees a read-only editor",
       "description": "The demo is now a sandbox: every document can be edited, changes live only in the browser and reset on reload, and Save offers the file as a download. Separately, someone signed in to a server with a read-only role now actually sees a read-only editor, rather than being allowed to type into changes the server would refuse.",
       "technical_notes": "Both halves had the same cause: nothing answered \"may I edit in this session\". readOnly was passed to some views from launch.demo and to none from the server session, so the demo blocked editing on PRD/SAD/SDD/Results while leaving SRS/VTP fully editable, and a server reader could type into every table. Now one derived value - the session capability - flows to every view, and demo is no longer read-only at all. SRSTable and VTPTable gain the readOnly prop the others already had. Persisting in demo mode downloads the document instead of writing, so the sandbox has an exit. Also closes the rendering half of EDR-3, which was previously verified only at the transport level.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.6"
     },
     {
       "id": "j_5c9a04",
@@ -619,7 +623,8 @@
       "title": "Detailed design reads as a document, and is written like one",
       "description": "The detailed design is now one continuous document you scroll, with a sticky outline that follows where you are, editing in place on the section you are reading, and drag-to-reorder. Its text has been rewritten to read like reference documentation rather than a filled-in template.",
       "technical_notes": "Two halves. (1) The view: outline-plus-single-section did not suit 55 short sections - a long index against short articles, with the editor always at the top of the pane and the management controls stranded below it. Replaced with a continuous document, scrollspy outline, per-section hover menu, and inline editing; section boundaries stay hard data because SrsItem.design points at a section id, so this is a rendering change only. (2) The prose: the guide prescribed a content checklist and the generator turned it into a form - 48 of 55 sections opened Secret: and 50 closed Acceptance:, and 69 percent sat within a third of the median length. The guide now frames the SDD as reference documentation (Diataxis: describe and only describe), names the tells to avoid, and states that length follows the unit rather than the template.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.6"
     },
     {
       "id": "j_7b2f56",
@@ -632,7 +637,8 @@
       "title": "Author the trace links in the editor",
       "description": "The links between documents can now be edited in the browser. A requirement row expands to show and edit what it satisfies, what design implements it, and what verifies it; a design section can be linked to requirements from the design itself. References are chosen from a searchable list showing each item's code and text, so a link can no longer be mistyped.",
       "technical_notes": "Only verifies (VTP -> SRS) had an editor; satisfies (JOB-16) and design (JOB-44) were displays only, so no human could author an upward or downward trace without the skill. New RefPicker component - searchable multi-select over candidate items, value is ids, chips show codes - used for all three, which also removes the raw-id typing verifies previously required. The link stays stored on the requirement; the design view edits it by writing back to the SRS document, so there is still one home per edge. The requirement row expansion now shows the whole chain for that requirement rather than only its tests.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.6"
     },
     {
       "id": "j_9e3c71",
@@ -645,7 +651,22 @@
       "title": "Verification links resolve to test groups, and the gate notices stale design",
       "description": "Seventy verification tests were reported as not run when their tests had in fact passed: they named a group of tests, and the matcher only accepted the full name of a single one. A test entry can now point at a group. Separately, the pre-push check now notices when a commit changes code that a design section claims to describe while that section stays untouched.",
       "technical_notes": "Two defects, both mine. (1) The run records a full test name; automation links were being written as describe-block names; matchLink required exact equality, so 70 of 243 entries resolved to nothing and the Overview read 170/243. A link selector now matches a result whose selector equals it or begins with it at a word boundary, so naming a group is legitimate and adding a test to that group does not need a spec edit. (2) The pre-push hook only ever grepped for srs|vtp, so the SAD and SDD were invisible to it - which is how JOB-40 shipped a server with no architecture update. The hook now uses each SDD section source path: a pushed commit touching a claimed path whose section body is unchanged is named as possibly stale.",
-      "status": "closed"
+      "status": "closed",
+      "version": "v1.6"
+    },
+    {
+      "id": "j_4c8e12",
+      "code": "JOB-50",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Cut release v1.6",
+      "description": "Release v1.6 — the Software Detailed Design pillar end to end, and the editor consistency work around it.",
+      "technical_notes": "Release bookkeeping. Set version v1.6 on JOB-1 and JOB-44..49; regenerated every closed job cache from git; moved the v1.5 full-document snapshot to .specpad/snapshots/v1.5 and regenerated .specpad/baseline as the v1.6 document set with the verification run frozen into it. First release in which no job is left open: JOB-1 closed in JOB-49s wake rather than carrying forward again. Tag goes on d7625b1, the last content commit, per the v1.3/v1.4/v1.5 convention.",
+      "version": "v1.6",
+      "status": "open"
     }
   ]
 }

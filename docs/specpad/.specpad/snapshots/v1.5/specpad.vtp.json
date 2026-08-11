@@ -653,21 +653,15 @@
     {
       "id": "t_ed0a04",
       "code": "TEST-41",
-      "text": "Expand a requirement row in a project that has product requirements, a detailed design and tests.",
+      "text": "Click the show-tests toggle on a requirement that has a verifying test.",
       "verifies": [
         "r_ed0a04"
       ],
-      "expected": "The expansion shows what the requirement satisfies, what design implements it, and what verifies it with each result. Where a project has no PRD or no detailed design, those parts are absent rather than empty.",
+      "expected": "The verifying VTP tests are listed inline beneath the requirement.",
       "automation": [
         {
           "runner": "vitest",
-          "file": "src/components/__tests__/SRSTable.test.tsx",
-          "selector": "SRSTable — authoring the trace (TR-1)"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/SRSTable.test.tsx",
-          "selector": "SRSTable show-tests + info"
+          "file": "src/components/__tests__/SRSTable.test.tsx"
         }
       ]
     },
@@ -890,16 +884,15 @@
     {
       "id": "t_ed0b11",
       "code": "TEST-55",
-      "text": "Open the editor in demo mode, edit a document, use the save control, and reload the page.",
+      "text": "In demo mode, confirm no Save button or File menu is offered, Ctrl+S does nothing, and the read-only indicator is shown.",
       "verifies": [
         "r_ed0b11"
       ],
-      "expected": "Every document is editable; the indicator states that nothing is saved; the save control offers the document as a file download and never writes it back; reloading discards the edits.",
+      "expected": "All write affordances are absent or inert and a \"Demo — read-only\" indicator is visible.",
       "automation": [
         {
           "runner": "vitest",
-          "file": "src/__tests__/LocalApp.demo.test.tsx",
-          "selector": "LocalApp demo mode"
+          "file": "src/__tests__/LocalApp.demo.test.tsx"
         }
       ]
     },
@@ -2114,7 +2107,7 @@
       "verifies": [
         "r_vs003"
       ],
-      "expected": "The tabs read Overview, PRD, SRS, SAD, SDD, VTP, Results, Auditor, Traceability, Releases, Jobs, in that order, and each phase band spans exactly the tabs of its phase.",
+      "expected": "ViewTabs renders Overview first, then the authoring group (Requirements, Verification Tests, Results, Architecture), then the oversight group (Auditor, Releases, Jobs), with a separator between groups.",
       "automation": [
         {
           "runner": "vitest",
@@ -2909,7 +2902,7 @@
         {
           "runner": "vitest",
           "file": "server/__tests__/config.test.ts",
-          "selector": "validateConfig — refusing a bad configuration refuses the dev provider on a non-loopback bind (AUTH-4)"
+          "selector": "refuses the dev provider on a non-loopback bind (AUTH-4)"
         }
       ]
     },
@@ -3131,7 +3124,7 @@
         {
           "runner": "vitest",
           "file": "server/__tests__/repository.integration.test.ts",
-          "selector": "Repository — concurrent editors (CMT-6, MRG-5) merges two people editing different requirements, with no conflict"
+          "selector": "merges two people editing different requirements, with no conflict"
         }
       ]
     },
@@ -3216,12 +3209,12 @@
         {
           "runner": "vitest",
           "file": "src/shared/__tests__/merge.test.ts",
-          "selector": "mergeItems — clean merges merges changes to different fields of the same item without conflict (MRG-2)"
+          "selector": "merges changes to different fields of the same item without conflict (MRG-2)"
         },
         {
           "runner": "vitest",
           "file": "src/shared/__tests__/merge.test.ts",
-          "selector": "mergeItems — conflicts reports a conflict when both sides set the same field differently (MRG-2)"
+          "selector": "reports a conflict when both sides set the same field differently (MRG-2)"
         }
       ]
     },
@@ -3237,12 +3230,12 @@
         {
           "runner": "vitest",
           "file": "src/shared/__tests__/merge.test.ts",
-          "selector": "mergeItems — conflicts reports a conflict when one side deletes an item the other modified (MRG-3)"
+          "selector": "reports a conflict when one side deletes an item the other modified (MRG-3)"
         },
         {
           "runner": "vitest",
           "file": "src/shared/__tests__/merge.test.ts",
-          "selector": "mergeItems — conflicts keeps the surviving item when a deletion conflicts with a modification (MRG-3)"
+          "selector": "keeps the surviving item when a deletion conflicts with a modification (MRG-3)"
         }
       ]
     },
@@ -3258,7 +3251,7 @@
         {
           "runner": "vitest",
           "file": "src/shared/__tests__/merge.test.ts",
-          "selector": "mergeItems — clean merges does not treat a difference in item order as a conflict (MRG-4)"
+          "selector": "does not treat a difference in item order as a conflict (MRG-4)"
         }
       ]
     },
@@ -3343,27 +3336,22 @@
       "verifies": [
         "r_rx3"
       ],
-      "expected": "A reader sees no row-actions menu in any document view and no cell opens for editing when clicked; an editor and a committer do. Commit is offered only to a committer, and the server refuses a write from a reader regardless of what the client rendered.",
+      "expected": "The reader sees read-only views with no editing affordances; the editor role can edit but is offered no Commit action; the committer sees both. Server-side checks reject writes from a reader regardless of what the client renders.",
       "automation": [
         {
           "runner": "vitest",
-          "file": "src/components/__tests__/SRSTable.test.tsx",
-          "selector": "SRSTable — read-only (EDR-3)"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/VTPTable.test.tsx",
-          "selector": "VTPTable — read-only (EDR-3)"
+          "file": "server/__tests__/api.test.ts",
+          "selector": "writes and roles (EDR-3)"
         },
         {
           "runner": "vitest",
           "file": "src/components/__tests__/ServerBar.test.tsx",
-          "selector": "ServerBar — the Commit affordance (EDR-3) offers"
+          "selector": "ServerBar — the Commit affordance (EDR-3)"
         },
         {
           "runner": "vitest",
           "file": "src/transports/__tests__/remote.test.ts",
-          "selector": "role-driven read-only"
+          "selector": "role-driven read-only (EDR-3)"
         }
       ]
     },
@@ -3552,7 +3540,7 @@
         {
           "runner": "vitest",
           "file": "src/__tests__/LocalApp.test.tsx",
-          "selector": "LocalApp document switching asks which project to open rather than picking one or falling back to files"
+          "selector": "asks which project to open rather than picking one or falling back to files"
         }
       ]
     },
@@ -3610,7 +3598,7 @@
         {
           "runner": "vitest",
           "file": "src/__tests__/LocalApp.test.tsx",
-          "selector": "LocalApp document switching reloads from the newly-selected project and rewrites the URL to name it"
+          "selector": "reloads from the newly-selected project and rewrites the URL to name it"
         }
       ]
     },
@@ -3658,7 +3646,7 @@
         {
           "runner": "vitest",
           "file": "server/__tests__/repository.integration.test.ts",
-          "selector": "Repository — reaping idle working copies (WCL-1..4) never removes a copy holding uncommitted changes, however idle (WCL-2)"
+          "selector": "never removes a copy holding uncommitted changes, however idle (WCL-2)"
         }
       ]
     },
@@ -3674,7 +3662,7 @@
         {
           "runner": "vitest",
           "file": "server/__tests__/repository.integration.test.ts",
-          "selector": "Repository — reaping idle working copies (WCL-1..4) re-provisions a reaped copy on next use, so the user notices nothing (WCL-3)"
+          "selector": "re-provisions a reaped copy on next use, so the user notices nothing (WCL-3)"
         }
       ]
     },
@@ -3695,445 +3683,7 @@
         {
           "runner": "vitest",
           "file": "server/__tests__/repository.integration.test.ts",
-          "selector": "Repository — reaping idle working copies (WCL-1..4) reaps nothing when reaping is disabled (WCL-4)"
-        }
-      ]
-    },
-    {
-      "id": "t_dd1",
-      "code": "TEST-223",
-      "verifies": [
-        "r_dd1"
-      ],
-      "text": "Inspect the document-type registry and validate a well-formed detailed design, including a heading-only section and one with no body.",
-      "expected": "The type is registered as an id-keyed register captured in the baseline; a well-formed document validates, and a section with no title is rejected.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/sdd.test.ts",
-          "selector": "SDD — structure"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/sdd.test.ts",
-          "selector": "SDD — registered as a document type"
-        }
-      ]
-    },
-    {
-      "id": "t_dd2",
-      "code": "TEST-224",
-      "verifies": [
-        "r_dd2"
-      ],
-      "text": "Retitle, recode and reorder a design section that a requirement references, then delete a different one.",
-      "expected": "Every reference still resolves after the rename, recode and reorder. Only the deletion breaks a reference, and it is reported as an unresolved design reference.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/sdd.test.ts",
-          "selector": "SDD — the identity guarantee"
-        }
-      ]
-    },
-    {
-      "id": "t_dd3",
-      "code": "TEST-225",
-      "verifies": [
-        "r_dd3"
-      ],
-      "text": "Author a design section whose body contains markdown headings and an embedded diagram reference.",
-      "expected": "The document validates and the body is preserved verbatim, including the image reference; nothing in the schema constrains the body to fixed fields.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/sdd.test.ts",
-          "selector": "SDD — structure"
-        }
-      ]
-    },
-    {
-      "id": "t_dd4",
-      "code": "TEST-226",
-      "verifies": [
-        "r_dd4"
-      ],
-      "text": "Inspect a requirement's design field and the schema that governs it.",
-      "expected": "The requirement carries a list of design section ids; the schema documents them as ids rather than codes, and no reverse link is stored on the section.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/sdd.test.ts",
-          "selector": "SDD — governance (opt-in)"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/schema-descriptions.test.ts",
-          "selector": "schema field descriptions"
-        }
-      ]
-    },
-    {
-      "id": "t_dd5",
-      "code": "TEST-227",
-      "verifies": [
-        "r_dd5"
-      ],
-      "text": "Point a requirement at a design section id that does not exist, with a detailed design present.",
-      "expected": "The unresolved reference is reported against that requirement; with no detailed design present the rule does not run at all.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/sdd.test.ts",
-          "selector": "SDD — governance (opt-in)"
-        }
-      ]
-    },
-    {
-      "id": "t_dd6",
-      "code": "TEST-228",
-      "verifies": [
-        "r_dd6"
-      ],
-      "text": "Leave one requirement with no design reference, with a detailed design present, and confirm there is no configuration that relaxes the check.",
-      "expected": "That requirement is reported as not reaching the design; headings are exempt; the check applies with no safety-class or documentation-level input available to switch it off.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/sdd.test.ts",
-          "selector": "SDD — governance (opt-in)"
-        }
-      ]
-    },
-    {
-      "id": "t_dd7",
-      "code": "TEST-229",
-      "verifies": [
-        "r_dd7"
-      ],
-      "text": "Change a design section under a job, then inspect the job's cached before/after and the release baseline.",
-      "expected": "The detailed design appears in the job's before and after snapshots and in the baseline, and the changed section is listed among the job's changes — with no diff, snapshot or view code specific to this document type.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/sdd.test.ts",
-          "selector": "SDD — registered as a document type"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/docTypes.test.ts",
-          "selector": "document-type registry"
-        },
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/change-tracking.test.ts",
-          "selector": "dogfood job caches"
-        }
-      ]
-    },
-    {
-      "id": "t_dd8",
-      "code": "TEST-230",
-      "verifies": [
-        "r_dd8"
-      ],
-      "text": "Read the skill procedure for changing a design section.",
-      "expected": "It requires listing the requirements referencing the changed section and deciding for each whether it still holds, in the same job, and says to fix the requirement or the design where it does not.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/guides.test.ts",
-          "selector": "on-demand authoring guides each guide covers what-to-capture and good/bad examples"
-        },
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/parity.test.ts",
-          "selector": "skill ↔ module governance parity documents every governance rule id from the shared module"
-        }
-      ]
-    },
-    {
-      "id": "t_dd9",
-      "code": "TEST-231",
-      "verifies": [
-        "r_dd9"
-      ],
-      "text": "Read the baseline generator procedure for drafting a detailed design.",
-      "expected": "It proposes sections from module boundaries, forbids one-per-file across a large tree and decomposition from the call flow, and requires generated sections to be tagged draft for review.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/guides.test.ts",
-          "selector": "on-demand authoring guides ships a guide for each document type"
-        }
-      ]
-    },
-    {
-      "id": "t_dd10",
-      "code": "TEST-232",
-      "verifies": [
-        "r_dd10"
-      ],
-      "text": "Open a project whose index lists a detailed design and inspect the reported validation and governance.",
-      "expected": "The design is loaded and its governance violations are reported alongside the others; a project with no detailed design reports none of the design rules.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/dogfood.test.ts",
-          "selector": "SpecPad self-documentation (dogfood) passes governance with no violations"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/StatusBar.test.tsx",
-          "selector": "StatusBar"
-        }
-      ]
-    },
-    {
-      "id": "t_dd11",
-      "code": "TEST-233",
-      "verifies": [
-        "r_dd11"
-      ],
-      "text": "Open the Detailed Design tab, scroll the document, and use the outline to reach a section.",
-      "expected": "Every section is rendered in order in one scrolling document; the outline lists them all, marks the one in view, and scrolls to a section when it is chosen. Each section shows its own source paths and the requirements implementing it.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/DetailedDesignView.test.tsx",
-          "selector": "DetailedDesignView — the document"
-        }
-      ]
-    },
-    {
-      "id": "t_dd12",
-      "code": "TEST-234",
-      "verifies": [
-        "r_dd12"
-      ],
-      "text": "Edit a section's title, code, source paths and body in the document; add a section, reorder one by drag and by the move controls, and delete one.",
-      "expected": "Each edit is reported with the section's id unchanged; a new section gets a fresh unique id; drag handles are offered per outline entry when editing is permitted and absent when it is not; deletion removes only that section.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/DetailedDesignView.test.tsx",
-          "selector": "DetailedDesignView — editing in place"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/DetailedDesignView.test.tsx",
-          "selector": "DetailedDesignView — structure"
-        }
-      ]
-    },
-    {
-      "id": "t_dd13",
-      "code": "TEST-235",
-      "verifies": [
-        "r_dd13"
-      ],
-      "text": "View a section referenced by two requirements, then edit it, then attempt to delete it and cancel.",
-      "expected": "The section lists both requirements; editing warns that they are now in question and names them; the deletion prompt names them as references that would be left unresolved, and cancelling changes nothing. A section nothing references says so.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/DetailedDesignView.test.tsx",
-          "selector": "DetailedDesignView — the document"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/DetailedDesignView.test.tsx",
-          "selector": "DetailedDesignView — editing"
-        }
-      ]
-    },
-    {
-      "id": "t_tab3",
-      "code": "TEST-236",
-      "verifies": [
-        "r_tab3"
-      ],
-      "text": "Inspect the document tab strip and hover each document tab.",
-      "expected": "Document tabs read PRD, SRS, SAD, SDD and VTP; each carries its full document name as hover text. Tabs that are not documents (Overview, Auditor, Traceability, Releases, Jobs) keep their word and carry no hover text.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/ViewTabs.test.tsx",
-          "selector": "ViewTabs labels each document tab by its acronym, with the full name on hover"
-        }
-      ]
-    },
-    {
-      "id": "t_dd14",
-      "code": "TEST-237",
-      "verifies": [
-        "r_dd14"
-      ],
-      "text": "View the Auditor with neither design document, with each alone, and with both — including a project whose requirements do not all reach a design section.",
-      "expected": "Design Outputs is a gap with neither, partial with either alone (linking to the one present), and complete only with both. With both, the detail counts the design sections and names how many requirements are not yet traced to one. An empty detailed design does not count as a design output.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/designControls.test.ts",
-          "selector": "buildDesignControls — Design Outputs covers architecture and detailed design"
-        }
-      ]
-    },
-    {
-      "id": "t_ro1",
-      "code": "TEST-238",
-      "verifies": [
-        "r_ro1"
-      ],
-      "text": "Inspect every document view for the condition that governs its editing affordances.",
-      "expected": "All of them take one derived session condition; none derives its own from the demo flag or the transport. A view added later that ignores it is visible as such, because the condition is passed in rather than looked up.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/SRSTable.test.tsx",
-          "selector": "SRSTable — read-only (EDR-3)"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/VTPTable.test.tsx",
-          "selector": "VTPTable — read-only (EDR-3)"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/PrdTable.test.tsx",
-          "selector": "PrdTable"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/DetailedDesignView.test.tsx",
-          "selector": "DetailedDesignView — editing"
-        }
-      ]
-    },
-    {
-      "id": "t_dd15",
-      "code": "TEST-239",
-      "verifies": [
-        "r_dd15"
-      ],
-      "text": "Inspect how a section boundary is stored, and place a markdown heading inside a section body.",
-      "expected": "Each section is a stored item with its own id, which is what a requirement references. A heading within a body is sub-structure and carries no id, so nothing can trace to it and the continuous rendering leaves every trace intact.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/sdd.test.ts",
-          "selector": "SDD — the identity guarantee"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/DetailedDesignView.test.tsx",
-          "selector": "DetailedDesignView — the document"
-        }
-      ]
-    },
-    {
-      "id": "t_dd16",
-      "code": "TEST-240",
-      "verifies": [
-        "r_dd16"
-      ],
-      "text": "Open one section for editing and inspect the sections around it.",
-      "expected": "The chosen section becomes editable in place while the sections before and after it stay rendered as prose.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/DetailedDesignView.test.tsx",
-          "selector": "DetailedDesignView — editing in place opens the clicked section for editing and leaves its neighbours rendered"
-        }
-      ]
-    },
-    {
-      "id": "t_tr1",
-      "code": "TEST-241",
-      "verifies": [
-        "r_tr1"
-      ],
-      "text": "Link and unlink a product requirement and a design section from a requirement row, and requirements from a test row.",
-      "expected": "Each edit is written to the item that stores the edge — satisfies and design onto the requirement, verifies onto the test — and stores ids. A heading is never offered as a link target.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/SRSTable.test.tsx",
-          "selector": "SRSTable — authoring the trace (TR-1)"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/VTPTable.test.tsx",
-          "selector": "VTPTable"
-        }
-      ]
-    },
-    {
-      "id": "t_tr2",
-      "code": "TEST-242",
-      "verifies": [
-        "r_tr2"
-      ],
-      "text": "Add and remove a requirement from a design section's Implements list, then inspect the requirements document.",
-      "expected": "The requirement's own design list gains or loses that section; no other requirement's links change; and the same edge appears on the requirement's row in the requirements table.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/DetailedDesignView.test.tsx",
-          "selector": "DetailedDesignView — linking requirements from the design (TR-2)"
-        }
-      ]
-    },
-    {
-      "id": "t_tr3",
-      "code": "TEST-243",
-      "verifies": [
-        "r_tr3"
-      ],
-      "text": "Open a reference picker, filter by code and by text, choose a candidate, and view an item holding a reference that no longer resolves.",
-      "expected": "Candidates are listed by code and text and filter on both; choosing one stores its id, and no identifier is ever typed or displayed for a resolvable reference. An unresolved reference is shown as unresolved and can be removed.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/RefPicker.test.tsx",
-          "selector": "RefPicker"
-        }
-      ]
-    },
-    {
-      "id": "t_ver9",
-      "code": "TEST-244",
-      "verifies": [
-        "r_ver9"
-      ],
-      "text": "Resolve an automation link naming a group of tests, one naming a single test in full, and one naming a string that is a prefix of a longer name but not a whole segment of it.",
-      "expected": "The group matches every test beneath it and is failed if any of them failed; the full name matches exactly one; the partial prefix matches nothing and is reported as not run rather than passed.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/verification.test.ts",
-          "selector": "selectors may name a group of tests (VER-9)"
-        }
-      ]
-    },
-    {
-      "id": "t_des1",
-      "code": "TEST-245",
-      "verifies": [
-        "r_des1"
-      ],
-      "text": "Push commits that change a file a design section claims, change it together with that section, change an unclaimed file, and change a file in a project with no detailed design.",
-      "expected": "The first is reported naming the file and the section; the second, third and fourth are silent. A section claiming no paths is never reported. The check warns and never blocks the push.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/stale-design.test.ts",
-          "selector": "stale-design check"
-        },
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/stale-design.test.ts",
-          "selector": "the hook installs and calls the check"
+          "selector": "reaps nothing when reaping is disabled (WCL-4)"
         }
       ]
     }
