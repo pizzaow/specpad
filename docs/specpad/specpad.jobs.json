@@ -666,7 +666,7 @@
       "description": "Release v1.6 — the Software Detailed Design pillar end to end, and the editor consistency work around it.",
       "technical_notes": "Release bookkeeping. Set version v1.6 on JOB-1 and JOB-44..49; regenerated every closed job cache from git; moved the v1.5 full-document snapshot to .specpad/snapshots/v1.5 and regenerated .specpad/baseline as the v1.6 document set with the verification run frozen into it. First release in which no job is left open: JOB-1 closed in JOB-49s wake rather than carrying forward again. Tag goes on d7625b1, the last content commit, per the v1.3/v1.4/v1.5 convention.",
       "version": "v1.6",
-      "status": "open"
+      "status": "closed"
     }
   ]
 }
