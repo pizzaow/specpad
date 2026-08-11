@@ -30,9 +30,26 @@ export interface VerificationOutcome {
   run?: { runner: string; ref: string; ranAt: string }; // run provenance when automated and a run is loaded
 }
 
-/** Results in a run that a link points at: same file, and same selector when the link pins one. */
+/**
+ * Does a run result's selector answer to a link's selector?
+ *
+ * A runner reports the full name of each test; a VTP entry usually corresponds to a
+ * *group* of them, so a link may name the group and match every test beneath it. The
+ * boundary check keeps "merge" from matching "merges nothing" — the next character must
+ * end the name segment.
+ */
+export function selectorMatches(linkSelector: string, resultSelector: string | undefined): boolean {
+  const result = resultSelector ?? '';
+  if (result === linkSelector) return true;
+  if (!result.startsWith(linkSelector)) return false;
+  return /[\s>]/.test(result.charAt(linkSelector.length));
+}
+
+/** Results in a run that a link points at: same file, and answering its selector when it pins one. */
 export function matchLink(link: AutomationLink, run: RunRecord): RunResult[] {
-  return run.results.filter((r) => r.file === link.file && (link.selector == null || r.selector === link.selector));
+  return run.results.filter(
+    (r) => r.file === link.file && (link.selector == null || selectorMatches(link.selector, r.selector)),
+  );
 }
 
 /** Resolve a single automation link against a run (or null when no run is loaded). */

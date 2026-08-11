@@ -74,3 +74,61 @@ describe('verification — rollup + run schema', () => {
     expect(validate(doc)).toEqual([]);
   });
 });
+
+// A runner reports the full name of each test; a VTP entry usually corresponds to a
+// group of them. Requiring the full name made 70 of SpecPad's own entries read as
+// not-run while their tests were passing (JOB-49).
+describe('selectors may name a group of tests (VER-9)', () => {
+  const run: RunRecord = {
+    schemaVersion: '1.0',
+    type: 'run',
+    name: 'Acme',
+    runner: 'vitest',
+    ref: 'abc1234',
+    ranAt: '2026-08-11T00:00:00Z',
+    summary: { total: 3, passed: 3, failed: 0, skipped: 0 },
+    results: [
+      { file: 'a.test.ts', selector: 'merge — conflicts reports a same-field conflict', status: 'passed' },
+      { file: 'a.test.ts', selector: 'merge — conflicts reports a delete-modify conflict', status: 'passed' },
+      { file: 'a.test.ts', selector: 'merge — conflicts reporting nothing at all', status: 'passed' },
+    ],
+  };
+
+  const outcomeFor = (selector?: string) =>
+    verificationOutcome(
+      { id: 't_1', text: 'x', expected: 'y', automation: [{ runner: 'vitest', file: 'a.test.ts', selector }] },
+      run,
+    );
+
+  it('matches every test beneath a group name', () => {
+    const outcome = outcomeFor('merge — conflicts');
+    expect(outcome.status).toBe('passed');
+    expect(outcome.links[0].matches).toBe(3);
+  });
+
+  it('still matches one test by its full name', () => {
+    const outcome = outcomeFor('merge — conflicts reports a same-field conflict');
+    expect(outcome.links[0].matches).toBe(1);
+  });
+
+  it('requires a word boundary, so a prefix of a longer name does not match it', () => {
+    // "merge — conflict" must not sweep up "merge — conflicts …".
+    expect(outcomeFor('merge — conflict').status).toBe('not_run');
+  });
+
+  it('reports a group as failed when any test beneath it failed', () => {
+    const failing: RunRecord = {
+      ...run,
+      results: [...run.results.slice(0, 2), { ...run.results[2], status: 'failed' }],
+    };
+    const outcome = verificationOutcome(
+      { id: 't_1', text: 'x', expected: 'y', automation: [{ runner: 'vitest', file: 'a.test.ts', selector: 'merge — conflicts' }] },
+      failing,
+    );
+    expect(outcome.status).toBe('failed');
+  });
+
+  it('reports a selector matching nothing as not run, not as passed', () => {
+    expect(outcomeFor('no such group').status).toBe('not_run');
+  });
+});

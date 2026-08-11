@@ -8,6 +8,10 @@
 #   WARN       : a pushed commit that changes code but touches no SRS/VTP — run a
 #                SpecPad requirement audit, or add a `Spec: none <reason>` trailer
 #                (e.g. a refactor or comment-only change) to acknowledge it.
+#   WARN       : a pushed commit that changes code a detailed-design section claims to
+#                describe, while leaving that section unchanged. Uses each section's
+#                own `source` paths, so it names the file and the section rather than
+#                guessing (needs node; skipped silently without it).
 #   Bypass all : SPECPAD_SKIP=1 git push    (emergencies only)
 #
 # Workflow-agnostic: merge commits are skipped, and history before SpecPad was
@@ -18,6 +22,7 @@
 
 specdir="docs/specpad"
 [ -d "$specdir" ] || exit 0   # not a SpecPad project — nothing to enforce
+hookdir=$(cd "$(dirname "$0")" && pwd)
 
 ZERO="0000000000000000000000000000000000000000"
 adoption=$(git log --diff-filter=A --reverse --format=%H -- "$specdir" 2>/dev/null | head -1)
@@ -43,6 +48,18 @@ check_commit() {
     echo "      changed code but no SRS/VTP — run a SpecPad requirement audit," >&2
     echo "      or add a 'Spec: none <reason>' trailer (e.g. refactor/comments)." >&2
     warn=1
+  fi
+
+  # Design that may no longer describe the code it claims. Silent without node, and
+  # never blocking: only the author can say whether the design actually changed.
+  if [ -n "$code" ] && [ -z "$spec_none" ] && [ -x "$(command -v node || true)" ] && [ -f "$hookdir/stale-design.mjs" ]; then
+    if ! stale=$(node "$hookdir/stale-design.mjs" "$sha" "$specdir" 2>&1 >/dev/null); then
+      echo "  ⚠ ${sha:0:9}  $subject" >&2
+      echo "      design may be out of date:" >&2
+      printf '%s\n' "$stale" >&2
+      echo "      re-read those sections, or record that the design did not change." >&2
+      warn=1
+    fi
   fi
 }
 

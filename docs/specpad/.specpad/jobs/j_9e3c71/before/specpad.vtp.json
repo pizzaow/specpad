@@ -662,7 +662,7 @@
         {
           "runner": "vitest",
           "file": "src/components/__tests__/SRSTable.test.tsx",
-          "selector": "SRSTable — authoring the trace (TR-1)"
+          "selector": "authoring the trace"
         },
         {
           "runner": "vitest",
@@ -2909,7 +2909,7 @@
         {
           "runner": "vitest",
           "file": "server/__tests__/config.test.ts",
-          "selector": "validateConfig — refusing a bad configuration refuses the dev provider on a non-loopback bind (AUTH-4)"
+          "selector": "refuses the dev provider on a non-loopback bind (AUTH-4)"
         }
       ]
     },
@@ -3131,7 +3131,7 @@
         {
           "runner": "vitest",
           "file": "server/__tests__/repository.integration.test.ts",
-          "selector": "Repository — concurrent editors (CMT-6, MRG-5) merges two people editing different requirements, with no conflict"
+          "selector": "merges two people editing different requirements, with no conflict"
         }
       ]
     },
@@ -3216,12 +3216,12 @@
         {
           "runner": "vitest",
           "file": "src/shared/__tests__/merge.test.ts",
-          "selector": "mergeItems — clean merges merges changes to different fields of the same item without conflict (MRG-2)"
+          "selector": "merges changes to different fields of the same item without conflict (MRG-2)"
         },
         {
           "runner": "vitest",
           "file": "src/shared/__tests__/merge.test.ts",
-          "selector": "mergeItems — conflicts reports a conflict when both sides set the same field differently (MRG-2)"
+          "selector": "reports a conflict when both sides set the same field differently (MRG-2)"
         }
       ]
     },
@@ -3237,12 +3237,12 @@
         {
           "runner": "vitest",
           "file": "src/shared/__tests__/merge.test.ts",
-          "selector": "mergeItems — conflicts reports a conflict when one side deletes an item the other modified (MRG-3)"
+          "selector": "reports a conflict when one side deletes an item the other modified (MRG-3)"
         },
         {
           "runner": "vitest",
           "file": "src/shared/__tests__/merge.test.ts",
-          "selector": "mergeItems — conflicts keeps the surviving item when a deletion conflicts with a modification (MRG-3)"
+          "selector": "keeps the surviving item when a deletion conflicts with a modification (MRG-3)"
         }
       ]
     },
@@ -3258,7 +3258,7 @@
         {
           "runner": "vitest",
           "file": "src/shared/__tests__/merge.test.ts",
-          "selector": "mergeItems — clean merges does not treat a difference in item order as a conflict (MRG-4)"
+          "selector": "does not treat a difference in item order as a conflict (MRG-4)"
         }
       ]
     },
@@ -3348,17 +3348,17 @@
         {
           "runner": "vitest",
           "file": "src/components/__tests__/SRSTable.test.tsx",
-          "selector": "SRSTable — read-only (EDR-3)"
+          "selector": "read-only (EDR-3)"
         },
         {
           "runner": "vitest",
           "file": "src/components/__tests__/VTPTable.test.tsx",
-          "selector": "VTPTable — read-only (EDR-3)"
+          "selector": "read-only (EDR-3)"
         },
         {
           "runner": "vitest",
           "file": "src/components/__tests__/ServerBar.test.tsx",
-          "selector": "ServerBar — the Commit affordance (EDR-3) offers"
+          "selector": "the Commit affordance"
         },
         {
           "runner": "vitest",
@@ -3552,7 +3552,7 @@
         {
           "runner": "vitest",
           "file": "src/__tests__/LocalApp.test.tsx",
-          "selector": "LocalApp document switching asks which project to open rather than picking one or falling back to files"
+          "selector": "asks which project to open rather than picking one or falling back to files"
         }
       ]
     },
@@ -3610,7 +3610,7 @@
         {
           "runner": "vitest",
           "file": "src/__tests__/LocalApp.test.tsx",
-          "selector": "LocalApp document switching reloads from the newly-selected project and rewrites the URL to name it"
+          "selector": "reloads from the newly-selected project and rewrites the URL to name it"
         }
       ]
     },
@@ -3658,7 +3658,7 @@
         {
           "runner": "vitest",
           "file": "server/__tests__/repository.integration.test.ts",
-          "selector": "Repository — reaping idle working copies (WCL-1..4) never removes a copy holding uncommitted changes, however idle (WCL-2)"
+          "selector": "never removes a copy holding uncommitted changes, however idle (WCL-2)"
         }
       ]
     },
@@ -3674,7 +3674,7 @@
         {
           "runner": "vitest",
           "file": "server/__tests__/repository.integration.test.ts",
-          "selector": "Repository — reaping idle working copies (WCL-1..4) re-provisions a reaped copy on next use, so the user notices nothing (WCL-3)"
+          "selector": "re-provisions a reaped copy on next use, so the user notices nothing (WCL-3)"
         }
       ]
     },
@@ -3695,7 +3695,7 @@
         {
           "runner": "vitest",
           "file": "server/__tests__/repository.integration.test.ts",
-          "selector": "Repository — reaping idle working copies (WCL-1..4) reaps nothing when reaping is disabled (WCL-4)"
+          "selector": "reaps nothing when reaping is disabled (WCL-4)"
         }
       ]
     },
@@ -3769,7 +3769,7 @@
         {
           "runner": "vitest",
           "file": "src/shared/__tests__/schema-descriptions.test.ts",
-          "selector": "schema field descriptions"
+          "selector": "every property documented"
         }
       ]
     },
@@ -3822,7 +3822,7 @@
         {
           "runner": "vitest",
           "file": "src/shared/__tests__/docTypes.test.ts",
-          "selector": "document-type registry"
+          "selector": "a newly registered type"
         },
         {
           "runner": "vitest",
@@ -3843,12 +3843,12 @@
         {
           "runner": "vitest",
           "file": "skill/__tests__/guides.test.ts",
-          "selector": "on-demand authoring guides each guide covers what-to-capture and good/bad examples"
+          "selector": "each guide covers what-to-capture"
         },
         {
           "runner": "vitest",
           "file": "skill/__tests__/parity.test.ts",
-          "selector": "skill ↔ module governance parity documents every governance rule id from the shared module"
+          "selector": "documents every governance rule id"
         }
       ]
     },
@@ -3864,7 +3864,7 @@
         {
           "runner": "vitest",
           "file": "skill/__tests__/guides.test.ts",
-          "selector": "on-demand authoring guides ships a guide for each document type"
+          "selector": "ships a guide for each document type"
         }
       ]
     },
@@ -3880,7 +3880,7 @@
         {
           "runner": "vitest",
           "file": "src/shared/__tests__/dogfood.test.ts",
-          "selector": "SpecPad self-documentation (dogfood) passes governance with no violations"
+          "selector": "passes governance with no violations"
         },
         {
           "runner": "vitest",
@@ -3938,7 +3938,7 @@
         {
           "runner": "vitest",
           "file": "src/components/__tests__/DetailedDesignView.test.tsx",
-          "selector": "DetailedDesignView — the document"
+          "selector": "DetailedDesignView — display"
         },
         {
           "runner": "vitest",
@@ -3959,7 +3959,7 @@
         {
           "runner": "vitest",
           "file": "src/components/__tests__/ViewTabs.test.tsx",
-          "selector": "ViewTabs labels each document tab by its acronym, with the full name on hover"
+          "selector": "labels each document tab by its acronym"
         }
       ]
     },
@@ -3975,7 +3975,7 @@
         {
           "runner": "vitest",
           "file": "src/__tests__/designControls.test.ts",
-          "selector": "buildDesignControls — Design Outputs covers architecture and detailed design"
+          "selector": "Design Outputs covers architecture and detailed design"
         }
       ]
     },
@@ -3991,12 +3991,12 @@
         {
           "runner": "vitest",
           "file": "src/components/__tests__/SRSTable.test.tsx",
-          "selector": "SRSTable — read-only (EDR-3)"
+          "selector": "read-only (EDR-3)"
         },
         {
           "runner": "vitest",
           "file": "src/components/__tests__/VTPTable.test.tsx",
-          "selector": "VTPTable — read-only (EDR-3)"
+          "selector": "read-only (EDR-3)"
         },
         {
           "runner": "vitest",
@@ -4043,7 +4043,7 @@
         {
           "runner": "vitest",
           "file": "src/components/__tests__/DetailedDesignView.test.tsx",
-          "selector": "DetailedDesignView — editing in place opens the clicked section for editing and leaves its neighbours rendered"
+          "selector": "opens the clicked section for editing and leaves its neighbours rendered"
         }
       ]
     },
@@ -4059,7 +4059,7 @@
         {
           "runner": "vitest",
           "file": "src/components/__tests__/SRSTable.test.tsx",
-          "selector": "SRSTable — authoring the trace (TR-1)"
+          "selector": "authoring the trace"
         },
         {
           "runner": "vitest",
@@ -4080,7 +4080,7 @@
         {
           "runner": "vitest",
           "file": "src/components/__tests__/DetailedDesignView.test.tsx",
-          "selector": "DetailedDesignView — linking requirements from the design (TR-2)"
+          "selector": "linking requirements from the design"
         }
       ]
     },
@@ -4097,43 +4097,6 @@
           "runner": "vitest",
           "file": "src/components/__tests__/RefPicker.test.tsx",
           "selector": "RefPicker"
-        }
-      ]
-    },
-    {
-      "id": "t_ver9",
-      "code": "TEST-244",
-      "verifies": [
-        "r_ver9"
-      ],
-      "text": "Resolve an automation link naming a group of tests, one naming a single test in full, and one naming a string that is a prefix of a longer name but not a whole segment of it.",
-      "expected": "The group matches every test beneath it and is failed if any of them failed; the full name matches exactly one; the partial prefix matches nothing and is reported as not run rather than passed.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/verification.test.ts",
-          "selector": "selectors may name a group of tests (VER-9)"
-        }
-      ]
-    },
-    {
-      "id": "t_des1",
-      "code": "TEST-245",
-      "verifies": [
-        "r_des1"
-      ],
-      "text": "Push commits that change a file a design section claims, change it together with that section, change an unclaimed file, and change a file in a project with no detailed design.",
-      "expected": "The first is reported naming the file and the section; the second, third and fourth are silent. A section claiming no paths is never reported. The check warns and never blocks the push.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/stale-design.test.ts",
-          "selector": "stale-design check"
-        },
-        {
-          "runner": "vitest",
-          "file": "skill/__tests__/stale-design.test.ts",
-          "selector": "the hook installs and calls the check"
         }
       ]
     }

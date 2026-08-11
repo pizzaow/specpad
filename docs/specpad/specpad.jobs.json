@@ -633,6 +633,19 @@
       "description": "The links between documents can now be edited in the browser. A requirement row expands to show and edit what it satisfies, what design implements it, and what verifies it; a design section can be linked to requirements from the design itself. References are chosen from a searchable list showing each item's code and text, so a link can no longer be mistyped.",
       "technical_notes": "Only verifies (VTP -> SRS) had an editor; satisfies (JOB-16) and design (JOB-44) were displays only, so no human could author an upward or downward trace without the skill. New RefPicker component - searchable multi-select over candidate items, value is ids, chips show codes - used for all three, which also removes the raw-id typing verifies previously required. The link stays stored on the requirement; the design view edits it by writing back to the SRS document, so there is still one home per edge. The requirement row expansion now shows the whole chain for that requirement rather than only its tests.",
       "status": "open"
+    },
+    {
+      "id": "j_9e3c71",
+      "code": "JOB-49",
+      "type": "bugfix",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Verification links resolve to test groups, and the gate notices stale design",
+      "description": "Seventy verification tests were reported as not run when their tests had in fact passed: they named a group of tests, and the matcher only accepted the full name of a single one. A test entry can now point at a group. Separately, the pre-push check now notices when a commit changes code that a design section claims to describe while that section stays untouched.",
+      "technical_notes": "Two defects, both mine. (1) The run records a full test name; automation links were being written as describe-block names; matchLink required exact equality, so 70 of 243 entries resolved to nothing and the Overview read 170/243. A link selector now matches a result whose selector equals it or begins with it at a word boundary, so naming a group is legitimate and adding a test to that group does not need a spec edit. (2) The pre-push hook only ever grepped for srs|vtp, so the SAD and SDD were invisible to it - which is how JOB-40 shipped a server with no architecture update. The hook now uses each SDD section source path: a pushed commit touching a claimed path whose section body is unchanged is named as possibly stale.",
+      "status": "open"
     }
   ]
 }

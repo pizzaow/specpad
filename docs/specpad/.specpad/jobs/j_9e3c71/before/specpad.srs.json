@@ -3437,28 +3437,6 @@
         "editor"
       ],
       "text": "A reference shall be chosen from the candidate items, each shown by its code and text, rather than entered as an identifier; a reference that does not resolve shall be shown as unresolved rather than hidden or discarded."
-    },
-    {
-      "id": "r_ver9",
-      "code": "VER-9",
-      "design": [
-        "d_ver001"
-      ],
-      "tags": [
-        "verification"
-      ],
-      "text": "An automation link's selector shall be able to name a group of tests as well as a single test: a captured result answers a selector when its name equals it or begins with it at a word boundary."
-    },
-    {
-      "id": "r_des1",
-      "code": "DES-1",
-      "design": [
-        "d_tpl001"
-      ],
-      "tags": [
-        "governance"
-      ],
-      "text": "The pre-push check shall report, for each pushed commit, any file it changes that a design section names as its source while that section itself is unchanged, naming both the file and the section, and shall warn rather than block."
     }
   ]
 }

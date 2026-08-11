@@ -53,7 +53,7 @@ export interface SrsDoc {
 export interface AutomationLink {
   runner: string; // opaque runner id, e.g. "vitest", "playwright", "pytest"
   file: string; // path to the test file (tracked in git)
-  selector?: string; // runner-interpreted: test name, grep, "#15", …; absent = the whole file
+  selector?: string; // runner-interpreted: a test name, a group/describe name, "#15", …; a group matches every test beneath it. Absent = the whole file
 }
 
 export interface VtpItem {
@@ -237,7 +237,7 @@ export const vtpSchema = {
               properties: {
                 runner: { type: 'string', description: 'Opaque test-runner id (e.g. "vitest", "playwright", "pytest"); interpreted by a runner adapter or CI, never by the SpecPad core.' },
                 file: { type: 'string', description: 'Path to the test file (tracked in git), relative to the repo root.' },
-                selector: { type: 'string', description: 'Runner-interpreted identifier for the specific test within the file (test name, grep, "#15", …); absent matches the whole file.' },
+                selector: { type: 'string', description: 'Runner-interpreted identifier for the test or group of tests within the file (a test name, a group/describe name, "#15", …). A result answers a selector when its name equals it or begins with it at a word boundary, so naming a group matches every test beneath it. Absent matches the whole file.' },
               },
             },
           },
