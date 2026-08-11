@@ -38,6 +38,8 @@ import { CSS } from '@dnd-kit/utilities';
 import type { SddDoc, SddSection, SrsDoc, SrsItem } from '../shared';
 import { createSddSection } from '../shared';
 import RowMenu from './RowMenu';
+import RefPicker from './RefPicker';
+import type { RefOption } from './RefPicker';
 
 interface DetailedDesignViewProps {
   doc: SddDoc | null;
@@ -45,6 +47,11 @@ interface DetailedDesignViewProps {
   srsDoc?: SrsDoc | null;
   diagrams?: Record<string, string>;
   onChange?: (next: SddDoc) => void;
+  /**
+   * Writes back to the requirements. The link is stored on the requirement, so linking
+   * from a design section edits the SRS — one home per edge, reachable from either end.
+   */
+  onChangeSrs?: (next: SrsDoc) => void;
   readOnly?: boolean;
 }
 
@@ -148,6 +155,7 @@ const DetailedDesignView: React.FC<DetailedDesignViewProps> = ({
   srsDoc,
   diagrams,
   onChange,
+  onChangeSrs,
   readOnly,
 }) => {
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -155,6 +163,29 @@ const DetailedDesignView: React.FC<DetailedDesignViewProps> = ({
   const nodes = useRef(new Map<string, HTMLElement>());
 
   const refs = useMemo(() => referencesBySection(srsDoc), [srsDoc]);
+  const srsOptions: RefOption[] = useMemo(
+    () => (srsDoc?.items ?? []).filter((i) => !i.heading).map((i) => ({ id: i.id, code: i.code, text: i.text })),
+    [srsDoc],
+  );
+
+  /**
+   * Set which requirements a section implements, by editing each requirement's `design`.
+   * Adding here is identical to adding from the requirement's own row.
+   */
+  const setImplementers = (sectionId: string, requirementIds: string[]) => {
+    if (!srsDoc || !onChangeSrs) return;
+    const wanted = new Set(requirementIds);
+    onChangeSrs({
+      ...srsDoc,
+      items: srsDoc.items.map((req) => {
+        if (req.heading) return req;
+        const linked = (req.design ?? []).includes(sectionId);
+        if (wanted.has(req.id) && !linked) return { ...req, design: [...(req.design ?? []), sectionId] };
+        if (!wanted.has(req.id) && linked) return { ...req, design: (req.design ?? []).filter((d) => d !== sectionId) };
+        return req;
+      }),
+    });
+  };
   const sections = doc?.items ?? [];
   const canEdit = !readOnly && !!onChange;
 
@@ -387,18 +418,15 @@ const DetailedDesignView: React.FC<DetailedDesignViewProps> = ({
               )}
 
               <div className="dd-refs" style={{ margin: '4px 0 8px' }}>
-                {referencing.length > 0 ? (
-                  <span>
-                    <strong>Implements:</strong>{' '}
-                    {referencing.map((r) => (
-                      <span key={r.id} className="label label-default" style={{ marginRight: 4 }}>
-                        {r.code ?? r.id}
-                      </span>
-                    ))}
-                  </span>
-                ) : (
-                  <span className="text-muted">No requirement references this section yet.</span>
-                )}
+                <strong>Implements:</strong>{' '}
+                <RefPicker
+                  label={`Requirements implemented by ${label(section)}`}
+                  value={referencing.map((r) => r.id)}
+                  options={srsOptions}
+                  onChange={(ids) => setImplementers(section.id, ids)}
+                  readOnly={readOnly || !onChangeSrs}
+                  empty="No requirement references this section yet."
+                />
               </div>
 
               {editing && referencing.length > 0 && (

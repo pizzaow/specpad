@@ -504,7 +504,7 @@
     {
       "id": "r_ed0a04",
       "code": "EDA-4",
-      "text": "A requirement row shall offer a toggle that reveals its full trace: the product requirements it satisfies, the design sections implementing it, and the tests verifying it with their recorded results.",
+      "text": "A requirement row shall offer a show-tests toggle that reveals its verifying tests inline (code, text, expected, result).",
       "level": 1,
       "tags": [
         "editor"
@@ -3402,41 +3402,6 @@
         "design"
       ],
       "text": "Editing a section in the detailed design shall leave the surrounding sections rendered, so the reader keeps their position in the document."
-    },
-    {
-      "id": "r_tr1",
-      "code": "TR-1",
-      "design": [
-        "d_tbl001",
-        "d_rfp001"
-      ],
-      "tags": [
-        "editor"
-      ],
-      "text": "Each trace edge shall be editable in the editor on the item that stores it: a requirement shall be able to record which product requirements it satisfies and which design sections implement it, and a test which requirements it verifies."
-    },
-    {
-      "id": "r_tr2",
-      "code": "TR-2",
-      "design": [
-        "d_ddv001",
-        "d_tbl001"
-      ],
-      "tags": [
-        "editor"
-      ],
-      "text": "A design section shall be able to record which requirements it implements, written back to those requirements, so an edge stored in one place can be authored from either end."
-    },
-    {
-      "id": "r_tr3",
-      "code": "TR-3",
-      "design": [
-        "d_rfp001"
-      ],
-      "tags": [
-        "editor"
-      ],
-      "text": "A reference shall be chosen from the candidate items, each shown by its code and text, rather than entered as an identifier; a reference that does not resolve shall be shown as unresolved rather than hidden or discarded."
     }
   ]
 }

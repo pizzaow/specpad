@@ -653,21 +653,15 @@
     {
       "id": "t_ed0a04",
       "code": "TEST-41",
-      "text": "Expand a requirement row in a project that has product requirements, a detailed design and tests.",
+      "text": "Click the show-tests toggle on a requirement that has a verifying test.",
       "verifies": [
         "r_ed0a04"
       ],
-      "expected": "The expansion shows what the requirement satisfies, what design implements it, and what verifies it with each result. Where a project has no PRD or no detailed design, those parts are absent rather than empty.",
+      "expected": "The verifying VTP tests are listed inline beneath the requirement.",
       "automation": [
         {
           "runner": "vitest",
-          "file": "src/components/__tests__/SRSTable.test.tsx",
-          "selector": "authoring the trace"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/SRSTable.test.tsx",
-          "selector": "SRSTable show-tests + info"
+          "file": "src/components/__tests__/SRSTable.test.tsx"
         }
       ]
     },
@@ -4044,59 +4038,6 @@
           "runner": "vitest",
           "file": "src/components/__tests__/DetailedDesignView.test.tsx",
           "selector": "opens the clicked section for editing and leaves its neighbours rendered"
-        }
-      ]
-    },
-    {
-      "id": "t_tr1",
-      "code": "TEST-241",
-      "verifies": [
-        "r_tr1"
-      ],
-      "text": "Link and unlink a product requirement and a design section from a requirement row, and requirements from a test row.",
-      "expected": "Each edit is written to the item that stores the edge — satisfies and design onto the requirement, verifies onto the test — and stores ids. A heading is never offered as a link target.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/SRSTable.test.tsx",
-          "selector": "authoring the trace"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/VTPTable.test.tsx",
-          "selector": "VTPTable"
-        }
-      ]
-    },
-    {
-      "id": "t_tr2",
-      "code": "TEST-242",
-      "verifies": [
-        "r_tr2"
-      ],
-      "text": "Add and remove a requirement from a design section's Implements list, then inspect the requirements document.",
-      "expected": "The requirement's own design list gains or loses that section; no other requirement's links change; and the same edge appears on the requirement's row in the requirements table.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/DetailedDesignView.test.tsx",
-          "selector": "linking requirements from the design"
-        }
-      ]
-    },
-    {
-      "id": "t_tr3",
-      "code": "TEST-243",
-      "verifies": [
-        "r_tr3"
-      ],
-      "text": "Open a reference picker, filter by code and by text, choose a candidate, and view an item holding a reference that no longer resolves.",
-      "expected": "Candidates are listed by code and text and filter on both; choosing one stores its id, and no identifier is ever typed or displayed for a resolvable reference. An unresolved reference is shown as unresolved and can be removed.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/RefPicker.test.tsx",
-          "selector": "RefPicker"
         }
       ]
     }

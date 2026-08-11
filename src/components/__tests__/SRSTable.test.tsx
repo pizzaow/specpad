@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import SRSTable from '../SRSTable';
-import type { SrsDoc, VtpDoc } from '../../shared';
+import type { SrsDoc, VtpDoc, PrdDoc, SddDoc } from '../../shared';
 const srs: SrsDoc = {
   schemaVersion: '1.0', type: 'srs', name: 'AcmeApp', title: 'Requirements',
   items: [
@@ -73,7 +73,7 @@ describe('SRSTable hierarchy + menu actions', () => {
 describe('SRSTable show-tests + info', () => {
   it('expands the verifying tests inline for a requirement', () => {
     render(<SRSTable doc={srs} vtpDoc={vtp} onChange={vi.fn()} />);
-    fireEvent.click(screen.getByLabelText('Show tests for r_001'));
+    fireEvent.click(screen.getByLabelText('Show trace for r_001'));
     expect(screen.getByText('Login test')).toBeInTheDocument();
     expect(screen.getByText(/TEST-1/)).toBeInTheDocument();
   });
@@ -170,5 +170,87 @@ describe('SRSTable — read-only (EDR-3)', () => {
 
     expect(screen.queryByDisplayValue('Shall authenticate.')).toBeNull();
     expect(onChange).not.toHaveBeenCalled();
+  });
+});
+
+// The requirement is where every trace edge is stored, so it is where they are authored.
+describe('SRSTable — authoring the trace (TR-1)', () => {
+  const prd: PrdDoc = {
+    schemaVersion: '1.0', type: 'prd', name: 'AcmeApp', title: 'Product Requirements',
+    items: [{ id: 'p_001', code: 'PROD-1', text: 'Users sign in with SSO.', status: 'implemented' }],
+  };
+  const sdd: SddDoc = {
+    schemaVersion: '1.0', type: 'sdd', name: 'AcmeApp', title: 'Detailed Design',
+    items: [
+      { id: 'h_x', title: 'Units', heading: true },
+      { id: 'd_001', code: 'SDD-1', title: 'auth' },
+      { id: 'd_002', code: 'SDD-2', title: 'session' },
+    ],
+  };
+
+  const expand = () => fireEvent.click(screen.getByLabelText('Show trace for r_001'));
+
+  it('offers the design and satisfies pickers only when those documents exist', () => {
+    const { rerender } = render(<SRSTable doc={srs} vtpDoc={vtp} onChange={vi.fn()} />);
+    expand();
+    expect(screen.queryByText('Design:')).toBeNull();
+    expect(screen.queryByText('Satisfies:')).toBeNull();
+
+    rerender(<SRSTable doc={srs} vtpDoc={vtp} prdDoc={prd} sddDoc={sdd} onChange={vi.fn()} />);
+    expect(screen.getByText('Design:')).toBeInTheDocument();
+    expect(screen.getByText('Satisfies:')).toBeInTheDocument();
+  });
+
+  it('links a design section by picking it, storing its id', () => {
+    const onChange = vi.fn();
+    render(<SRSTable doc={srs} vtpDoc={vtp} prdDoc={prd} sddDoc={sdd} onChange={onChange} />);
+    expand();
+
+    fireEvent.click(within(screen.getByRole('group', { name: /Design sections implementing FUNC-1/ })).getByText(/add/));
+    fireEvent.mouseDown(screen.getByRole('option', { name: /SDD-2/ }));
+
+    const next = onChange.mock.calls.at(-1)![0] as SrsDoc;
+    expect(next.items.find((i) => i.id === 'r_001')!.design).toEqual(['d_002']);
+  });
+
+  it('does not offer a heading as a link target', () => {
+    render(<SRSTable doc={srs} vtpDoc={vtp} prdDoc={prd} sddDoc={sdd} onChange={vi.fn()} />);
+    expand();
+    fireEvent.click(within(screen.getByRole('group', { name: /Design sections implementing FUNC-1/ })).getByText(/add/));
+
+    expect(screen.queryByRole('option', { name: /Units/ })).toBeNull();
+  });
+
+  it('removes a link', () => {
+    const onChange = vi.fn();
+    const linked: SrsDoc = {
+      ...srs,
+      items: srs.items.map((i) => (i.id === 'r_001' ? { ...i, design: ['d_001'] } : i)),
+    };
+    render(<SRSTable doc={linked} vtpDoc={vtp} prdDoc={prd} sddDoc={sdd} onChange={onChange} />);
+    expand();
+
+    fireEvent.click(screen.getByLabelText('Remove SDD-1'));
+
+    const next = onChange.mock.calls.at(-1)![0] as SrsDoc;
+    expect(next.items.find((i) => i.id === 'r_001')!.design).toEqual([]);
+  });
+
+  it('shows an unresolved reference rather than dropping it', () => {
+    const dangling: SrsDoc = {
+      ...srs,
+      items: srs.items.map((i) => (i.id === 'r_001' ? { ...i, design: ['d_gone'] } : i)),
+    };
+    render(<SRSTable doc={dangling} vtpDoc={vtp} prdDoc={prd} sddDoc={sdd} onChange={vi.fn()} />);
+    expand();
+
+    expect(screen.getByText(/d_gone \(unresolved\)/)).toBeInTheDocument();
+  });
+
+  it('offers no picker controls when read-only', () => {
+    render(<SRSTable doc={srs} vtpDoc={vtp} prdDoc={prd} sddDoc={sdd} onChange={vi.fn()} readOnly />);
+    expand();
+
+    expect(screen.queryByText(/add/)).toBeNull();
   });
 });

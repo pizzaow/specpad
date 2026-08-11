@@ -1007,7 +1007,7 @@ const LocalApp: React.FC = () => {
           />
         )}
         {currentView === 'prd' && prdDoc && <PrdTable key={selectedDocName} doc={prdDoc} srs={srsDoc} onChange={handlePrdChange} baseline={prdBaseline} attribution={prdSnapshots.length ? prdAttribution : undefined} readOnly={sessionReadOnly} />}
-        {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} onChange={handleChange} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} onEditingItem={serverSession ? announceEditing : undefined} presence={presenceByItem} readOnly={sessionReadOnly} />}
+        {currentView === 'srs' && srsDoc && <SRSTable key={selectedDocName} doc={srsDoc} vtpDoc={vtpDoc} prdDoc={prdDoc} sddDoc={sddDoc} onChange={handleChange} baseline={srsBaseline} attribution={srsSnapshots.length ? srsAttribution : undefined} onEditingItem={serverSession ? announceEditing : undefined} presence={presenceByItem} readOnly={sessionReadOnly} />}
         {currentView === 'vtp' && vtpDoc && <VTPTable key={selectedDocName} doc={vtpDoc} srsDoc={srsDoc} onChange={handleChange} redline={vtpRedline} attribution={vtpSnapshots.length ? vtpAttribution : undefined} onEditingItem={serverSession ? announceEditing : undefined} presence={presenceByItem} readOnly={sessionReadOnly} />}
         {currentView === 'testing' && vtpDoc && <TestingView key={selectedDocName} doc={vtpDoc} run={runRecord} onChange={handleChange} readOnly={sessionReadOnly} />}
         {currentView === 'releases' && isDirectoryOpen && (
@@ -1039,6 +1039,7 @@ const LocalApp: React.FC = () => {
             srsDoc={srsDoc}
             diagrams={diagrams}
             onChange={handleSddChange}
+            onChangeSrs={handleChange}
             readOnly={sessionReadOnly}
           />
         )}

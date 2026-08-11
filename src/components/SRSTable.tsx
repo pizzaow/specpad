@@ -7,18 +7,24 @@
  * read-only, struck-through entries at their baseline position.
  */
 import React, { useEffect, useMemo, useState } from 'react';
-import type { SrsDoc, SrsItem, VtpDoc, VtpItem } from '../shared';
+import type { SrsDoc, SrsItem, VtpDoc, VtpItem, PrdDoc, SddDoc } from '../shared';
 import { createSrsItem, generateId, ID_PREFIX } from '../shared';
 import type { AttributionView, RedlineEntry } from '../changeTracking';
 import { buildRedlineRows } from '../changeTracking';
 import { rowStatusClass, isCellChanged } from '../changeTrackingView';
 import { deriveHeadingCodes } from '../outline';
 import RowMenu from './RowMenu';
+import RefPicker from './RefPicker';
+import type { RefOption } from './RefPicker';
 import ItemInfo from './ItemInfo';
 
 interface SRSTableProps {
   doc: SrsDoc;
   vtpDoc: VtpDoc | null;
+  /** Candidates for the upward trace (`satisfies`), when the project has a PRD. */
+  prdDoc?: PrdDoc | null;
+  /** Candidates for the downward trace (`design`), when the project has an SDD. */
+  sddDoc?: SddDoc | null;
   onChange: (doc: SrsDoc) => void;
   baseline?: SrsDoc | null;
   attribution?: Map<string, AttributionView>;
@@ -38,6 +44,8 @@ const INDENT_PX = 22;
 const SRSTable: React.FC<SRSTableProps> = ({
   doc,
   vtpDoc,
+  prdDoc,
+  sddDoc,
   onChange,
   baseline,
   attribution,
@@ -132,6 +140,22 @@ const SRSTable: React.FC<SRSTableProps> = ({
     items.splice(i, 1);
     update(items);
   };
+  const prdOptions: RefOption[] = React.useMemo(
+    () => (prdDoc?.items ?? []).filter((i) => !i.heading).map((i) => ({ id: i.id, code: i.code, text: i.text })),
+    [prdDoc],
+  );
+  const sddOptions: RefOption[] = React.useMemo(
+    () => (sddDoc?.items ?? []).filter((s) => !s.heading).map((s) => ({ id: s.id, code: s.code, text: s.title })),
+    [sddDoc],
+  );
+
+  /** Write one trace edge onto a requirement. The edge is stored here and nowhere else. */
+  const setRefs = (index: number, field: 'satisfies' | 'design', ids: string[]) => {
+    const items = data.items.slice();
+    items[index] = { ...items[index], [field]: ids };
+    onChange({ ...data, items });
+  };
+
   const toggleTests = (id: string) => {
     const next = new Set(expanded);
     if (next.has(id)) next.delete(id); else next.add(id);
@@ -247,7 +271,7 @@ const SRSTable: React.FC<SRSTableProps> = ({
                   </td>
                   <td>
                     {item.heading ? '' : (
-                      <button type="button" className="btn btn-link btn-xs" aria-label={`Show tests for ${item.id}`}
+                      <button type="button" className="btn btn-link btn-xs" aria-label={`Show trace for ${item.id}`}
                         onClick={() => toggleTests(item.id)}>
                         <span>{count}</span> {open ? '▾' : '▸'}
                       </button>
@@ -273,6 +297,33 @@ const SRSTable: React.FC<SRSTableProps> = ({
                   <tr className="srs-tests-row">
                     <td />
                     <td colSpan={4}>
+                      {prdDoc && (
+                        <div style={{ marginBottom: 6 }}>
+                          <strong>Satisfies:</strong>{' '}
+                          <RefPicker
+                            label={`Product requirements satisfied by ${item.code || item.id}`}
+                            value={item.satisfies ?? []}
+                            options={prdOptions}
+                            onChange={(ids) => setRefs(index, 'satisfies', ids)}
+                            readOnly={readOnly}
+                            empty="No product requirement"
+                          />
+                        </div>
+                      )}
+                      {sddDoc && (
+                        <div style={{ marginBottom: 6 }}>
+                          <strong>Design:</strong>{' '}
+                          <RefPicker
+                            label={`Design sections implementing ${item.code || item.id}`}
+                            value={item.design ?? []}
+                            options={sddOptions}
+                            onChange={(ids) => setRefs(index, 'design', ids)}
+                            readOnly={readOnly}
+                            empty="No design section"
+                          />
+                        </div>
+                      )}
+                      <strong>Verified by:</strong>{' '}
                       {count === 0 ? (
                         <em className="text-muted">No verifying tests.</em>
                       ) : (

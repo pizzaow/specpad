@@ -620,6 +620,19 @@
       "description": "The detailed design is now one continuous document you scroll, with a sticky outline that follows where you are, editing in place on the section you are reading, and drag-to-reorder. Its text has been rewritten to read like reference documentation rather than a filled-in template.",
       "technical_notes": "Two halves. (1) The view: outline-plus-single-section did not suit 55 short sections - a long index against short articles, with the editor always at the top of the pane and the management controls stranded below it. Replaced with a continuous document, scrollspy outline, per-section hover menu, and inline editing; section boundaries stay hard data because SrsItem.design points at a section id, so this is a rendering change only. (2) The prose: the guide prescribed a content checklist and the generator turned it into a form - 48 of 55 sections opened Secret: and 50 closed Acceptance:, and 69 percent sat within a third of the median length. The guide now frames the SDD as reference documentation (Diataxis: describe and only describe), names the tells to avoid, and states that length follows the unit rather than the template.",
       "status": "open"
+    },
+    {
+      "id": "j_7b2f56",
+      "code": "JOB-48",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Author the trace links in the editor",
+      "description": "The links between documents can now be edited in the browser. A requirement row expands to show and edit what it satisfies, what design implements it, and what verifies it; a design section can be linked to requirements from the design itself. References are chosen from a searchable list showing each item's code and text, so a link can no longer be mistyped.",
+      "technical_notes": "Only verifies (VTP -> SRS) had an editor; satisfies (JOB-16) and design (JOB-44) were displays only, so no human could author an upward or downward trace without the skill. New RefPicker component - searchable multi-select over candidate items, value is ids, chips show codes - used for all three, which also removes the raw-id typing verifies previously required. The link stays stored on the requirement; the design view edits it by writing back to the SRS document, so there is still one home per edge. The requirement row expansion now shows the whole chain for that requirement rather than only its tests.",
+      "status": "open"
     }
   ]
 }

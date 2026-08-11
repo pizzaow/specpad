@@ -241,3 +241,39 @@ describe('DetailedDesignView — read-only (EDR-3)', () => {
     expect(onChange).not.toHaveBeenCalled();
   });
 });
+
+// The edge is stored on the requirement, so linking from the design writes to the SRS.
+describe('DetailedDesignView — linking requirements from the design (TR-2)', () => {
+  it('adds a requirement to a section by editing that requirement', () => {
+    const onChangeSrs = vi.fn();
+    render(
+      <DetailedDesignView doc={doc} srsDoc={srsDoc} onChange={vi.fn()} onChangeSrs={onChangeSrs} />,
+    );
+
+    const picker = within(section('SDD-2')).getByRole('group', { name: /Requirements implemented by/ });
+    fireEvent.click(within(picker).getByText(/add/));
+    fireEvent.mouseDown(screen.getByRole('option', { name: /SSO-1/ }));
+
+    const next = onChangeSrs.mock.calls.at(-1)![0] as SrsDoc;
+    expect(next.items.find((r) => r.id === 'r_1')!.design).toEqual(['d_aaa111', 'd_bbb222']);
+  });
+
+  it('removes a requirement from a section, leaving its other links alone', () => {
+    const onChangeSrs = vi.fn();
+    render(
+      <DetailedDesignView doc={doc} srsDoc={srsDoc} onChange={vi.fn()} onChangeSrs={onChangeSrs} />,
+    );
+
+    fireEvent.click(within(section('SDD-1')).getByLabelText('Remove SSO-1'));
+
+    const next = onChangeSrs.mock.calls.at(-1)![0] as SrsDoc;
+    expect(next.items.find((r) => r.id === 'r_1')!.design).toEqual([]);
+    expect(next.items.find((r) => r.id === 'r_2')!.design).toEqual(['d_aaa111']);
+    expect(next.items.find((r) => r.id === 'r_3')!.design).toEqual(['d_bbb222']);
+  });
+
+  it('is read-only when the shell offers no way to write the requirements', () => {
+    render(<DetailedDesignView doc={doc} srsDoc={srsDoc} onChange={vi.fn()} />);
+    expect(within(section('SDD-1')).queryByText(/add/)).toBeNull();
+  });
+});

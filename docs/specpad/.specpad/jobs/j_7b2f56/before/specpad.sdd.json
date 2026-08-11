@@ -314,16 +314,7 @@
         "src/components/VTPTable.tsx",
         "src/components/PrdTable.tsx"
       ],
-      "body": "Inline editing for an id-keyed register: click a cell to edit, row menu for structure, expandable\nreference cells, redline decoration, presence markers.\n\nThree tables rather than one generic component. Each register has a different set of columns that\nmatter, and the abstraction covering all three was worse than the duplication.\n\nExpanding a requirement row shows its whole trace — satisfies, design, verifies — with the first two edited through `RefPicker`. The edges are stored on the item the row shows.\n\nWith `readOnly`, no row menu renders, no cell opens for editing, and the pickers offer no controls."
-    },
-    {
-      "id": "d_rfp001",
-      "code": "SDD-49",
-      "title": "RefPicker — choosing a reference",
-      "source": [
-        "src/components/RefPicker.tsx"
-      ],
-      "body": "Selects the items a trace edge points at.\n\nEvery edge stores ids (`verifies`, `satisfies`, `design`) while a human works in codes and text. The picker shows each candidate's code and text, filters on both, and stores its id; no identifier is typed or displayed for a reference that resolves.\n\nHeadings are not offered as candidates. A reference that does not resolve is displayed as unresolved and can be removed, rather than being hidden or dropped — discarding it silently would conceal the breakage governance reports."
+      "body": "Inline editing for an id-keyed register: click a cell to edit, row menu for structure, expandable\nreference cells, redline decoration, presence markers.\n\nThree tables rather than one generic component. Each register has a different set of columns that\nmatter, and the abstraction covering all three was worse than the duplication.\n\nWith `readOnly`, no row menu renders and no cell opens for editing."
     },
     {
       "id": "d_tst001",
@@ -400,7 +391,7 @@
       "source": [
         "src/components/DetailedDesignView.tsx"
       ],
-      "body": "The detailed design, rendered as one continuous document with a sticky outline.\n\n- The document column stacks every section in order — group headings, then each section's\n  `code · title`, source paths, the requirements implementing it, and its rendered body.\n- The outline tracks the section in view (IntersectionObserver) and scrolls to a section on click.\n- Editing is in place: selecting a section's body replaces it with a CodeMirror editor between its\n  neighbours. There is no document-level edit mode.\n- Each section header carries a menu: add below, add group, move up, move down, delete.\n- Outline entries reorder by drag, using `@dnd-kit`.\n\nSection boundaries are data, not formatting. `SrsItem.design` points at a section id, so a continuous\nrendering changes presentation only. A `##` inside a body is sub-structure within that section and\ncannot be traced to.\n\nEach section lists the requirements referencing it, and can add or remove them. The edge is stored on the requirement, so this writes to the SRS document through `onChangeSrs` — one home per edge, reachable from either end.\n\nEditing a section states that the referencing requirements are now in question; deleting one names the references that would be left unresolved."
+      "body": "The detailed design, rendered as one continuous document with a sticky outline.\n\n- The document column stacks every section in order — group headings, then each section's\n  `code · title`, source paths, the requirements implementing it, and its rendered body.\n- The outline tracks the section in view (IntersectionObserver) and scrolls to a section on click.\n- Editing is in place: selecting a section's body replaces it with a CodeMirror editor between its\n  neighbours. There is no document-level edit mode.\n- Each section header carries a menu: add below, add group, move up, move down, delete.\n- Outline entries reorder by drag, using `@dnd-kit`.\n\nSection boundaries are data, not formatting. `SrsItem.design` points at a section id, so a continuous\nrendering changes presentation only. A `##` inside a body is sub-structure within that section and\ncannot be traced to.\n\nEach section lists the requirements referencing it. Editing one states that those requirements are now\nin question; deleting one names the references that would be left unresolved."
     },
     {
       "id": "h_sd050",

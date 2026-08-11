@@ -13,6 +13,8 @@ import type { RedlineView, AttributionView } from '../changeTracking';
 import { rowStatusClass, isCellChanged } from '../changeTrackingView';
 import { deriveHeadingCodes } from '../outline';
 import RowMenu from './RowMenu';
+import RefPicker from './RefPicker';
+import type { RefOption } from './RefPicker';
 import ItemInfo from './ItemInfo';
 
 interface VTPTableProps {
@@ -120,6 +122,18 @@ const VTPTable: React.FC<VTPTableProps> = ({
     items.splice(index, 1);
     update(items);
   };
+  const srsOptions: RefOption[] = React.useMemo(
+    () => (srsDoc?.items ?? []).filter((i) => !i.heading).map((i) => ({ id: i.id, code: i.code, text: i.text })),
+    [srsDoc],
+  );
+
+  /** Write the verified-requirement edge onto a test. Ids are chosen, never typed. */
+  const setVerifies = (index: number, ids: string[]) => {
+    const items = data.items.slice();
+    items[index] = { ...items[index], verifies: ids };
+    onChange({ ...data, items });
+  };
+
   const toggleVerifies = (id: string) => {
     const next = new Set(expanded);
     if (next.has(id)) next.delete(id); else next.add(id);
@@ -234,18 +248,15 @@ const VTPTable: React.FC<VTPTableProps> = ({
                   <tr className="srs-tests-row">
                     <td />
                     <td colSpan={4}>
-                      <div style={{ marginBottom: 4 }}>
-                        {refs.length === 0
-                          ? <em className="text-muted">Verifies no requirement.</em>
-                          : refs.map((ref) => (
-                            <span key={ref} className={`label ${srsById.has(ref) ? 'label-default' : 'label-danger'}`} style={{ marginRight: 4 }}>
-                              {srsById.get(ref) ?? `${ref} (missing)`}
-                            </span>
-                          ))}
-                      </div>
-                      {editing?.index === index && editing.field === 'verifies'
-                        ? renderEditField('verifies')
-                        : <button type="button" className="btn btn-default btn-xs" onClick={() => startEdit(index, 'verifies')}>Edit verified requirements</button>}
+                      <strong>Verifies:</strong>{' '}
+                      <RefPicker
+                        label={`Requirements verified by ${item.code || item.id}`}
+                        value={refs}
+                        options={srsOptions}
+                        onChange={(ids) => setVerifies(index, ids)}
+                        readOnly={readOnly}
+                        empty="No requirement"
+                      />
                     </td>
                   </tr>
                 )}
