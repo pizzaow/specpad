@@ -1,7 +1,13 @@
 [
   {
     "hash": "57e82efb982a97994a8c46944d93307c6ef8f0f6",
-    "subject": "feat(verification): Results tab \u2014 Manual/Automated split, click-to-edit links, run detail; drop verifies/notes noise",
+    "subject": "feat(verification): Results tab — Manual/Automated split, click-to-edit links, run detail; drop verifies/notes noise",
+    "author": "Geoff Pollard",
+    "date": "2026-06-25"
+  },
+  {
+    "hash": "4ee43b3f5f4bf2995734f901fc3766e899009559",
+    "subject": "feat(verification): VTP→test→run evidence chain (linkage + run capture + Results chain view)",
     "author": "Geoff Pollard",
     "date": "2026-06-25"
   }

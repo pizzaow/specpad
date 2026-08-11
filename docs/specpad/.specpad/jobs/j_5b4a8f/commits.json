@@ -1,0 +1,14 @@
+[
+  {
+    "hash": "9b57a97a22ee3e49f61dd4f04c58672cbe5a75d7",
+    "subject": "chore(dogfood): seed JOB-39 before/ snapshot",
+    "author": "Geoff [EXAS]",
+    "date": "2026-07-14"
+  },
+  {
+    "hash": "0b3592c9927a7d6c4d168e59a125b002acda3aa2",
+    "subject": "feat(skill): split job description into release-note + engineer technical_notes",
+    "author": "Geoff [EXAS]",
+    "date": "2026-07-14"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "hash": "78df4f08dec3271e062646f31f7d54119cef7672",
+    "subject": "Presence and the upstream-moved signal (CE-3, CE-4)",
+    "author": "Geoff Pollard",
+    "date": "2026-08-07"
+  },
+  {
+    "hash": "8108ab31881bc871bac7306ef3bcb023b1ce132e",
+    "subject": "Make the server actually startable, and prove it over HTTP",
+    "author": "Geoff Pollard",
+    "date": "2026-08-07"
+  },
+  {
+    "hash": "ba64b2d242246fdf080cda54584d337751be0663",
+    "subject": "Integration-test the git pipeline against a real repository",
+    "author": "Geoff Pollard",
+    "date": "2026-08-07"
+  },
+  {
+    "hash": "28377cf0f2e589cbb93a5b0e491814138ae24336",
+    "subject": "Launcher can target a self-hosted editor (EDR-4)",
+    "author": "Geoff Pollard",
+    "date": "2026-08-07"
+  },
+  {
+    "hash": "847960c07bb2874a6c2991e074a817e0c3b044e7",
+    "subject": "Server mode in the editor: remote transport, server bar, Commit dialog",
+    "author": "Geoff Pollard",
+    "date": "2026-08-07"
+  },
+  {
+    "hash": "c9b156403decd6304a57d45fd9ccc08e56830589",
+    "subject": "Multi-user self-hosted server: contract merge, transport seam, server core",
+    "author": "Geoff Pollard",
+    "date": "2026-08-07"
+  }
+]
