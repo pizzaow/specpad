@@ -1,4 +1,4 @@
-import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, JobsDoc, JobDoc } from './schema';
+import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, JobsDoc, JobDoc } from './schema';
 
 export type GovernanceRuleId =
   | 'traceability'
@@ -9,7 +9,10 @@ export type GovernanceRuleId =
   | 'prd-referential-integrity'
   | 'prd-coverage'
   | 'sdd-referential-integrity'
-  | 'sdd-coverage';
+  | 'sdd-coverage'
+  | 'risk-referential-integrity'
+  | 'risk-cause'
+  | 'risk-controlled';
 
 /** Normalize the active-job marker to a list, tolerating the legacy single `job`. */
 export function activeJobIds(job: JobDoc | null | undefined): string[] {
@@ -80,6 +83,24 @@ export const GOVERNANCE_RULES: GovernanceRule[] = [
     description:
       'When an SDD is present, every non-heading SRS requirement must reference at least one SDD section via `design` — the evidence that the design implements the requirements (IEC 62304 5.4; FDA SDS).',
   },
+  {
+    id: 'risk-referential-integrity',
+    title: 'Risk references resolve',
+    description:
+      'When a risk register is present, every `causes` entry must resolve to an SDD section of kind "unit", and every `controls` entry to an existing SRS requirement.',
+  },
+  {
+    id: 'risk-cause',
+    title: 'Every risk names a contributing software item',
+    description:
+      'When a risk register is present, every non-heading risk must name at least one software item that could cause it (IEC 62304 7.1). A hazardous situation with no software cause does not belong in the software risk analysis.',
+  },
+  {
+    id: 'risk-controlled',
+    title: 'Every risk is controlled or justified',
+    description:
+      'When a risk register is present, every non-heading risk must reference at least one controlling requirement (IEC 62304 7.2), or record why no software control is needed — for example a risk controlled in hardware or by labelling.',
+  },
 ];
 
 export interface ProjectBundle {
@@ -88,6 +109,7 @@ export interface ProjectBundle {
   vtp?: VtpDoc | null;
   prd?: PrdDoc | null;
   sdd?: SddDoc | null;
+  risk?: RiskDoc | null;
   jobs?: JobsDoc | null;
   job?: JobDoc | null;
 }
@@ -206,6 +228,64 @@ export function checkGovernance(bundle: ProjectBundle): GovernanceViolation[] {
           rule: 'sdd-coverage',
           itemId: req.id,
           message: `Requirement ${req.id} does not reference any design section.`,
+        });
+      }
+    }
+  }
+
+  // risk-*: only when a risk register is present (opt-in), as with PRD and SDD.
+  //
+  // The control measures are ordinary requirements (62304 5.2.2), so the evidence that
+  // a control works is the tests already verifying that requirement — 7.3 needs no rule
+  // of its own here, only the trace that `traceability` already enforces.
+  if (bundle.risk) {
+    const unitIds = new Set(
+      (bundle.sdd?.items ?? []).filter((s) => !s.heading && (s.kind ?? 'unit') === 'unit').map((s) => s.id),
+    );
+    const sectionIds = new Set((bundle.sdd?.items ?? []).map((s) => s.id));
+    const srsIds2 = new Set(srsItems.map((i) => i.id));
+
+    for (const risk of bundle.risk.items ?? []) {
+      if (risk.heading) continue;
+
+      for (const ref of risk.causes ?? []) {
+        if (!sectionIds.has(ref)) {
+          violations.push({
+            rule: 'risk-referential-integrity',
+            itemId: risk.id,
+            message: `Risk ${risk.id} names cause "${ref}", which is not a known design section id.`,
+          });
+        } else if (!unitIds.has(ref)) {
+          // A design view describes structure across units; it cannot fail on its own.
+          violations.push({
+            rule: 'risk-referential-integrity',
+            itemId: risk.id,
+            message: `Risk ${risk.id} names cause "${ref}", which is a design view rather than a software unit.`,
+          });
+        }
+      }
+      for (const ref of risk.controls ?? []) {
+        if (!srsIds2.has(ref)) {
+          violations.push({
+            rule: 'risk-referential-integrity',
+            itemId: risk.id,
+            message: `Risk ${risk.id} names control "${ref}", which is not a known requirement id.`,
+          });
+        }
+      }
+
+      if ((risk.causes ?? []).length === 0) {
+        violations.push({
+          rule: 'risk-cause',
+          itemId: risk.id,
+          message: `Risk ${risk.id} names no software item that could cause it.`,
+        });
+      }
+      if ((risk.controls ?? []).length === 0 && !(risk.justification ?? '').trim()) {
+        violations.push({
+          rule: 'risk-controlled',
+          itemId: risk.id,
+          message: `Risk ${risk.id} has no controlling requirement and no justification for having none.`,
         });
       }
     }

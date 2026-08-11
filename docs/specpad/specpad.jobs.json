@@ -680,6 +680,19 @@
       "description": "A running record of places where SpecPad does not yet give IEC 62304 what it asks for. Held open deliberately: these are attacked together during the detailed clause-by-clause trace, not piecemeal.",
       "technical_notes": "GAP 1 — software units are not identifiable in the data (found 2026-08-11, JOB-44 review). An SDD item is one of three things: a group heading, a cross-cutting design view (IEEE 1016), or a software unit (62304 5.4.2). Only heading is machine-readable; unit and view are told apart by reading. Consequences: 5.4.1 asks the architecture to be refined into software UNITS and the unit list cannot be produced mechanically; 5.5.3 wants acceptance criteria per unit and cannot be rolled up; risk control measures allocate to units and will need this as a join key. Likely fix: an optional kind (unit | view) on SddSection, defaulting to unit, with the seven viewpoint sections marked view. Note also that SDD-40, SDD-47 and SDD-61 each cover several components in one section - legitimate under 5.4.1 since the manufacturer defines granularity, but it should be a declared choice rather than an artefact of how the prose was grouped.",
       "status": "open"
+    },
+    {
+      "id": "j_2b7f48",
+      "code": "JOB-52",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Software risk pillar (IEC 62304 clause 7)",
+      "description": "SpecPad now records software risk: the hazardous situations software can contribute to, which parts of the design could cause them, and the requirements that control them. Because a control is an ordinary requirement, the tests already verifying it become the evidence that the control works.",
+      "technical_notes": "The 62304 clause 7 slice only. Hazards, harms, P1/P2 estimation, benefit-risk and post-market stay in the system risk management file the QMS owns and are referenced by id - SpecPad produces design-control evidence, not a QMS. Probability is deliberately absent: for software you cannot argue it down, so severity drives the analysis. Chain is hazardous situation -> contributing software item (SDD section) -> risk control measure (SRS requirement, per 5.2.2) -> verification, and the last link already exists via the SRS/VTP trace and captured runs, so 7.3 is largely satisfied by machinery already built. Controls are stored on the risk item. Also closes JOB-51 gap 1: SddSection gains kind (unit | view) so a cause points at a real software unit and the unit list 5.4.1 asks for becomes derivable. Security risk is deliberately NOT in this register - 62304 Ed 2 and AAMI SW96 make it a separate process, and the threat-model pillar will get its own.",
+      "status": "open"
     }
   ]
 }

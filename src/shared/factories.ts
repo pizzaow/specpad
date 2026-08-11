@@ -1,5 +1,5 @@
 import { SCHEMA_VERSION } from './schema';
-import type { ProjectDoc, ProjectDocRef, SrsDoc, VtpDoc, PrdDoc, SddDoc, SrsItem, VtpItem, PrdItem, SddSection, JobsDoc, JobRecord } from './schema';
+import type { ProjectDoc, ProjectDocRef, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SrsItem, VtpItem, PrdItem, SddSection, RiskItem, JobsDoc, JobRecord } from './schema';
 import { generateId, ID_PREFIX } from './ids';
 import { REGISTER_TYPES } from './docTypes';
 
@@ -61,6 +61,17 @@ export function createPrdItem(existingIds: Iterable<string>, level = 0): PrdItem
 }
 
 /** A new detailed-design section. Ids are `d_…` and, once issued, never change (SRS.design targets them). */
+export function createRiskDoc(name: string, title: string): RiskDoc {
+  return { schemaVersion: SCHEMA_VERSION, type: 'risk', name, title, items: [] };
+}
+
+/** A new risk. Ids are `k_…`; residual starts unassessed rather than quietly acceptable. */
+export function createRiskItem(existingIds: Iterable<string>, level = 0): RiskItem {
+  const item: RiskItem = { id: generateId(ID_PREFIX.risk, existingIds), text: '', residual: 'not_assessed' };
+  if (level > 0) item.level = level;
+  return item;
+}
+
 export function createSddSection(existingIds: Iterable<string>, level = 0): SddSection {
   const item: SddSection = { id: generateId(ID_PREFIX.design, existingIds), title: '', body: '' };
   if (level > 0) item.level = level;

@@ -24,11 +24,6 @@
       "type": "sdd",
       "path": "specpad.sdd.json",
       "title": "Detailed Design"
-    },
-    {
-      "type": "risk",
-      "path": "specpad.risk.json",
-      "title": "Risk"
     }
   ]
 }

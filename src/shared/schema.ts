@@ -3,11 +3,11 @@
 
 export const SCHEMA_VERSION = '1.0' as const;
 export type SchemaVersion = typeof SCHEMA_VERSION;
-export type DocType = 'project' | 'srs' | 'vtp' | 'prd' | 'sdd';
+export type DocType = 'project' | 'srs' | 'vtp' | 'prd' | 'sdd' | 'risk';
 export type TestResult = '' | 'not_tested' | 'passed' | 'failed';
 
 export interface ProjectDocRef {
-  type: 'srs' | 'vtp' | 'prd' | 'sdd';
+  type: 'srs' | 'vtp' | 'prd' | 'sdd' | 'risk';
   path: string;
   title: string;
 }
@@ -126,9 +126,66 @@ export interface SddSection {
   level?: number;
   /** Markdown: the design itself. Images and diagrams resolve like the SAD's. */
   body?: string;
+  /**
+   * What this section is: a software unit (IEC 62304 §5.4.2) or a cross-cutting design
+   * view (IEEE 1016). Absent means unit, which is the common case. Risk causes and the
+   * unit list §5.4.1 asks for both depend on the distinction.
+   */
+  kind?: SddSectionKind;
   /** Repository paths this section describes — what makes it checkable against code. */
   source?: string[];
   tags?: string[];
+}
+
+export type SddSectionKind = 'unit' | 'view';
+
+/**
+ * One entry in the software risk analysis (IEC 62304 §7).
+ *
+ * The §7 slice only: a hazardous situation software can contribute to, the software
+ * items that could cause it, and the requirements controlling it. Hazards, harms,
+ * probability estimation, benefit-risk and post-market surveillance belong to the
+ * system risk management file the quality system owns; `hazardRef` points at it.
+ *
+ * There is deliberately no probability field. For software you cannot argue probability
+ * down — a defect is present or it is not — so severity drives the analysis.
+ */
+export interface RiskItem {
+  id: string;
+  code?: string;
+  heading?: boolean;
+  level?: number;
+  /** The hazardous situation, stated in terms of what the software does or fails to do. */
+  text: string;
+  /** Identifier of the hazard or hazardous situation in the system risk management file. */
+  hazardRef?: string;
+  severity?: RiskSeverity;
+  /** SDD section ids for the software items that could cause it (§7.1). */
+  causes?: string[];
+  /** SRS requirement ids implementing the risk control measures (§7.2, §5.2.2). */
+  controls?: string[];
+  /** Why no software control is needed, when there is none — e.g. controlled in hardware. */
+  justification?: string;
+  residual?: ResidualRisk;
+  notes?: string;
+  tags?: string[];
+}
+
+/**
+ * Severity of the harm. ISO 14971 leaves the scale to the manufacturer; this is
+ * SpecPad's, and a project using a different one maps onto it.
+ */
+export type RiskSeverity = 'negligible' | 'minor' | 'serious' | 'critical' | 'catastrophic';
+
+/** The judgement recorded after the controls are in place. */
+export type ResidualRisk = 'acceptable' | 'unacceptable' | 'not_assessed';
+
+export interface RiskDoc {
+  schemaVersion: SchemaVersion;
+  type: 'risk';
+  name: string;
+  title: string;
+  items: RiskItem[];
 }
 
 export interface SddDoc {
@@ -139,7 +196,7 @@ export interface SddDoc {
   items: SddSection[];
 }
 
-export type SpecPadDoc = ProjectDoc | SrsDoc | VtpDoc | PrdDoc | SddDoc;
+export type SpecPadDoc = ProjectDoc | SrsDoc | VtpDoc | PrdDoc | SddDoc | RiskDoc;
 
 const stringArray = { type: 'array', items: { type: 'string' } } as const;
 
@@ -162,7 +219,7 @@ export const projectSchema = {
         type: 'object',
         required: ['type', 'path', 'title'],
         properties: {
-          type: { enum: ['srs', 'vtp', 'prd', 'sdd'], description: 'Which kind of document this entry points at: "srs", "vtp", "prd", or "sdd".' },
+          type: { enum: ['srs', 'vtp', 'prd', 'sdd', 'risk'], description: 'Which kind of document this entry points at: "srs", "vtp", "prd", "sdd", or "risk".' },
           path: { type: 'string', description: 'Path of the document file, relative to the project index.' },
           title: { type: 'string', description: 'Display title for the document.' },
         },
@@ -297,9 +354,45 @@ export const sddSchema = {
           title: { type: 'string', description: 'Section heading — the software unit or design view this section describes.' },
           heading: { type: 'boolean', description: 'True when this item groups sections rather than describing a design.' },
           level: { type: 'integer', minimum: 0, description: 'Indent depth for hierarchy; absent means 0.' },
+          kind: { enum: ['unit', 'view'], description: 'Whether this section describes a software unit (IEC 62304 5.4.2) or a cross-cutting design view (IEEE 1016 viewpoint). Absent means "unit". Only units may be named as the cause of a risk, and the unit list required by 5.4.1 is derived from this.' },
           body: { type: 'string', description: 'The design, as markdown: what the unit hides, its algorithm and data, interface behaviour for valid and invalid input (5.4.3), and unit acceptance criteria (5.5.3). May embed images and diagrams like the architecture document.' },
           source: { ...stringArray, description: 'Repository paths this section describes, so the design can be checked against the code it claims to describe.' },
           tags: { ...stringArray, description: 'Free-form labels; "draft" marks a generated section awaiting author review.' },
+        },
+      },
+    },
+  },
+} as const;
+
+export const riskSchema = {
+  $id: 'specpad/v1/risk',
+  type: 'object',
+  required: ['schemaVersion', 'type', 'name', 'title', 'items'],
+  properties: {
+    schemaVersion: { const: '1.0', description: 'Contract version of this file; "1.0" documents open in the pinned editor build at /v01/.' },
+    type: { const: 'risk', description: 'Document discriminator; selects the schema this file is validated against.' },
+    name: { type: 'string', description: 'Short system name; also the filename stem ([name].risk.json).' },
+    title: { type: 'string', description: 'Human-readable document title.' },
+    items: {
+      type: 'array',
+      description: 'The software risk analysis (IEC 62304 clause 7): hazardous situations software can contribute to, and section headings. Hazards, harms, probability estimation and benefit-risk belong to the system risk management file, referenced by hazardRef.',
+      items: {
+        type: 'object',
+        required: ['id', 'text'],
+        properties: {
+          id: { type: 'string', minLength: 1, description: 'Stable machine identifier, generated once and never changed.' },
+          code: { type: 'string', description: 'Human-facing label (e.g. "RISK-4"); freely renameable because references never use it.' },
+          text: { type: 'string', description: 'The hazardous situation, stated in terms of what the software does or fails to do.' },
+          heading: { type: 'boolean', description: 'True when this item is a section heading rather than a risk.' },
+          level: { type: 'integer', minimum: 0, description: 'Indent depth for hierarchy; absent means 0.' },
+          hazardRef: { type: 'string', description: 'Identifier of the hazard or hazardous situation in the system risk management file, which the quality system owns. SpecPad holds the software slice and references the rest rather than restating it.' },
+          severity: { enum: ['negligible', 'minor', 'serious', 'critical', 'catastrophic'], description: 'Severity of the resulting harm. There is deliberately no probability: for software you cannot argue probability down, so severity drives the analysis. ISO 14971 leaves the scale to the manufacturer; a project using a different one maps onto this.' },
+          causes: { ...stringArray, description: 'Ids of the SDD sections for the software items that could cause this hazardous situation (IEC 62304 7.1). Ids, never codes. Only sections of kind "unit" may be named.' },
+          controls: { ...stringArray, description: 'Ids of the SRS requirements implementing the risk control measures (IEC 62304 7.2; 5.2.2 requires a control implemented in software to be a software requirement). Their verifying tests are the evidence the control works (7.3), derived rather than restated.' },
+          justification: { type: 'string', description: 'Why no software control is needed, when there is none — for example a risk controlled in hardware, by labelling, or accepted at system level.' },
+          residual: { enum: ['acceptable', 'unacceptable', 'not_assessed'], description: 'The judgement recorded once the controls are in place. Absent is treated as not assessed.' },
+          notes: { type: 'string', description: 'Free-text analysis notes.' },
+          tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
         },
       },
     },

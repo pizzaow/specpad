@@ -136,7 +136,8 @@ describe('checkGovernance', () => {
   it('exposes a stable list of rule ids', () => {
     expect(GOVERNANCE_RULES.map((r) => r.id).sort()).toEqual([
       'active-job-known', 'active-job-open', 'missing-expected', 'prd-coverage',
-      'prd-referential-integrity', 'referential-integrity', 'sdd-coverage',
+      'prd-referential-integrity', 'referential-integrity', 'risk-cause',
+      'risk-controlled', 'risk-referential-integrity', 'sdd-coverage',
       'sdd-referential-integrity', 'traceability',
     ]);
   });

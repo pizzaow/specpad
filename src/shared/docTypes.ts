@@ -9,7 +9,7 @@
  * Sidecars (project index, releases, job marker, jobs register) are infrastructure,
  * not content documents, so they live outside this registry (see validate.ts).
  */
-import { srsSchema, vtpSchema, prdSchema, sddSchema } from './schema';
+import { srsSchema, vtpSchema, prdSchema, sddSchema, riskSchema } from './schema';
 
 // register: id-keyed JSON with an `items[]` array (diffable by the shared diffItems).
 // prose: tracked markdown/text (line-diffed). asset: binary-ish file (coarse, changed/yes-no).
@@ -40,6 +40,10 @@ export const DOC_TYPES: DocTypeSpec[] = [
   // stable per-section id is what SRS.design points at — that identity is the entire mechanism that
   // lets the design be rewritten freely without breaking the trace.
   { type: 'sdd', label: 'Detailed Design', kind: 'register', optional: true, inBaseline: true, generate: 'optional', schema: sddSchema as Record<string, unknown> },
+  // Software risk (IEC 62304 clause 7). Not generated: a risk analysis is a judgement
+  // about harm, and code cannot supply it — the generator would only invent plausible
+  // hazards, which is worse than an empty register.
+  { type: 'risk', label: 'Risk', kind: 'register', optional: true, inBaseline: true, generate: 'never', schema: riskSchema as Record<string, unknown> },
 ];
 
 /** All id-keyed register types (srs, vtp, prd, …) — the diffable/redline-able docs. */

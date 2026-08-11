@@ -4,7 +4,7 @@
  * Runs the same shared validate/checkGovernance the skill uses, so they agree.
  */
 import React, { useMemo, useState } from 'react';
-import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, JobsDoc, JobDoc } from '../shared';
+import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, JobsDoc, JobDoc } from '../shared';
 import { validate, checkGovernance } from '../shared';
 
 interface StatusBarProps {
@@ -14,21 +14,22 @@ interface StatusBarProps {
   projectDoc: ProjectDoc | null;
   prdDoc?: PrdDoc | null;
   sddDoc?: SddDoc | null;
+  riskDoc?: RiskDoc | null;
   jobsDoc?: JobsDoc | null;
   job?: JobDoc | null;
   demo?: boolean;
 }
 
-const StatusBar: React.FC<StatusBarProps> = ({ path, srsDoc, vtpDoc, projectDoc, prdDoc, sddDoc, jobsDoc, job, demo }) => {
+const StatusBar: React.FC<StatusBarProps> = ({ path, srsDoc, vtpDoc, projectDoc, prdDoc, sddDoc, riskDoc, jobsDoc, job, demo }) => {
   const [open, setOpen] = useState(false);
 
   const structural = useMemo(
-    () => [projectDoc, srsDoc, vtpDoc, prdDoc, sddDoc, jobsDoc].filter(Boolean).flatMap((d) => validate(d).map((e) => e.message)),
-    [projectDoc, srsDoc, vtpDoc, prdDoc, sddDoc, jobsDoc],
+    () => [projectDoc, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, jobsDoc].filter(Boolean).flatMap((d) => validate(d).map((e) => e.message)),
+    [projectDoc, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, jobsDoc],
   );
   const governance = useMemo(
-    () => checkGovernance({ project: projectDoc, srs: srsDoc, vtp: vtpDoc, prd: prdDoc, sdd: sddDoc, jobs: jobsDoc, job }).map((v) => v.message),
-    [projectDoc, srsDoc, vtpDoc, prdDoc, sddDoc, jobsDoc, job],
+    () => checkGovernance({ project: projectDoc, srs: srsDoc, vtp: vtpDoc, prd: prdDoc, sdd: sddDoc, risk: riskDoc, jobs: jobsDoc, job }).map((v) => v.message),
+    [projectDoc, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, jobsDoc, job],
   );
 
   const errors = structural.length;

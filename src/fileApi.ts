@@ -13,6 +13,7 @@ import type {
   VtpDoc,
   PrdDoc,
   SddDoc,
+  RiskDoc,
   SpecPadDoc,
   ReleasesDoc,
   JobDoc,
@@ -285,7 +286,12 @@ export async function loadSdd(name: string): Promise<SddDoc> {
   return (await requireJson(`${name}.sdd.json`)) as SddDoc;
 }
 
-export async function saveDocument(doc: SrsDoc | VtpDoc | PrdDoc | SddDoc | ProjectDoc): Promise<void> {
+/** Load the optional risk register `<name>.risk.json` (caller guards on its presence). */
+export async function loadRisk(name: string): Promise<RiskDoc> {
+  return (await requireJson(`${name}.risk.json`)) as RiskDoc;
+}
+
+export async function saveDocument(doc: SrsDoc | VtpDoc | PrdDoc | SddDoc | RiskDoc | ProjectDoc): Promise<void> {
   assertWritable();
   // The schema uses type 'project', but the filename suffix is 'proj'.
   const kind = doc.type === 'project' ? 'proj' : doc.type;

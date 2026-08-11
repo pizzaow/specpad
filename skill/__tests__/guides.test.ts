@@ -18,6 +18,7 @@ describe('on-demand authoring guides', () => {
         'product-requirements.md',
         'architecture.md',
         'detailed-design.md',
+        'risk.md',
       ]),
     );
   });

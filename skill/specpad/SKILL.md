@@ -43,6 +43,9 @@ into the SRS/VTP **spec-first**, attributed to a job, alongside the code. For ea
      data it owns; and whenever it adds a requirement (a new requirement needs a design section to
      point at). **Changing a section obliges you to re-review every requirement that references it** —
      see *Detailed design* below.
+   - **Software risk** — when the job adds or changes a way the software could contribute to harm, or
+     changes a unit or requirement a risk names. A control measure is a requirement, so adding a
+     control means adding a requirement.
    - **Any other registered pillar** (SOUP, cybersecurity, SDD, …) — same question, same rule.
 
    Capture **intent, not transcript**. Most jobs touch SRS+VTP; surface which document types you judged
@@ -74,6 +77,7 @@ them here; read the one you need when you reach that step:
 - Product requirements (PRD) → `guides/product-requirements.md`
 - Architecture (SAD) → `guides/architecture.md`
 - Detailed design (SDD) → `guides/detailed-design.md`
+- Software risk → `guides/risk.md`
 
 ## Files and naming
 
@@ -84,6 +88,8 @@ them here; read the one you need when you reach that step:
   SRS requirements trace up to via `satisfies` (see Product requirements below)
 - `docs/specpad/<name>.sdd.json` — optional detailed design: the software units and design views that
   implement the requirements, which SRS items point down at via `design` (see Detailed design below)
+- `docs/specpad/<name>.risk.json` — optional software risk analysis (IEC 62304 clause 7): the
+  hazardous situations software can contribute to, their causes and controls (see Software risk below)
 - `docs/specpad/<name>.sad.md` — optional architecture document (arc42 skeleton, markdown)
 - `docs/specpad/<name>.<diagram>.svg` — optional diagrams (draw.io SVG exports) the SAD references inline
 - `docs/specpad/<name>.workspace.dsl` — optional C4 model (Structurizr DSL — an alternative to draw.io)
@@ -258,8 +264,11 @@ VTP item — REQUIRED `id`, `text`. Optional `code`, `verifies`, `expected`, `re
 `notes`, `tags`, `heading`. `result` is one of "" | "not_tested" | "passed" | "failed".
 PRD item — REQUIRED `id`, `text`. Optional `code`, `tags`, `heading`. (PRD is the optional
 product-requirements register; same item shape as the SRS.)
-SDD section — REQUIRED `id`, `title`. Optional `code`, `body` (markdown), `source`, `tags`,
-`heading`, `level`. (The detailed design; sections are prose, not fields — see below.)
+SDD section — REQUIRED `id`, `title`. Optional `code`, `body` (markdown), `source`, `kind`
+(`unit` | `view`, default `unit`), `tags`, `heading`, `level`. (The detailed design; sections are
+prose, not fields — see below.)
+Risk item — REQUIRED `id`, `text`. Optional `code`, `hazardRef`, `severity`, `causes`, `controls`,
+`justification`, `residual`, `notes`, `tags`, `heading`, `level`. (The software risk analysis.)
 
 ## Product requirements (PRD) — optional upward trace
 
@@ -308,6 +317,30 @@ Specification; IEEE 1016 design views). Read `guides/detailed-design.md` before 
   look at the sections whose `source` paths you touched.
 - **Opt-in governance:** when an SDD is present, `sdd-referential-integrity` and `sdd-coverage` apply
   (see Governance). A project with no SDD pays nothing.
+
+## Software risk (IEC 62304 clause 7) — optional
+
+A project may add an optional **risk register** (`<name>.risk.json`, `type: "risk"`): the hazardous
+situations software can contribute to, what could cause them, and what controls them. Read
+`guides/risk.md` before authoring one.
+
+- **The §7 slice only.** Hazards, foreseeable sequences of events, harms, probability estimation,
+  benefit-risk and post-production monitoring belong to the **system risk management file** the quality
+  system owns; `hazardRef` points at it. SpecPad produces design-control evidence, not a quality system.
+- **No probability, deliberately.** For software you cannot argue probability down, so **severity**
+  drives the analysis. A row made acceptable by rating the probability "remote" is the error this
+  register exists to refuse.
+- **A cause is a software unit** — an SDD section with `kind: "unit"` (§7.1). A design view describes
+  structure across units and cannot fail on its own, so naming one is a violation.
+- **A control is a requirement.** §5.2.2 requires a control implemented in software to be a software
+  requirement, so `controls` holds SRS **ids**. This is what makes **§7.3 verification of risk control
+  measures automatic**: the tests already verifying that requirement, and the captured run, are the
+  evidence — nothing is recorded twice. A control that cannot be phrased as a requirement is not a
+  software control; record where it lives in `justification`.
+- **Security risk is a separate process** (62304 Ed 2, AAMI SW96, IEC 81001-5-1) and does not belong in
+  this register.
+- **Opt-in governance:** when a risk register is present, `risk-referential-integrity`, `risk-cause`
+  and `risk-controlled` apply. A project with no risk register pays nothing.
 
 ## Hierarchy (sections and sub-requirements)
 
@@ -580,6 +613,13 @@ declaring a task done:
   section via `design` — the evidence that the design implements the requirements. With no SDD, neither
   rule applies — the detailed design is opt-in, but once adopted it is checked at full rigor (see
   *Detailed design*).
+- `risk-referential-integrity`: When a risk register is present, every `causes` entry resolves to an SDD
+  section of kind `unit`, and every `controls` entry to an existing SRS requirement.
+- `risk-cause`: When a risk register is present, every non-heading risk names at least one software item
+  that could cause it (IEC 62304 7.1).
+- `risk-controlled`: When a risk register is present, every non-heading risk references at least one
+  controlling requirement (7.2) or records why no software control is needed. With no risk register,
+  none of the three applies — software risk is opt-in.
 
 Also confirm structural validity: required fields present, `result` within its enum,
 `schemaVersion` is "1.0".

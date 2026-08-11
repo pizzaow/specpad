@@ -5,7 +5,7 @@
  * persisted directory handles so return visits reopen without re-picking.
  */
 import React, { useEffect, useRef, useState } from 'react';
-import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, ReleasesDoc, JobDoc, JobsDoc, RunRecord } from './shared';
+import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, ReleasesDoc, JobDoc, JobsDoc, RunRecord } from './shared';
 import {
   DocumentListItem,
   isFileSystemAccessSupported,
@@ -22,6 +22,7 @@ import {
   loadProject,
   loadPrd,
   loadSdd,
+  loadRisk,
   loadRun,
   saveDocument,
   createNewDocument,
@@ -188,6 +189,7 @@ const LocalApp: React.FC = () => {
   // The detailed design: loaded so its governance runs live, and so the design a
   // requirement points at can be resolved for display (JOB-44).
   const [sddDoc, setSddDoc] = useState<SddDoc | null>(null);
+  const [riskDoc, setRiskDoc] = useState<RiskDoc | null>(null);
   const [prdBaseline, setPrdBaseline] = useState<PrdDoc | null>(null);
   const [runRecord, setRunRecord] = useState<RunRecord | null>(null);
   const [dirtyPrd, setDirtyPrd] = useState(false);
@@ -279,7 +281,7 @@ const LocalApp: React.FC = () => {
   // Live in-progress diff for each active open job: its `before` snapshot vs the working copy,
   // per register document type (srs/vtp/prd/…) — new types are picked up automatically.
   const activeDiffs = React.useMemo(() => {
-    const working: Record<string, SpecPadDoc | null> = { srs: srsDoc, vtp: vtpDoc, prd: prdDoc, sdd: sddDoc };
+    const working: Record<string, SpecPadDoc | null> = { srs: srsDoc, vtp: vtpDoc, prd: prdDoc, sdd: sddDoc, risk: riskDoc };
     const out: Record<string, JobDiff> = {};
     for (const [id, before] of Object.entries(activeBefore)) {
       const entry: JobDiff = {};
@@ -290,7 +292,7 @@ const LocalApp: React.FC = () => {
       if (Object.keys(entry).length) out[id] = entry;
     }
     return out;
-  }, [activeBefore, srsDoc, vtpDoc, prdDoc, sddDoc]);
+  }, [activeBefore, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc]);
 
   // Live in-progress architecture diff for active open jobs: before arch snapshot vs the working SAD/diagrams.
   const activeArch = React.useMemo(() => {
@@ -442,11 +444,13 @@ const LocalApp: React.FC = () => {
     const vtp = documents.find((d) => d.name === name && d.type === 'vtp');
     const prd = documents.find((d) => d.name === name && d.type === 'prd');
     const sdd = documents.find((d) => d.name === name && d.type === 'sdd');
+    const rsk = documents.find((d) => d.name === name && d.type === 'risk');
     setProjectDoc(proj ? await loadProject(name) : null);
     setSrsDoc(srs ? await loadDocument('srs', name) : null);
     setVtpDoc(vtp ? await loadDocument('vtp', name) : null);
     setPrdDoc(prd ? await loadPrd(name) : null);
     setSddDoc(sdd ? await loadSdd(name) : null);
+    setRiskDoc(rsk ? await loadRisk(name) : null);
     setSelectedDocName(name);
     await loadChangeTracking(name);
     setDirtySrs(false);
@@ -462,11 +466,13 @@ const LocalApp: React.FC = () => {
     const vtp = docs.find((d) => d.name === name && d.type === 'vtp');
     const prd = docs.find((d) => d.name === name && d.type === 'prd');
     const sdd = docs.find((d) => d.name === name && d.type === 'sdd');
+    const rsk = docs.find((d) => d.name === name && d.type === 'risk');
     setProjectDoc(proj ? await loadProject(name) : null);
     setSrsDoc(srs ? await loadDocument('srs', name) : null);
     setVtpDoc(vtp ? await loadDocument('vtp', name) : null);
     setPrdDoc(prd ? await loadPrd(name) : null);
     setSddDoc(sdd ? await loadSdd(name) : null);
+    setRiskDoc(rsk ? await loadRisk(name) : null);
     setSelectedDocName(name);
     await loadChangeTracking(name);
     setDirtySrs(false);
@@ -492,6 +498,7 @@ const LocalApp: React.FC = () => {
       setVtpDoc(null);
       setPrdDoc(null);
       setSddDoc(null);
+      setRiskDoc(null);
       setPrdBaseline(null);
       setRunRecord(null);
       setDirtyPrd(false);
@@ -1095,7 +1102,7 @@ const LocalApp: React.FC = () => {
         <StatusBar
           path={launch.demo ? 'demo (hosted copy of docs/specpad/)' : `docs/specpad/${projectName}`}
           srsDoc={srsDoc} vtpDoc={vtpDoc} projectDoc={projectDoc}
-          prdDoc={prdDoc} sddDoc={sddDoc} jobsDoc={jobsDoc} job={job}
+          prdDoc={prdDoc} sddDoc={sddDoc} riskDoc={riskDoc} jobsDoc={jobsDoc} job={job}
           demo={launch.demo}
         />
       )}

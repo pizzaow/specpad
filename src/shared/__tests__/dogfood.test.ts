@@ -6,10 +6,11 @@ import srs from '../../../docs/specpad/specpad.srs.json';
 import vtp from '../../../docs/specpad/specpad.vtp.json';
 import prd from '../../../docs/specpad/specpad.prd.json';
 import sdd from '../../../docs/specpad/specpad.sdd.json';
+import risk from '../../../docs/specpad/specpad.risk.json';
 import releases from '../../../docs/specpad/specpad.releases.json';
 import job from '../../../docs/specpad/specpad.job.json';
 import jobs from '../../../docs/specpad/specpad.jobs.json';
-import type { SrsDoc, VtpDoc, PrdDoc, SddDoc, JobsDoc, JobDoc } from '../schema';
+import type { SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, JobsDoc, JobDoc } from '../schema';
 
 // SpecPad documents its own requirements and tests with SpecPad (dogfooding).
 // These must stay structurally valid and governance-clean, exactly like any
@@ -21,6 +22,7 @@ describe('SpecPad self-documentation (dogfood)', () => {
     expect(validate(vtp)).toEqual([]);
     expect(validate(prd)).toEqual([]);
     expect(validate(sdd)).toEqual([]);
+    expect(validate(risk)).toEqual([]);
     expect(validate(releases)).toEqual([]);
     expect(validate(job)).toEqual([]);
     expect(validate(jobs)).toEqual([]);
@@ -33,6 +35,7 @@ describe('SpecPad self-documentation (dogfood)', () => {
         vtp: vtp as VtpDoc,
         prd: prd as PrdDoc,
         sdd: sdd as SddDoc,
+        risk: risk as RiskDoc,
         jobs: jobs as JobsDoc,
         job: job as JobDoc,
       }),
