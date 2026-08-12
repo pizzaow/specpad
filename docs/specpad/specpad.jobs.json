@@ -707,7 +707,7 @@
       "description": "Release v1.7 — the software risk pillar, and the editor view that makes a control verifiable at a glance.",
       "technical_notes": "Release bookkeeping. Closed JOB-52 and set version v1.7 on it; regenerated every closed job cache; moved the v1.6 snapshot to .specpad/snapshots/v1.6 and regenerated .specpad/baseline as the v1.7 document set - now including the risk register - with the verification run frozen in. Tag on da5c398, the last content commit. JOB-51 (the 62304 compliance-gap record) stays open and rolls to a later release; its one commit falls inside this tag, which is expected and harmless since the job is not done.",
       "version": "v1.7",
-      "status": "open"
+      "status": "closed"
     }
   ]
 }
