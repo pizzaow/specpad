@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="300" viewBox="0 0 720 300" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <rect width="720" height="300" fill="#ffffff"/>
+  <text x="16" y="26" font-size="15" font-weight="bold">SpecPad — System Context (C1)</text>
+
+  <!-- Developer -->
+  <rect x="40" y="120" width="120" height="60" rx="6" fill="#dbe7ff" stroke="#4a6fa5"/>
+  <text x="100" y="148" text-anchor="middle" font-weight="bold">Developer</text>
+  <text x="100" y="166" text-anchor="middle" fill="#555">+ Claude Code</text>
+
+  <!-- SpecPad -->
+  <rect x="290" y="105" width="150" height="90" rx="8" fill="#1f6feb" stroke="#0b3d91"/>
+  <text x="365" y="140" text-anchor="middle" fill="#fff" font-weight="bold">SpecPad</text>
+  <text x="365" y="160" text-anchor="middle" fill="#dde">skill + editor</text>
+  <text x="365" y="176" text-anchor="middle" fill="#dde">+ shared contract</text>
+
+  <!-- git repo -->
+  <rect x="560" y="40" width="120" height="55" rx="6" fill="#eaeaea" stroke="#888"/>
+  <text x="620" y="72" text-anchor="middle" font-weight="bold">Git repo</text>
+
+  <!-- eQMS -->
+  <rect x="560" y="125" width="120" height="55" rx="6" fill="#eaeaea" stroke="#888"/>
+  <text x="620" y="157" text-anchor="middle" font-weight="bold">eQMS</text>
+
+  <!-- Structurizr -->
+  <rect x="560" y="210" width="120" height="55" rx="6" fill="#eaeaea" stroke="#888"/>
+  <text x="620" y="242" text-anchor="middle" font-weight="bold">Structurizr</text>
+
+  <!-- arrows -->
+  <line x1="160" y1="150" x2="288" y2="150" stroke="#555" marker-end="url(#a)"/>
+  <text x="224" y="143" text-anchor="middle" fill="#555">edits specs</text>
+  <line x1="440" y1="135" x2="558" y2="80" stroke="#555" marker-end="url(#a)"/>
+  <text x="505" y="100" text-anchor="middle" fill="#555">reads/writes</text>
+  <line x1="440" y1="150" x2="558" y2="150" stroke="#555" marker-end="url(#a)"/>
+  <text x="505" y="143" text-anchor="middle" fill="#555">exports</text>
+  <line x1="440" y1="165" x2="558" y2="232" stroke="#555" marker-end="url(#a)"/>
+  <text x="505" y="205" text-anchor="middle" fill="#555">renders C4</text>
+
+  <defs>
+    <marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#555"/>
+    </marker>
+  </defs>
+</svg>

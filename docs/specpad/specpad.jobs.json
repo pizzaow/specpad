@@ -692,6 +692,21 @@
       "title": "Software risk pillar (IEC 62304 clause 7)",
       "description": "SpecPad now records software risk: the hazardous situations software can contribute to, which parts of the design could cause them, and the requirements that control them. Because a control is an ordinary requirement, the tests already verifying it become the evidence that the control works.",
       "technical_notes": "The 62304 clause 7 slice only. Hazards, harms, P1/P2 estimation, benefit-risk and post-market stay in the system risk management file the QMS owns and are referenced by id - SpecPad produces design-control evidence, not a QMS. Probability is deliberately absent: for software you cannot argue it down, so severity drives the analysis. Chain is hazardous situation -> contributing software item (SDD section) -> risk control measure (SRS requirement, per 5.2.2) -> verification, and the last link already exists via the SRS/VTP trace and captured runs, so 7.3 is largely satisfied by machinery already built. Controls are stored on the risk item. Also closes JOB-51 gap 1: SddSection gains kind (unit | view) so a cause points at a real software unit and the unit list 5.4.1 asks for becomes derivable. Security risk is deliberately NOT in this register - 62304 Ed 2 and AAMI SW96 make it a separate process, and the threat-model pillar will get its own.",
+      "status": "closed",
+      "version": "v1.7"
+    },
+    {
+      "id": "j_6e1b53",
+      "code": "JOB-53",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Cut release v1.7",
+      "description": "Release v1.7 — the software risk pillar, and the editor view that makes a control verifiable at a glance.",
+      "technical_notes": "Release bookkeeping. Closed JOB-52 and set version v1.7 on it; regenerated every closed job cache; moved the v1.6 snapshot to .specpad/snapshots/v1.6 and regenerated .specpad/baseline as the v1.7 document set - now including the risk register - with the verification run frozen in. Tag on da5c398, the last content commit. JOB-51 (the 62304 compliance-gap record) stays open and rolls to a later release; its one commit falls inside this tag, which is expected and harmless since the job is not done.",
+      "version": "v1.7",
       "status": "open"
     }
   ]
