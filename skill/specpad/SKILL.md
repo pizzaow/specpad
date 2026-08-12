@@ -369,8 +369,16 @@ software it depends on, assessed. Read `guides/soup.md` before authoring one.
   none of it ships. The runtime that is not a package usually does: a language runtime, or a binary
   invoked as a subprocess.
 - **End of life is a date** (`endOfLife`) with its source, not a sentence: a date can be compared to
-  today, and a component already out of support is what this register exists to surface. The *plan*
-  goes in `maintenance`.
+  today, and a component already out of support is what this register exists to surface. Check the
+  supplier's own announcement **and [endoflife.date](https://endoflife.date)** — the latter tracks
+  published support windows for most runtimes and frameworks and will often give a date where the
+  supplier's pages do not. Record which one it came from in `endOfLifeSource`. The *plan* goes in
+  `maintenance`.
+- **Depth is what gets these findings closed.** Every performance requirement carries a **number**
+  ("renders 250 rows in under 200 ms", not "no perceptible delay"); `runtime` names versions and what
+  is **not** supported; `limitations` says what is done about each one; `maintenance` names the
+  re-assessment trigger. Requirements describe the component's **interface**, not its internals — it is
+  a black box that will change inside without telling you. See `guides/soup.md`.
 - **Known defects are not recorded here.** Evaluating published anomalies is a per-version exercise
   against a moving list, and it belongs with the bill of materials and its vulnerability feed. Two
   answers to one question means the stale one gets read.

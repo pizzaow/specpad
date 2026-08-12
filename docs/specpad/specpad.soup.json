@@ -17,16 +17,16 @@
       "version": "18.3.1",
       "license": "MIT",
       "url": "https://react.dev",
-      "purpose": "The editor's rendering library. Every view is a React component; the shell holds the loaded documents as component state.",
-      "requirements": "Renders a component tree to the DOM and re-renders it on state change. Must render a 250-row register table without a perceptible delay on a mid-range laptop. State updates must be applied in the order they are made, since document edits are sequential.",
-      "runtime": "A browser supporting ES2020. No server-side rendering is used.",
-      "limitations": "Rendering is not synchronous with state updates; code that assumes an edit is visible on the next line is wrong. React 18 concurrent features are not used.",
+      "purpose": "The editor's rendering library: every view is a React component, and the shell holds the loaded documents as component state. Chosen because the editor is a document-editing application with substantial local state and no server round-trip, which is the case component state and effects handle directly.",
+      "requirements": "Renders a component tree to the DOM and re-renders it when state changes.\nApplies state updates in the order they are made — document edits are sequential and an out-of-order apply would silently reorder an author's changes.\nRenders a 250-row register table in under 200 ms on a mid-range laptop; re-renders one edited row in under 50 ms.\nSupports portals: content rendered outside its parent's DOM position while remaining in the React tree.",
+      "runtime": "A browser supporting ES2020 (Chrome 85+, Firefox 78+, Safari 14+). No server-side rendering is used, and none is supported by this application.",
+      "limitations": "Rendering is not synchronous with state updates, so code that assumes an edit is visible on the next line is wrong; every view reads from props rather than the DOM for this reason. React 18 concurrent features are not used, so no benefit is taken from interruptible rendering on large documents.",
       "usedBy": [
         "d_app001",
         "d_tbl001",
         "d_chr001"
       ],
-      "maintenance": "Actively maintained by Meta with a large contributor base and a published release policy. If it were abandoned, the editor would continue to work against the pinned version indefinitely; migration would be a rewrite of the view layer and is the largest single replacement risk in the product."
+      "maintenance": "Maintained by Meta with a large contributor base and a published release policy; no security notification channel is subscribed to, since the library has no network surface. If it were abandoned the editor would keep working against the pinned version indefinitely — replacement would be a rewrite of the view layer, and this is the largest single replacement cost in the product. Re-assess on a major version, or if the project changes stewardship."
     },
     {
       "id": "s_reactd",
@@ -36,15 +36,15 @@
       "version": "18.3.1",
       "license": "MIT",
       "url": "https://react.dev",
-      "purpose": "Binds React to the browser DOM, and provides the portal used to render a row menu outside its table.",
-      "requirements": "Mounts a React tree into a DOM node. `createPortal` must render into a node outside the parent's DOM hierarchy while keeping it inside the React tree — the row menu depends on this to escape a stacking context.",
-      "runtime": "A browser supporting ES2020; versioned in lockstep with react.",
-      "limitations": "Must match the react version exactly.",
+      "purpose": "Binds React to the browser DOM, and provides the portal the row-actions menu uses to escape the stacking context its table row creates.",
+      "requirements": "Mounts a React tree into a DOM node.\n`createPortal` renders into a node outside the parent's DOM hierarchy while keeping it inside the React tree, so the menu stays in the component tree while escaping its row.\nVersion matches react exactly.",
+      "runtime": "A browser supporting ES2020; versioned in lockstep with react, which is a hard constraint rather than a convention.",
+      "limitations": "Must match the react version exactly: a mismatch fails at runtime rather than at build, so both are pinned together and upgraded together.",
       "usedBy": [
         "d_app001",
         "d_chr001"
       ],
-      "maintenance": "As react."
+      "maintenance": "As react — same project, same release train, same contingency. Re-assess whenever react is re-assessed."
     },
     {
       "id": "s_rmd",
@@ -54,15 +54,15 @@
       "version": "10.1.0",
       "license": "MIT",
       "url": "https://github.com/remarkjs/react-markdown",
-      "purpose": "Renders the architecture document and each detailed-design section body from markdown, with an image handler that substitutes inline SVG diagrams.",
-      "requirements": "Renders CommonMark to React elements. Must not execute or emit raw HTML from the document, since a specification is authored by several people and may be edited through a server. Must allow the image renderer to be replaced, which is how diagrams are placed inline.",
-      "runtime": "react 18+.",
-      "limitations": "Does not render arbitrary HTML by design; GitHub-flavoured tables require the remark-gfm plugin. Rendering is not incremental — a very large document re-renders whole.",
+      "purpose": "Renders the architecture document and each detailed-design section body from markdown, with a replaced image renderer that substitutes inline SVG diagrams. Chosen over a raw markdown-to-HTML converter because the image hook is what places diagrams inline without the document holding HTML.",
+      "requirements": "Renders CommonMark to React elements.\nDoes not execute or emit raw HTML from the document. A specification is authored by several people and may be edited through a server, so document content must never become markup.\nAllows the image renderer to be replaced, which is how diagrams are placed inline.\nRenders a 60-section document in under 500 ms on a mid-range laptop.",
+      "runtime": "react 18+. Browser only; no Node rendering path is used.",
+      "limitations": "Raw HTML is disabled by design, so GitHub-flavoured tables need the GFM plugin (recorded separately). Rendering is not incremental: a large document re-renders whole, which is why a section rather than a document is the editing unit in the detailed-design view.",
       "usedBy": [
         "d_arv001",
         "d_ddv001"
       ],
-      "maintenance": "Part of the unified/remark collective, widely used and actively released. Replaceable at moderate cost: the markdown boundary is two components, both of which take the document as a string."
+      "maintenance": "Part of the unified/remark collective, widely used with an active release cadence. Replaceable at moderate cost: the markdown boundary is two components, both taking the document as a string. Re-assess on a major version or if the plugin interface changes."
     },
     {
       "id": "s_gfm",
@@ -72,15 +72,15 @@
       "version": "4.0.1",
       "license": "MIT",
       "url": "https://github.com/remarkjs/remark-gfm",
-      "purpose": "Adds GitHub-flavoured markdown — principally tables — to the rendered architecture and design documents.",
-      "requirements": "Parses GFM tables, strikethrough and task lists. Tables are the requirement that matters: the design documents use them heavily.",
-      "runtime": "react-markdown 10.x.",
-      "limitations": "Does not implement every GitHub extension; footnote rendering differs from GitHub in detail.",
+      "purpose": "Adds GitHub-flavoured markdown to the rendered architecture and design documents. Tables are the reason it is here: both documents use them heavily and CommonMark has none.",
+      "requirements": "Parses GFM tables, including alignment markers.\nParses strikethrough and task lists.\nAdds no HTML execution path — the raw-HTML prohibition on the renderer must still hold with this plugin loaded.",
+      "runtime": "react-markdown 10.x. Versioned against the renderer's plugin interface rather than independently.",
+      "limitations": "Not every GitHub extension is implemented, and footnote rendering differs from GitHub in detail. Neither is used in the documents this product renders.",
       "usedBy": [
         "d_arv001",
         "d_ddv001"
       ],
-      "maintenance": "As react-markdown; same collective and release cadence."
+      "maintenance": "Same collective and release cadence as react-markdown. Re-assess with it."
     },
     {
       "id": "s_cm",
@@ -90,15 +90,15 @@
       "version": "4.25.10",
       "license": "MIT",
       "url": "https://uiwjs.github.io/react-codemirror/",
-      "purpose": "The markdown editor for the architecture document and detailed-design section bodies — a React wrapper around CodeMirror 6.",
-      "requirements": "Presents a text editor bound to a string, reporting every change. Must not reformat, normalise or otherwise alter text the author did not type: a specification document must round-trip through the editor byte for byte.",
-      "runtime": "react 18+, and the CodeMirror 6 packages it depends on.",
-      "limitations": "A wrapper: CodeMirror configuration beyond the exposed props requires reaching through to the underlying extension API.",
+      "purpose": "The markdown editor for the architecture document and detailed-design section bodies — a React wrapper around CodeMirror 6. Chosen over a plain textarea for syntax highlighting, and over an integration written here because the wrapper already handles the controlled-value and reconfiguration cases.",
+      "requirements": "Presents a text editor bound to a string and reports every change.\nDoes not reformat, normalise, trim or re-wrap text the author did not type. A specification must round-trip through the editor byte for byte; a silent normalisation would appear in the git diff as an authored change.\nAccepts a language extension for syntax highlighting.\nOpens a 2,000-line document in under 300 ms.",
+      "runtime": "react 18+, and the CodeMirror 6 packages it depends on. Browser only.",
+      "limitations": "A wrapper: configuration beyond the exposed props means reaching through to the CodeMirror extension API directly, which the architecture view does for the markdown language only.",
       "usedBy": [
         "d_arv001",
         "d_ddv001"
       ],
-      "maintenance": "A single-maintainer wrapper over a well-maintained core, which is the risk. If it were abandoned, CodeMirror 6 could be used directly at moderate cost; the wrapper is convenience rather than capability."
+      "maintenance": "A single-maintainer wrapper over a well-maintained core, which is where the risk sits rather than in CodeMirror itself. If it were abandoned, CodeMirror 6 can be used directly at moderate cost — the wrapper is convenience, not capability. Re-assess if releases stop for a year, or on a CodeMirror major version."
     },
     {
       "id": "s_cmmd",
@@ -108,15 +108,15 @@
       "version": "6.5.0",
       "license": "MIT",
       "url": "https://codemirror.net",
-      "purpose": "Markdown syntax highlighting inside the editor.",
-      "requirements": "Highlights markdown syntax. Presentation only: it must never alter the document text.",
-      "runtime": "CodeMirror 6.",
-      "limitations": "Highlighting only; no linting or formatting.",
+      "purpose": "Markdown syntax highlighting inside the editor. Presentation only.",
+      "requirements": "Highlights markdown syntax within a CodeMirror 6 editor.\nNever alters the document text — highlighting is a decoration layer, and a component that edited the buffer would violate the round-trip requirement placed on the editor.",
+      "runtime": "CodeMirror 6. Loaded by the editor wrapper rather than directly.",
+      "limitations": "Highlighting only: no linting, formatting or completion, none of which is wanted here.",
       "usedBy": [
         "d_arv001",
         "d_ddv001"
       ],
-      "maintenance": "CodeMirror is maintained by its original author with a long and stable release history."
+      "maintenance": "CodeMirror is maintained by its original author with a long, stable release history and a published security contact. Re-assess on a CodeMirror major version."
     },
     {
       "id": "s_dnd",
@@ -126,14 +126,14 @@
       "version": "core 6.3.1, sortable 10.0.0, utilities 3.2.2",
       "license": "MIT",
       "url": "https://dndkit.com",
-      "purpose": "Drag-to-reorder in the detailed-design outline.",
-      "requirements": "Reports a drag from one list position to another, by item id, with keyboard as well as pointer input. Must not itself mutate the list — the shell applies the reorder, so a failed or cancelled drag can leave no trace.",
-      "runtime": "react 18+.",
-      "limitations": "Reordering only; no cross-list dragging or drop-target validation is used.",
+      "purpose": "Drag-to-reorder in the detailed-design outline. Chosen because react-beautiful-dnd is deprecated and dnd-kit is the maintained successor with keyboard support, which a specification tool needs for accessibility.",
+      "requirements": "Reports a drag from one list position to another, identifying both by item id.\nSupports keyboard-driven reordering as well as pointer input.\nDoes not itself mutate the list: the shell applies the reorder, so a cancelled or failed drag leaves no trace in the document.\nA drag begins only after 4 px of movement, so a click to navigate is not mistaken for a drag.",
+      "runtime": "react 18+. Browser only; pointer and keyboard events, no touch-specific backend configured.",
+      "limitations": "Reordering within one list only. No cross-list dragging, no drop-target validation, and no virtualised-list support — the outline is rendered in full, which is why none is needed at the sizes involved.",
       "usedBy": [
         "d_ddv001"
       ],
-      "maintenance": "Actively maintained and the de-facto standard since react-beautiful-dnd was deprecated. If abandoned, the outline falls back to the move-up and move-down controls already present, which is why they were kept."
+      "maintenance": "Actively maintained and the de-facto standard since react-beautiful-dnd was deprecated. If it were abandoned the outline falls back to the move-up and move-down controls, which are kept in the interface for exactly this reason. Re-assess on a major version."
     },
     {
       "id": "s_ajv",
@@ -143,15 +143,15 @@
       "version": "8.20.0",
       "license": "MIT",
       "url": "https://ajv.js.org",
-      "purpose": "Validates every document against its JSON Schema. This is the only component on which the correctness of the contract depends directly.",
-      "requirements": "Validates a document against JSON Schema draft-07 and reports every violation, not merely the first, with a path identifying the offending field. A document it accepts must genuinely satisfy the schema: a false accept would let a malformed specification through governance.",
-      "runtime": "Node 18+ or a browser supporting ES2020.",
-      "limitations": "Reports structure only; policy such as referential integrity is not expressible in the schema and is enforced separately in the governance module.",
+      "purpose": "Validates every document against its JSON Schema. Chosen over hand-written validation because the schemas are the published contract; a second implementation would be a second source of truth, and the two would diverge.",
+      "requirements": "Validates a document against JSON Schema draft-07.\nReports every violation, not the first: an author fixing one error at a time is the slowest way to fix five.\nEach violation carries an instance path identifying the offending field.\nA document it accepts genuinely satisfies the schema. A false accept is the worst failure available to this product — a malformed specification passing governance — which is why the schemas are also exercised by fixtures directly rather than trusted through ajv alone.\nValidates a 250-item document in under 50 ms.",
+      "runtime": "Node 18+ or a browser supporting ES2020. No filesystem or network access is used, and none is available in the browser build.",
+      "limitations": "Structure only. Referential integrity, traceability and every other policy rule are inexpressible in JSON Schema and are enforced separately in the governance module — the split is deliberate, not a workaround.",
       "usedBy": [
         "d_val001"
       ],
       "tests": [],
-      "maintenance": "Long-established and widely depended upon, though release cadence has slowed. A false accept would be the worst failure in the product, which is why the schemas are also exercised directly by fixtures rather than trusted through ajv alone."
+      "maintenance": "Long established and widely depended upon, though the release cadence has slowed. No support contract exists. Replacement would mean a different draft-07 validator with the same error shape, which is a contained change behind one module. Re-assess if a year passes without a release, or on a JSON Schema draft change."
     },
     {
       "id": "s_boot",
@@ -161,14 +161,14 @@
       "version": "3.4.1",
       "license": "MIT",
       "url": "https://getbootstrap.com",
-      "purpose": "Base stylesheet for the editor. Layout and component classes only; SpecPad's own token layer is imported after it and overrides appearance.",
-      "requirements": "Provides the grid, table, form-control, label, button and panel classes the views use. No JavaScript from Bootstrap is loaded.",
-      "runtime": "A browser; no jQuery, since the JavaScript component library is not used.",
-      "limitations": "Version 3 is no longer developed. Its visual defaults are dated, which is why the theme layer overrides them; and it predates CSS custom properties, so theming is done in SpecPad's own layer rather than Bootstrap's.",
+      "purpose": "Base stylesheet for the editor — grid, table, form-control, label, button and panel classes. SpecPad's own token layer is imported after it and overrides appearance, so this supplies layout rather than looks.",
+      "requirements": "Provides the grid, table, form, label, button and panel classes the views use.\nContributes no JavaScript: the component library is not loaded, and nothing here may require jQuery.\nIts rules are overridable by a later stylesheet without `!important`, which is what lets the token layer set appearance.",
+      "runtime": "A browser. No jQuery, since the JavaScript components are not used.",
+      "limitations": "Version 3 is no longer developed. It predates CSS custom properties, so theming is done entirely in SpecPad's own layer; its visual defaults are dated and are overridden rather than used.",
       "usedBy": [
         "d_thm001"
       ],
-      "maintenance": "End of life since 2019-07-24: no further releases will be made. Accepted deliberately — a stylesheet cannot develop new defects, and the JavaScript components that held the security-relevant issues are not loaded. Replacement by the token layer is scheduled work rather than contingency.",
+      "maintenance": "End of life since 2019-07-24: no further releases will be made, and no security fixes are available. Accepted deliberately — a stylesheet cannot develop new defects, and the jQuery-dependent components that held the security-relevant issues are not loaded. Displacement by the token layer is scheduled work rather than contingency. Re-assess if any Bootstrap JavaScript is ever introduced, which would change the position entirely.",
       "endOfLife": "2019-07-24",
       "endOfLifeSource": "https://blog.getbootstrap.com/2019/07/24/bootstrap-3-4-1-and-4-3-1/ — Bootstrap 3 reached end of life with 3.4.1; no further releases."
     },
@@ -185,16 +185,16 @@
       "version": "2.34 or later",
       "license": "GPL-2.0-only",
       "url": "https://git-scm.com",
-      "purpose": "Every durable operation. The skill reads history through it, and the server clones, checks out, commits, rebases and pushes through it. SpecPad has no other store.",
-      "requirements": "Supports sparse-checkout in cone mode, worktrees, rebase with an inspectable index, and push. Sparse-checkout is a security control here, not an optimisation: without it a working copy could contain application source. Command output must be stable enough to parse for status and conflict stages.",
-      "runtime": "A POSIX or Windows host with the git binary on PATH, and credentials for the remote.",
-      "limitations": "Invoked as a subprocess, so it is a process boundary rather than a library: errors arrive as exit codes and text. Behaviour varies slightly across versions, which is why every invocation goes through one runner.",
+      "purpose": "Every durable operation. The skill reads history through it; the server clones, checks out, commits, rebases and pushes through it. There is no other store, and this is a premise of the product rather than a convenience.",
+      "requirements": "Supports sparse-checkout in cone mode. This is a security control, not an optimisation: without it a per-user working copy could contain application source.\nSupports worktrees, so each user gets an independent checkout of one clone.\nSupports rebase with an inspectable index, so a conflict can be resolved structurally rather than textually.\nPush reports non-fast-forward rejection distinguishably from other failures, so a retry can be bounded rather than blind.\nCommand output for status and conflict stages is stable enough to parse across the supported versions.",
+      "runtime": "git 2.34 or later on PATH; a POSIX or Windows host; credentials for the remote. Versions before 2.34 are not supported — cone-mode sparse-checkout behaviour differs.",
+      "limitations": "Invoked as a subprocess, so it is a process boundary rather than a library: errors arrive as exit codes and text, and behaviour varies slightly across versions. Every invocation goes through one runner for that reason, which is also what makes the pipeline testable without a repository.",
       "usedBy": [
         "d_git001",
         "d_rpo001",
         "d_wcp001"
       ],
-      "maintenance": "Maintained by a broad community with a predictable release cadence and long support history. Not replaceable: git is the product's premise rather than a dependency, and SpecPad would not exist in this form without it."
+      "maintenance": "Maintained by a broad community with a predictable release cadence and a published security process. Not replaceable: git is the product's premise, and SpecPad would not exist in this form without it. Re-assess if the sparse-checkout or worktree interfaces change."
     },
     {
       "id": "s_node",
@@ -204,15 +204,15 @@
       "version": "22 LTS or later",
       "license": "MIT",
       "url": "https://nodejs.org",
-      "purpose": "Runs the self-hosted server and the skill's tooling. The server uses only the standard library — http, fs, path, crypto, child_process — and declares no runtime dependencies of its own.",
-      "requirements": "Provides an HTTP server, filesystem access, subprocess execution and SHA-256 hashing. Must sustain server-sent event streams that stay open for hours without the connection being recycled underneath the application.",
-      "runtime": "A supported operating system; a container image is provided.",
-      "limitations": "Single-threaded per process: a long synchronous operation blocks every request, which is why git calls are asynchronous throughout.",
+      "purpose": "Runs the self-hosted server and the skill's tooling. The server uses only the standard library — http, fs, path, crypto, child_process — and declares no runtime dependencies of its own, which is what makes it auditable in a single directory.",
+      "requirements": "Provides an HTTP server, filesystem access, subprocess execution and SHA-256 hashing from the standard library.\nSustains server-sent event streams held open for hours without the runtime recycling the connection underneath the application.\nSubprocess execution reports exit status and captures stdout and stderr separately.\nStarts and serves a first request in under 5 s on a container-class host.",
+      "runtime": "Node 22 LTS or later, on a supported operating system; a container image is provided. Node 20 is not supported — it reached end of life on 2026-04-30.",
+      "limitations": "Single-threaded per process: a long synchronous operation blocks every request, which is why every git call is asynchronous and why no request handler reads a large file synchronously.",
       "usedBy": [
         "d_ent001",
         "d_git001"
       ],
-      "maintenance": "LTS lines are supported for 30 months with a published schedule, so end of support is knowable in advance rather than discovered. Node 20, which this register previously named, reached end of life on 2026-04-30; the supported floor is now 22 LTS (end of life 2027-04-30). Moving the floor is a version bump and a CI matrix change, since only the standard library is used.",
+      "maintenance": "LTS lines carry 30 months of support on a published schedule, so end of support is knowable in advance rather than discovered. Security releases are announced through the project's advisory channel. The floor moved from 20 to 22 when 20 reached end of life; because only the standard library is used, moving it is a version bump and a CI matrix change. Re-assess at each LTS transition.",
       "endOfLife": "2027-04-30",
       "endOfLifeSource": "https://endoflife.date/nodejs — Node 22 LTS ends 2027-04-30."
     }

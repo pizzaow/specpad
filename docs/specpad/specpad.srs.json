@@ -3708,6 +3708,17 @@
         "soup"
       ],
       "text": "The editor shall distinguish a component whose end-of-life date has passed from one with a future date and from one with no date announced."
+    },
+    {
+      "id": "r_sp10",
+      "code": "SOUP-10",
+      "design": [
+        "d_skl001"
+      ],
+      "tags": [
+        "soup"
+      ],
+      "text": "The authoring guidance for a component shall state, for each recorded field, what constitutes an adequate entry, requiring a measurable figure for a performance requirement, explicit versions and exclusions for the runtime, and a named re-assessment trigger."
     }
   ]
 }

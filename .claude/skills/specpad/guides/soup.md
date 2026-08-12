@@ -53,34 +53,93 @@ as a subprocess. If the product stops working when it is absent, it is SOUP.
 ### The version is exact, and that is the point
 
 A range is not an identity. `^18.2.0` says nothing an auditor can act on: **an assessment applies to
-the version it was performed against**, and a range does not name one. Record what is actually
-installed, and revisit the record when it changes.
+the version it was performed against**, and a range does not name one. "Latest stable" is worse — it
+also makes a vulnerability lookup impossible, since there is no version to look up.
 
-### Requirements are what you require *of it*
+Record what is actually installed, and revisit the record when it changes.
 
-Not what it claims to do — what your product needs it to do, phrased so a failure would be recognisable.
-"Renders CommonMark to React elements; must not execute embedded HTML" is a requirement. "A markdown
-renderer" is a description.
+### `purpose` — what it does here, and why this one
 
-Put them here as text rather than in the SRS. The requirements register holds behaviour **this product
-implements**; a requirement on a supplier is neither implemented here nor verified here.
+Three things, in a sentence or two each: the **role** it plays in this product, **why it is
+appropriate** for that role, and — where the choice was contested — **why this component rather than
+the alternatives**. The last is what the FDA guidance asks for at Enhanced level, and it is the part
+that is impossible to reconstruct a year later.
 
-### Known defects are not recorded here
+> ✅ *"Validates every document against its JSON Schema. Chosen over hand-written validation because the
+> schemas are published as the contract; a second implementation would be a second source of truth."*
+> ❌ *"A JSON Schema validator."* — that is the supplier's description, and would be equally true of a
+> component that did not suit at all.
 
-Evaluating a supplier's published anomalies is a per-version exercise against a moving list, and it
-belongs with the bill of materials and its vulnerability feed rather than with the assessment of the
-component. Keeping a hand-written anomaly paragraph beside a machine-generated advisory feed produces
-two answers to one question, and the stale one is the one that gets read.
+### `requirements` — the field auditors read first
 
-### End of life is a date, not a sentence
+What **you require of it**, not what it claims to do. Write them as a list, one per line, each phrased
+so that a failure would be recognisable. This is the field most often found insufficient, and for two
+reasons that are easy to fix.
 
-`endOfLife` is the date the supplier's support ends, and `endOfLifeSource` is where you got it. A date
-can be compared to today; a paragraph saying support "will end eventually" cannot, and a component that
-went out of support two years ago will sit in the register unnoticed.
+**Every performance requirement needs a number.** "Fast enough", "no perceptible delay", "reasonable
+memory" cannot be verified and will not survive review. Put a figure and the conditions on it.
 
-If no end of life has been announced, leave it empty — that is a different statement from a date in the
-past, and the register shows them differently. Put the *plan* in `maintenance`: what you will do when
-the date arrives, or why you are content to run past it.
+> ✅ *"Renders a 250-row register table in under 200 ms on a mid-range laptop."*
+> ❌ *"Renders large tables without a perceptible delay."*
+
+**Test the interface, not the internals.** A component is a black box: require behaviour observable at
+its boundary, including what happens when it is misused. What it does internally is the supplier's
+business and will change without telling you.
+
+> ✅ *"A document with no `items[]` array is rejected rather than merged."*
+> ❌ *"Uses an efficient tree-diff internally."*
+
+Where a requirement is exercised by a test, link it through `tests`. A requirement no test reaches is
+a finding on its own — the same rule the SRS lives by, for the same reason.
+
+### `runtime` — what *it* needs, stated in versions
+
+Floors and exclusions, not adjectives. Name the versions, and name what is **not** supported: the
+exclusion is what someone deploying to an unusual platform needs, and it is never in the supplier's
+headline.
+
+> ✅ *"Node 22 LTS or later; POSIX or Windows host; git 2.34+ on PATH. Not supported on Node 20, which
+> is out of support."*
+> ❌ *"A modern JavaScript environment."*
+
+### `limitations` — what it will not do, and what you do about it
+
+The behaviour you had to work around, the thing it deliberately does not support, the edge it does not
+handle. Where you compensate for a limitation elsewhere, say where — that sentence is the one that
+answers "so why is this acceptable?" before it is asked.
+
+> ✅ *"Does not render raw HTML by design, so tables require the GFM plugin. Rendering is not
+> incremental: a very large document re-renders whole, which is why a section is the editing unit."*
+> ❌ *"Some limitations apply."*
+
+### `maintenance` — the supplier, and your contingency
+
+Three parts, and the third is the one people omit:
+
+1. **What the supplier does** — release cadence, security policy, whether there is a notification
+   channel or an SLA you can point to. FDA calls this assurance of development and maintenance.
+2. **What you do when they stop** — replacement cost, and whether the boundary is narrow enough to
+   swap. "This is a wrapper; the core could be used directly" is a contingency. "We would have to
+   rewrite the editor" is also a contingency, and an honest one.
+3. **When you look again** — the trigger for re-assessment. A major version, a licence change, a
+   change of ownership, or a date.
+
+### `endOfLife` — check both sources
+
+The supplier's own announcement is authoritative but often hard to find and sometimes absent.
+**[endoflife.date](https://endoflife.date) is the practical second source**: it tracks published
+support windows for most runtimes, frameworks and distributions, and will usually give you a date when
+the supplier's own pages will not.
+
+Record the date, and put in `endOfLifeSource` where it came from — the supplier's announcement if you
+found one, endoflife.date otherwise, and both where they disagree. A date with no source is a claim
+about a supplier's intentions with nothing behind it.
+
+If no end of life has been announced, leave it empty. That is a different statement from a date in the
+past, and the register shows them differently.
+
+Support windows are **per release line**: a major-version upgrade usually moves the date, so this is
+one of the fields to revisit whenever the version changes.
 
 ## ✅ Good
 

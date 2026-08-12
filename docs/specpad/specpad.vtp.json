@@ -4517,6 +4517,22 @@
           "selector": "SoupTable — end of life"
         }
       ]
+    },
+    {
+      "id": "t_sp10",
+      "code": "TEST-268",
+      "verifies": [
+        "r_sp10"
+      ],
+      "text": "Read the component authoring guide and the skill procedure for each recorded field.",
+      "expected": "Each field states what an adequate entry contains, with a good and a bad example: a performance requirement carries a figure, the runtime names versions and exclusions, limitations say what is done about them, and maintenance names a re-assessment trigger. Both name endoflife.date alongside the supplier as a source for the end-of-life date.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "skill/__tests__/guides.test.ts",
+          "selector": "on-demand authoring guides"
+        }
+      ]
     }
   ]
 }
