@@ -138,7 +138,7 @@ describe('checkGovernance', () => {
       'active-job-known', 'active-job-open', 'missing-expected', 'prd-coverage',
       'prd-referential-integrity', 'referential-integrity', 'risk-cause',
       'risk-controlled', 'risk-referential-integrity', 'sdd-coverage',
-      'sdd-referential-integrity', 'soup-anomalies', 'soup-identity',
+      'sdd-referential-integrity', 'soup-identity',
       'soup-referential-integrity', 'soup-requirements',
       'traceability',
     ]);

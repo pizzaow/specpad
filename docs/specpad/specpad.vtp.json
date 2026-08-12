@@ -4424,27 +4424,6 @@
       ]
     },
     {
-      "id": "t_sp4",
-      "code": "TEST-262",
-      "verifies": [
-        "r_sp4"
-      ],
-      "text": "Record a component whose anomalies have never been evaluated, and view a component whose evaluation is recorded with its date.",
-      "expected": "The first is reported and reads \"not evaluated\" in the register; the second shows the date the evaluation was performed, which is what makes an upgrade visibly stale.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/soup.test.ts",
-          "selector": "flags a component whose anomalies were never evaluated"
-        },
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/SoupTable.test.tsx",
-          "selector": "SoupTable — the row"
-        }
-      ]
-    },
-    {
       "id": "t_sp5",
       "code": "TEST-263",
       "verifies": [
@@ -4466,13 +4445,18 @@
       "verifies": [
         "r_sp6"
       ],
-      "text": "Open the SOUP tab, read a row, and expand a component.",
-      "expected": "The row carries name, supplier, version and the anomaly state; expanding shows purpose, requirements, runtime, limitations, anomalies with their date, and support and end of life. Read-only shows the assessment without any editing affordance, and names a field that was never recorded rather than showing an empty box.",
+      "text": "Read a component in the register, then select it.",
+      "expected": "Reading shows the record as prose — purpose, requirements, runtime, limitations, support — with release date and source omitted. Selecting it opens every field as an input at once, including those two, and Done closes it. A read-only session never opens the record.",
       "automation": [
         {
           "runner": "vitest",
           "file": "src/components/__tests__/SoupTable.test.tsx",
-          "selector": "SoupTable — the assessment"
+          "selector": "SoupTable — reading"
+        },
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/SoupTable.test.tsx",
+          "selector": "SoupTable — clicking opens the whole record"
         },
         {
           "runner": "vitest",
@@ -4499,6 +4483,38 @@
           "runner": "vitest",
           "file": "src/components/__tests__/SoupTable.test.tsx",
           "selector": "SoupTable — the assessment"
+        }
+      ]
+    },
+    {
+      "id": "t_sp8",
+      "code": "TEST-266",
+      "verifies": [
+        "r_sp8"
+      ],
+      "text": "Record a component's end-of-life date and the source of that date, and one with neither.",
+      "expected": "Both validate; neither field is required, since a component with no announced end of life is a legitimate record.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/shared/__tests__/soup.test.ts",
+          "selector": "records an end-of-life date and where it came from"
+        }
+      ]
+    },
+    {
+      "id": "t_sp9",
+      "code": "TEST-267",
+      "verifies": [
+        "r_sp9"
+      ],
+      "text": "View components whose end-of-life date is in the past, in the future, and absent.",
+      "expected": "The past date is marked as ended and its row is highlighted; the future date is shown plainly; the absent one reads as none announced.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/SoupTable.test.tsx",
+          "selector": "SoupTable — end of life"
         }
       ]
     }

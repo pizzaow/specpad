@@ -3630,7 +3630,7 @@
       "tags": [
         "soup"
       ],
-      "text": "The system shall support an optional register of the third-party software a product depends on, recording for each component its identity, the requirements placed on it, what it needs to run, its known limitations and anomalies, and its support and end-of-life position."
+      "text": "The system shall support an optional register of the third-party software a product depends on, recording for each component its identity, the requirements placed on it, what it needs to run, its known limitations, and its support and end-of-life position."
     },
     {
       "id": "r_sp2",
@@ -3655,17 +3655,6 @@
       "text": "When a component register is present, every component shall state the functional and performance requirements placed on it, recorded on the component rather than as software requirements of the product."
     },
     {
-      "id": "r_sp4",
-      "code": "SOUP-4",
-      "design": [
-        "d_gov001"
-      ],
-      "tags": [
-        "soup"
-      ],
-      "text": "When a component register is present, every component shall record an evaluation of the supplier's published anomalies for the version in use, together with the date that evaluation was performed."
-    },
-    {
       "id": "r_sp5",
       "code": "SOUP-5",
       "design": [
@@ -3685,7 +3674,7 @@
       "tags": [
         "soup"
       ],
-      "text": "The editor shall present the component register with each component's identity in the row and its full assessment on expansion, indicating on the row whether the anomaly evaluation has been performed and when."
+      "text": "The editor shall present each component as a record rather than a grid of inputs, and shall open the whole record for editing — every field at once — when the component is selected."
     },
     {
       "id": "r_sp7",
@@ -3697,6 +3686,28 @@
         "soup"
       ],
       "text": "A component shall record which software units use it and which tests exercise it, and shall show the risks that name it as a cause."
+    },
+    {
+      "id": "r_sp8",
+      "code": "SOUP-8",
+      "design": [
+        "d_sch001"
+      ],
+      "tags": [
+        "soup"
+      ],
+      "text": "A component shall be able to record the date the supplier's support ends together with the source of that date."
+    },
+    {
+      "id": "r_sp9",
+      "code": "SOUP-9",
+      "design": [
+        "d_tbl001"
+      ],
+      "tags": [
+        "soup"
+      ],
+      "text": "The editor shall distinguish a component whose end-of-life date has passed from one with a future date and from one with no date announced."
     }
   ]
 }

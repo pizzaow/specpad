@@ -15,7 +15,6 @@ export type GovernanceRuleId =
   | 'risk-controlled'
   | 'soup-identity'
   | 'soup-requirements'
-  | 'soup-anomalies'
   | 'soup-referential-integrity';
 
 /** Normalize the active-job marker to a list, tolerating the legacy single `job`. */
@@ -116,12 +115,6 @@ export const GOVERNANCE_RULES: GovernanceRule[] = [
     title: 'Every component has requirements placed on it',
     description:
       'When a SOUP register is present, every component must state the functional and performance requirements necessary for its intended use (IEC 62304 5.3.3).',
-  },
-  {
-    id: 'soup-anomalies',
-    title: "Every component's known anomalies are evaluated",
-    description:
-      "When a SOUP register is present, every component must record an evaluation of the supplier's published anomaly list for the version in use (IEC 62304 7.1.2, 7.1.3).",
   },
   {
     id: 'soup-referential-integrity',
@@ -344,13 +337,6 @@ export function checkGovernance(bundle: ProjectBundle): GovernanceViolation[] {
           rule: 'soup-requirements',
           itemId: component.id,
           message: `Component ${label} states no functional or performance requirements.`,
-        });
-      }
-      if (!(component.anomalies ?? '').trim()) {
-        violations.push({
-          rule: 'soup-anomalies',
-          itemId: component.id,
-          message: `Component ${label} records no evaluation of its published anomalies.`,
         });
       }
       for (const ref of component.usedBy ?? []) {

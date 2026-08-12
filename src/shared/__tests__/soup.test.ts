@@ -20,8 +20,6 @@ const component = (over: Partial<SoupDoc['items'][number]> = {}) => ({
   vendor: 'Evgeny Poberezkin and contributors',
   version: '8.20.0',
   requirements: 'Validates against JSON Schema draft-07 and reports every violation.',
-  anomalies: 'Issue tracker reviewed for 8.20.0; no open defect affects draft-07 validation.',
-  anomaliesReviewed: '2026-08-11',
   ...over,
 });
 
@@ -90,9 +88,10 @@ describe('SOUP governance (opt-in)', () => {
       .toContain('soup-requirements');
   });
 
-  it('flags a component whose anomalies were never evaluated', () => {
-    expect(only(checkGovernance({ srs, vtp, sdd, soup: soup({ anomalies: '' }) })).map((v) => v.rule))
-      .toContain('soup-anomalies');
+  it('records an end-of-life date and where it came from', () => {
+    const doc = soup({ endOfLife: '2019-07-24', endOfLifeSource: 'https://example.invalid/eol' });
+    expect(validate(doc)).toEqual([]);
+    expect(only(checkGovernance({ srs, vtp, sdd, soup: doc }))).toEqual([]);
   });
 
   it('flags an unresolved usedBy or test reference', () => {

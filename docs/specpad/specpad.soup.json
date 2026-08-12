@@ -21,8 +21,6 @@
       "requirements": "Renders a component tree to the DOM and re-renders it on state change. Must render a 250-row register table without a perceptible delay on a mid-range laptop. State updates must be applied in the order they are made, since document edits are sequential.",
       "runtime": "A browser supporting ES2020. No server-side rendering is used.",
       "limitations": "Rendering is not synchronous with state updates; code that assumes an edit is visible on the next line is wrong. React 18 concurrent features are not used.",
-      "anomalies": "GitHub issue tracker reviewed for 18.3.1. No open defect affects the features used here: the editor uses component state, effects and portals, and no concurrent, suspense or server-component feature. Hydration defects do not apply — the app is client-rendered only.",
-      "anomaliesReviewed": "2026-08-11",
       "usedBy": [
         "d_app001",
         "d_tbl001",
@@ -42,8 +40,6 @@
       "requirements": "Mounts a React tree into a DOM node. `createPortal` must render into a node outside the parent's DOM hierarchy while keeping it inside the React tree — the row menu depends on this to escape a stacking context.",
       "runtime": "A browser supporting ES2020; versioned in lockstep with react.",
       "limitations": "Must match the react version exactly.",
-      "anomalies": "Reviewed with react 18.3.1, from which it is inseparable. No open defect affects mounting or portals.",
-      "anomaliesReviewed": "2026-08-11",
       "usedBy": [
         "d_app001",
         "d_chr001"
@@ -62,8 +58,6 @@
       "requirements": "Renders CommonMark to React elements. Must not execute or emit raw HTML from the document, since a specification is authored by several people and may be edited through a server. Must allow the image renderer to be replaced, which is how diagrams are placed inline.",
       "runtime": "react 18+.",
       "limitations": "Does not render arbitrary HTML by design; GitHub-flavoured tables require the remark-gfm plugin. Rendering is not incremental — a very large document re-renders whole.",
-      "anomalies": "Issue tracker reviewed for 10.1.0. Open items concern plugin compatibility and typings, not rendering correctness. The HTML-injection class of defect does not apply: raw HTML is disabled and no `rehype-raw` plugin is configured.",
-      "anomaliesReviewed": "2026-08-11",
       "usedBy": [
         "d_arv001",
         "d_ddv001"
@@ -82,8 +76,6 @@
       "requirements": "Parses GFM tables, strikethrough and task lists. Tables are the requirement that matters: the design documents use them heavily.",
       "runtime": "react-markdown 10.x.",
       "limitations": "Does not implement every GitHub extension; footnote rendering differs from GitHub in detail.",
-      "anomalies": "Issue tracker reviewed for 4.0.1. No open defect affects table parsing.",
-      "anomaliesReviewed": "2026-08-11",
       "usedBy": [
         "d_arv001",
         "d_ddv001"
@@ -102,8 +94,6 @@
       "requirements": "Presents a text editor bound to a string, reporting every change. Must not reformat, normalise or otherwise alter text the author did not type: a specification document must round-trip through the editor byte for byte.",
       "runtime": "react 18+, and the CodeMirror 6 packages it depends on.",
       "limitations": "A wrapper: CodeMirror configuration beyond the exposed props requires reaching through to the underlying extension API.",
-      "anomalies": "Issue tracker reviewed for 4.25.x. Open items concern extension reconfiguration and SSR, neither of which applies here. No defect affecting text fidelity is open.",
-      "anomaliesReviewed": "2026-08-11",
       "usedBy": [
         "d_arv001",
         "d_ddv001"
@@ -122,8 +112,6 @@
       "requirements": "Highlights markdown syntax. Presentation only: it must never alter the document text.",
       "runtime": "CodeMirror 6.",
       "limitations": "Highlighting only; no linting or formatting.",
-      "anomalies": "CodeMirror issue tracker reviewed for 6.5.0. Open items concern highlighting edge cases in nested constructs — cosmetic, and incapable of altering the document.",
-      "anomaliesReviewed": "2026-08-11",
       "usedBy": [
         "d_arv001",
         "d_ddv001"
@@ -142,8 +130,6 @@
       "requirements": "Reports a drag from one list position to another, by item id, with keyboard as well as pointer input. Must not itself mutate the list — the shell applies the reorder, so a failed or cancelled drag can leave no trace.",
       "runtime": "react 18+.",
       "limitations": "Reordering only; no cross-list dragging or drop-target validation is used.",
-      "anomalies": "Issue tracker reviewed for core 6.3.1. Open items concern nested droppables and virtualised lists, neither of which is used here.",
-      "anomaliesReviewed": "2026-08-11",
       "usedBy": [
         "d_ddv001"
       ],
@@ -161,8 +147,6 @@
       "requirements": "Validates a document against JSON Schema draft-07 and reports every violation, not merely the first, with a path identifying the offending field. A document it accepts must genuinely satisfy the schema: a false accept would let a malformed specification through governance.",
       "runtime": "Node 18+ or a browser supporting ES2020.",
       "limitations": "Reports structure only; policy such as referential integrity is not expressible in the schema and is enforced separately in the governance module.",
-      "anomalies": "Issue tracker reviewed for 8.20.0. Open items concern draft-2020 features, TypeScript typings and code generation for unusual keyword combinations. None affects draft-07 validation of the keywords used here (type, required, enum, const, minimum, minLength, items, properties).",
-      "anomaliesReviewed": "2026-08-11",
       "usedBy": [
         "d_val001"
       ],
@@ -181,12 +165,12 @@
       "requirements": "Provides the grid, table, form-control, label, button and panel classes the views use. No JavaScript from Bootstrap is loaded.",
       "runtime": "A browser; no jQuery, since the JavaScript component library is not used.",
       "limitations": "Version 3 is no longer developed. Its visual defaults are dated, which is why the theme layer overrides them; and it predates CSS custom properties, so theming is done in SpecPad's own layer rather than Bootstrap's.",
-      "anomalies": "Bootstrap 3 is end-of-life and receives no fixes. Its known issues are cosmetic and browser-specific, in components not used here. The CSS carries no execution risk; the jQuery-dependent JavaScript components, which held the security-relevant defects, are not loaded.",
-      "anomaliesReviewed": "2026-08-11",
       "usedBy": [
         "d_thm001"
       ],
-      "maintenance": "End-of-life: no further releases will be made. Accepted deliberately — a stylesheet cannot develop new defects, and the styling is being displaced by the token layer. Replacement is scheduled work rather than contingency."
+      "maintenance": "End of life since 2019-07-24: no further releases will be made. Accepted deliberately — a stylesheet cannot develop new defects, and the JavaScript components that held the security-relevant issues are not loaded. Replacement by the token layer is scheduled work rather than contingency.",
+      "endOfLife": "2019-07-24",
+      "endOfLifeSource": "https://blog.getbootstrap.com/2019/07/24/bootstrap-3-4-1-and-4-3-1/ — Bootstrap 3 reached end of life with 3.4.1; no further releases."
     },
     {
       "id": "h_sp10",
@@ -205,8 +189,6 @@
       "requirements": "Supports sparse-checkout in cone mode, worktrees, rebase with an inspectable index, and push. Sparse-checkout is a security control here, not an optimisation: without it a working copy could contain application source. Command output must be stable enough to parse for status and conflict stages.",
       "runtime": "A POSIX or Windows host with the git binary on PATH, and credentials for the remote.",
       "limitations": "Invoked as a subprocess, so it is a process boundary rather than a library: errors arrive as exit codes and text. Behaviour varies slightly across versions, which is why every invocation goes through one runner.",
-      "anomalies": "Release notes reviewed for the 2.4x series. Known issues concern platform-specific path handling and performance on very large repositories. The path-handling class matters here and is mitigated independently: paths are validated before they reach git, and sparse-checkout bounds what the worktree can contain.",
-      "anomaliesReviewed": "2026-08-11",
       "usedBy": [
         "d_git001",
         "d_rpo001",
@@ -219,20 +201,20 @@
       "code": "SOUP-11",
       "name": "Node.js",
       "vendor": "OpenJS Foundation",
-      "version": "20 LTS or later",
+      "version": "22 LTS or later",
       "license": "MIT",
       "url": "https://nodejs.org",
       "purpose": "Runs the self-hosted server and the skill's tooling. The server uses only the standard library — http, fs, path, crypto, child_process — and declares no runtime dependencies of its own.",
       "requirements": "Provides an HTTP server, filesystem access, subprocess execution and SHA-256 hashing. Must sustain server-sent event streams that stay open for hours without the connection being recycled underneath the application.",
       "runtime": "A supported operating system; a container image is provided.",
       "limitations": "Single-threaded per process: a long synchronous operation blocks every request, which is why git calls are asynchronous throughout.",
-      "anomalies": "Security releases for the 20.x line reviewed. Advisories affecting HTTP request handling are the relevant class and are addressed by staying on the current LTS patch; the deployment is behind an authenticating proxy, which is the primary control for request-level attacks.",
-      "anomaliesReviewed": "2026-08-11",
       "usedBy": [
         "d_ent001",
         "d_git001"
       ],
-      "maintenance": "LTS lines are supported for 30 months with a published schedule, so end-of-support is knowable in advance rather than discovered."
+      "maintenance": "LTS lines are supported for 30 months with a published schedule, so end of support is knowable in advance rather than discovered. Node 20, which this register previously named, reached end of life on 2026-04-30; the supported floor is now 22 LTS (end of life 2027-04-30). Moving the floor is a version bump and a CI matrix change, since only the standard library is used.",
+      "endOfLife": "2027-04-30",
+      "endOfLifeSource": "https://endoflife.date/nodejs — Node 22 LTS ends 2027-04-30."
     }
   ]
 }

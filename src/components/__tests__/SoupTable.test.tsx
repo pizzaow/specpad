@@ -4,11 +4,11 @@ import SoupTable from '../SoupTable';
 import type { RiskDoc, SddDoc, SoupDoc, VtpDoc } from '../../shared';
 
 /**
- * The SOUP tab (SOUP-10..12).
+ * The SOUP tab (SOUP-6..9).
  *
- * The state worth surfacing is whether the anomaly evaluation still applies: it is the
- * field that rots silently, because an upgrade invalidates it and nothing else in the
- * record changes to say so.
+ * Display first: a component reads as a record, and clicking it opens the whole record
+ * for editing. The state worth surfacing on the row is an end-of-life date that has
+ * passed — a component whose supplier has stopped is invisible in prose.
  */
 
 const sdd: SddDoc = {
@@ -33,75 +33,121 @@ const soup = (over: Partial<SoupDoc['items'][number]> = {}): SoupDoc => ({
     {
       id: 's_1', code: 'SOUP-1', name: 'ajv', vendor: 'Evgeny Poberezkin', version: '8.20.0',
       requirements: 'Validates draft-07 and reports every violation.',
-      anomalies: 'Issue tracker reviewed; nothing affects draft-07.',
-      anomaliesReviewed: '2026-08-11',
+      purpose: 'Validates every document against its schema.',
       ...over,
     },
   ],
 });
 
 const render_ = (d: SoupDoc, props: Partial<React.ComponentProps<typeof SoupTable>> = {}) =>
-  render(<SoupTable doc={d} sddDoc={sdd} vtpDoc={vtp} riskDoc={risk} onChange={vi.fn()} {...props} />);
+  render(
+    <SoupTable doc={d} sddDoc={sdd} vtpDoc={vtp} riskDoc={risk} onChange={vi.fn()} today="2026-08-12" {...props} />,
+  );
 
-describe('SoupTable — the row', () => {
-  it('shows the identity an auditor checks first', () => {
+const openRecord = () => fireEvent.click(screen.getByText('ajv'));
+
+describe('SoupTable — reading', () => {
+  it('reads as a record rather than a grid of inputs', () => {
     render_(soup());
 
-    expect(screen.getByDisplayValue('ajv')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('Evgeny Poberezkin')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('8.20.0')).toBeInTheDocument();
+    expect(screen.getByText('ajv')).toBeInTheDocument();
+    expect(screen.getByText('Evgeny Poberezkin')).toBeInTheDocument();
+    expect(screen.queryByDisplayValue('ajv')).toBeNull(); // nothing is an input until asked
   });
 
-  it('dates the anomaly evaluation on the row, since staleness is the thing to notice', () => {
+  it('shows the assessment without expanding anything', () => {
     render_(soup());
-    expect(screen.getByText('2026-08-11')).toBeInTheDocument();
+
+    expect(screen.getByText(/Validates draft-07/)).toBeInTheDocument();
+    expect(screen.getByText('Purpose and role:')).toBeInTheDocument();
+    expect(screen.getByText('Support and contingency:')).toBeInTheDocument();
   });
 
-  it('says plainly when the anomalies were never evaluated', () => {
-    render_(soup({ anomalies: '' }));
-    expect(screen.getByText('not evaluated')).toBeInTheDocument();
+  it('names an unrecorded field rather than leaving a blank', () => {
+    render_(soup({ limitations: '' }));
+    expect(screen.getAllByText('Not recorded.').length).toBeGreaterThan(0);
   });
 });
 
-describe('SoupTable — the assessment', () => {
-  const expand = () => fireEvent.click(screen.getByLabelText(/Show assessment of ajv/));
+describe('SoupTable — end of life', () => {
+  it('shows a future date plainly', () => {
+    render_(soup({ endOfLife: '2027-04-30' }));
+    expect(screen.getByText('2027-04-30')).toBeInTheDocument();
+    expect(screen.queryByText(/ended /)).toBeNull();
+  });
 
-  it('expands to every field the two regimes ask for', () => {
+  it('marks a date that has already passed, which is the point of recording one', () => {
+    const { container } = render_(soup({ endOfLife: '2019-07-24' }));
+
+    expect(screen.getByText('ended 2019-07-24')).toBeInTheDocument();
+    expect(container.querySelector('tr.warning')).not.toBeNull();
+  });
+
+  it('says none announced when there is no date', () => {
     render_(soup());
-    expand();
+    expect(screen.getByText('none announced')).toBeInTheDocument();
+  });
+});
 
-    for (const label of [
-      'Purpose and role',
-      'Requirements placed on it',
-      'What it needs to run',
-      'Design limitations',
-      'Published anomalies',
-      'Support and end of life',
-    ]) {
-      expect(screen.getByText(label)).toBeInTheDocument();
+describe('SoupTable — clicking opens the whole record', () => {
+  it('turns every field into an input at once, not just the one clicked', () => {
+    render_(soup());
+    openRecord();
+
+    for (const label of ['Name of ajv', 'Supplier of ajv', 'Version of ajv', 'Licence of ajv', 'End of life of ajv']) {
+      expect(screen.getByLabelText(label)).toBeInTheDocument();
     }
+    for (const label of ['Purpose and role of ajv', 'Requirements placed on it of ajv', 'Support and contingency of ajv']) {
+      expect(screen.getByLabelText(label)).toBeInTheDocument();
+    }
+  });
+
+  it('offers the fields hidden while reading — release date and source', () => {
+    render_(soup());
+    expect(screen.queryByLabelText('Release date of ajv')).toBeNull();
+    expect(screen.queryByLabelText('Source of ajv')).toBeNull();
+
+    openRecord();
+    expect(screen.getByLabelText('Release date of ajv')).toBeInTheDocument();
+    expect(screen.getByLabelText('Source of ajv')).toBeInTheDocument();
+  });
+
+  it('records the end-of-life date and where it came from', () => {
+    const onChange = vi.fn();
+    render_(soup(), { onChange });
+    openRecord();
+
+    fireEvent.change(screen.getByLabelText('End of life of ajv'), { target: { value: '2027-04-30' } });
+    expect((onChange.mock.calls.at(-1)![0] as SoupDoc).items[0].endOfLife).toBe('2027-04-30');
+
+    fireEvent.change(screen.getByLabelText('End-of-life source of ajv'), { target: { value: 'https://example.invalid' } });
+    expect((onChange.mock.calls.at(-1)![0] as SoupDoc).items[0].endOfLifeSource).toBe('https://example.invalid');
+  });
+
+  it('closes on Done', () => {
+    render_(soup());
+    openRecord();
+    fireEvent.click(screen.getByRole('button', { name: 'Done' }));
+
+    expect(screen.queryByLabelText('Name of ajv')).toBeNull();
   });
 
   it('offers only software units as users of the component', () => {
     render_(soup());
-    expand();
+    openRecord();
     fireEvent.click(within(screen.getByRole('group', { name: /Units using ajv/ })).getByText(/add/));
 
     expect(screen.queryByRole('option', { name: /SDD-9/ })).toBeNull();
     expect(screen.getByRole('option', { name: /SDD-1/ })).toBeInTheDocument();
   });
 
-  it('names the risks this component is said to cause', () => {
+  it('names the risks this component is said to cause, while reading', () => {
     render_(soup());
-    expand();
-
     expect(screen.getByText('RISK-1')).toBeInTheDocument();
   });
 
   it('says so when no risk names it', () => {
     render_(soup(), { riskDoc: { ...risk, items: [] } });
-    expand();
-
     expect(screen.getByText(/No risk names this component as a cause/)).toBeInTheDocument();
   });
 });
@@ -110,8 +156,9 @@ describe('SoupTable — editing', () => {
   it('records a version change without touching the id', () => {
     const onChange = vi.fn();
     render_(soup(), { onChange });
+    openRecord();
 
-    fireEvent.change(screen.getByDisplayValue('8.20.0'), { target: { value: '8.21.0' } });
+    fireEvent.change(screen.getByLabelText('Version of ajv'), { target: { value: '8.21.0' } });
 
     const next = onChange.mock.calls.at(-1)![0] as SoupDoc;
     expect(next.items[0]).toMatchObject({ id: 's_1', version: '8.21.0' });
@@ -129,21 +176,13 @@ describe('SoupTable — editing', () => {
     expect(next.items[1].id).toMatch(/^s_[0-9a-f]{6}$/);
   });
 
-  it('offers no editing affordance when read-only, and still shows the assessment', () => {
+  it('does not open the record when read-only, and still shows the assessment', () => {
     render_(soup(), { readOnly: true });
 
     expect(screen.queryByLabelText('Row actions')).toBeNull();
-    expect(screen.queryByDisplayValue('ajv')).toBeNull();
-    expect(screen.getByText('ajv')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('ajv'));
 
-    fireEvent.click(screen.getByLabelText(/Show assessment of ajv/));
-    expect(screen.getByText(/Issue tracker reviewed/)).toBeInTheDocument();
-  });
-
-  it('reports an unrecorded field rather than showing an empty box', () => {
-    render_(soup({ limitations: '' }), { readOnly: true });
-    fireEvent.click(screen.getByLabelText(/Show assessment of ajv/));
-
-    expect(screen.getAllByText('Not recorded.').length).toBeGreaterThan(0);
+    expect(screen.queryByLabelText('Name of ajv')).toBeNull();
+    expect(screen.getByText(/Validates draft-07/)).toBeInTheDocument();
   });
 });

@@ -229,10 +229,10 @@ export interface SoupItem {
   runtime?: string;
   /** Expected design limitations — what it is known not to do. */
   limitations?: string;
-  /** Evaluation of the published anomaly list for this version (§7.1.2, §7.1.3). */
-  anomalies?: string;
-  /** When that anomaly evaluation was last performed; it goes stale with each release. */
-  anomaliesReviewed?: string;
+  /** Date the supplier's support for this component ends, where it is known. */
+  endOfLife?: string;
+  /** Where that end-of-life date came from — a URL or a citation. */
+  endOfLifeSource?: string;
   /** SDD section ids for the units that use it. */
   usedBy?: string[];
   /** VTP item ids exercising it, where its behaviour is verified directly. */
@@ -492,8 +492,8 @@ export const soupSchema = {
           requirements: { type: 'string', description: 'The functional and performance requirements placed on the component, necessary for its intended use (IEC 62304 5.3.3). Text rather than SRS entries: these are requirements on a supplier, not behaviour this product implements.' },
           runtime: { type: 'string', description: 'Hardware and software the component itself needs in order to run (IEC 62304 5.3.4; FDA computer system specifications).' },
           limitations: { type: 'string', description: 'Expected design limitations — what the component is known not to do (FDA).' },
-          anomalies: { type: 'string', description: "Evaluation of the supplier's published anomaly list for this exact version: which known defects could affect this product, and why the remainder cannot (IEC 62304 7.1.2, 7.1.3; FDA current list of defects)." },
-          anomaliesReviewed: { type: 'string', description: 'When that anomaly evaluation was last performed. It goes stale with every release the supplier makes, so the date is part of the evidence.' },
+          endOfLife: { type: 'string', description: "Date the supplier's support for this component ends, where it is known (FDA: end-of-life support plans and obsolescence). A date rather than prose, so a component already past support can be found rather than read for." },
+          endOfLifeSource: { type: 'string', description: 'Where the end-of-life date came from — a URL or citation. An undated claim about a supplier\'s intentions is not evidence.' },
           usedBy: { ...stringArray, description: 'Ids of the SDD sections for the units that use this component.' },
           tests: { ...stringArray, description: "Ids of the VTP items exercising this component, where its behaviour is verified directly (FDA testing)." },
           maintenance: { type: 'string', description: "The supplier's development and support practices, and the plan for when support ends — obsolescence contingency (FDA, Enhanced documentation level)." },

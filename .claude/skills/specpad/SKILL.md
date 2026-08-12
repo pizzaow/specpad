@@ -46,8 +46,8 @@ into the SRS/VTP **spec-first**, attributed to a job, alongside the code. For ea
    - **Software risk** — when the job adds or changes a way the software could contribute to harm, or
      changes a unit or requirement a risk names. A control measure is a requirement, so adding a
      control means adding a requirement.
-   - **SOUP** — when the job adds, removes or **upgrades** a third-party dependency. An upgrade
-     invalidates that component's anomaly evaluation: redo it, or the record is stale.
+   - **SOUP** — when the job adds, removes or **upgrades** a third-party dependency. An upgrade moves
+     the support window, so revisit the end-of-life date as well as the version.
    - **Any other registered pillar** (SOUP, cybersecurity, SDD, …) — same question, same rule.
 
    Capture **intent, not transcript**. Most jobs touch SRS+VTP; surface which document types you judged
@@ -273,7 +273,7 @@ SDD section — REQUIRED `id`, `title`. Optional `code`, `body` (markdown), `sou
 (`unit` | `view`, default `unit`), `tags`, `heading`, `level`. (The detailed design; sections are
 prose, not fields — see below.)
 SOUP item — REQUIRED `id`, `name`. Optional `code`, `vendor`, `version`, `releaseDate`, `license`,
-`url`, `purpose`, `requirements`, `runtime`, `limitations`, `anomalies`, `anomaliesReviewed`,
+`url`, `purpose`, `requirements`, `runtime`, `limitations`, `endOfLife`, `endOfLifeSource`,
 `usedBy`, `tests`, `maintenance`, `notes`, `tags`, `heading`, `level`.
 Risk item — REQUIRED `id`, `text`. Optional `code`, `hazardRef`, `severity`, `causes`, `controls`,
 `justification`, `residual`, `notes`, `tags`, `heading`, `level`. (The software risk analysis.)
@@ -355,10 +355,9 @@ situations software can contribute to, what could cause them, and what controls 
 A project may add an optional **SOUP register** (`<name>.soup.json`, `type: "soup"`): the third-party
 software it depends on, assessed. Read `guides/soup.md` before authoring one.
 
-- **Both regimes, one record.** IEC 62304 wants the requirements you place on the component (§5.3.3),
-  what it needs to run (§5.3.4), and an evaluation of its published anomalies for the version in use
-  (§7.1.2, §7.1.3); the FDA off-the-shelf guidance wants provenance, purpose, design limitations,
-  testing, and — at Enhanced level — support and end-of-life contingency. Author all of it; what to
+- **Both regimes, one record.** IEC 62304 wants the requirements you place on the component (§5.3.3)
+  and what it needs to run (§5.3.4); the FDA off-the-shelf guidance wants provenance, purpose, design
+  limitations, testing, and — at Enhanced level — support and end-of-life contingency. Author all of it; what to
   omit is an export decision.
 - **The version is exact**, never a range: an anomaly evaluation is only valid for the version it was
   performed against, so a range makes the assessment unverifiable.
@@ -369,6 +368,12 @@ software it depends on, assessed. Read `guides/soup.md` before authoring one.
 - **Development tools are not SOUP.** Compilers, bundlers, test runners and CI fall under §5.1.4 —
   none of it ships. The runtime that is not a package usually does: a language runtime, or a binary
   invoked as a subprocess.
+- **End of life is a date** (`endOfLife`) with its source, not a sentence: a date can be compared to
+  today, and a component already out of support is what this register exists to surface. The *plan*
+  goes in `maintenance`.
+- **Known defects are not recorded here.** Evaluating published anomalies is a per-version exercise
+  against a moving list, and it belongs with the bill of materials and its vulnerability feed. Two
+  answers to one question means the stale one gets read.
 - **This is not an SBOM.** An SBOM is a recursive inventory of every dependency, generated from the
   manifests; this is the assessed subset. Do not let one stand in for the other.
 - **Opt-in governance:** when a SOUP register is present, `soup-identity`, `soup-requirements`,
@@ -656,8 +661,6 @@ declaring a task done:
   version (8.1.2).
 - `soup-requirements`: When a SOUP register is present, every component states the functional and
   performance requirements placed on it (5.3.3).
-- `soup-anomalies`: When a SOUP register is present, every component records an evaluation of its
-  published anomalies for the version in use (7.1.2, 7.1.3).
 - `soup-referential-integrity`: When a SOUP register is present, every `usedBy` entry resolves to a
   design section and every `tests` entry to a test. With no SOUP register, none of the four applies.
 
