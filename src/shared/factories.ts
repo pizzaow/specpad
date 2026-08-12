@@ -1,5 +1,5 @@
 import { SCHEMA_VERSION } from './schema';
-import type { ProjectDoc, ProjectDocRef, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SoupDoc, SrsItem, VtpItem, PrdItem, SddSection, RiskItem, SoupItem, JobsDoc, JobRecord } from './schema';
+import type { ProjectDoc, ProjectDocRef, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SoupDoc, ThreatDoc, SrsItem, VtpItem, PrdItem, SddSection, RiskItem, SoupItem, ThreatItem, JobsDoc, JobRecord } from './schema';
 import { generateId, ID_PREFIX } from './ids';
 import { REGISTER_TYPES } from './docTypes';
 
@@ -61,6 +61,17 @@ export function createPrdItem(existingIds: Iterable<string>, level = 0): PrdItem
 }
 
 /** A new detailed-design section. Ids are `d_…` and, once issued, never change (SRS.design targets them). */
+export function createThreatDoc(name: string, title: string): ThreatDoc {
+  return { schemaVersion: SCHEMA_VERSION, type: 'threat', name, title, items: [] };
+}
+
+/** A new threat. Ids are `x_…`; residual starts unassessed rather than quietly acceptable. */
+export function createThreatItem(existingIds: Iterable<string>, level = 0): ThreatItem {
+  const item: ThreatItem = { id: generateId(ID_PREFIX.threat, existingIds), text: '', residual: 'not_assessed' };
+  if (level > 0) item.level = level;
+  return item;
+}
+
 export function createSoupDoc(name: string, title: string): SoupDoc {
   return { schemaVersion: SCHEMA_VERSION, type: 'soup', name, title, items: [] };
 }

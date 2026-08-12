@@ -14,9 +14,8 @@
  * requirements are now in question; deleting one names what would be left unresolved
  * (DD-8, DD-13).
  */
+import Markdown from './Markdown';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import CodeMirror from '@uiw/react-codemirror';
 import { markdown } from '@codemirror/lang-markdown';
 import {
@@ -55,32 +54,6 @@ interface DetailedDesignViewProps {
   readOnly?: boolean;
 }
 
-const Markdown: React.FC<{ md: string; diagrams?: Record<string, string> }> = ({ md, diagrams }) => (
-  <div className="markdown-body">
-    <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
-      components={{
-        img: ({ src, alt }) => {
-          const svg = src ? diagrams?.[src] : undefined;
-          if (svg) {
-            return (
-              <span
-                className="arch-diagram"
-                role="img"
-                aria-label={alt}
-                style={{ display: 'block', overflow: 'auto', margin: '10px 0' }}
-                dangerouslySetInnerHTML={{ __html: svg }}
-              />
-            );
-          }
-          return <span className="text-muted">[diagram: {src}]</span>;
-        },
-      }}
-    >
-      {md}
-    </ReactMarkdown>
-  </div>
-);
 
 /** Requirements referencing each section id — derived on read, never stored. */
 function referencesBySection(srsDoc: SrsDoc | null | undefined): Map<string, SrsItem[]> {

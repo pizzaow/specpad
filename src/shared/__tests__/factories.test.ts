@@ -25,7 +25,7 @@ describe('factories', () => {
   it('creates a schema-valid project doc with document refs', () => {
     const doc = createProjectDoc('AcmeApp', 'AcmeApp System');
     expect(validate(doc)).toEqual([]);
-    expect(doc.documents.map((d) => d.type)).toEqual(['prd', 'srs', 'vtp', 'sdd', 'risk', 'soup']);
+    expect(doc.documents.map((d) => d.type)).toEqual(['prd', 'srs', 'vtp', 'sdd', 'risk', 'soup', 'threat']);
   });
 
   it('creates srs items with unique r_ ids', () => {

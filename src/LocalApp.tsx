@@ -5,7 +5,7 @@
  * persisted directory handles so return visits reopen without re-picking.
  */
 import React, { useEffect, useRef, useState } from 'react';
-import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SoupDoc, ReleasesDoc, JobDoc, JobsDoc, RunRecord } from './shared';
+import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SoupDoc, ThreatDoc, ReleasesDoc, JobDoc, JobsDoc, RunRecord } from './shared';
 import {
   DocumentListItem,
   isFileSystemAccessSupported,
@@ -24,6 +24,7 @@ import {
   loadSdd,
   loadRisk,
   loadSoup,
+  loadThreat,
   loadRun,
   saveDocument,
   createNewDocument,
@@ -88,6 +89,8 @@ import ArchitectureView from './components/ArchitectureView';
 import DetailedDesignView from './components/DetailedDesignView';
 import RiskTable from './components/RiskTable';
 import SoupTable from './components/SoupTable';
+import ThreatTable from './components/ThreatTable';
+import SecurityView from './components/SecurityView';
 import ReleasesView from './components/ReleasesView';
 import AuditView from './components/AuditView';
 import TraceabilityView from './components/TraceabilityView';
@@ -98,7 +101,7 @@ import type { ThemeId } from './theme';
 import StatusBar from './components/StatusBar';
 import ViewTabs from './components/ViewTabs';
 
-type ViewMode = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'sdd' | 'risk' | 'soup' | 'releases' | 'audit' | 'trace';
+type ViewMode = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'sdd' | 'risk' | 'soup' | 'threat' | 'sec' | 'releases' | 'audit' | 'trace';
 type OpenResult = { name: string; documents: DocumentListItem[] };
 // Items of any id-keyed register document (srs/vtp/prd/…); a per-job diff is keyed by doc type,
 // so newly-registered register types are diffed without changing this code.
@@ -194,12 +197,16 @@ const LocalApp: React.FC = () => {
   const [sddDoc, setSddDoc] = useState<SddDoc | null>(null);
   const [riskDoc, setRiskDoc] = useState<RiskDoc | null>(null);
   const [soupDoc, setSoupDoc] = useState<SoupDoc | null>(null);
+  const [threatDoc, setThreatDoc] = useState<ThreatDoc | null>(null);
+  const [sec, setSec] = useState<string | null>(null);
   const [prdBaseline, setPrdBaseline] = useState<PrdDoc | null>(null);
   const [runRecord, setRunRecord] = useState<RunRecord | null>(null);
   const [dirtyPrd, setDirtyPrd] = useState(false);
   const [dirtySdd, setDirtySdd] = useState(false);
   const [dirtyRisk, setDirtyRisk] = useState(false);
   const [dirtySoup, setDirtySoup] = useState(false);
+  const [dirtyThreat, setDirtyThreat] = useState(false);
+  const [dirtySec, setDirtySec] = useState(false);
   const [currentView, setCurrentView] = useState<ViewMode>('overview');
   const [theme, setTheme] = useState<ThemeId>(readStoredTheme);
   const [loading, setLoading] = useState(false);
@@ -287,7 +294,7 @@ const LocalApp: React.FC = () => {
   // Live in-progress diff for each active open job: its `before` snapshot vs the working copy,
   // per register document type (srs/vtp/prd/…) — new types are picked up automatically.
   const activeDiffs = React.useMemo(() => {
-    const working: Record<string, SpecPadDoc | null> = { srs: srsDoc, vtp: vtpDoc, prd: prdDoc, sdd: sddDoc, risk: riskDoc, soup: soupDoc };
+    const working: Record<string, SpecPadDoc | null> = { srs: srsDoc, vtp: vtpDoc, prd: prdDoc, sdd: sddDoc, risk: riskDoc, soup: soupDoc, threat: threatDoc };
     const out: Record<string, JobDiff> = {};
     for (const [id, before] of Object.entries(activeBefore)) {
       const entry: JobDiff = {};
@@ -298,7 +305,7 @@ const LocalApp: React.FC = () => {
       if (Object.keys(entry).length) out[id] = entry;
     }
     return out;
-  }, [activeBefore, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, soupDoc]);
+  }, [activeBefore, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, soupDoc, threatDoc]);
 
   // Live in-progress architecture diff for active open jobs: before arch snapshot vs the working SAD/diagrams.
   const activeArch = React.useMemo(() => {
@@ -415,6 +422,7 @@ const LocalApp: React.FC = () => {
     setSad(sadText);
     setDsl(await loadProjectText(`${name}.workspace.dsl`));
     setSadGuide(await loadProjectText(`${name}.sad.guide.md`));
+    setSec(await loadProjectText(`${name}.sec.md`));
     setDiagrams(await loadDiagrams(sadText));
     setDirtySad(false);
     setDirtyDsl(false);
@@ -452,6 +460,7 @@ const LocalApp: React.FC = () => {
     const sdd = documents.find((d) => d.name === name && d.type === 'sdd');
     const rsk = documents.find((d) => d.name === name && d.type === 'risk');
     const spu = documents.find((d) => d.name === name && d.type === 'soup');
+    const thr = documents.find((d) => d.name === name && d.type === 'threat');
     setProjectDoc(proj ? await loadProject(name) : null);
     setSrsDoc(srs ? await loadDocument('srs', name) : null);
     setVtpDoc(vtp ? await loadDocument('vtp', name) : null);
@@ -459,6 +468,7 @@ const LocalApp: React.FC = () => {
     setSddDoc(sdd ? await loadSdd(name) : null);
     setRiskDoc(rsk ? await loadRisk(name) : null);
     setSoupDoc(spu ? await loadSoup(name) : null);
+    setThreatDoc(thr ? await loadThreat(name) : null);
     setSelectedDocName(name);
     await loadChangeTracking(name);
     setDirtySrs(false);
@@ -467,6 +477,8 @@ const LocalApp: React.FC = () => {
     setDirtySdd(false);
     setDirtyRisk(false);
     setDirtySoup(false);
+    setDirtyThreat(false);
+    setDirtySec(false);
   };
 
   // Variant used right after open(), before `documents` state has settled.
@@ -478,6 +490,7 @@ const LocalApp: React.FC = () => {
     const sdd = docs.find((d) => d.name === name && d.type === 'sdd');
     const rsk = docs.find((d) => d.name === name && d.type === 'risk');
     const spu = docs.find((d) => d.name === name && d.type === 'soup');
+    const thr = docs.find((d) => d.name === name && d.type === 'threat');
     setProjectDoc(proj ? await loadProject(name) : null);
     setSrsDoc(srs ? await loadDocument('srs', name) : null);
     setVtpDoc(vtp ? await loadDocument('vtp', name) : null);
@@ -485,6 +498,7 @@ const LocalApp: React.FC = () => {
     setSddDoc(sdd ? await loadSdd(name) : null);
     setRiskDoc(rsk ? await loadRisk(name) : null);
     setSoupDoc(spu ? await loadSoup(name) : null);
+    setThreatDoc(thr ? await loadThreat(name) : null);
     setSelectedDocName(name);
     await loadChangeTracking(name);
     setDirtySrs(false);
@@ -493,6 +507,8 @@ const LocalApp: React.FC = () => {
     setDirtySdd(false);
     setDirtyRisk(false);
     setDirtySoup(false);
+    setDirtyThreat(false);
+    setDirtySec(false);
   };
 
   // Apply a freshly-opened project: set state, auto-load a single/requested doc,
@@ -514,6 +530,8 @@ const LocalApp: React.FC = () => {
       setSddDoc(null);
       setRiskDoc(null);
       setSoupDoc(null);
+      setThreatDoc(null);
+      setSec(null);
       setPrdBaseline(null);
       setRunRecord(null);
       setDirtyPrd(false);
@@ -783,6 +801,7 @@ const LocalApp: React.FC = () => {
   const handleSddChange = (next: SddDoc) => { setSddDoc(next); setDirtySdd(true); };
   const handleRiskChange = (next: RiskDoc) => { setRiskDoc(next); setDirtyRisk(true); };
   const handleSoupChange = (next: SoupDoc) => { setSoupDoc(next); setDirtySoup(true); };
+  const handleThreatChange = (next: ThreatDoc) => { setThreatDoc(next); setDirtyThreat(true); };
 
   /**
    * May this session edit? One answer, used by every view (EDR-3).
@@ -793,7 +812,7 @@ const LocalApp: React.FC = () => {
    */
   const sessionReadOnly = !!serverSession && !serverSession.capabilities.write;
 
-  const persist = async (doc: SrsDoc | VtpDoc | PrdDoc | SddDoc | RiskDoc | SoupDoc) => {
+  const persist = async (doc: SrsDoc | VtpDoc | PrdDoc | SddDoc | RiskDoc | SoupDoc | ThreatDoc) => {
     // The demo has nowhere to write: hand the document back as a file instead, so the
     // sandbox has an exit and an edit is never silently lost.
     if (launch.demo) {
@@ -806,7 +825,7 @@ const LocalApp: React.FC = () => {
     else saveFileFallback(serializeDocument(doc), `${doc.name}.${doc.type}.json`);
   };
 
-  const dirty = dirtySrs || dirtyVtp || dirtyPrd || dirtySdd || dirtyRisk || dirtySoup || dirtyJobs || dirtySad || dirtyDsl;
+  const dirty = dirtySrs || dirtyVtp || dirtyPrd || dirtySdd || dirtyRisk || dirtySoup || dirtyThreat || dirtySec || dirtyJobs || dirtySad || dirtyDsl;
 
   // ---- Presence, resolved for display (CE-3) ----
 
@@ -847,6 +866,8 @@ const LocalApp: React.FC = () => {
       if (dirtySdd && sddDoc) { await persist(sddDoc); setDirtySdd(false); }
       if (dirtyRisk && riskDoc) { await persist(riskDoc); setDirtyRisk(false); }
       if (dirtySoup && soupDoc) { await persist(soupDoc); setDirtySoup(false); }
+      if (dirtyThreat && threatDoc) { await persist(threatDoc); setDirtyThreat(false); }
+      if (dirtySec && sec !== null) { await saveProjectText(`${selectedDocName || projectName}.sec.md`, sec); setDirtySec(false); }
       if (dirtyJobs && jobsDoc) { await saveJobs(name, jobsDoc); setDirtyJobs(false); }
       if (dirtySad && sad !== null) { await saveProjectText(`${name}.sad.md`, sad); setDirtySad(false); }
       if (dirtyDsl && dsl !== null) { await saveProjectText(`${name}.workspace.dsl`, dsl); setDirtyDsl(false); }
@@ -1014,7 +1035,7 @@ const LocalApp: React.FC = () => {
       {isDirectoryOpen && (
         <ViewTabs
           current={currentView}
-          enabled={{ overview: true, prd: !!prdDoc, srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl), sdd: !!sddDoc, risk: !!riskDoc, soup: !!soupDoc, releases: !!releases, audit: !!srsDoc, trace: !!srsDoc }}
+          enabled={{ overview: true, prd: !!prdDoc, srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl), sdd: !!sddDoc, risk: !!riskDoc, soup: !!soupDoc, threat: !!threatDoc, sec: sec !== null, releases: !!releases, audit: !!srsDoc, trace: !!srsDoc }}
           onSelect={setCurrentView}
         />
       )}
@@ -1093,6 +1114,28 @@ const LocalApp: React.FC = () => {
             readOnly={sessionReadOnly}
           />
         )}
+        {currentView === 'threat' && threatDoc && (
+          <ThreatTable
+            key={selectedDocName}
+            doc={threatDoc}
+            sddDoc={sddDoc}
+            soupDoc={soupDoc}
+            srsDoc={srsDoc}
+            vtpDoc={vtpDoc}
+            riskDoc={riskDoc}
+            run={runRecord}
+            onChange={handleThreatChange}
+            readOnly={sessionReadOnly}
+          />
+        )}
+        {currentView === 'sec' && isDirectoryOpen && (
+          <SecurityView
+            sec={sec}
+            diagrams={diagrams}
+            onChange={(v) => { setSec(v); setDirtySec(true); }}
+            readOnly={sessionReadOnly}
+          />
+        )}
         {currentView === 'jobs' && isDirectoryOpen && (
           <JobsView
             doc={jobsDoc}
@@ -1145,7 +1188,7 @@ const LocalApp: React.FC = () => {
         <StatusBar
           path={launch.demo ? 'demo (hosted copy of docs/specpad/)' : `docs/specpad/${projectName}`}
           srsDoc={srsDoc} vtpDoc={vtpDoc} projectDoc={projectDoc}
-          prdDoc={prdDoc} sddDoc={sddDoc} riskDoc={riskDoc} soupDoc={soupDoc} jobsDoc={jobsDoc} job={job}
+          prdDoc={prdDoc} sddDoc={sddDoc} riskDoc={riskDoc} soupDoc={soupDoc} threatDoc={threatDoc} jobsDoc={jobsDoc} job={job}
           demo={launch.demo}
         />
       )}

@@ -9,7 +9,7 @@
  * Sidecars (project index, releases, job marker, jobs register) are infrastructure,
  * not content documents, so they live outside this registry (see validate.ts).
  */
-import { srsSchema, vtpSchema, prdSchema, sddSchema, riskSchema, soupSchema } from './schema';
+import { srsSchema, vtpSchema, prdSchema, sddSchema, riskSchema, soupSchema, threatSchema } from './schema';
 
 // register: id-keyed JSON with an `items[]` array (diffable by the shared diffItems).
 // prose: tracked markdown/text (line-diffed). asset: binary-ish file (coarse, changed/yes-no).
@@ -48,6 +48,12 @@ export const DOC_TYPES: DocTypeSpec[] = [
   // identity of each dependency is derivable from the manifests, but every judgement
   // about it — what is required of it, what its anomalies mean here — is not.
   { type: 'soup', label: 'SOUP', kind: 'register', optional: true, inBaseline: true, generate: 'optional', schema: soupSchema as Record<string, unknown> },
+  // Threat model and security risk, one register (FDA; IEC 81001-5-1; AAMI SW96). Never
+  // generated: an attacker's intent is not derivable from source.
+  { type: 'threat', label: 'Threats', kind: 'register', optional: true, inBaseline: true, generate: 'never', schema: threatSchema as Record<string, unknown> },
+  // Security architecture: prose plus diagrams, like the arc42 document, holding the four
+  // views a submission is expected to contain.
+  { type: 'sec', label: 'Security', kind: 'prose', optional: true, inBaseline: true, generate: 'optional' },
 ];
 
 /** All id-keyed register types (srs, vtp, prd, …) — the diffable/redline-able docs. */

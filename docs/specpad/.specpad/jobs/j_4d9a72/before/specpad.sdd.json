@@ -309,16 +309,15 @@
     {
       "id": "d_tbl001",
       "code": "SDD-40",
-      "title": "Register tables — SRS, VTP, PRD, Risk, SOUP, Threats",
+      "title": "Register tables — SRS, VTP, PRD, Risk, SOUP",
       "source": [
         "src/components/SRSTable.tsx",
         "src/components/VTPTable.tsx",
         "src/components/PrdTable.tsx",
         "src/components/RiskTable.tsx",
-        "src/components/SoupTable.tsx",
-        "src/components/ThreatTable.tsx"
+        "src/components/SoupTable.tsx"
       ],
-      "body": "Inline editing for an id-keyed register: click a cell to edit, row menu for structure, expandable\nreference cells, redline decoration, presence markers.\n\nSix tables rather than one generic component. Each register has a different set of columns that\nmatter, and the abstraction covering all three was worse than the duplication.\n\nExpanding a requirement row shows its whole trace — satisfies, design, verifies — with the first two edited through `RefPicker`. The edges are stored on the item the row shows.\n\nWith `readOnly`, no row menu renders, no cell opens for editing, and the pickers offer no controls.\n\nThe risk table adds a derived **Controlled** column: a control is a requirement, so whether the\ncontrol works is the state of that requirement's tests in the run. A risk recorded as acceptable whose\ncontrol test failed reads as failing — the recorded judgement does not override the evidence.\n\nThe SOUP table is display-first: identity on the row, the assessment beneath it as prose, and a click\nopens the whole record as a form rather than one cell. Release date and source URL are shown only\nwhile editing. The row carries the end-of-life date and marks one that has passed — a component whose\nsupplier has stopped is invisible in prose and is what the register exists to surface.\n\nThe threat table puts exploitability where a probability would sit and derives its Controlled column\nfrom the same evidence the risk table uses — a control is a requirement in both registers."
+      "body": "Inline editing for an id-keyed register: click a cell to edit, row menu for structure, expandable\nreference cells, redline decoration, presence markers.\n\nFive tables rather than one generic component. Each register has a different set of columns that\nmatter, and the abstraction covering all three was worse than the duplication.\n\nExpanding a requirement row shows its whole trace — satisfies, design, verifies — with the first two edited through `RefPicker`. The edges are stored on the item the row shows.\n\nWith `readOnly`, no row menu renders, no cell opens for editing, and the pickers offer no controls.\n\nThe risk table adds a derived **Controlled** column: a control is a requirement, so whether the\ncontrol works is the state of that requirement's tests in the run. A risk recorded as acceptable whose\ncontrol test failed reads as failing — the recorded judgement does not override the evidence.\n\nThe SOUP table is display-first: identity on the row, the assessment beneath it as prose, and a click\nopens the whole record as a form rather than one cell. Release date and source URL are shown only\nwhile editing. The row carries the end-of-life date and marks one that has passed — a component whose\nsupplier has stopped is invisible in prose and is what the register exists to surface."
     },
     {
       "id": "d_rfp001",
@@ -341,13 +340,11 @@
     {
       "id": "d_arv001",
       "code": "SDD-42",
-      "title": "ArchitectureView and SecurityView — prose documents",
+      "title": "ArchitectureView — authoring and display",
       "source": [
-        "src/components/ArchitectureView.tsx",
-        "src/components/SecurityView.tsx",
-        "src/components/Markdown.tsx"
+        "src/components/ArchitectureView.tsx"
       ],
-      "body": "Edit and Display sub-views for the arc42 markdown. Display renders with react-markdown, resolving each\n`![alt](name.svg)` from the loaded diagram map. Edit is a CodeMirror markdown editor. Diagrams are\nauthored externally in draw.io.\n\nAn unresolvable diagram reference renders as missing and does not abort opening the project.\n\nThe security architecture document gets the same treatment in `SecurityView`. Both, and the\ndetailed-design view, render through one `Markdown` component: the markdown declares where diagrams\ngo, an unresolvable reference is named rather than dropped, and there is one implementation of that\nrather than three."
+      "body": "Edit and Display sub-views for the arc42 markdown. Display renders with react-markdown, resolving each\n`![alt](name.svg)` from the loaded diagram map. Edit is a CodeMirror markdown editor. Diagrams are\nauthored externally in draw.io.\n\nAn unresolvable diagram reference renders as missing and does not abort opening the project."
     },
     {
       "id": "d_jbv001",

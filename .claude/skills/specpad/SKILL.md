@@ -46,6 +46,9 @@ into the SRS/VTP **spec-first**, attributed to a job, alongside the code. For ea
    - **Software risk** — when the job adds or changes a way the software could contribute to harm, or
      changes a unit or requirement a risk names. A control measure is a requirement, so adding a
      control means adding a requirement.
+   - **Cybersecurity** — when the job adds an interface, a trust boundary, or a component on the
+     perimeter. A new entry point without STRIDE walked across it is how a threat model goes stale
+     while looking complete.
    - **SOUP** — when the job adds, removes or **upgrades** a third-party dependency. An upgrade moves
      the support window, so revisit the end-of-life date as well as the version.
    - **Any other registered pillar** (SOUP, cybersecurity, SDD, …) — same question, same rule.
@@ -81,6 +84,7 @@ them here; read the one you need when you reach that step:
 - Detailed design (SDD) → `guides/detailed-design.md`
 - Software risk → `guides/risk.md`
 - SOUP / off-the-shelf software → `guides/soup.md`
+- Threat model and security architecture → `guides/security.md`
 
 ## Files and naming
 
@@ -95,6 +99,10 @@ them here; read the one you need when you reach that step:
   hazardous situations software can contribute to, their causes and controls (see Software risk below)
 - `docs/specpad/<name>.soup.json` — optional SOUP / off-the-shelf software register: the third-party
   software the product depends on, assessed (see SOUP below)
+- `docs/specpad/<name>.threat.json` — optional threat model and security risk analysis, one register
+  (see Cybersecurity below)
+- `docs/specpad/<name>.sec.md` — optional security architecture document: the four views a submission
+  is expected to contain
 - `docs/specpad/<name>.sad.md` — optional architecture document (arc42 skeleton, markdown)
 - `docs/specpad/<name>.<diagram>.svg` — optional diagrams (draw.io SVG exports) the SAD references inline
 - `docs/specpad/<name>.workspace.dsl` — optional C4 model (Structurizr DSL — an alternative to draw.io)
@@ -272,6 +280,9 @@ product-requirements register; same item shape as the SRS.)
 SDD section — REQUIRED `id`, `title`. Optional `code`, `body` (markdown), `source`, `kind`
 (`unit` | `view`, default `unit`), `tags`, `heading`, `level`. (The detailed design; sections are
 prose, not fields — see below.)
+Threat item — REQUIRED `id`, `text`. Optional `code`, `asset`, `entryPoint`, `category` (STRIDE),
+`exploitability`, `impact`, `causes`, `controls`, `justification`, `safetyRisk`, `residual`, `notes`,
+`tags`, `heading`, `level`.
 SOUP item — REQUIRED `id`, `name`. Optional `code`, `vendor`, `version`, `releaseDate`, `license`,
 `url`, `purpose`, `requirements`, `runtime`, `limitations`, `endOfLife`, `endOfLifeSource`,
 `usedBy`, `tests`, `maintenance`, `notes`, `tags`, `heading`, `level`.
@@ -386,6 +397,31 @@ software it depends on, assessed. Read `guides/soup.md` before authoring one.
   manifests; this is the assessed subset. Do not let one stand in for the other.
 - **Opt-in governance:** when a SOUP register is present, `soup-identity`, `soup-requirements`,
   `soup-anomalies` and `soup-referential-integrity` apply.
+
+## Cybersecurity (threat model and security architecture) — optional
+
+A project may add an optional **threat model** (`<name>.threat.json`, `type: "threat"`) and a
+**security architecture document** (`<name>.sec.md`). Read `guides/security.md` before authoring
+either. Current regime: FDA *Cybersecurity in Medical Devices* (June 2025, which supersedes the
+September 2023 guidance and adds the §524B obligations), IEC 81001-5-1, and AAMI SW96/TIR57.
+
+- **One register, not two.** The threat model and the security risk analysis are the same document:
+  identifying a threat and assessing it are one act.
+- **Exploitability, not probability.** A safety risk drops probability because software fails
+  deterministically; a security risk drops it because an attacker chooses when to act. Rate
+  exploitability from the attacker's side — rating it low *because* of a control double-counts the
+  control.
+- **STRIDE is a coverage prompt**, not a label. Walk all six categories across each entry point; a
+  category with no threat is a question worth answering once.
+- **A control is a requirement**, as in the safety risk register, so verification comes from the trace.
+- **`safetyRisk` links a threat to the harm it would cause.** That join is why security risk sits
+  beside safety risk rather than inside it: a security finding with a patient consequence belongs in
+  both files.
+- **Four architecture views**, all of which a submission is expected to contain: global system,
+  multi-patient harm, updateability and patchability, security use cases. Where they and the
+  architecture document describe the same structure, the architecture document is the source.
+- **Opt-in governance:** when a threat model is present, `threat-referential-integrity`,
+  `threat-assessed` and `threat-controlled` apply.
 
 ## Hierarchy (sections and sub-requirements)
 
@@ -670,7 +706,15 @@ declaring a task done:
 - `soup-requirements`: When a SOUP register is present, every component states the functional and
   performance requirements placed on it (5.3.3).
 - `soup-referential-integrity`: When a SOUP register is present, every `usedBy` entry resolves to a
-  design section and every `tests` entry to a test. With no SOUP register, none of the four applies.
+  design section and every `tests` entry to a test. With no SOUP register, none of the three applies.
+- `threat-referential-integrity`: When a threat model is present, every `causes` entry resolves to a
+  design unit or a component, every `controls` entry to a requirement, and every `safetyRisk` entry to
+  a risk.
+- `threat-assessed`: When a threat model is present, every non-heading threat records an exploitability
+  and an impact.
+- `threat-controlled`: When a threat model is present, every non-heading threat references at least one
+  controlling requirement or records why none is needed. With no threat model, none of the three
+  applies.
 
 Also confirm structural validity: required fields present, `result` within its enum,
 `schemaVersion` is "1.0".

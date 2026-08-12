@@ -8,9 +8,8 @@
  *    C4 source if the project uses one). Diagrams are authored externally (draw.io).
  * The web tool is a pseudo-render; formal Word output comes from the skill export.
  */
+import Markdown from './Markdown';
 import React, { useState } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import CodeMirror from '@uiw/react-codemirror';
 import { markdown } from '@codemirror/lang-markdown';
 
@@ -24,28 +23,6 @@ interface ArchitectureViewProps {
   readOnly?: boolean;
 }
 
-const Markdown: React.FC<{ md: string; diagrams?: Record<string, string> }> = ({ md, diagrams }) => (
-  <div className="markdown-body">
-    <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
-      components={{
-        img: ({ src, alt }) => {
-          const svg = src ? diagrams?.[src] : undefined;
-          if (svg) {
-            return (
-              <span className="arch-diagram" role="img" aria-label={alt}
-                style={{ display: 'block', overflow: 'auto', margin: '10px 0' }}
-                dangerouslySetInnerHTML={{ __html: svg }} />
-            );
-          }
-          return <span className="text-muted">[diagram: {src}]</span>;
-        },
-      }}
-    >
-      {md}
-    </ReactMarkdown>
-  </div>
-);
 
 const ArchitectureView: React.FC<ArchitectureViewProps> = ({
   sad, dsl, guide, diagrams, onChangeSad, onChangeDsl, readOnly,

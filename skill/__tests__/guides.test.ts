@@ -20,6 +20,7 @@ describe('on-demand authoring guides', () => {
         'detailed-design.md',
         'risk.md',
         'soup.md',
+        'security.md',
       ]),
     );
   });

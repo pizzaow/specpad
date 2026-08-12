@@ -3,11 +3,11 @@
 
 export const SCHEMA_VERSION = '1.0' as const;
 export type SchemaVersion = typeof SCHEMA_VERSION;
-export type DocType = 'project' | 'srs' | 'vtp' | 'prd' | 'sdd' | 'risk' | 'soup';
+export type DocType = 'project' | 'srs' | 'vtp' | 'prd' | 'sdd' | 'risk' | 'soup' | 'threat';
 export type TestResult = '' | 'not_tested' | 'passed' | 'failed';
 
 export interface ProjectDocRef {
-  type: 'srs' | 'vtp' | 'prd' | 'sdd' | 'risk' | 'soup';
+  type: 'srs' | 'vtp' | 'prd' | 'sdd' | 'risk' | 'soup' | 'threat';
   path: string;
   title: string;
 }
@@ -243,6 +243,69 @@ export interface SoupItem {
   tags?: string[];
 }
 
+/**
+ * One threat against the product (FDA cybersecurity guidance, June 2025; IEC 81001-5-1;
+ * AAMI SW96/TIR57).
+ *
+ * The threat model and the security risk analysis are one register, because assessing a
+ * threat and identifying it are the same act.
+ *
+ * Assessed on **exploitability**, not probability. Safety risk drops probability because
+ * software fails deterministically; security risk replaces it because an attacker
+ * chooses when to act, and a defence is worth what it costs to defeat.
+ *
+ * Where exploiting a threat could harm someone, `safetyRisk` names the risk it creates.
+ * That join is what AAMI SW96 exists to make: a security finding with a patient
+ * consequence belongs in the safety risk file as well as here.
+ */
+export interface ThreatItem {
+  id: string;
+  code?: string;
+  heading?: boolean;
+  level?: number;
+  /** The threat: what an attacker does, and what it gets them. */
+  text: string;
+  /** What is being attacked — the data, function or property at stake. */
+  asset?: string;
+  /** Where the attack enters: the interface or trust boundary it crosses. */
+  entryPoint?: string;
+  category?: ThreatCategory;
+  exploitability?: Exploitability;
+  /** Severity of the consequence if the threat is realised. */
+  impact?: RiskSeverity;
+  /** Ids of the design units or components that present this attack surface. */
+  causes?: string[];
+  /** SRS requirement ids implementing the security controls. */
+  controls?: string[];
+  /** Why no software control is needed, when there is none. */
+  justification?: string;
+  /** Risk item ids for the safety risk that exploiting this threat would create. */
+  safetyRisk?: string[];
+  residual?: ResidualRisk;
+  notes?: string;
+  tags?: string[];
+}
+
+/** STRIDE, the categorisation threat modelling has settled on. */
+export type ThreatCategory =
+  | 'spoofing'
+  | 'tampering'
+  | 'repudiation'
+  | 'information_disclosure'
+  | 'denial_of_service'
+  | 'elevation_of_privilege';
+
+/** How readily the threat can be realised — access needed, skill, and opportunity. */
+export type Exploitability = 'high' | 'medium' | 'low';
+
+export interface ThreatDoc {
+  schemaVersion: SchemaVersion;
+  type: 'threat';
+  name: string;
+  title: string;
+  items: ThreatItem[];
+}
+
 export interface SoupDoc {
   schemaVersion: SchemaVersion;
   type: 'soup';
@@ -259,7 +322,7 @@ export interface SddDoc {
   items: SddSection[];
 }
 
-export type SpecPadDoc = ProjectDoc | SrsDoc | VtpDoc | PrdDoc | SddDoc | RiskDoc | SoupDoc;
+export type SpecPadDoc = ProjectDoc | SrsDoc | VtpDoc | PrdDoc | SddDoc | RiskDoc | SoupDoc | ThreatDoc;
 
 const stringArray = { type: 'array', items: { type: 'string' } } as const;
 
@@ -282,7 +345,7 @@ export const projectSchema = {
         type: 'object',
         required: ['type', 'path', 'title'],
         properties: {
-          type: { enum: ['srs', 'vtp', 'prd', 'sdd', 'risk', 'soup'], description: 'Which kind of document this entry points at: "srs", "vtp", "prd", "sdd", "risk", or "soup".' },
+          type: { enum: ['srs', 'vtp', 'prd', 'sdd', 'risk', 'soup', 'threat'], description: 'Which kind of document this entry points at: "srs", "vtp", "prd", "sdd", "risk", "soup", or "threat".' },
           path: { type: 'string', description: 'Path of the document file, relative to the project index.' },
           title: { type: 'string', description: 'Display title for the document.' },
         },
@@ -498,6 +561,45 @@ export const soupSchema = {
           tests: { ...stringArray, description: "Ids of the VTP items exercising this component, where its behaviour is verified directly (FDA testing)." },
           maintenance: { type: 'string', description: "The supplier's development and support practices, and the plan for when support ends — obsolescence contingency (FDA, Enhanced documentation level)." },
           notes: { type: 'string', description: 'Free-text assessment notes.' },
+          tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
+        },
+      },
+    },
+  },
+} as const;
+
+export const threatSchema = {
+  $id: 'specpad/v1/threat',
+  type: 'object',
+  required: ['schemaVersion', 'type', 'name', 'title', 'items'],
+  properties: {
+    schemaVersion: { const: '1.0', description: 'Contract version of this file; "1.0" documents open in the pinned editor build at /v01/.' },
+    type: { const: 'threat', description: 'Document discriminator; selects the schema this file is validated against.' },
+    name: { type: 'string', description: 'Short system name; also the filename stem ([name].threat.json).' },
+    title: { type: 'string', description: 'Human-readable document title.' },
+    items: {
+      type: 'array',
+      description: 'The threat model and security risk analysis, which are one register: assessing a threat and identifying it are the same act (FDA cybersecurity guidance; IEC 81001-5-1; AAMI SW96).',
+      items: {
+        type: 'object',
+        required: ['id', 'text'],
+        properties: {
+          id: { type: 'string', minLength: 1, description: 'Stable machine identifier, generated once and never changed.' },
+          code: { type: 'string', description: 'Human-facing label (e.g. "THR-4"); freely renameable because references never use it.' },
+          text: { type: 'string', description: 'The threat: what an attacker does, and what it gets them.' },
+          heading: { type: 'boolean', description: 'True when this item is a section heading rather than a threat.' },
+          level: { type: 'integer', minimum: 0, description: 'Indent depth for hierarchy; absent means 0.' },
+          asset: { type: 'string', description: 'What is being attacked — the data, function or property at stake.' },
+          entryPoint: { type: 'string', description: 'Where the attack enters: the interface or trust boundary it crosses.' },
+          category: { enum: ['spoofing', 'tampering', 'repudiation', 'information_disclosure', 'denial_of_service', 'elevation_of_privilege'], description: 'STRIDE category, the classification threat modelling has settled on. Its value is coverage: an entry point with no threat in a category is a prompt to ask why.' },
+          exploitability: { enum: ['high', 'medium', 'low'], description: 'How readily the threat can be realised — the access required, the skill, and the opportunity. Exploitability rather than probability: an attacker chooses when to act, so a frequency estimate is meaningless, and a defence is worth what it costs to defeat.' },
+          impact: { enum: ['negligible', 'minor', 'serious', 'critical', 'catastrophic'], description: 'Severity of the consequence if the threat is realised, on the same scale as safety severity so the two analyses can be read together.' },
+          causes: { ...stringArray, description: 'Ids of the design units or third-party components presenting this attack surface. Ids, never codes.' },
+          controls: { ...stringArray, description: 'Ids of the SRS requirements implementing the security controls. A control is a requirement, so its verifying tests are the evidence it works — the same mechanism the safety risk register uses.' },
+          justification: { type: 'string', description: 'Why no software control is needed, when there is none — for example a threat accepted, or controlled by the deployment environment.' },
+          safetyRisk: { ...stringArray, description: 'Ids of the risk items for the safety risk that exploiting this threat would create. This join is the point of AAMI SW96: a security finding with a patient consequence belongs in the safety risk file as well as here.' },
+          residual: { enum: ['acceptable', 'unacceptable', 'not_assessed'], description: 'The judgement recorded once the controls are in place. Absent is treated as not assessed.' },
+          notes: { type: 'string', description: 'Free-text analysis notes.' },
           tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
         },
       },

@@ -34,11 +34,6 @@
       "type": "soup",
       "path": "specpad.soup.json",
       "title": "SOUP"
-    },
-    {
-      "type": "threat",
-      "path": "specpad.threat.json",
-      "title": "Threats"
     }
   ]
 }

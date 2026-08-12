@@ -4,7 +4,7 @@
  * Runs the same shared validate/checkGovernance the skill uses, so they agree.
  */
 import React, { useMemo, useState } from 'react';
-import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SoupDoc, JobsDoc, JobDoc } from '../shared';
+import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SoupDoc, ThreatDoc, JobsDoc, JobDoc } from '../shared';
 import { validate, checkGovernance } from '../shared';
 
 interface StatusBarProps {
@@ -16,21 +16,22 @@ interface StatusBarProps {
   sddDoc?: SddDoc | null;
   riskDoc?: RiskDoc | null;
   soupDoc?: SoupDoc | null;
+  threatDoc?: ThreatDoc | null;
   jobsDoc?: JobsDoc | null;
   job?: JobDoc | null;
   demo?: boolean;
 }
 
-const StatusBar: React.FC<StatusBarProps> = ({ path, srsDoc, vtpDoc, projectDoc, prdDoc, sddDoc, riskDoc, soupDoc, jobsDoc, job, demo }) => {
+const StatusBar: React.FC<StatusBarProps> = ({ path, srsDoc, vtpDoc, projectDoc, prdDoc, sddDoc, riskDoc, soupDoc, threatDoc, jobsDoc, job, demo }) => {
   const [open, setOpen] = useState(false);
 
   const structural = useMemo(
-    () => [projectDoc, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, soupDoc, jobsDoc].filter(Boolean).flatMap((d) => validate(d).map((e) => e.message)),
-    [projectDoc, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, soupDoc, jobsDoc],
+    () => [projectDoc, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, soupDoc, threatDoc, jobsDoc].filter(Boolean).flatMap((d) => validate(d).map((e) => e.message)),
+    [projectDoc, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, soupDoc, threatDoc, jobsDoc],
   );
   const governance = useMemo(
-    () => checkGovernance({ project: projectDoc, srs: srsDoc, vtp: vtpDoc, prd: prdDoc, sdd: sddDoc, risk: riskDoc, soup: soupDoc, jobs: jobsDoc, job }).map((v) => v.message),
-    [projectDoc, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, soupDoc, jobsDoc, job],
+    () => checkGovernance({ project: projectDoc, srs: srsDoc, vtp: vtpDoc, prd: prdDoc, sdd: sddDoc, risk: riskDoc, soup: soupDoc, threat: threatDoc, jobs: jobsDoc, job }).map((v) => v.message),
+    [projectDoc, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, soupDoc, threatDoc, jobsDoc, job],
   );
 
   const errors = structural.length;

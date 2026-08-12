@@ -6,7 +6,7 @@ export type Rng = () => number;
 const defaultRng: Rng = () => Math.random();
 
 /** Prefixes by row kind: requirement, test, heading, job, product requirement. */
-export const ID_PREFIX = { requirement: 'r', test: 't', heading: 'h', job: 'j', product: 'p', design: 'd', risk: 'k', soup: 's' } as const;
+export const ID_PREFIX = { requirement: 'r', test: 't', heading: 'h', job: 'j', product: 'p', design: 'd', risk: 'k', soup: 's', threat: 'x' } as const;
 
 export function generateId(
   prefix: string,

@@ -139,7 +139,8 @@ describe('checkGovernance', () => {
       'prd-referential-integrity', 'referential-integrity', 'risk-cause',
       'risk-controlled', 'risk-referential-integrity', 'sdd-coverage',
       'sdd-referential-integrity', 'soup-identity',
-      'soup-referential-integrity', 'soup-requirements',
+      'soup-referential-integrity', 'soup-requirements', 'threat-assessed',
+      'threat-controlled', 'threat-referential-integrity',
       'traceability',
     ]);
   });

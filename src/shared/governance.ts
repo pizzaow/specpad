@@ -1,4 +1,4 @@
-import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SoupDoc, JobsDoc, JobDoc } from './schema';
+import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SoupDoc, ThreatDoc, JobsDoc, JobDoc } from './schema';
 
 export type GovernanceRuleId =
   | 'traceability'
@@ -15,7 +15,10 @@ export type GovernanceRuleId =
   | 'risk-controlled'
   | 'soup-identity'
   | 'soup-requirements'
-  | 'soup-referential-integrity';
+  | 'soup-referential-integrity'
+  | 'threat-referential-integrity'
+  | 'threat-assessed'
+  | 'threat-controlled';
 
 /** Normalize the active-job marker to a list, tolerating the legacy single `job`. */
 export function activeJobIds(job: JobDoc | null | undefined): string[] {
@@ -122,6 +125,24 @@ export const GOVERNANCE_RULES: GovernanceRule[] = [
     description:
       'When a SOUP register is present, every `usedBy` entry must resolve to an SDD section and every `tests` entry to a VTP item.',
   },
+  {
+    id: 'threat-referential-integrity',
+    title: 'Threat references resolve',
+    description:
+      'When a threat model is present, every `causes` entry must resolve to a design unit or a component, every `controls` entry to a requirement, and every `safetyRisk` entry to a risk.',
+  },
+  {
+    id: 'threat-assessed',
+    title: 'Every threat is assessed',
+    description:
+      'When a threat model is present, every non-heading threat must record an exploitability and an impact. A threat neither of which is stated has been identified but not analysed.',
+  },
+  {
+    id: 'threat-controlled',
+    title: 'Every threat is controlled or accepted',
+    description:
+      'When a threat model is present, every non-heading threat must reference at least one controlling requirement, or record why none is needed — for example a threat accepted, or controlled by the deployment environment.',
+  },
 ];
 
 export interface ProjectBundle {
@@ -132,6 +153,7 @@ export interface ProjectBundle {
   sdd?: SddDoc | null;
   risk?: RiskDoc | null;
   soup?: SoupDoc | null;
+  threat?: ThreatDoc | null;
   jobs?: JobsDoc | null;
   job?: JobDoc | null;
 }
@@ -356,6 +378,68 @@ export function checkGovernance(bundle: ProjectBundle): GovernanceViolation[] {
             message: `Component ${label} names test "${ref}", which is not a known test id.`,
           });
         }
+      }
+    }
+  }
+
+  // threat-*: only when a threat model is present (opt-in), as with the other pillars.
+  //
+  // Exploitability replaces probability, so `threat-assessed` asks for it rather than a
+  // likelihood: an attacker chooses when to act, and a defence is worth what it costs to
+  // defeat.
+  if (bundle.threat) {
+    const attackSurface = new Set([
+      ...(bundle.sdd?.items ?? []).filter((s) => !s.heading && (s.kind ?? 'unit') === 'unit').map((s) => s.id),
+      ...(bundle.soup?.items ?? []).filter((c) => !c.heading).map((c) => c.id),
+    ]);
+    const srsIds3 = new Set(srsItems.map((i) => i.id));
+    const riskIds = new Set((bundle.risk?.items ?? []).filter((r) => !r.heading).map((r) => r.id));
+
+    for (const threat of bundle.threat.items ?? []) {
+      if (threat.heading) continue;
+      const label = threat.code || threat.id;
+
+      for (const ref of threat.causes ?? []) {
+        if (!attackSurface.has(ref)) {
+          violations.push({
+            rule: 'threat-referential-integrity',
+            itemId: threat.id,
+            message: `Threat ${label} names attack surface "${ref}", which is neither a software unit nor a component.`,
+          });
+        }
+      }
+      for (const ref of threat.controls ?? []) {
+        if (!srsIds3.has(ref)) {
+          violations.push({
+            rule: 'threat-referential-integrity',
+            itemId: threat.id,
+            message: `Threat ${label} names control "${ref}", which is not a known requirement id.`,
+          });
+        }
+      }
+      for (const ref of threat.safetyRisk ?? []) {
+        if (!riskIds.has(ref)) {
+          violations.push({
+            rule: 'threat-referential-integrity',
+            itemId: threat.id,
+            message: `Threat ${label} names safety risk "${ref}", which is not a known risk id.`,
+          });
+        }
+      }
+
+      if (!threat.exploitability || !threat.impact) {
+        violations.push({
+          rule: 'threat-assessed',
+          itemId: threat.id,
+          message: `Threat ${label} does not record both an exploitability and an impact.`,
+        });
+      }
+      if ((threat.controls ?? []).length === 0 && !(threat.justification ?? '').trim()) {
+        violations.push({
+          rule: 'threat-controlled',
+          itemId: threat.id,
+          message: `Threat ${label} has no controlling requirement and no justification for having none.`,
+        });
       }
     }
   }

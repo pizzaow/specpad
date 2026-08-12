@@ -1,0 +1,216 @@
+{
+  "schemaVersion": "1.0",
+  "type": "threat",
+  "name": "specpad",
+  "title": "Threats",
+  "items": [
+    {
+      "id": "h_th00",
+      "text": "Identity and access",
+      "heading": true
+    },
+    {
+      "id": "x_a1b2c3",
+      "code": "THR-1",
+      "category": "spoofing",
+      "exploitability": "low",
+      "impact": "serious",
+      "residual": "acceptable",
+      "text": "An attacker reaches the server directly and asserts an identity header, publishing specification changes as somebody else.",
+      "asset": "The authenticated identity, and therefore the authorship of every commit.",
+      "entryPoint": "The HTTP API, bypassing the authenticating proxy.",
+      "causes": [
+        "d_ath001",
+        "d_sap001"
+      ],
+      "controls": [
+        "r_ax2",
+        "r_ax5"
+      ],
+      "safetyRisk": [
+        "k_e1f2a3"
+      ],
+      "notes": "Headers are believed only from a configured trusted peer, and a deployment that names none refuses to start. The residual risk is a network misconfiguration placing the server where an untrusted client can reach it, which is a deployment concern the documentation covers rather than a control the software can apply."
+    },
+    {
+      "id": "x_b2c3d4",
+      "code": "THR-2",
+      "category": "elevation_of_privilege",
+      "exploitability": "low",
+      "impact": "serious",
+      "residual": "acceptable",
+      "text": "A signed-in user with a read-only role edits the specification anyway, by calling the API directly rather than through the editor.",
+      "asset": "The integrity of the specification, and the meaning of a role.",
+      "entryPoint": "The HTTP API write endpoints.",
+      "causes": [
+        "d_sap001",
+        "d_ath001"
+      ],
+      "controls": [
+        "r_ax5",
+        "r_rx3",
+        "r_ro1"
+      ],
+      "safetyRisk": [
+        "k_d0e1f2"
+      ],
+      "notes": "The editor's read-only rendering is a courtesy; refusal is server-side and does not depend on what the client displayed."
+    },
+    {
+      "id": "x_c3d4e5",
+      "code": "THR-3",
+      "category": "elevation_of_privilege",
+      "exploitability": "medium",
+      "impact": "critical",
+      "residual": "acceptable",
+      "text": "A user of one project reads or writes another project on the same server, by naming it in the request path.",
+      "asset": "Another project's specification, on a deployment shared between teams.",
+      "entryPoint": "The project segment of the API path.",
+      "causes": [
+        "d_rot001",
+        "d_ath001",
+        "d_rpo001"
+      ],
+      "controls": [
+        "r_mp4",
+        "r_mp5",
+        "r_mp6"
+      ],
+      "notes": "Authorization is resolved per project rather than per deployment, and each project holds its own worktree directory, so cross-project access is refused rather than filtered. Exploitability is medium rather than low because the path is the obvious thing to tamper with once multi-project hosting is known."
+    },
+    {
+      "id": "h_th10",
+      "text": "The repository the server can write to",
+      "heading": true
+    },
+    {
+      "id": "x_d4e5f6",
+      "code": "THR-4",
+      "category": "tampering",
+      "exploitability": "medium",
+      "impact": "critical",
+      "residual": "acceptable",
+      "text": "A crafted path escapes the allowlisted directory, letting a request read or write application source in a repository the server holds push credentials for.",
+      "asset": "The whole repository, not merely the specification: the server can push.",
+      "entryPoint": "Every API operation that takes a document path.",
+      "causes": [
+        "d_pth001",
+        "d_rpo001"
+      ],
+      "controls": [
+        "r_sv2",
+        "r_sv3"
+      ],
+      "safetyRisk": [
+        "k_c9d0e1"
+      ],
+      "notes": "Two independent defences, which is the point: the path grammar refuses traversal outright, and sparse-checkout means the working tree cannot contain application source for a path bug to reach. Defence in depth here is deliberate — a single control on the highest-impact threat is not enough."
+    },
+    {
+      "id": "x_e5f6a7",
+      "code": "THR-5",
+      "category": "tampering",
+      "exploitability": "low",
+      "impact": "serious",
+      "residual": "acceptable",
+      "text": "A malicious document body is committed and later rendered in another user's browser, executing script in their session.",
+      "asset": "Another reader's browser session, and through it their access to the editor.",
+      "entryPoint": "Any markdown body — an architecture document, a design section — rendered by the editor.",
+      "causes": [
+        "d_arv001",
+        "d_ddv001"
+      ],
+      "controls": [
+        "r_sa003"
+      ],
+      "justification": "",
+      "notes": "The renderer does not emit raw HTML and no raw-HTML plugin is configured, so document content cannot become markup. This is a property of a component rather than of code written here, which is why the component carries it as a requirement placed on the supplier."
+    },
+    {
+      "id": "x_f6a7b8",
+      "code": "THR-6",
+      "category": "repudiation",
+      "exploitability": "low",
+      "impact": "minor",
+      "residual": "acceptable",
+      "text": "A change is published in a way that does not identify who made it, so the specification history cannot be relied on.",
+      "asset": "The audit trail — the property that makes git the evidence store.",
+      "entryPoint": "The commit pipeline.",
+      "causes": [
+        "d_wcp001",
+        "d_ath001"
+      ],
+      "controls": [
+        "r_ax6",
+        "r_cm5"
+      ],
+      "safetyRisk": [
+        "k_e1f2a3"
+      ],
+      "notes": "The authenticated user is the commit author; the machine credential only pushes. Nothing is force-pushed and no history is rewritten, so a published change cannot be quietly removed either."
+    },
+    {
+      "id": "h_th20",
+      "text": "Supply and availability",
+      "heading": true
+    },
+    {
+      "id": "x_a7b8c9",
+      "code": "THR-7",
+      "category": "tampering",
+      "exploitability": "medium",
+      "impact": "serious",
+      "residual": "not_assessed",
+      "text": "A dependency is compromised upstream and ships code into the editor build that reads or alters specification content.",
+      "asset": "Everything the editor can reach, including a connected server session.",
+      "entryPoint": "The dependency supply chain, at install time.",
+      "causes": [
+        "s_react1",
+        "s_rmd",
+        "s_cm",
+        "s_ajv"
+      ],
+      "justification": "Not controlled in software today. The lockfile pins exact versions and the assessed set is small, but nothing here verifies provenance, and integrity checking of the supply chain belongs with the bill of materials and its monitoring rather than with this analysis. Recorded as not assessed rather than accepted, because the position has not been decided.",
+      "notes": "The honest entry in this model: the threat is real, the control is absent, and saying so is more useful than a control invented to close the row."
+    },
+    {
+      "id": "x_b8c9d0",
+      "code": "THR-8",
+      "category": "denial_of_service",
+      "exploitability": "medium",
+      "impact": "minor",
+      "residual": "acceptable",
+      "text": "A user exhausts the server's disk by accumulating working copies, or by committing very large documents, preventing others from working.",
+      "asset": "Availability of the server to other users.",
+      "entryPoint": "Session provisioning and the write endpoints.",
+      "causes": [
+        "d_rpo001",
+        "d_sap001"
+      ],
+      "controls": [
+        "r_wc1",
+        "r_wc2"
+      ],
+      "notes": "Idle working copies are reaped, and a request body is bounded. Impact is minor because the specification is in git: an unavailable server delays work rather than losing it."
+    },
+    {
+      "id": "x_c9d0e1",
+      "code": "THR-9",
+      "category": "information_disclosure",
+      "exploitability": "low",
+      "impact": "minor",
+      "residual": "acceptable",
+      "text": "Advisory presence reveals who is working on what to someone who should not see it.",
+      "asset": "Other users' activity within a project.",
+      "entryPoint": "The event stream.",
+      "causes": [
+        "d_prs001"
+      ],
+      "controls": [
+        "r_mp8",
+        "r_ax5"
+      ],
+      "notes": "The stream is per project and requires a role in that project, so presence never crosses a project boundary. Within a project it is deliberate: knowing who is editing a row is the feature."
+    }
+  ]
+}
