@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { buildDesignControls } from '../designControls';
-import type { SrsDoc, VtpDoc, SddDoc, ReleasesDoc, JobRecord } from '../shared';
+import type { SrsDoc, VtpDoc, SddDoc, RiskDoc, ReleasesDoc, JobRecord } from '../shared';
 
 const srs: SrsDoc = {
   schemaVersion: '1.0', type: 'srs', name: 'Acme', title: 'SRS',
@@ -115,5 +115,48 @@ describe('buildDesignControls — Design Outputs covers architecture and detaile
     const empty: SddDoc = { ...sdd, items: [{ id: 'h_1', title: 'Units', heading: true }] };
     const el = byKey(buildDesignControls({ srs, vtp, sdd: empty, hasArchitecture: true }), 'outputs');
     expect(el.status).toBe('partial');
+  });
+});
+
+describe('buildDesignControls — Risk Management derives from the register', () => {
+  const risk = (over: Partial<RiskDoc['items'][number]> = {}): RiskDoc => ({
+    schemaVersion: '1.0', type: 'risk', name: 'Acme', title: 'Risk',
+    items: [
+      { id: 'h_1', text: 'Group', heading: true },
+      { id: 'k_1', text: 'A hazardous situation.', causes: ['d_1'], controls: ['r_1'], residual: 'acceptable', ...over },
+    ],
+  });
+
+  it('is a gap with no register', () => {
+    const el = byKey(buildDesignControls({ srs, vtp }), 'risk');
+    expect(el.status).toBe('gap');
+    expect(el.link).toBeUndefined();
+  });
+
+  it('is present when every risk is controlled and assessed, and links to the register', () => {
+    const el = byKey(buildDesignControls({ srs, vtp, risk: risk() }), 'risk');
+    expect(el.status).toBe('present');
+    expect(el.detail).toContain('1 risks');
+    expect(el.link).toBe('risk');
+  });
+
+  it('is partial while a risk is uncontrolled', () => {
+    const el = byKey(buildDesignControls({ srs, vtp, risk: risk({ controls: [] }) }), 'risk');
+    expect(el.status).toBe('partial');
+    expect(el.detail).toContain('1 uncontrolled');
+  });
+
+  it('is partial while a residual risk is unassessed', () => {
+    const el = byKey(buildDesignControls({ srs, vtp, risk: risk({ residual: 'not_assessed' }) }), 'risk');
+    expect(el.status).toBe('partial');
+    expect(el.detail).toContain('not assessed');
+  });
+
+  it('accepts a risk justified rather than controlled', () => {
+    const el = byKey(
+      buildDesignControls({ srs, vtp, risk: risk({ controls: [], justification: 'Hardware interlock.' }) }),
+      'risk',
+    );
+    expect(el.status).toBe('present');
   });
 });

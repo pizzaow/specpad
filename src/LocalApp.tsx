@@ -85,6 +85,7 @@ import TestingView from './components/TestingView';
 import JobsView from './components/JobsView';
 import ArchitectureView from './components/ArchitectureView';
 import DetailedDesignView from './components/DetailedDesignView';
+import RiskTable from './components/RiskTable';
 import ReleasesView from './components/ReleasesView';
 import AuditView from './components/AuditView';
 import TraceabilityView from './components/TraceabilityView';
@@ -95,7 +96,7 @@ import type { ThemeId } from './theme';
 import StatusBar from './components/StatusBar';
 import ViewTabs from './components/ViewTabs';
 
-type ViewMode = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'sdd' | 'releases' | 'audit' | 'trace';
+type ViewMode = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'sdd' | 'risk' | 'releases' | 'audit' | 'trace';
 type OpenResult = { name: string; documents: DocumentListItem[] };
 // Items of any id-keyed register document (srs/vtp/prd/…); a per-job diff is keyed by doc type,
 // so newly-registered register types are diffed without changing this code.
@@ -194,6 +195,7 @@ const LocalApp: React.FC = () => {
   const [runRecord, setRunRecord] = useState<RunRecord | null>(null);
   const [dirtyPrd, setDirtyPrd] = useState(false);
   const [dirtySdd, setDirtySdd] = useState(false);
+  const [dirtyRisk, setDirtyRisk] = useState(false);
   const [currentView, setCurrentView] = useState<ViewMode>('overview');
   const [theme, setTheme] = useState<ThemeId>(readStoredTheme);
   const [loading, setLoading] = useState(false);
@@ -457,6 +459,7 @@ const LocalApp: React.FC = () => {
     setDirtyVtp(false);
     setDirtyPrd(false);
     setDirtySdd(false);
+    setDirtyRisk(false);
   };
 
   // Variant used right after open(), before `documents` state has settled.
@@ -479,6 +482,7 @@ const LocalApp: React.FC = () => {
     setDirtyVtp(false);
     setDirtyPrd(false);
     setDirtySdd(false);
+    setDirtyRisk(false);
   };
 
   // Apply a freshly-opened project: set state, auto-load a single/requested doc,
@@ -766,6 +770,7 @@ const LocalApp: React.FC = () => {
   };
   const handlePrdChange = (next: PrdDoc) => { setPrdDoc(next); setDirtyPrd(true); };
   const handleSddChange = (next: SddDoc) => { setSddDoc(next); setDirtySdd(true); };
+  const handleRiskChange = (next: RiskDoc) => { setRiskDoc(next); setDirtyRisk(true); };
 
   /**
    * May this session edit? One answer, used by every view (EDR-3).
@@ -776,7 +781,7 @@ const LocalApp: React.FC = () => {
    */
   const sessionReadOnly = !!serverSession && !serverSession.capabilities.write;
 
-  const persist = async (doc: SrsDoc | VtpDoc | PrdDoc | SddDoc) => {
+  const persist = async (doc: SrsDoc | VtpDoc | PrdDoc | SddDoc | RiskDoc) => {
     // The demo has nowhere to write: hand the document back as a file instead, so the
     // sandbox has an exit and an edit is never silently lost.
     if (launch.demo) {
@@ -789,7 +794,7 @@ const LocalApp: React.FC = () => {
     else saveFileFallback(serializeDocument(doc), `${doc.name}.${doc.type}.json`);
   };
 
-  const dirty = dirtySrs || dirtyVtp || dirtyPrd || dirtySdd || dirtyJobs || dirtySad || dirtyDsl;
+  const dirty = dirtySrs || dirtyVtp || dirtyPrd || dirtySdd || dirtyRisk || dirtyJobs || dirtySad || dirtyDsl;
 
   // ---- Presence, resolved for display (CE-3) ----
 
@@ -828,6 +833,7 @@ const LocalApp: React.FC = () => {
       if (dirtyVtp && vtpDoc) { await persist(vtpDoc); setDirtyVtp(false); }
       if (dirtyPrd && prdDoc) { await persist(prdDoc); setDirtyPrd(false); }
       if (dirtySdd && sddDoc) { await persist(sddDoc); setDirtySdd(false); }
+      if (dirtyRisk && riskDoc) { await persist(riskDoc); setDirtyRisk(false); }
       if (dirtyJobs && jobsDoc) { await saveJobs(name, jobsDoc); setDirtyJobs(false); }
       if (dirtySad && sad !== null) { await saveProjectText(`${name}.sad.md`, sad); setDirtySad(false); }
       if (dirtyDsl && dsl !== null) { await saveProjectText(`${name}.workspace.dsl`, dsl); setDirtyDsl(false); }
@@ -995,7 +1001,7 @@ const LocalApp: React.FC = () => {
       {isDirectoryOpen && (
         <ViewTabs
           current={currentView}
-          enabled={{ overview: true, prd: !!prdDoc, srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl), sdd: !!sddDoc, releases: !!releases, audit: !!srsDoc, trace: !!srsDoc }}
+          enabled={{ overview: true, prd: !!prdDoc, srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl), sdd: !!sddDoc, risk: !!riskDoc, releases: !!releases, audit: !!srsDoc, trace: !!srsDoc }}
           onSelect={setCurrentView}
         />
       )}
@@ -1025,6 +1031,7 @@ const LocalApp: React.FC = () => {
             prd={prdDoc} srs={srsDoc} vtp={vtpDoc}
             jobs={jobsDoc?.jobs ?? []} releases={releases}
             sdd={sddDoc}
+            risk={riskDoc}
             hasArchitecture={!!(sad || dsl)}
             onNavigate={setCurrentView}
           />
@@ -1047,6 +1054,18 @@ const LocalApp: React.FC = () => {
             diagrams={diagrams}
             onChange={handleSddChange}
             onChangeSrs={handleChange}
+            readOnly={sessionReadOnly}
+          />
+        )}
+        {currentView === 'risk' && riskDoc && (
+          <RiskTable
+            key={selectedDocName}
+            doc={riskDoc}
+            sddDoc={sddDoc}
+            srsDoc={srsDoc}
+            vtpDoc={vtpDoc}
+            run={runRecord}
+            onChange={handleRiskChange}
             readOnly={sessionReadOnly}
           />
         )}

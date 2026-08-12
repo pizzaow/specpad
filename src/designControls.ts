@@ -5,7 +5,7 @@
  * tab that holds the evidence. This is the surface an engineer uses to answer an
  * auditor's "where are your design inputs / verification / …?".
  */
-import type { PrdDoc, SrsDoc, VtpDoc, SddDoc, ReleasesDoc, JobRecord } from './shared';
+import type { PrdDoc, SrsDoc, VtpDoc, SddDoc, RiskDoc, ReleasesDoc, JobRecord } from './shared';
 import { buildAuditReport } from './auditReport';
 import type { ViewKey } from './components/ViewTabs';
 
@@ -26,6 +26,7 @@ export interface DesignControlsInput {
   srs?: SrsDoc | null;
   vtp?: VtpDoc | null;
   sdd?: SddDoc | null;
+  risk?: RiskDoc | null;
   jobs?: JobRecord[];
   releases?: ReleasesDoc | null;
   hasArchitecture?: boolean;
@@ -55,6 +56,23 @@ export function buildDesignControls(input: DesignControlsInput): ControlElement[
   // element is complete only with both, and partial with either alone.
   const outputsStatus: ControlStatus = hasArch && hasSdd ? 'present' : hasArch || hasSdd ? 'partial' : 'gap';
   const undesigned = reqs.total > 0 ? (input.srs?.items ?? []).filter((r) => !r.heading && (r.design ?? []).length === 0).length : 0;
+
+  // Risk Management (ISO 14971 / 62304 §7). Derived from the register rather than
+  // hardcoded: present once every risk is controlled or justified, partial while any is
+  // not. A control's verification lives in the trace, so it is not re-counted here.
+  const risks = (input.risk?.items ?? []).filter((r) => !r.heading);
+  const uncontrolled = risks.filter((r) => (r.controls ?? []).length === 0 && !(r.justification ?? '').trim());
+  const unassessed = risks.filter((r) => (r.residual ?? 'not_assessed') === 'not_assessed');
+  const riskStatus: ControlStatus =
+    risks.length === 0 ? 'gap' : uncontrolled.length === 0 && unassessed.length === 0 ? 'present' : 'partial';
+  const riskDetail =
+    risks.length === 0
+      ? 'No software risk analysis yet'
+      : [
+          `${risks.length} risks`,
+          uncontrolled.length > 0 ? `${uncontrolled.length} uncontrolled` : 'all controlled or justified',
+          unassessed.length > 0 ? `${unassessed.length} residual risk not assessed` : 'residual risk assessed',
+        ].join(' · ');
 
   const verifyStatus: ControlStatus =
     reqs.total === 0 ? 'gap' : reqs.verified === reqs.total ? 'present' : 'partial';
@@ -138,8 +156,9 @@ export function buildDesignControls(input: DesignControlsInput): ControlElement[
       name: 'Risk Management',
       cite: 'ISO 14971 · IEC 62304 §7',
       statement: 'Hazard analysis and risk control measures, traced to requirements/tests.',
-      status: 'gap',
-      detail: 'Not yet captured — roadmap (PROD-20)',
+      status: riskStatus,
+      detail: riskDetail,
+      link: risks.length > 0 ? 'risk' : undefined,
     },
     {
       key: 'config',

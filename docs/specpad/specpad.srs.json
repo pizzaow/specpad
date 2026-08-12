@@ -3579,6 +3579,40 @@
         "design"
       ],
       "text": "A design section shall declare whether it describes a software unit or a cross-cutting design view, defaulting to a unit, so that the set of software units is derivable."
+    },
+    {
+      "id": "r_rsk10",
+      "code": "RSK-10",
+      "design": [
+        "d_tbl001"
+      ],
+      "tags": [
+        "risk"
+      ],
+      "text": "The editor shall present the risk register as a table in which each risk’s hazardous situation, severity, causes, controls and residual risk can be read and edited."
+    },
+    {
+      "id": "r_rsk11",
+      "code": "RSK-11",
+      "design": [
+        "d_tbl001",
+        "d_ver001"
+      ],
+      "tags": [
+        "risk"
+      ],
+      "text": "For each risk the editor shall derive, from the tests verifying its controlling requirements and the captured run, whether the control is demonstrated to work, and shall distinguish a control with no test from one whose test failed and from one not yet executed."
+    },
+    {
+      "id": "r_rsk12",
+      "code": "RSK-12",
+      "design": [
+        "d_dsc001"
+      ],
+      "tags": [
+        "risk"
+      ],
+      "text": "The Auditor view shall derive the status of the Risk Management design-control element from the risk register — complete only when every risk is controlled or justified and every residual risk assessed."
     }
   ]
 }

@@ -4316,6 +4316,59 @@
           "selector": "treats a section with no kind as a unit"
         }
       ]
+    },
+    {
+      "id": "t_rsk10",
+      "code": "TEST-256",
+      "verifies": [
+        "r_rsk10"
+      ],
+      "text": "Open the Risk tab and edit a risk’s hazardous situation, severity, causes, controls and residual risk; then open it read-only.",
+      "expected": "Each field is editable and reported with the risk’s id unchanged; only software units are offered as causes; read-only offers no editing affordance at all.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/RiskTable.test.tsx",
+          "selector": "RiskTable — the analysis"
+        },
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/RiskTable.test.tsx",
+          "selector": "RiskTable — editing"
+        }
+      ]
+    },
+    {
+      "id": "t_rsk11",
+      "code": "TEST-257",
+      "verifies": [
+        "r_rsk11"
+      ],
+      "text": "View risks whose controls are respectively verified by a passing test, verified by a failing test, verified by a test that never ran, backed by a requirement with no test, and absent altogether.",
+      "expected": "Each reads differently: verified, failing, not run, no test, no control. A risk recorded as acceptable whose control test failed still reads failing — the recorded judgement does not override the evidence. Expanding a risk names each control, its requirement and its tests.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/RiskTable.test.tsx",
+          "selector": "whether the control is demonstrated"
+        }
+      ]
+    },
+    {
+      "id": "t_rsk12",
+      "code": "TEST-258",
+      "verifies": [
+        "r_rsk12"
+      ],
+      "text": "View the Auditor with no risk register, with one holding an uncontrolled risk, and with one fully controlled and assessed.",
+      "expected": "Risk Management reads gap, partial and present respectively, with the counts behind each, and links to the register when there is one.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/__tests__/designControls.test.ts",
+          "selector": "buildDesignControls"
+        }
+      ]
     }
   ]
 }
