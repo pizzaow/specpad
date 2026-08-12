@@ -44,6 +44,7 @@ vi.mock('../fileApi', () => ({
   loadProject: vi.fn(),
   loadSdd: vi.fn(async () => null),
   loadRisk: vi.fn(async () => null),
+  loadSoup: vi.fn(async () => null),
   loadPrd: vi.fn(async () => null),
   loadRun: vi.fn(async () => null),
   openProjectDirectory: vi.fn(),

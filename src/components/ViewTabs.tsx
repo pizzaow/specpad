@@ -7,7 +7,7 @@
  */
 import React from 'react';
 
-export type ViewKey = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'arch' | 'sdd' | 'risk' | 'audit' | 'trace' | 'releases' | 'jobs';
+export type ViewKey = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'arch' | 'sdd' | 'risk' | 'soup' | 'audit' | 'trace' | 'releases' | 'jobs';
 
 // `phase` is the design-control element this tab contributes evidence to; tabs with
 // the same adjacent phase share one band. Overview has none (it's the home view).
@@ -22,6 +22,7 @@ const TABS: { key: ViewKey; label: string; title?: string; phase?: string }[] = 
   { key: 'srs', label: 'SRS', title: 'Software Requirements', phase: 'Design Inputs' },
   { key: 'arch', label: 'SAD', title: 'Software Architecture Document', phase: 'Design Outputs' },
   { key: 'sdd', label: 'SDD', title: 'Software Detailed Design', phase: 'Design Outputs' },
+  { key: 'soup', label: 'SOUP', title: 'Third-party software (IEC 62304 SOUP; FDA off-the-shelf)', phase: 'Design Outputs' },
   { key: 'risk', label: 'Risk', title: 'Software risk analysis (IEC 62304 clause 7)', phase: 'Risk Management' },
   { key: 'vtp', label: 'VTP', title: 'Verification Test Plan', phase: 'Design Verification' },
   { key: 'testing', label: 'Results', title: 'Verification results', phase: 'Design Verification' },

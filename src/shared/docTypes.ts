@@ -9,7 +9,7 @@
  * Sidecars (project index, releases, job marker, jobs register) are infrastructure,
  * not content documents, so they live outside this registry (see validate.ts).
  */
-import { srsSchema, vtpSchema, prdSchema, sddSchema, riskSchema } from './schema';
+import { srsSchema, vtpSchema, prdSchema, sddSchema, riskSchema, soupSchema } from './schema';
 
 // register: id-keyed JSON with an `items[]` array (diffable by the shared diffItems).
 // prose: tracked markdown/text (line-diffed). asset: binary-ish file (coarse, changed/yes-no).
@@ -44,6 +44,10 @@ export const DOC_TYPES: DocTypeSpec[] = [
   // about harm, and code cannot supply it — the generator would only invent plausible
   // hazards, which is worse than an empty register.
   { type: 'risk', label: 'Risk', kind: 'register', optional: true, inBaseline: true, generate: 'never', schema: riskSchema as Record<string, unknown> },
+  // Third-party software (IEC 62304 SOUP; FDA off-the-shelf). Drafted optionally: the
+  // identity of each dependency is derivable from the manifests, but every judgement
+  // about it — what is required of it, what its anomalies mean here — is not.
+  { type: 'soup', label: 'SOUP', kind: 'register', optional: true, inBaseline: true, generate: 'optional', schema: soupSchema as Record<string, unknown> },
 ];
 
 /** All id-keyed register types (srs, vtp, prd, …) — the diffable/redline-able docs. */

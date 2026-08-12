@@ -3,11 +3,11 @@
 
 export const SCHEMA_VERSION = '1.0' as const;
 export type SchemaVersion = typeof SCHEMA_VERSION;
-export type DocType = 'project' | 'srs' | 'vtp' | 'prd' | 'sdd' | 'risk';
+export type DocType = 'project' | 'srs' | 'vtp' | 'prd' | 'sdd' | 'risk' | 'soup';
 export type TestResult = '' | 'not_tested' | 'passed' | 'failed';
 
 export interface ProjectDocRef {
-  type: 'srs' | 'vtp' | 'prd' | 'sdd' | 'risk';
+  type: 'srs' | 'vtp' | 'prd' | 'sdd' | 'risk' | 'soup';
   path: string;
   title: string;
 }
@@ -160,7 +160,10 @@ export interface RiskItem {
   /** Identifier of the hazard or hazardous situation in the system risk management file. */
   hazardRef?: string;
   severity?: RiskSeverity;
-  /** SDD section ids for the software items that could cause it (§7.1). */
+  /**
+   * Ids of the software items that could cause it (§7.1): SDD sections describing a
+   * unit, or SOUP components. A cause is whatever could fail, ours or a supplier's.
+   */
   causes?: string[];
   /** SRS requirement ids implementing the risk control measures (§7.2, §5.2.2). */
   controls?: string[];
@@ -188,6 +191,66 @@ export interface RiskDoc {
   items: RiskItem[];
 }
 
+/**
+ * One third-party software component the product depends on (IEC 62304 SOUP; FDA
+ * off-the-shelf software).
+ *
+ * Covers both regimes: 62304 asks what you *require* of the component (§5.3.3), what it
+ * needs to run (§5.3.4), and what is known to be wrong with the exact version you ship
+ * (§7.1.2); the FDA guidance asks where it came from, why it is appropriate, what its
+ * limits are, and what happens when the vendor stops supporting it.
+ *
+ * Requirements placed on the component are text here rather than SRS entries: they are
+ * requirements on a vendor, and the SRS holds only what this product implements.
+ *
+ * This is not an SBOM. An SBOM is a recursive inventory of every dependency, generated
+ * from the manifests; this is the far smaller set that has actually been assessed.
+ */
+export interface SoupItem {
+  id: string;
+  code?: string;
+  heading?: boolean;
+  level?: number;
+  /** The component's name, as its supplier calls it. */
+  name: string;
+  /** Manufacturer, project or source (§8.1.2). */
+  vendor?: string;
+  /** The exact version in use, including patch or upgrade designation (§8.1.2). */
+  version?: string;
+  /** Release date of that version. */
+  releaseDate?: string;
+  license?: string;
+  url?: string;
+  /** What it does in this product, and why it is appropriate for the job. */
+  purpose?: string;
+  /** Functional and performance requirements placed on the component (§5.3.3). */
+  requirements?: string;
+  /** Hardware and software the component itself needs in order to run (§5.3.4). */
+  runtime?: string;
+  /** Expected design limitations — what it is known not to do. */
+  limitations?: string;
+  /** Evaluation of the published anomaly list for this version (§7.1.2, §7.1.3). */
+  anomalies?: string;
+  /** When that anomaly evaluation was last performed; it goes stale with each release. */
+  anomaliesReviewed?: string;
+  /** SDD section ids for the units that use it. */
+  usedBy?: string[];
+  /** VTP item ids exercising it, where its behaviour is verified directly. */
+  tests?: string[];
+  /** Supplier's development and support practices, and the end-of-life contingency. */
+  maintenance?: string;
+  notes?: string;
+  tags?: string[];
+}
+
+export interface SoupDoc {
+  schemaVersion: SchemaVersion;
+  type: 'soup';
+  name: string;
+  title: string;
+  items: SoupItem[];
+}
+
 export interface SddDoc {
   schemaVersion: SchemaVersion;
   type: 'sdd';
@@ -196,7 +259,7 @@ export interface SddDoc {
   items: SddSection[];
 }
 
-export type SpecPadDoc = ProjectDoc | SrsDoc | VtpDoc | PrdDoc | SddDoc | RiskDoc;
+export type SpecPadDoc = ProjectDoc | SrsDoc | VtpDoc | PrdDoc | SddDoc | RiskDoc | SoupDoc;
 
 const stringArray = { type: 'array', items: { type: 'string' } } as const;
 
@@ -219,7 +282,7 @@ export const projectSchema = {
         type: 'object',
         required: ['type', 'path', 'title'],
         properties: {
-          type: { enum: ['srs', 'vtp', 'prd', 'sdd', 'risk'], description: 'Which kind of document this entry points at: "srs", "vtp", "prd", "sdd", or "risk".' },
+          type: { enum: ['srs', 'vtp', 'prd', 'sdd', 'risk', 'soup'], description: 'Which kind of document this entry points at: "srs", "vtp", "prd", "sdd", "risk", or "soup".' },
           path: { type: 'string', description: 'Path of the document file, relative to the project index.' },
           title: { type: 'string', description: 'Display title for the document.' },
         },
@@ -387,11 +450,54 @@ export const riskSchema = {
           level: { type: 'integer', minimum: 0, description: 'Indent depth for hierarchy; absent means 0.' },
           hazardRef: { type: 'string', description: 'Identifier of the hazard or hazardous situation in the system risk management file, which the quality system owns. SpecPad holds the software slice and references the rest rather than restating it.' },
           severity: { enum: ['negligible', 'minor', 'serious', 'critical', 'catastrophic'], description: 'Severity of the resulting harm. There is deliberately no probability: for software you cannot argue probability down, so severity drives the analysis. ISO 14971 leaves the scale to the manufacturer; a project using a different one maps onto this.' },
-          causes: { ...stringArray, description: 'Ids of the SDD sections for the software items that could cause this hazardous situation (IEC 62304 7.1). Ids, never codes. Only sections of kind "unit" may be named.' },
+          causes: { ...stringArray, description: 'Ids of the software items that could cause this hazardous situation (IEC 62304 7.1): SDD sections of kind "unit", or SOUP components whose anomalies could contribute (7.1.2). Ids, never codes.' },
           controls: { ...stringArray, description: 'Ids of the SRS requirements implementing the risk control measures (IEC 62304 7.2; 5.2.2 requires a control implemented in software to be a software requirement). Their verifying tests are the evidence the control works (7.3), derived rather than restated.' },
           justification: { type: 'string', description: 'Why no software control is needed, when there is none — for example a risk controlled in hardware, by labelling, or accepted at system level.' },
           residual: { enum: ['acceptable', 'unacceptable', 'not_assessed'], description: 'The judgement recorded once the controls are in place. Absent is treated as not assessed.' },
           notes: { type: 'string', description: 'Free-text analysis notes.' },
+          tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
+        },
+      },
+    },
+  },
+} as const;
+
+export const soupSchema = {
+  $id: 'specpad/v1/soup',
+  type: 'object',
+  required: ['schemaVersion', 'type', 'name', 'title', 'items'],
+  properties: {
+    schemaVersion: { const: '1.0', description: 'Contract version of this file; "1.0" documents open in the pinned editor build at /v01/.' },
+    type: { const: 'soup', description: 'Document discriminator; selects the schema this file is validated against.' },
+    name: { type: 'string', description: 'Short system name; also the filename stem ([name].soup.json).' },
+    title: { type: 'string', description: 'Human-readable document title.' },
+    items: {
+      type: 'array',
+      description: 'The third-party software the product depends on, assessed (IEC 62304 SOUP; FDA off-the-shelf software). Not an SBOM: an SBOM is a recursive inventory of every dependency generated from the manifests, while this is the set that has been assessed.',
+      items: {
+        type: 'object',
+        required: ['id', 'name'],
+        properties: {
+          id: { type: 'string', minLength: 1, description: 'Stable machine identifier, generated once and never changed; a risk naming this component as a cause targets it.' },
+          code: { type: 'string', description: 'Human-facing label (e.g. "SOUP-3"); freely renameable because references never use it.' },
+          name: { type: 'string', description: "The component's name, as its supplier calls it (IEC 62304 8.1.2)." },
+          heading: { type: 'boolean', description: 'True when this item is a section heading rather than a component.' },
+          level: { type: 'integer', minimum: 0, description: 'Indent depth for hierarchy; absent means 0.' },
+          vendor: { type: 'string', description: 'Manufacturer, project or source of the component (IEC 62304 8.1.2; FDA "manufacturer").' },
+          version: { type: 'string', description: 'The exact version in use, including patch level or upgrade designation. Exact rather than a range: an anomaly evaluation is only valid for the version it was performed against (IEC 62304 8.1.2; FDA "version level, patch number, upgrade designation").' },
+          releaseDate: { type: 'string', description: 'Release date of that version (FDA).' },
+          license: { type: 'string', description: 'Licence the component is distributed under.' },
+          url: { type: 'string', description: 'Where the component and its documentation come from.' },
+          purpose: { type: 'string', description: 'What the component does in this product, and why it is appropriate for the job (FDA: functional role, purpose, and at Enhanced level the justification for selecting it).' },
+          requirements: { type: 'string', description: 'The functional and performance requirements placed on the component, necessary for its intended use (IEC 62304 5.3.3). Text rather than SRS entries: these are requirements on a supplier, not behaviour this product implements.' },
+          runtime: { type: 'string', description: 'Hardware and software the component itself needs in order to run (IEC 62304 5.3.4; FDA computer system specifications).' },
+          limitations: { type: 'string', description: 'Expected design limitations — what the component is known not to do (FDA).' },
+          anomalies: { type: 'string', description: "Evaluation of the supplier's published anomaly list for this exact version: which known defects could affect this product, and why the remainder cannot (IEC 62304 7.1.2, 7.1.3; FDA current list of defects)." },
+          anomaliesReviewed: { type: 'string', description: 'When that anomaly evaluation was last performed. It goes stale with every release the supplier makes, so the date is part of the evidence.' },
+          usedBy: { ...stringArray, description: 'Ids of the SDD sections for the units that use this component.' },
+          tests: { ...stringArray, description: "Ids of the VTP items exercising this component, where its behaviour is verified directly (FDA testing)." },
+          maintenance: { type: 'string', description: "The supplier's development and support practices, and the plan for when support ends — obsolescence contingency (FDA, Enhanced documentation level)." },
+          notes: { type: 'string', description: 'Free-text assessment notes.' },
           tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
         },
       },

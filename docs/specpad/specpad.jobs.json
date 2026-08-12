@@ -708,6 +708,19 @@
       "technical_notes": "Release bookkeeping. Closed JOB-52 and set version v1.7 on it; regenerated every closed job cache; moved the v1.6 snapshot to .specpad/snapshots/v1.6 and regenerated .specpad/baseline as the v1.7 document set - now including the risk register - with the verification run frozen in. Tag on da5c398, the last content commit. JOB-51 (the 62304 compliance-gap record) stays open and rolls to a later release; its one commit falls inside this tag, which is expected and harmless since the job is not done.",
       "version": "v1.7",
       "status": "closed"
+    },
+    {
+      "id": "j_8c5d21",
+      "code": "JOB-54",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "SOUP / OTS pillar (IEC 62304 and the FDA off-the-shelf software guidance)",
+      "description": "SpecPad now records the third-party software a product depends on: what it is and exactly which version, what the product requires of it, what it needs to run, what is known to be wrong with it, and what happens when the vendor stops supporting it. A component can be named as the cause of a risk, like any other part of the design.",
+      "technical_notes": "Covers both regimes rather than either alone. IEC 62304 8.1.2 (identity), 5.3.3 (functional and performance requirements placed on the component), 5.3.4 (hardware and software it needs), 7.1.2/7.1.3 (published anomaly list, evaluated per version); FDA off-the-shelf guidance of August 2023 (release date, purpose and functional role, expected design limitations, current defect list, testing, and the Enhanced-level maintenance, support and end-of-life contingency). Authored at maximum rigour; Basic vs Enhanced is an export decision. Requirements placed on a component are text on the record, not SRS entries - they are requirements on a vendor, and the SRS holds only what SpecPad itself implements. RiskItem.causes extended to accept a SOUP id as well as a design unit: a cause is whatever could fail. SBOM is deliberately out of scope and separate - it is a recursive inventory of every dependency generated from the manifests, while this is the far smaller set actually assessed; conflating them would let a 40-entry assessed list pass as a 900-package inventory.",
+      "status": "open"
     }
   ]
 }

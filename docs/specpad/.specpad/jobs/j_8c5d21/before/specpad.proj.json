@@ -29,11 +29,6 @@
       "type": "risk",
       "path": "specpad.risk.json",
       "title": "Risk"
-    },
-    {
-      "type": "soup",
-      "path": "specpad.soup.json",
-      "title": "SOUP"
     }
   ]
 }

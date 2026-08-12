@@ -1,0 +1,238 @@
+{
+  "schemaVersion": "1.0",
+  "type": "soup",
+  "name": "specpad",
+  "title": "SOUP",
+  "items": [
+    {
+      "id": "h_sp00",
+      "name": "Editor runtime",
+      "heading": true
+    },
+    {
+      "id": "s_react1",
+      "code": "SOUP-1",
+      "name": "react",
+      "vendor": "Meta (Facebook, Inc.) and contributors",
+      "version": "18.3.1",
+      "license": "MIT",
+      "url": "https://react.dev",
+      "purpose": "The editor's rendering library. Every view is a React component; the shell holds the loaded documents as component state.",
+      "requirements": "Renders a component tree to the DOM and re-renders it on state change. Must render a 250-row register table without a perceptible delay on a mid-range laptop. State updates must be applied in the order they are made, since document edits are sequential.",
+      "runtime": "A browser supporting ES2020. No server-side rendering is used.",
+      "limitations": "Rendering is not synchronous with state updates; code that assumes an edit is visible on the next line is wrong. React 18 concurrent features are not used.",
+      "anomalies": "GitHub issue tracker reviewed for 18.3.1. No open defect affects the features used here: the editor uses component state, effects and portals, and no concurrent, suspense or server-component feature. Hydration defects do not apply — the app is client-rendered only.",
+      "anomaliesReviewed": "2026-08-11",
+      "usedBy": [
+        "d_app001",
+        "d_tbl001",
+        "d_chr001"
+      ],
+      "maintenance": "Actively maintained by Meta with a large contributor base and a published release policy. If it were abandoned, the editor would continue to work against the pinned version indefinitely; migration would be a rewrite of the view layer and is the largest single replacement risk in the product."
+    },
+    {
+      "id": "s_reactd",
+      "code": "SOUP-2",
+      "name": "react-dom",
+      "vendor": "Meta (Facebook, Inc.) and contributors",
+      "version": "18.3.1",
+      "license": "MIT",
+      "url": "https://react.dev",
+      "purpose": "Binds React to the browser DOM, and provides the portal used to render a row menu outside its table.",
+      "requirements": "Mounts a React tree into a DOM node. `createPortal` must render into a node outside the parent's DOM hierarchy while keeping it inside the React tree — the row menu depends on this to escape a stacking context.",
+      "runtime": "A browser supporting ES2020; versioned in lockstep with react.",
+      "limitations": "Must match the react version exactly.",
+      "anomalies": "Reviewed with react 18.3.1, from which it is inseparable. No open defect affects mounting or portals.",
+      "anomaliesReviewed": "2026-08-11",
+      "usedBy": [
+        "d_app001",
+        "d_chr001"
+      ],
+      "maintenance": "As react."
+    },
+    {
+      "id": "s_rmd",
+      "code": "SOUP-3",
+      "name": "react-markdown",
+      "vendor": "remark contributors (unified collective)",
+      "version": "10.1.0",
+      "license": "MIT",
+      "url": "https://github.com/remarkjs/react-markdown",
+      "purpose": "Renders the architecture document and each detailed-design section body from markdown, with an image handler that substitutes inline SVG diagrams.",
+      "requirements": "Renders CommonMark to React elements. Must not execute or emit raw HTML from the document, since a specification is authored by several people and may be edited through a server. Must allow the image renderer to be replaced, which is how diagrams are placed inline.",
+      "runtime": "react 18+.",
+      "limitations": "Does not render arbitrary HTML by design; GitHub-flavoured tables require the remark-gfm plugin. Rendering is not incremental — a very large document re-renders whole.",
+      "anomalies": "Issue tracker reviewed for 10.1.0. Open items concern plugin compatibility and typings, not rendering correctness. The HTML-injection class of defect does not apply: raw HTML is disabled and no `rehype-raw` plugin is configured.",
+      "anomaliesReviewed": "2026-08-11",
+      "usedBy": [
+        "d_arv001",
+        "d_ddv001"
+      ],
+      "maintenance": "Part of the unified/remark collective, widely used and actively released. Replaceable at moderate cost: the markdown boundary is two components, both of which take the document as a string."
+    },
+    {
+      "id": "s_gfm",
+      "code": "SOUP-4",
+      "name": "remark-gfm",
+      "vendor": "remark contributors (unified collective)",
+      "version": "4.0.1",
+      "license": "MIT",
+      "url": "https://github.com/remarkjs/remark-gfm",
+      "purpose": "Adds GitHub-flavoured markdown — principally tables — to the rendered architecture and design documents.",
+      "requirements": "Parses GFM tables, strikethrough and task lists. Tables are the requirement that matters: the design documents use them heavily.",
+      "runtime": "react-markdown 10.x.",
+      "limitations": "Does not implement every GitHub extension; footnote rendering differs from GitHub in detail.",
+      "anomalies": "Issue tracker reviewed for 4.0.1. No open defect affects table parsing.",
+      "anomaliesReviewed": "2026-08-11",
+      "usedBy": [
+        "d_arv001",
+        "d_ddv001"
+      ],
+      "maintenance": "As react-markdown; same collective and release cadence."
+    },
+    {
+      "id": "s_cm",
+      "code": "SOUP-5",
+      "name": "@uiw/react-codemirror",
+      "vendor": "uiwjs",
+      "version": "4.25.10",
+      "license": "MIT",
+      "url": "https://uiwjs.github.io/react-codemirror/",
+      "purpose": "The markdown editor for the architecture document and detailed-design section bodies — a React wrapper around CodeMirror 6.",
+      "requirements": "Presents a text editor bound to a string, reporting every change. Must not reformat, normalise or otherwise alter text the author did not type: a specification document must round-trip through the editor byte for byte.",
+      "runtime": "react 18+, and the CodeMirror 6 packages it depends on.",
+      "limitations": "A wrapper: CodeMirror configuration beyond the exposed props requires reaching through to the underlying extension API.",
+      "anomalies": "Issue tracker reviewed for 4.25.x. Open items concern extension reconfiguration and SSR, neither of which applies here. No defect affecting text fidelity is open.",
+      "anomaliesReviewed": "2026-08-11",
+      "usedBy": [
+        "d_arv001",
+        "d_ddv001"
+      ],
+      "maintenance": "A single-maintainer wrapper over a well-maintained core, which is the risk. If it were abandoned, CodeMirror 6 could be used directly at moderate cost; the wrapper is convenience rather than capability."
+    },
+    {
+      "id": "s_cmmd",
+      "code": "SOUP-6",
+      "name": "@codemirror/lang-markdown",
+      "vendor": "Marijn Haverbeke and contributors",
+      "version": "6.5.0",
+      "license": "MIT",
+      "url": "https://codemirror.net",
+      "purpose": "Markdown syntax highlighting inside the editor.",
+      "requirements": "Highlights markdown syntax. Presentation only: it must never alter the document text.",
+      "runtime": "CodeMirror 6.",
+      "limitations": "Highlighting only; no linting or formatting.",
+      "anomalies": "CodeMirror issue tracker reviewed for 6.5.0. Open items concern highlighting edge cases in nested constructs — cosmetic, and incapable of altering the document.",
+      "anomaliesReviewed": "2026-08-11",
+      "usedBy": [
+        "d_arv001",
+        "d_ddv001"
+      ],
+      "maintenance": "CodeMirror is maintained by its original author with a long and stable release history."
+    },
+    {
+      "id": "s_dnd",
+      "code": "SOUP-7",
+      "name": "@dnd-kit (core, sortable, utilities)",
+      "vendor": "Claudéric Demers and contributors",
+      "version": "core 6.3.1, sortable 10.0.0, utilities 3.2.2",
+      "license": "MIT",
+      "url": "https://dndkit.com",
+      "purpose": "Drag-to-reorder in the detailed-design outline.",
+      "requirements": "Reports a drag from one list position to another, by item id, with keyboard as well as pointer input. Must not itself mutate the list — the shell applies the reorder, so a failed or cancelled drag can leave no trace.",
+      "runtime": "react 18+.",
+      "limitations": "Reordering only; no cross-list dragging or drop-target validation is used.",
+      "anomalies": "Issue tracker reviewed for core 6.3.1. Open items concern nested droppables and virtualised lists, neither of which is used here.",
+      "anomaliesReviewed": "2026-08-11",
+      "usedBy": [
+        "d_ddv001"
+      ],
+      "maintenance": "Actively maintained and the de-facto standard since react-beautiful-dnd was deprecated. If abandoned, the outline falls back to the move-up and move-down controls already present, which is why they were kept."
+    },
+    {
+      "id": "s_ajv",
+      "code": "SOUP-8",
+      "name": "ajv",
+      "vendor": "Evgeny Poberezkin and contributors",
+      "version": "8.20.0",
+      "license": "MIT",
+      "url": "https://ajv.js.org",
+      "purpose": "Validates every document against its JSON Schema. This is the only component on which the correctness of the contract depends directly.",
+      "requirements": "Validates a document against JSON Schema draft-07 and reports every violation, not merely the first, with a path identifying the offending field. A document it accepts must genuinely satisfy the schema: a false accept would let a malformed specification through governance.",
+      "runtime": "Node 18+ or a browser supporting ES2020.",
+      "limitations": "Reports structure only; policy such as referential integrity is not expressible in the schema and is enforced separately in the governance module.",
+      "anomalies": "Issue tracker reviewed for 8.20.0. Open items concern draft-2020 features, TypeScript typings and code generation for unusual keyword combinations. None affects draft-07 validation of the keywords used here (type, required, enum, const, minimum, minLength, items, properties).",
+      "anomaliesReviewed": "2026-08-11",
+      "usedBy": [
+        "d_val001"
+      ],
+      "tests": [],
+      "maintenance": "Long-established and widely depended upon, though release cadence has slowed. A false accept would be the worst failure in the product, which is why the schemas are also exercised directly by fixtures rather than trusted through ajv alone."
+    },
+    {
+      "id": "s_boot",
+      "code": "SOUP-9",
+      "name": "bootstrap",
+      "vendor": "Bootstrap Authors, Twitter Inc.",
+      "version": "3.4.1",
+      "license": "MIT",
+      "url": "https://getbootstrap.com",
+      "purpose": "Base stylesheet for the editor. Layout and component classes only; SpecPad's own token layer is imported after it and overrides appearance.",
+      "requirements": "Provides the grid, table, form-control, label, button and panel classes the views use. No JavaScript from Bootstrap is loaded.",
+      "runtime": "A browser; no jQuery, since the JavaScript component library is not used.",
+      "limitations": "Version 3 is no longer developed. Its visual defaults are dated, which is why the theme layer overrides them; and it predates CSS custom properties, so theming is done in SpecPad's own layer rather than Bootstrap's.",
+      "anomalies": "Bootstrap 3 is end-of-life and receives no fixes. Its known issues are cosmetic and browser-specific, in components not used here. The CSS carries no execution risk; the jQuery-dependent JavaScript components, which held the security-relevant defects, are not loaded.",
+      "anomaliesReviewed": "2026-08-11",
+      "usedBy": [
+        "d_thm001"
+      ],
+      "maintenance": "End-of-life: no further releases will be made. Accepted deliberately — a stylesheet cannot develop new defects, and the styling is being displaced by the token layer. Replacement is scheduled work rather than contingency."
+    },
+    {
+      "id": "h_sp10",
+      "name": "Server runtime",
+      "heading": true
+    },
+    {
+      "id": "s_git",
+      "code": "SOUP-10",
+      "name": "git",
+      "vendor": "Software Freedom Conservancy and contributors",
+      "version": "2.34 or later",
+      "license": "GPL-2.0-only",
+      "url": "https://git-scm.com",
+      "purpose": "Every durable operation. The skill reads history through it, and the server clones, checks out, commits, rebases and pushes through it. SpecPad has no other store.",
+      "requirements": "Supports sparse-checkout in cone mode, worktrees, rebase with an inspectable index, and push. Sparse-checkout is a security control here, not an optimisation: without it a working copy could contain application source. Command output must be stable enough to parse for status and conflict stages.",
+      "runtime": "A POSIX or Windows host with the git binary on PATH, and credentials for the remote.",
+      "limitations": "Invoked as a subprocess, so it is a process boundary rather than a library: errors arrive as exit codes and text. Behaviour varies slightly across versions, which is why every invocation goes through one runner.",
+      "anomalies": "Release notes reviewed for the 2.4x series. Known issues concern platform-specific path handling and performance on very large repositories. The path-handling class matters here and is mitigated independently: paths are validated before they reach git, and sparse-checkout bounds what the worktree can contain.",
+      "anomaliesReviewed": "2026-08-11",
+      "usedBy": [
+        "d_git001",
+        "d_rpo001",
+        "d_wcp001"
+      ],
+      "maintenance": "Maintained by a broad community with a predictable release cadence and long support history. Not replaceable: git is the product's premise rather than a dependency, and SpecPad would not exist in this form without it."
+    },
+    {
+      "id": "s_node",
+      "code": "SOUP-11",
+      "name": "Node.js",
+      "vendor": "OpenJS Foundation",
+      "version": "20 LTS or later",
+      "license": "MIT",
+      "url": "https://nodejs.org",
+      "purpose": "Runs the self-hosted server and the skill's tooling. The server uses only the standard library — http, fs, path, crypto, child_process — and declares no runtime dependencies of its own.",
+      "requirements": "Provides an HTTP server, filesystem access, subprocess execution and SHA-256 hashing. Must sustain server-sent event streams that stay open for hours without the connection being recycled underneath the application.",
+      "runtime": "A supported operating system; a container image is provided.",
+      "limitations": "Single-threaded per process: a long synchronous operation blocks every request, which is why git calls are asynchronous throughout.",
+      "anomalies": "Security releases for the 20.x line reviewed. Advisories affecting HTTP request handling are the relevant class and are addressed by staying on the current LTS patch; the deployment is behind an authenticating proxy, which is the primary control for request-level attacks.",
+      "anomaliesReviewed": "2026-08-11",
+      "usedBy": [
+        "d_ent001",
+        "d_git001"
+      ],
+      "maintenance": "LTS lines are supported for 30 months with a published schedule, so end-of-support is knowable in advance rather than discovered."
+    }
+  ]
+}

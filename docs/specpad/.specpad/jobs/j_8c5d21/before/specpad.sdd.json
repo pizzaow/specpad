@@ -98,7 +98,7 @@
       "source": [
         "src/shared/docTypes.ts"
       ],
-      "body": "The registry of content document types, and how each behaves: `register` | `prose` | `asset`,\noptional, in-baseline, generated.\n\nExports `DOC_TYPES`, `REGISTER_TYPES`, `docTypeFor`, `isRegisterType`, `registerTypesInIndex`.\nAn unknown type returns `undefined`.\n\nValidation, the schema reference, snapshots, per-job diffs, the redline and the generator all iterate\nthe registry, so a new pillar is a registration plus a schema. Adding the SDD (JOB-44), the risk register (JOB-52) and\nthe SOUP register (JOB-54) changed no snapshot, diff or generator code."
+      "body": "The registry of content document types, and how each behaves: `register` | `prose` | `asset`,\noptional, in-baseline, generated.\n\nExports `DOC_TYPES`, `REGISTER_TYPES`, `docTypeFor`, `isRegisterType`, `registerTypesInIndex`.\nAn unknown type returns `undefined`.\n\nValidation, the schema reference, snapshots, per-job diffs, the redline and the generator all iterate\nthe registry, so a new pillar is a registration plus a schema. Adding the SDD (JOB-44) and the risk register (JOB-52)\nchanged no snapshot, diff or generator code."
     },
     {
       "id": "d_val001",
@@ -309,15 +309,14 @@
     {
       "id": "d_tbl001",
       "code": "SDD-40",
-      "title": "Register tables — SRS, VTP, PRD, Risk, SOUP",
+      "title": "Register tables — SRS, VTP, PRD, Risk",
       "source": [
         "src/components/SRSTable.tsx",
         "src/components/VTPTable.tsx",
         "src/components/PrdTable.tsx",
-        "src/components/RiskTable.tsx",
-        "src/components/SoupTable.tsx"
+        "src/components/RiskTable.tsx"
       ],
-      "body": "Inline editing for an id-keyed register: click a cell to edit, row menu for structure, expandable\nreference cells, redline decoration, presence markers.\n\nFive tables rather than one generic component. Each register has a different set of columns that\nmatter, and the abstraction covering all three was worse than the duplication.\n\nExpanding a requirement row shows its whole trace — satisfies, design, verifies — with the first two edited through `RefPicker`. The edges are stored on the item the row shows.\n\nWith `readOnly`, no row menu renders, no cell opens for editing, and the pickers offer no controls.\n\nThe risk table adds a derived **Controlled** column: a control is a requirement, so whether the\ncontrol works is the state of that requirement's tests in the run. A risk recorded as acceptable whose\ncontrol test failed reads as failing — the recorded judgement does not override the evidence.\n\nThe SOUP table puts identity in the row and the assessment behind an expansion, and dates the anomaly\nevaluation on the row: it is the field that rots silently, since an upgrade invalidates it and nothing\nelse in the record changes to say so."
+      "body": "Inline editing for an id-keyed register: click a cell to edit, row menu for structure, expandable\nreference cells, redline decoration, presence markers.\n\nFour tables rather than one generic component. Each register has a different set of columns that\nmatter, and the abstraction covering all three was worse than the duplication.\n\nExpanding a requirement row shows its whole trace — satisfies, design, verifies — with the first two edited through `RefPicker`. The edges are stored on the item the row shows.\n\nWith `readOnly`, no row menu renders, no cell opens for editing, and the pickers offer no controls.\n\nThe risk table adds a derived **Controlled** column: a control is a requirement, so whether the\ncontrol works is the state of that requirement's tests in the run. A risk recorded as acceptable whose\ncontrol test failed reads as failing — the recorded judgement does not override the evidence."
     },
     {
       "id": "d_rfp001",

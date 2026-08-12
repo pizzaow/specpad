@@ -46,6 +46,8 @@ into the SRS/VTP **spec-first**, attributed to a job, alongside the code. For ea
    - **Software risk** — when the job adds or changes a way the software could contribute to harm, or
      changes a unit or requirement a risk names. A control measure is a requirement, so adding a
      control means adding a requirement.
+   - **SOUP** — when the job adds, removes or **upgrades** a third-party dependency. An upgrade
+     invalidates that component's anomaly evaluation: redo it, or the record is stale.
    - **Any other registered pillar** (SOUP, cybersecurity, SDD, …) — same question, same rule.
 
    Capture **intent, not transcript**. Most jobs touch SRS+VTP; surface which document types you judged
@@ -78,6 +80,7 @@ them here; read the one you need when you reach that step:
 - Architecture (SAD) → `guides/architecture.md`
 - Detailed design (SDD) → `guides/detailed-design.md`
 - Software risk → `guides/risk.md`
+- SOUP / off-the-shelf software → `guides/soup.md`
 
 ## Files and naming
 
@@ -90,6 +93,8 @@ them here; read the one you need when you reach that step:
   implement the requirements, which SRS items point down at via `design` (see Detailed design below)
 - `docs/specpad/<name>.risk.json` — optional software risk analysis (IEC 62304 clause 7): the
   hazardous situations software can contribute to, their causes and controls (see Software risk below)
+- `docs/specpad/<name>.soup.json` — optional SOUP / off-the-shelf software register: the third-party
+  software the product depends on, assessed (see SOUP below)
 - `docs/specpad/<name>.sad.md` — optional architecture document (arc42 skeleton, markdown)
 - `docs/specpad/<name>.<diagram>.svg` — optional diagrams (draw.io SVG exports) the SAD references inline
 - `docs/specpad/<name>.workspace.dsl` — optional C4 model (Structurizr DSL — an alternative to draw.io)
@@ -267,6 +272,9 @@ product-requirements register; same item shape as the SRS.)
 SDD section — REQUIRED `id`, `title`. Optional `code`, `body` (markdown), `source`, `kind`
 (`unit` | `view`, default `unit`), `tags`, `heading`, `level`. (The detailed design; sections are
 prose, not fields — see below.)
+SOUP item — REQUIRED `id`, `name`. Optional `code`, `vendor`, `version`, `releaseDate`, `license`,
+`url`, `purpose`, `requirements`, `runtime`, `limitations`, `anomalies`, `anomaliesReviewed`,
+`usedBy`, `tests`, `maintenance`, `notes`, `tags`, `heading`, `level`.
 Risk item — REQUIRED `id`, `text`. Optional `code`, `hazardRef`, `severity`, `causes`, `controls`,
 `justification`, `residual`, `notes`, `tags`, `heading`, `level`. (The software risk analysis.)
 
@@ -341,6 +349,30 @@ situations software can contribute to, what could cause them, and what controls 
   this register.
 - **Opt-in governance:** when a risk register is present, `risk-referential-integrity`, `risk-cause`
   and `risk-controlled` apply. A project with no risk register pays nothing.
+
+## SOUP / off-the-shelf software — optional
+
+A project may add an optional **SOUP register** (`<name>.soup.json`, `type: "soup"`): the third-party
+software it depends on, assessed. Read `guides/soup.md` before authoring one.
+
+- **Both regimes, one record.** IEC 62304 wants the requirements you place on the component (§5.3.3),
+  what it needs to run (§5.3.4), and an evaluation of its published anomalies for the version in use
+  (§7.1.2, §7.1.3); the FDA off-the-shelf guidance wants provenance, purpose, design limitations,
+  testing, and — at Enhanced level — support and end-of-life contingency. Author all of it; what to
+  omit is an export decision.
+- **The version is exact**, never a range: an anomaly evaluation is only valid for the version it was
+  performed against, so a range makes the assessment unverifiable.
+- **Requirements on a component are text here, not SRS entries.** The requirements register holds what
+  this product implements; a requirement on a supplier is neither implemented nor verified here.
+- **A component may be the cause of a risk** (§7.1.2), exactly as one of your own units can: `causes`
+  accepts either.
+- **Development tools are not SOUP.** Compilers, bundlers, test runners and CI fall under §5.1.4 —
+  none of it ships. The runtime that is not a package usually does: a language runtime, or a binary
+  invoked as a subprocess.
+- **This is not an SBOM.** An SBOM is a recursive inventory of every dependency, generated from the
+  manifests; this is the assessed subset. Do not let one stand in for the other.
+- **Opt-in governance:** when a SOUP register is present, `soup-identity`, `soup-requirements`,
+  `soup-anomalies` and `soup-referential-integrity` apply.
 
 ## Hierarchy (sections and sub-requirements)
 
@@ -620,6 +652,14 @@ declaring a task done:
 - `risk-controlled`: When a risk register is present, every non-heading risk references at least one
   controlling requirement (7.2) or records why no software control is needed. With no risk register,
   none of the three applies — software risk is opt-in.
+- `soup-identity`: When a SOUP register is present, every component records a supplier and an exact
+  version (8.1.2).
+- `soup-requirements`: When a SOUP register is present, every component states the functional and
+  performance requirements placed on it (5.3.3).
+- `soup-anomalies`: When a SOUP register is present, every component records an evaluation of its
+  published anomalies for the version in use (7.1.2, 7.1.3).
+- `soup-referential-integrity`: When a SOUP register is present, every `usedBy` entry resolves to a
+  design section and every `tests` entry to a test. With no SOUP register, none of the four applies.
 
 Also confirm structural validity: required fields present, `result` within its enum,
 `schemaVersion` is "1.0".

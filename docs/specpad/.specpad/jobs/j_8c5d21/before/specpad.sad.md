@@ -7,7 +7,7 @@
 
 ## 1. Introduction and Goals
 SpecPad governs structured software documentation — **product requirements (user needs), software
-requirements, verification tests, architecture, detailed design, software risk, and third-party software** — as files in a git repo, edited by a Claude Code
+requirements, verification tests, architecture, detailed design, and software risk** — as files in a git repo, edited by a Claude Code
 skill and a hosted visual editor under one shared contract, producing change-tracked, exportable design
 evidence. The set of document types is **open** (a registry): SOUP/SBOM, cybersecurity, and SDD are
 planned pillars that plug into the same machinery. Quality goals: **low install friction**, a
@@ -48,7 +48,7 @@ clone on their behalf.
 - **A document-type registry (`src/shared/docTypes.ts`) is the source of truth for which content
   document types exist** and how each behaves (id-keyed register vs prose vs asset). Validation, the
   snapshot/diff/redline, the generator, and the per-job impact evaluation all derive from it, so a new
-  pillar (cybersecurity, threat model) is one registration — as the detailed design and the risk
+  pillar (SOUP, cybersecurity, threat model) is one registration — as the detailed design and the risk
   register both were. The per-project list is the project index
   (`proj.json documents[]`).
 - **Skill writes programmatically; humans edit visually; git merges.**
@@ -75,7 +75,7 @@ Top-level units and the key interfaces between them:
 | Shared contract (`src/shared`) | Types + JSON Schemas, governance, id-keyed diff, **document-type registry** (`docTypes.ts`) | imported by editor; mirrored by skill |
 | Editor (`src/`) | React SPA: Overview, PRD, SRS, VTP, Results, Architecture, **Detailed Design**, **Auditor (design-control map)**, **Traceability**, Releases, Jobs views; selectable **themes**; local file I/O | File System Access API; the contract |
 | Skill (`skill/specpad`) | Scaffold, govern, cache, draft (generator), export; git plumbing | git; the contract; the eQMS export |
-| Spec files + cache (`docs/specpad`) | proj/**prd**/srs/vtp/**sdd**/**risk**/**soup** JSON, sad.md + diagrams, `.specpad/` baselines & job caches | git |
+| Spec files + cache (`docs/specpad`) | proj/**prd**/srs/vtp/**sdd**/**risk** JSON, sad.md + diagrams, `.specpad/` baselines & job caches | git |
 | Transport seam (`src/fileApi.ts`, `src/transports/`) | The editor's one door to documents: local / demo / remote implementations of `FileApi` | one conformance suite across all three |
 | Server (`server/`) | Optional self-hosted multi-project server: identity, per-project authorization, per-user worktrees, the commit gate, HTTP API + SSE | the contract; git; an upstream SSO gateway |
 
@@ -139,15 +139,12 @@ Per-job architecture diffs are coarse (file changed + SAD line diff, no in-diagr
 prose and can drift — mitigated by the working loop's per-job impact evaluation across every registered
 document type, but not hard-enforced by the pre-push gate; diagrams (draw.io SVGs) are updated by hand
 and can lag the prose. The eQMS export format is not finalized; third-party components (SOUP/SBOM),
-cybersecurity architecture and the threat model are planned pillars, not yet built. An SBOM is not
-the SOUP register and is not built: an SBOM is a recursive inventory generated from the manifests,
-while the SOUP register is the assessed subset. The
+cybersecurity architecture and the threat model are planned pillars, not yet built. The
 detailed design is complete: authored by the skill or in the browser, governed, snapshotted and diffed.
 
 ## 12. Glossary
 PRD (product requirements / user needs), SRS (software requirements), VTP (verification tests), SAD
-(this document), SOUP (software of unknown provenance — the assessed third-party software; FDA calls
-it off-the-shelf software), risk (the IEC 62304 clause 7 software risk analysis — hazardous situations software
+(this document), risk (the IEC 62304 clause 7 software risk analysis — hazardous situations software
 contributes to, their causes and controls; the system risk management file stays with the quality
 system), SDD (software detailed design — the units and design views implementing the
 requirements; IEC 62304 5.4, FDA Software Design Specification, IEEE 1016 views), project (on a self-hosted server: one repository

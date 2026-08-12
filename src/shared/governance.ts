@@ -1,4 +1,4 @@
-import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, JobsDoc, JobDoc } from './schema';
+import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SoupDoc, JobsDoc, JobDoc } from './schema';
 
 export type GovernanceRuleId =
   | 'traceability'
@@ -12,7 +12,11 @@ export type GovernanceRuleId =
   | 'sdd-coverage'
   | 'risk-referential-integrity'
   | 'risk-cause'
-  | 'risk-controlled';
+  | 'risk-controlled'
+  | 'soup-identity'
+  | 'soup-requirements'
+  | 'soup-anomalies'
+  | 'soup-referential-integrity';
 
 /** Normalize the active-job marker to a list, tolerating the legacy single `job`. */
 export function activeJobIds(job: JobDoc | null | undefined): string[] {
@@ -101,6 +105,30 @@ export const GOVERNANCE_RULES: GovernanceRule[] = [
     description:
       'When a risk register is present, every non-heading risk must reference at least one controlling requirement (IEC 62304 7.2), or record why no software control is needed — for example a risk controlled in hardware or by labelling.',
   },
+  {
+    id: 'soup-identity',
+    title: 'Every component is exactly identified',
+    description:
+      'When a SOUP register is present, every component must record a supplier and an exact version (IEC 62304 8.1.2). A version range is not an identity: an anomaly evaluation is only valid for the version it was performed against.',
+  },
+  {
+    id: 'soup-requirements',
+    title: 'Every component has requirements placed on it',
+    description:
+      'When a SOUP register is present, every component must state the functional and performance requirements necessary for its intended use (IEC 62304 5.3.3).',
+  },
+  {
+    id: 'soup-anomalies',
+    title: "Every component's known anomalies are evaluated",
+    description:
+      "When a SOUP register is present, every component must record an evaluation of the supplier's published anomaly list for the version in use (IEC 62304 7.1.2, 7.1.3).",
+  },
+  {
+    id: 'soup-referential-integrity',
+    title: 'Component references resolve',
+    description:
+      'When a SOUP register is present, every `usedBy` entry must resolve to an SDD section and every `tests` entry to a VTP item.',
+  },
 ];
 
 export interface ProjectBundle {
@@ -110,6 +138,7 @@ export interface ProjectBundle {
   prd?: PrdDoc | null;
   sdd?: SddDoc | null;
   risk?: RiskDoc | null;
+  soup?: SoupDoc | null;
   jobs?: JobsDoc | null;
   job?: JobDoc | null;
 }
@@ -244,16 +273,19 @@ export function checkGovernance(bundle: ProjectBundle): GovernanceViolation[] {
     );
     const sectionIds = new Set((bundle.sdd?.items ?? []).map((s) => s.id));
     const srsIds2 = new Set(srsItems.map((i) => i.id));
+    // A cause is whatever could fail: one of our units, or a supplier's component (7.1.2).
+    const soupIds = new Set((bundle.soup?.items ?? []).filter((c) => !c.heading).map((c) => c.id));
 
     for (const risk of bundle.risk.items ?? []) {
       if (risk.heading) continue;
 
       for (const ref of risk.causes ?? []) {
+        if (soupIds.has(ref)) continue;
         if (!sectionIds.has(ref)) {
           violations.push({
             rule: 'risk-referential-integrity',
             itemId: risk.id,
-            message: `Risk ${risk.id} names cause "${ref}", which is not a known design section id.`,
+            message: `Risk ${risk.id} names cause "${ref}", which is neither a known design section nor a known component.`,
           });
         } else if (!unitIds.has(ref)) {
           // A design view describes structure across units; it cannot fail on its own.
@@ -287,6 +319,57 @@ export function checkGovernance(bundle: ProjectBundle): GovernanceViolation[] {
           itemId: risk.id,
           message: `Risk ${risk.id} has no controlling requirement and no justification for having none.`,
         });
+      }
+    }
+  }
+
+  // soup-*: only when a SOUP register is present (opt-in), as with the other pillars.
+  if (bundle.soup) {
+    const sectionIds2 = new Set((bundle.sdd?.items ?? []).map((s) => s.id));
+    const vtpIds = new Set(vtpItems.map((t) => t.id));
+
+    for (const component of bundle.soup.items ?? []) {
+      if (component.heading) continue;
+      const label = component.name || component.id;
+
+      if (!(component.vendor ?? '').trim() || !(component.version ?? '').trim()) {
+        violations.push({
+          rule: 'soup-identity',
+          itemId: component.id,
+          message: `Component ${label} does not record both a supplier and an exact version.`,
+        });
+      }
+      if (!(component.requirements ?? '').trim()) {
+        violations.push({
+          rule: 'soup-requirements',
+          itemId: component.id,
+          message: `Component ${label} states no functional or performance requirements.`,
+        });
+      }
+      if (!(component.anomalies ?? '').trim()) {
+        violations.push({
+          rule: 'soup-anomalies',
+          itemId: component.id,
+          message: `Component ${label} records no evaluation of its published anomalies.`,
+        });
+      }
+      for (const ref of component.usedBy ?? []) {
+        if (!sectionIds2.has(ref)) {
+          violations.push({
+            rule: 'soup-referential-integrity',
+            itemId: component.id,
+            message: `Component ${label} is used by "${ref}", which is not a known design section id.`,
+          });
+        }
+      }
+      for (const ref of component.tests ?? []) {
+        if (!vtpIds.has(ref)) {
+          violations.push({
+            rule: 'soup-referential-integrity',
+            itemId: component.id,
+            message: `Component ${label} names test "${ref}", which is not a known test id.`,
+          });
+        }
       }
     }
   }

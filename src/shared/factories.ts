@@ -1,5 +1,5 @@
 import { SCHEMA_VERSION } from './schema';
-import type { ProjectDoc, ProjectDocRef, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SrsItem, VtpItem, PrdItem, SddSection, RiskItem, JobsDoc, JobRecord } from './schema';
+import type { ProjectDoc, ProjectDocRef, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SoupDoc, SrsItem, VtpItem, PrdItem, SddSection, RiskItem, SoupItem, JobsDoc, JobRecord } from './schema';
 import { generateId, ID_PREFIX } from './ids';
 import { REGISTER_TYPES } from './docTypes';
 
@@ -61,6 +61,17 @@ export function createPrdItem(existingIds: Iterable<string>, level = 0): PrdItem
 }
 
 /** A new detailed-design section. Ids are `d_…` and, once issued, never change (SRS.design targets them). */
+export function createSoupDoc(name: string, title: string): SoupDoc {
+  return { schemaVersion: SCHEMA_VERSION, type: 'soup', name, title, items: [] };
+}
+
+/** A new third-party component. Ids are `s_…`; a risk naming it as a cause targets one. */
+export function createSoupItem(existingIds: Iterable<string>, level = 0): SoupItem {
+  const item: SoupItem = { id: generateId(ID_PREFIX.soup, existingIds), name: '' };
+  if (level > 0) item.level = level;
+  return item;
+}
+
 export function createRiskDoc(name: string, title: string): RiskDoc {
   return { schemaVersion: SCHEMA_VERSION, type: 'risk', name, title, items: [] };
 }

@@ -9,6 +9,7 @@
     { "type": "srs", "path": "PROJECT_NAME.srs.json", "title": "Requirements" },
     { "type": "vtp", "path": "PROJECT_NAME.vtp.json", "title": "Verification Tests" },
     { "type": "sdd", "path": "PROJECT_NAME.sdd.json", "title": "Detailed Design" },
-    { "type": "risk", "path": "PROJECT_NAME.risk.json", "title": "Risk" }
+    { "type": "risk", "path": "PROJECT_NAME.risk.json", "title": "Risk" },
+    { "type": "soup", "path": "PROJECT_NAME.soup.json", "title": "SOUP" }
   ]
 }

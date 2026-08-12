@@ -39,6 +39,7 @@ vi.mock('../fileApi', () => ({
   loadProject: vi.fn(async () => demoProj),
   loadSdd: vi.fn(async () => null),
   loadRisk: vi.fn(async () => null),
+  loadSoup: vi.fn(async () => null),
   loadPrd: vi.fn(async () => null),
   loadRun: vi.fn(async () => null),
   loadDocument: vi.fn(async (type: 'srs' | 'vtp') => (type === 'srs' ? demoSrs : demoVtp)),
