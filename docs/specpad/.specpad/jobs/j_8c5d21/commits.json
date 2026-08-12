@@ -1,0 +1,20 @@
+[
+  {
+    "hash": "614c08c987581ee9d03c6f7ce72943d4a0703ab4",
+    "subject": "SOUP: prompt for the depth these fields actually need",
+    "author": "Geoff Pollard",
+    "date": "2026-08-12"
+  },
+  {
+    "hash": "f64a7f1e74b56acc9bf5287f8874d42f682d50d9",
+    "subject": "SOUP: read as a record, drop anomalies, date the end of life",
+    "author": "Geoff Pollard",
+    "date": "2026-08-12"
+  },
+  {
+    "hash": "110ca20c3813aae35af1d081a9e50e33f21d3500",
+    "subject": "SOUP / OTS pillar (IEC 62304 and the FDA off-the-shelf guidance)",
+    "author": "Geoff Pollard",
+    "date": "2026-08-11"
+  }
+]

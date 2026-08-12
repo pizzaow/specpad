@@ -1,5 +1,11 @@
 [
   {
+    "hash": "078d8513d832b2086644f801c58dceff76a714f0",
+    "subject": "release: close the v1.7 cut job",
+    "author": "Geoff Pollard",
+    "date": "2026-08-11"
+  },
+  {
     "hash": "c5c3412b6b35e2e472989d36f30bf7f52d37e94a",
     "subject": "release: cut v1.7 — the software risk pillar",
     "author": "Geoff Pollard",
