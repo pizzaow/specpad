@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { checkGovernance, checkAdvice, GOVERNANCE_RULES } from '../governance';
+import { validate } from '../validate';
+import { REQUIREMENT_CATEGORIES } from '../schema';
 import type { ProjectDoc, SrsDoc, VtpDoc } from '../schema';
 
 /**
@@ -17,7 +19,7 @@ import type { ProjectDoc, SrsDoc, VtpDoc } from '../schema';
 const srs: SrsDoc = {
   schemaVersion: '1.0', type: 'srs', name: 'Acme', title: 'Requirements',
   items: [
-    { id: 'r_1', code: 'A-1', text: 'The thing shall do the thing.', category: 'functional' },
+    { id: 'r_1', code: 'A-1', text: 'The thing shall do the thing.', category: ['functional'] },
     { id: 'r_2', code: 'A-2', text: 'The other thing shall also happen.' }, // no category
   ],
 };
@@ -78,6 +80,43 @@ describe('a project promotes an advisory to blocking', () => {
     const clean = { srs: { ...srs, items: [srs.items[0]] }, vtp: { ...vtp, items: [vtp.items[0]] }, project: project() };
     expect(checkAdvice(clean)).toEqual([]);
     expect(checkGovernance(clean)).toEqual([]);
+  });
+});
+
+describe('§5.2.2 categories overlap, so a requirement may hold several', () => {
+  it('accepts more than one category on one requirement', () => {
+    // A1:2015 NOTE 10: "The requirements in a) through l) can overlap." A networked alarm
+    // is genuinely three of them, and forcing one would under-count the coverage sweep.
+    const doc: SrsDoc = {
+      ...srs,
+      items: [{ id: 'r_1', code: 'A-1', text: 'A dropped link shall raise an operator warning within 2 s.', category: ['alarms', 'it-network', 'functional'] }],
+    };
+    expect(validate(doc)).toEqual([]);
+    expect(checkAdvice({ srs: doc, project: project() }).some((a) => a.rule === 'srs-category')).toBe(false);
+  });
+
+  it('advises only when the list is absent or empty, not when it is short', () => {
+    const one: SrsDoc = { ...srs, items: [{ id: 'r_1', text: 'x', category: ['regulatory'] }] };
+    const none: SrsDoc = { ...srs, items: [{ id: 'r_1', text: 'x', category: [] }] };
+    expect(checkAdvice({ srs: one, project: project() }).some((a) => a.rule === 'srs-category')).toBe(false);
+    expect(checkAdvice({ srs: none, project: project() }).some((a) => a.rule === 'srs-category')).toBe(true);
+  });
+
+  it('rejects a value outside the twelve', () => {
+    const doc = { ...srs, items: [{ id: 'r_1', text: 'x', category: ['usability'] }] } as unknown;
+    expect(validate(doc).length).toBeGreaterThan(0);
+  });
+
+  it('carries all twelve of a)-l), including the two A1:2015 replaced', () => {
+    expect(REQUIREMENT_CATEGORIES).toHaveLength(12);
+    expect(REQUIREMENT_CATEGORIES.map((c) => c.letter).join('')).toBe('abcdefghijkl');
+    const byValue = new Map(REQUIREMENT_CATEGORIES.map((c) => [c.value, c]));
+    // f) became "user interface requirements implemented by software"; j) became IT-network.
+    expect(byValue.get('user-interface')?.letter).toBe('f');
+    expect(byValue.get('it-network')?.letter).toBe('j');
+    // i) methods of operation and maintenance is not the same item as k) user maintenance.
+    expect(byValue.get('operation-maintenance')?.letter).toBe('i');
+    expect(byValue.get('user-maintenance')?.letter).toBe('k');
   });
 });
 

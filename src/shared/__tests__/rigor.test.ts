@@ -32,7 +32,7 @@ const risk = (over: Partial<RiskDoc['items'][number]> = {}): RiskDoc => ({
 });
 const srs: SrsDoc = {
   schemaVersion: '1.0', type: 'srs', name: 'Acme', title: 'Requirements',
-  items: [{ id: 'r_1', code: 'A-1', text: 'The rate shall be range-checked.', design: ['d_1'], category: 'functional' }],
+  items: [{ id: 'r_1', code: 'A-1', text: 'The rate shall be range-checked.', design: ['d_1'], category: ['functional'] }],
 };
 const vtp: VtpDoc = {
   schemaVersion: '1.0', type: 'vtp', name: 'Acme', title: 'Tests',

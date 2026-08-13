@@ -810,8 +810,8 @@ rule that fires on every requirement in an established project on the day it shi
 ignore governance rather than to use it, and material beyond a declared safety class needs pointing at
 without being called wrong.
 
-- `srs-category`: Every non-heading SRS requirement should declare which of IEC 62304 5.2.2 a)–i) it
-  is (`category`). Advisory.
+- `srs-category`: Every non-heading SRS requirement should declare which of IEC 62304 5.2.2 a)–l) it
+  is (`category`) — **one or more**, since A1:2015 NOTE 10 states the categories can overlap. Advisory.
 - `vtp-verification-level`: Every non-heading VTP test should declare whether it is `unit`,
   `integration` or `system` verification — 62304 5.5, 5.6 and 5.7 are three activities with distinct
   records (`verificationLevel`). Advisory.

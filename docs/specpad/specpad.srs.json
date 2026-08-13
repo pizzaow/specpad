@@ -3833,7 +3833,9 @@
       "design": [
         "d_dep001"
       ],
-      "category": "functional",
+      "category": [
+        "functional"
+      ],
       "tags": [
         "governance"
       ],
@@ -3846,7 +3848,9 @@
         "d_dep001",
         "d_ctx001"
       ],
-      "category": "functional",
+      "category": [
+        "functional"
+      ],
       "tags": [
         "governance"
       ],
@@ -3859,7 +3863,10 @@
         "d_dep001",
         "d_ctx001"
       ],
-      "category": "regulatory",
+      "category": [
+        "regulatory",
+        "functional"
+      ],
       "tags": [
         "governance",
         "62304"
@@ -3872,7 +3879,10 @@
       "design": [
         "d_ctx001"
       ],
-      "category": "regulatory",
+      "category": [
+        "regulatory",
+        "functional"
+      ],
       "tags": [
         "62304"
       ],
@@ -3884,7 +3894,10 @@
       "design": [
         "d_ctx001"
       ],
-      "category": "regulatory",
+      "category": [
+        "regulatory",
+        "functional"
+      ],
       "tags": [
         "62304"
       ],
@@ -3896,7 +3909,9 @@
       "design": [
         "d_dep001"
       ],
-      "category": "functional",
+      "category": [
+        "functional"
+      ],
       "tags": [
         "governance"
       ],
@@ -3909,7 +3924,10 @@
         "d_ctx001",
         "d_dep001"
       ],
-      "category": "regulatory",
+      "category": [
+        "regulatory",
+        "functional"
+      ],
       "tags": [
         "62304"
       ],
@@ -3922,7 +3940,10 @@
         "d_ctx001",
         "d_dep001"
       ],
-      "category": "regulatory",
+      "category": [
+        "regulatory",
+        "functional"
+      ],
       "tags": [
         "62304"
       ],
@@ -3935,7 +3956,10 @@
         "d_ctx001",
         "d_dep001"
       ],
-      "category": "regulatory",
+      "category": [
+        "regulatory",
+        "functional"
+      ],
       "tags": [
         "62304"
       ],
@@ -3947,7 +3971,10 @@
       "design": [
         "d_ctx001"
       ],
-      "category": "regulatory",
+      "category": [
+        "regulatory",
+        "functional"
+      ],
       "tags": [
         "62304"
       ],
@@ -3959,7 +3986,9 @@
       "design": [
         "d_app001"
       ],
-      "category": "functional",
+      "category": [
+        "functional"
+      ],
       "tags": [
         "editor"
       ],
@@ -3971,7 +4000,9 @@
       "design": [
         "d_app001"
       ],
-      "category": "usability",
+      "category": [
+        "user-interface"
+      ],
       "tags": [
         "editor",
         "governance"

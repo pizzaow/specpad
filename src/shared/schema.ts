@@ -129,40 +129,55 @@ export interface SrsItem {
   satisfies?: string[]; // ids of PRD items this requirement satisfies (upward trace; ids, never codes)
   design?: string[]; // ids of SDD sections implementing this requirement (downward trace; ids, never codes)
   /**
-   * Which of IEC 62304 §5.2.2's content categories this requirement is. A coverage prompt
-   * rather than a label: the value of the list is the question "is there really nothing
-   * under alarms?", which free text cannot be asked.
+   * Which of IEC 62304 §5.2.2's content categories this requirement is — a list, because
+   * A1:2015 NOTE 10 says plainly that "the requirements in a) through l) can overlap".
+   *
+   * An enumeration rather than a free tag, because the point is the coverage question
+   * ("is there really nothing under alarms?"), and against free text an absent category
+   * and a misspelt one look identical. `tags` remain the project's own vocabulary; this is
+   * the standard's.
    */
-  category?: RequirementCategory;
+  category?: RequirementCategory[];
   tags?: string[];
   hazards?: string[];
 }
 
-/** IEC 62304 §5.2.2 a)–i), which a software requirements specification is expected to cover. */
+/**
+ * IEC 62304 §5.2.2 a)–l), the content a software requirements specification is expected to
+ * cover. Twelve, not nine: f) and j) are the A1:2015 replacements, and i) "methods of
+ * operation and maintenance" is a different item from k) "user maintenance requirements".
+ */
 export type RequirementCategory =
   | 'functional'
   | 'inputs-outputs'
   | 'interfaces'
   | 'alarms'
   | 'security'
-  | 'usability'
+  | 'user-interface'
   | 'data-definition'
   | 'installation'
-  | 'maintenance'
+  | 'operation-maintenance'
+  | 'it-network'
+  | 'user-maintenance'
   | 'regulatory';
 
-/** The nine, with display labels — one list, so the editor and the reference agree. */
-export const REQUIREMENT_CATEGORIES: { value: RequirementCategory; label: string }[] = [
-  { value: 'functional', label: 'Functional' },
-  { value: 'inputs-outputs', label: 'Inputs/outputs' },
-  { value: 'interfaces', label: 'Interfaces' },
-  { value: 'alarms', label: 'Alarms' },
-  { value: 'security', label: 'Security' },
-  { value: 'usability', label: 'Usability' },
-  { value: 'data-definition', label: 'Data' },
-  { value: 'installation', label: 'Installation' },
-  { value: 'maintenance', label: 'Maintenance' },
-  { value: 'regulatory', label: 'Regulatory' },
+/**
+ * The twelve, with their letter and the standard's own wording — one list, so the editor,
+ * the guide and the schema reference cannot drift apart.
+ */
+export const REQUIREMENT_CATEGORIES: { value: RequirementCategory; letter: string; label: string; text: string }[] = [
+  { value: 'functional', letter: 'a', label: 'Functional', text: 'Functional and capability requirements' },
+  { value: 'inputs-outputs', letter: 'b', label: 'Inputs/outputs', text: 'Software system inputs and outputs' },
+  { value: 'interfaces', letter: 'c', label: 'Interfaces', text: 'Interfaces between the software system and other systems' },
+  { value: 'alarms', letter: 'd', label: 'Alarms', text: 'Software-driven alarms, warnings and operator messages' },
+  { value: 'security', letter: 'e', label: 'Security', text: 'Security requirements, including system security and malware protection' },
+  { value: 'user-interface', letter: 'f', label: 'User interface', text: 'User interface requirements implemented by software (A1:2015)' },
+  { value: 'data-definition', letter: 'g', label: 'Data', text: 'Data definition and database requirements' },
+  { value: 'installation', letter: 'h', label: 'Installation', text: 'Installation and acceptance at the operation and maintenance site' },
+  { value: 'operation-maintenance', letter: 'i', label: 'Operation', text: 'Requirements related to methods of operation and maintenance' },
+  { value: 'it-network', letter: 'j', label: 'IT-network', text: 'Requirements related to IT-network aspects: networked alarms, protocols, and unavailability of network services (A1:2015)' },
+  { value: 'user-maintenance', letter: 'k', label: 'User maintenance', text: 'User maintenance requirements' },
+  { value: 'regulatory', letter: 'l', label: 'Regulatory', text: 'Regulatory requirements' },
 ];
 
 export interface SrsDoc {
@@ -549,7 +564,7 @@ export const srsSchema = {
           level: { type: 'integer', minimum: 0, description: 'Indent depth for hierarchy; absent means 0. Headings form dotted section codes.' },
           satisfies: { ...stringArray, description: 'Ids of the PRD product requirements this requirement satisfies — ids, never codes, so renames cannot break the upward trace. Empty/absent unless a PRD register is in use.' },
           design: { ...stringArray, description: 'Ids of the SDD sections that implement this requirement — the downward trace (IEC 62304 5.4; FDA SDS). Ids, never codes, so a section can be retitled or rewritten without breaking the link. Empty/absent unless an SDD is in use.' },
-          category: { enum: ['functional', 'inputs-outputs', 'interfaces', 'alarms', 'security', 'usability', 'data-definition', 'installation', 'maintenance', 'regulatory'], description: 'Which of IEC 62304 5.2.2 a)-i) this requirement is. Its worth is coverage: a category with no requirement is a question to answer once, not an omission to discover at review.' },
+          category: { type: 'array', items: { enum: ['functional', 'inputs-outputs', 'interfaces', 'alarms', 'security', 'user-interface', 'data-definition', 'installation', 'operation-maintenance', 'it-network', 'user-maintenance', 'regulatory'] }, description: 'Which of IEC 62304 5.2.2 a)-l) this requirement is. A list, because A1:2015 NOTE 10 states that the requirements in a) through l) can overlap. Its worth is coverage: a category with no requirement is a question to answer once, not an omission to discover at review.' },
           tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
           hazards: { ...stringArray, description: 'Reserved hazard labels (legacy v1 field; the editor no longer surfaces it).' },
         },

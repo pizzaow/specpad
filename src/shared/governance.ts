@@ -176,7 +176,7 @@ const RULES: GovernanceRule[] = [
     tier: 'advisory',
     title: 'Requirements declare their content category',
     description:
-      'Every non-heading SRS requirement should declare which of IEC 62304 5.2.2 a)–i) it is. Advisory: the worth of the list is coverage, and a category with no requirement is a question to answer once rather than an omission found at review.',
+      'Every non-heading SRS requirement should declare which of IEC 62304 5.2.2 a)–l) it is — one or more, since A1:2015 NOTE 10 states the categories can overlap. Advisory: the worth of the list is coverage, and a category with no requirement is a question to answer once rather than an omission found at review.',
   },
   {
     id: 'vtp-verification-level',
@@ -233,8 +233,8 @@ function advisoryFindings(bundle: ProjectBundle): GovernanceFinding[] {
     out.push({ rule, itemId, message, severity: 'advisory' });
 
   for (const item of bundle.srs?.items ?? []) {
-    if (item.heading || item.category) continue;
-    advise('srs-category', item.id, `Requirement ${item.code ?? item.id} does not say which of IEC 62304 5.2.2 a)–i) it is.`);
+    if (item.heading || (item.category ?? []).length) continue;
+    advise('srs-category', item.id, `Requirement ${item.code ?? item.id} does not say which of IEC 62304 5.2.2 a)–l) it is.`);
   }
   for (const test of bundle.vtp?.items ?? []) {
     if (test.heading || test.verificationLevel) continue;

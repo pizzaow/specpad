@@ -19,6 +19,18 @@ import type { RefOption } from './RefPicker';
 import ItemInfo from './ItemInfo';
 import { REQUIREMENT_CATEGORIES } from '../shared';
 
+/**
+ * The §5.2.2 categories as picker options: the value is the id, the short label is the
+ * code, and the standard's own wording rides along so the picker teaches the list rather
+ * than assuming it is known. A requirement may hold several — A1:2015 NOTE 10 says the
+ * categories can overlap.
+ */
+const CATEGORY_OPTIONS = REQUIREMENT_CATEGORIES.map((c) => ({
+  id: c.value,
+  code: c.label,
+  text: `${c.letter}) ${c.text}`,
+}));
+
 interface SRSTableProps {
   doc: SrsDoc;
   vtpDoc: VtpDoc | null;
@@ -223,7 +235,7 @@ const SRSTable: React.FC<SRSTableProps> = ({
           <tr>
             <th style={{ width: 160 }}>Code</th>
             <th>Text</th>
-            <th style={{ width: 110 }} title="IEC 62304 §5.2.2 a)–i) — a category with no requirement is a question, not an omission">Category</th>
+            <th style={{ width: 110 }} title="IEC 62304 §5.2.2 a)–l) — one or more; A1:2015 NOTE 10 says the categories can overlap. A category with no requirement is a question, not an omission">Category</th>
             <th style={{ width: 150 }}>Tags</th>
             <th style={{ width: 70 }}>Tests</th>
             <th style={{ width: 44 }} />
@@ -277,18 +289,16 @@ const SRSTable: React.FC<SRSTableProps> = ({
                   </td>
                   <td>
                     {item.heading ? '' : (
-                      <select
-                        className="form-control input-sm"
-                        aria-label={`Category for ${item.code ?? item.id}`}
-                        value={item.category ?? ''}
-                        disabled={readOnly}
-                        onChange={(e) => setField(index, { category: (e.target.value || undefined) as SrsItem['category'] })}
-                      >
-                        <option value="">—</option>
-                        {REQUIREMENT_CATEGORIES.map((c) => (
-                          <option key={c.value} value={c.value}>{c.label}</option>
-                        ))}
-                      </select>
+                      <RefPicker
+                        label={`Categories for ${item.code ?? item.id} (IEC 62304 §5.2.2)`}
+                        value={item.category ?? []}
+                        options={CATEGORY_OPTIONS}
+                        empty="—"
+                        readOnly={readOnly}
+                        onChange={(values) =>
+                          setField(index, { category: values.length ? (values as SrsItem['category']) : undefined })
+                        }
+                      />
                     )}
                   </td>
                   <td className={isCellChanged(entry, 'tags') ? 'ct-changed' : undefined}>

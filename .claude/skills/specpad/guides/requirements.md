@@ -22,32 +22,45 @@ evidence — so it must be true, singular, and checkable.
 The litmus test: *could I write a test that fails if this behavior regressed?* If yes, it's a requirement.
 If the only test you can imagine asserts how the code is structured, it's not.
 
-## Category — walk the nine, once
+## Category — walk all twelve, once
 
-Each requirement carries a `category`: which of IEC 62304 §5.2.2 a)–i) it is. Setting it on an item is
-trivial. **The reason it exists is the sweep**, and the sweep is what you owe the draft:
+Each requirement carries `category`: which of IEC 62304 §5.2.2 a)–l) it is. **A list, not one
+value** — A1:2015 adds NOTE 10 saying plainly that *"the requirements in a) through l) can
+overlap"*. A warning raised over a network link is `alarms`, `it-network` and `functional` at once,
+and forcing a single choice makes someone pick arbitrarily, which quietly under-counts the sweep.
 
-| Category | Ask |
-|---|---|
-| `functional` | What the software does — the bulk of most registers |
-| `inputs-outputs` | Ranges, units, accuracy, limits on every input and output |
-| `interfaces` | Interfaces to other systems, devices and software |
-| `alarms` | Alarms, warnings, and operator messages |
-| `security` | Authentication, authorization, confidentiality, integrity, audit |
-| `usability` | What the software must do so a user does not err — not "it shall be intuitive" |
-| `data-definition` | Data definitions and database requirements; retention and format |
-| `installation` | Installation and acceptance at the point of use |
-| `maintenance` | Operation and maintenance by the user, including servicing |
-| `regulatory` | Requirements imposed by regulation or by a standard the product claims |
+| | Category | Ask |
+|---|---|---|
+| a | `functional` | What the software does — the bulk of most registers |
+| b | `inputs-outputs` | Ranges, units, accuracy and limits on every input and output |
+| c | `interfaces` | Interfaces to other systems |
+| d | `alarms` | Alarms, warnings and operator messages |
+| e | `security` | Authentication, authorization, confidentiality, integrity, malware protection |
+| f | `user-interface` | What the interface must do so a user does not err — not "it shall be intuitive" |
+| g | `data-definition` | Data definitions and database requirements; retention and format |
+| h | `installation` | Installation and acceptance at the site where it will run |
+| i | `operation-maintenance` | How it is operated and maintained in service |
+| j | `it-network` | Networked alarms, protocols, and what happens when the network is unavailable |
+| k | `user-maintenance` | What the *user* must do to maintain it |
+| l | `regulatory` | Imposed by regulation or by a standard the product claims |
 
-Go through all ten with the system in front of you and ask *"is there really nothing here?"* — the same
-move STRIDE makes in the threat model. **A category with no requirement is a question, not an
-omission**, and the answer is often "nothing, because …", which is worth writing down once rather than
-rediscovering at review.
+Setting the field on an item is trivial. **The reason it exists is the sweep**: go through all twelve
+with the system in front of you and ask *"is there really nothing here?"* — the same move STRIDE makes
+in the threat model. **A category with no requirement is a question, not an omission**, and the answer
+is often "nothing, because …", worth writing down once rather than rediscovering at review.
 
-The categories a first draft nearly always misses are `alarms`, `installation`, `maintenance` and
-`data-definition` — because they describe the product's life rather than its behaviour, and a
-conversation about building something rarely reaches them. Ask about them explicitly.
+The ones a first draft nearly always misses are `alarms`, `installation`, `operation-maintenance`,
+`user-maintenance`, `it-network` and `data-definition` — because they describe the product's life
+rather than its behaviour, and a conversation about building something rarely reaches them. Ask about
+them explicitly.
+
+Two the amendment changed, worth knowing if you learned the 2006 list: f) is **user interface
+requirements implemented by software** (it was usability engineering), and j) is **IT-network
+aspects** — which, for anything connected, is a category most registers should not be empty on.
+
+`category` is the standard's vocabulary; `tags` stay yours. Keeping them apart is deliberate: a closed
+list is what makes the coverage question answerable, because against free text an absent category and
+a misspelt one look identical.
 
 **Set it on every requirement you write.** The rule is advisory so that established registers are not
 lit up overnight; that is a concession to existing projects, not permission for a thin new draft.
