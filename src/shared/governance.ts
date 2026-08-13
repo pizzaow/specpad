@@ -1,24 +1,9 @@
-import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SoupDoc, ThreatDoc, JobsDoc, JobDoc } from './schema';
+import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SoupDoc, ThreatDoc, ReferenceDoc, JobsDoc, JobDoc } from './schema';
+import type { GovernanceRuleId } from './schema';
 
-export type GovernanceRuleId =
-  | 'traceability'
-  | 'referential-integrity'
-  | 'missing-expected'
-  | 'active-job-open'
-  | 'active-job-known'
-  | 'prd-referential-integrity'
-  | 'prd-coverage'
-  | 'sdd-referential-integrity'
-  | 'sdd-coverage'
-  | 'risk-referential-integrity'
-  | 'risk-cause'
-  | 'risk-controlled'
-  | 'soup-identity'
-  | 'soup-requirements'
-  | 'soup-referential-integrity'
-  | 'threat-referential-integrity'
-  | 'threat-assessed'
-  | 'threat-controlled';
+// Defined in schema.ts so the project index can name the rules it enforces without a
+// cycle; re-exported here because this module is where rules are read from.
+export type { GovernanceRuleId };
 
 /** Normalize the active-job marker to a list, tolerating the legacy single `job`. */
 export function activeJobIds(job: JobDoc | null | undefined): string[] {
@@ -27,14 +12,25 @@ export function activeJobIds(job: JobDoc | null | undefined): string[] {
   return job.job ? [job.job] : [];
 }
 
+/**
+ * How hard a rule bites. `violation` fails the project; `advisory` reports without failing,
+ * which exists because two things needed saying that are not defects: material beyond the
+ * declared safety class, and a field a project has not adopted yet. A blocking rule that
+ * fires on every existing document teaches people to ignore governance, so a project opts
+ * into being held to an advisory by naming it in the index's `enforce` list.
+ */
+export type RuleTier = 'violation' | 'advisory';
+
 export interface GovernanceRule {
   id: GovernanceRuleId;
   title: string;
   description: string;
+  /** Absent means `violation`; the tier a rule has before any project enforces it. */
+  tier?: RuleTier;
 }
 
 // The canonical rule list. The skill's SKILL.md is parity-tested against these ids.
-export const GOVERNANCE_RULES: GovernanceRule[] = [
+const RULES: GovernanceRule[] = [
   {
     id: 'traceability',
     title: 'Every requirement is verified',
@@ -143,7 +139,38 @@ export const GOVERNANCE_RULES: GovernanceRule[] = [
     description:
       'When a threat model is present, every non-heading threat must reference at least one controlling requirement, or record why none is needed — for example a threat accepted, or controlled by the deployment environment.',
   },
+  {
+    id: 'reference-located',
+    title: 'Every reference can be found',
+    description:
+      'When a references register is present, every non-heading entry must say where the document is kept (`location`) and what sort of document it is (`kind`). A reference a reviewer cannot open is a claim, not a record.',
+  },
+  {
+    id: 'reference-covers',
+    title: 'Every reference discharges something',
+    description:
+      'When a references register is present, every non-heading entry must say what it covers. The register exists to account for the processes SpecPad does not hold; an entry that discharges nothing is decoration, and this register is meant to stay short.',
+  },
+  {
+    id: 'srs-category',
+    tier: 'advisory',
+    title: 'Requirements declare their content category',
+    description:
+      'Every non-heading SRS requirement should declare which of IEC 62304 5.2.2 a)–i) it is. Advisory: the worth of the list is coverage, and a category with no requirement is a question to answer once rather than an omission found at review.',
+  },
+  {
+    id: 'vtp-verification-level',
+    tier: 'advisory',
+    title: 'Tests declare their verification level',
+    description:
+      'Every non-heading VTP test should declare whether it is unit verification (IEC 62304 5.5), integration testing (5.6) or system testing (5.7). Advisory: without it a register shows requirements are covered by something, but not that each activity was performed.',
+  },
 ];
+
+/** Rules with their tier resolved; absent in the literal above means `violation`. */
+export const GOVERNANCE_RULES: GovernanceRule[] = RULES.map((r) => ({ tier: 'violation', ...r }));
+
+const ADVISORY_IDS = new Set(GOVERNANCE_RULES.filter((r) => r.tier === 'advisory').map((r) => r.id));
 
 export interface ProjectBundle {
   project?: ProjectDoc | null;
@@ -154,6 +181,7 @@ export interface ProjectBundle {
   risk?: RiskDoc | null;
   soup?: SoupDoc | null;
   threat?: ThreatDoc | null;
+  reference?: ReferenceDoc | null;
   jobs?: JobsDoc | null;
   job?: JobDoc | null;
 }
@@ -164,8 +192,47 @@ export interface GovernanceViolation {
   message: string;
 }
 
+/** An advisory carries the same shape, plus the tier that says it does not fail. */
+export interface GovernanceFinding extends GovernanceViolation {
+  severity: RuleTier;
+}
+
+/**
+ * Findings from the advisory-tier rules, minus any the project has promoted to blocking
+ * (those come back from `checkGovernance` instead, so a finding is never reported twice).
+ */
+export function checkAdvice(bundle: ProjectBundle): GovernanceFinding[] {
+  const enforced = new Set(bundle.project?.enforce ?? []);
+  return advisoryFindings(bundle).filter((f) => !enforced.has(f.rule));
+}
+
+/** Every advisory-tier finding, regardless of what the project enforces. */
+function advisoryFindings(bundle: ProjectBundle): GovernanceFinding[] {
+  const out: GovernanceFinding[] = [];
+  const advise = (rule: GovernanceRuleId, itemId: string | null, message: string) =>
+    out.push({ rule, itemId, message, severity: 'advisory' });
+
+  for (const item of bundle.srs?.items ?? []) {
+    if (item.heading || item.category) continue;
+    advise('srs-category', item.id, `Requirement ${item.code ?? item.id} does not say which of IEC 62304 5.2.2 a)–i) it is.`);
+  }
+  for (const test of bundle.vtp?.items ?? []) {
+    if (test.heading || test.verificationLevel) continue;
+    advise('vtp-verification-level', test.id, `Test ${test.code ?? test.id} does not say whether it is unit, integration or system verification.`);
+  }
+  return out;
+}
+
 export function checkGovernance(bundle: ProjectBundle): GovernanceViolation[] {
   const violations: GovernanceViolation[] = [];
+
+  // Advisory rules the project has chosen to be held to become ordinary violations.
+  const enforced = new Set((bundle.project?.enforce ?? []).filter((r) => ADVISORY_IDS.has(r)));
+  if (enforced.size) {
+    for (const f of advisoryFindings(bundle)) {
+      if (enforced.has(f.rule)) violations.push({ rule: f.rule, itemId: f.itemId, message: f.message });
+    }
+  }
   const srsItems = bundle.srs?.items ?? [];
   const vtpItems = bundle.vtp?.items ?? [];
   const srsIds = new Set(srsItems.map((i) => i.id));
@@ -439,6 +506,31 @@ export function checkGovernance(bundle: ProjectBundle): GovernanceViolation[] {
           rule: 'threat-controlled',
           itemId: threat.id,
           message: `Threat ${label} has no controlling requirement and no justification for having none.`,
+        });
+      }
+    }
+  }
+
+  // reference-*: only when a references register is present (opt-in, as with the other
+  // pillars). This register accounts for the processes SpecPad does not hold, so both rules
+  // ask the same thing in different directions — can it be found, and does it discharge
+  // anything. An entry that fails either is not carrying its weight.
+  if (bundle.reference) {
+    for (const ref of bundle.reference.items) {
+      if (ref.heading) continue;
+      const label = ref.code ?? ref.title ?? ref.id;
+      if (!(ref.location ?? '').trim() || !ref.kind) {
+        violations.push({
+          rule: 'reference-located',
+          itemId: ref.id,
+          message: `Reference ${label} does not say both what sort of document it is and where it is kept.`,
+        });
+      }
+      if ((ref.covers ?? []).filter((c) => c.trim()).length === 0) {
+        violations.push({
+          rule: 'reference-covers',
+          itemId: ref.id,
+          message: `Reference ${label} does not say what it covers, so nothing accounts for why it is listed.`,
         });
       }
     }

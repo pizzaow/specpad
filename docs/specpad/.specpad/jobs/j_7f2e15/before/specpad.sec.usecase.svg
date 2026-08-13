@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="760" viewBox="0 0 900 760" font-family="Arial, Helvetica, sans-serif">
+<defs><marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#64748B"/></marker><marker id="arwS" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748B"/></marker></defs>
+<rect width="900" height="760" fill="#FEFEFE"/>
+<text x="450" y="26" text-anchor="middle" font-size="16" font-weight="bold" fill="#0F172A">Security view 6 — Security use case: sign in, edit, and publish a change</text>
+<rect x="32" y="60" width="170" height="52" rx="3" fill="#FAFAFA" stroke="#64748B" stroke-width="1.5"/>
+<text x="117" y="90" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">Author's browser</text>
+<path d="M117 112 L117 660" stroke="#94A3B8" stroke-width="1" stroke-dasharray="2 3" fill="none"/>
+<rect x="232" y="60" width="170" height="52" rx="3" fill="#E5E7EB" stroke="#64748B" stroke-width="1.5"/>
+<text x="317" y="90" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">Identity proxy</text>
+<path d="M317 112 L317 660" stroke="#94A3B8" stroke-width="1" stroke-dasharray="2 3" fill="none"/>
+<rect x="432" y="60" width="180" height="52" rx="3" fill="#FAFAFA" stroke="#64748B" stroke-width="1.5"/>
+<text x="522" y="90" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">SpecPad server</text>
+<path d="M522 112 L522 660" stroke="#94A3B8" stroke-width="1" stroke-dasharray="2 3" fill="none"/>
+<rect x="642" y="60" width="126" height="52" rx="3" fill="#E5E7EB" stroke="#64748B" stroke-width="1.5"/>
+<text x="705" y="90" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">Git remote</text>
+<path d="M705 112 L705 660" stroke="#94A3B8" stroke-width="1" stroke-dasharray="2 3" fill="none"/>
+<path d="M522 255 L562 255 L562 285 L522 285" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="566" y="262" width="271.1" height="16" fill="#FEFEFE" opacity="0.92"/>
+<text x="570" y="274" font-size="11" fill="#475569">3. trusted peer? role? — refuse (THR-1, THR-3)</text>
+<path d="M522 405 L562 405 L562 435 L522 435" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="566" y="412" width="299.7" height="16" fill="#FEFEFE" opacity="0.92"/>
+<text x="570" y="424" font-size="11" fill="#475569">6. path, schema, governance — refuse (THR-2, THR-4)</text>
+<text x="32" y="610" font-size="12" fill="#64748B">The proxy authenticates; SpecPad implements no authentication of its own and believes headers only from a configured peer.</text>
+<text x="32" y="625" font-size="12" fill="#64748B">The commit is authored as the signed-in human; the machine credential only pushes, so a session yields no repository credential.</text>
+<text x="32" y="640" font-size="12" fill="#64748B">Nothing is force-pushed and no history is rewritten, so a published change cannot be quietly removed (THR-6).</text>
+<rect x="32" y="668" width="736" height="66" rx="2" fill="none" stroke="#64748B" stroke-width="0.5"/>
+<text x="42" y="685" font-size="12" font-weight="bold" fill="#1E293B">Legend</text>
+<rect x="42" y="696" width="22" height="13" rx="3" fill="#FAFAFA" stroke="#64748B" stroke-width="1.5"/>
+<text x="72" y="707" font-size="11" fill="#1E293B">SpecPad-controlled element</text>
+<rect x="42" y="716" width="22" height="13" rx="3" fill="#E5E7EB" stroke="#64748B" stroke-width="1.5"/>
+<text x="72" y="727" font-size="11" fill="#1E293B">Operator- or third-party-controlled</text>
+<path d="M410 702 L440 702" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<text x="450" y="706" font-size="11" fill="#1E293B">Data flow</text>
+<path d="M410 722 L440 722" stroke="#64748B" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arw)"/>
+<text x="450" y="726" font-size="11" fill="#1E293B">Control / command flow</text>
+<path d="M117 170 L317 170" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="124.3" y="154.0" width="185.3" height="16" fill="#FEFEFE" opacity="0.92"/>
+<text x="217.0" y="166.0" text-anchor="middle" font-size="11" fill="#475569">1. GET /p/{project} — HTTPS 443</text>
+<path d="M317 215 L522 215" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="326.8" y="199.0" width="185.3" height="16" fill="#FEFEFE" opacity="0.92"/>
+<text x="419.5" y="211.0" text-anchor="middle" font-size="11" fill="#475569">2. identity headers — HTTP 8080</text>
+<path d="M522 320 L117 320" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="241.1" y="304.0" width="156.7" height="16" fill="#FEFEFE" opacity="0.92"/>
+<text x="319.5" y="316.0" text-anchor="middle" font-size="11" fill="#475569">4. documents + role (JSON)</text>
+<path d="M117 365 L522 365" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="212.5" y="349.0" width="213.9" height="16" fill="#FEFEFE" opacity="0.92"/>
+<text x="319.5" y="361.0" text-anchor="middle" font-size="11" fill="#475569">5. commit request (JSON) — HTTPS 443</text>
+<path d="M522 470 L705 470" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="489.4" y="454.0" width="248.2" height="16" fill="#FEFEFE" opacity="0.92"/>
+<text x="613.5" y="466.0" text-anchor="middle" font-size="11" fill="#475569">7. rebase + push as the author — HTTPS 443</text>
+<path d="M705 515 L522 515" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="535.1" y="499.0" width="156.7" height="16" fill="#FEFEFE" opacity="0.92"/>
+<text x="613.5" y="511.0" text-anchor="middle" font-size="11" fill="#475569">8. new head, or a conflict</text>
+<path d="M522 560 L117 560" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="221.1" y="544.0" width="196.8" height="16" fill="#FEFEFE" opacity="0.92"/>
+<text x="319.5" y="556.0" text-anchor="middle" font-size="11" fill="#475569">9. result + upstream-moved signal</text>
+<text x="24" y="748" font-size="12" fill="#64748B">Steps 3 and 6 are the refusal points; each names the threat it answers.</text>
+</svg>

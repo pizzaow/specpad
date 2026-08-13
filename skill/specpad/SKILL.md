@@ -429,6 +429,42 @@ AAMI SW96/TIR57.
 - **Opt-in governance:** when a threat model is present, `threat-referential-integrity`,
   `threat-assessed` and `threat-controlled` apply.
 
+## Safety classification (IEC 62304 §4.3) — declare it
+
+The project index carries `safetyClass` (`"A"`, `"B"` or `"C"`) and `safetyClassRationale`.
+
+**Declaring a class does not change what you write.** Author at maximum rigor whatever it says — the
+class is a *record of the judgement*, which is what 4.3 asks for and what a submission stating no
+class has failed to provide. Where material goes beyond the declared class, say so in a sentence
+rather than dropping it: over-delivering is free, and re-deriving an omission later is not.
+
+The rationale is the part reviewers read. Name the injury the software could contribute to and the
+reasoning that places it — "no injury is possible because the device does not treat, and the worst
+outcome is a delayed report" is a rationale; "Class A" alone is not.
+
+Edition 2 replaces A/B/C with two rigor levels. It is still in ballot (publication expected around
+May 2027), so classify against Ed 1.1 today.
+
+## References — the documents SpecPad does not hold
+
+A project may add an optional **references register** (`<name>.reference.json`, `type: "reference"`).
+Read `guides/references.md` before adding to it.
+
+62304 requires development planning (§5.1), maintenance (clause 6) and problem resolution (clause 9).
+SpecPad models **none** of them, and that is deliberate: companies already run these in a quality
+system and an issue tracker, and a second copy in the repo would be the stale one. So the register
+**names and locates** them — the move `hazardRef` already makes for the system risk management file.
+
+- **Keep it short.** An entry earns its place by discharging a clause, not by existing. A register
+  listing forty documents is a filing cabinet, not a statement about this project.
+- **Each entry says what it covers**, in free text (`"IEC 62304 clause 9"`). Free text because the
+  register points outward, and the clause list of whichever standard a project follows is not
+  SpecPad's to enumerate.
+- **Each entry can be found**: `kind`, `location`, and `identifier` where the document is controlled.
+  A reviewer who cannot open it has been given a claim, not a record.
+- **Opt-in governance:** when a references register is present, `reference-located` and
+  `reference-covers` apply.
+
 ## Hierarchy (sections and sub-requirements)
 
 Items are a flat, ordered array, but each SRS/VTP item may carry an optional **`level`** (an integer
@@ -721,9 +757,40 @@ declaring a task done:
 - `threat-controlled`: When a threat model is present, every non-heading threat references at least one
   controlling requirement or records why none is needed. With no threat model, none of the three
   applies.
+- `reference-located`: When a references register is present, every non-heading entry says what sort of
+  document it is (`kind`) and where it is kept (`location`).
+- `reference-covers`: When a references register is present, every non-heading entry says what it
+  covers. With no register, neither applies.
 
 Also confirm structural validity: required fields present, `result` within its enum,
 `schemaVersion` is "1.0".
+
+### The advisory tier
+
+Two rules **report without failing**. They exist because not everything worth saying is a defect: a
+rule that fires on every requirement in an established project on the day it ships teaches people to
+ignore governance rather than to use it, and material beyond a declared safety class needs pointing at
+without being called wrong.
+
+- `srs-category`: Every non-heading SRS requirement should declare which of IEC 62304 5.2.2 a)–i) it
+  is (`category`). Advisory.
+- `vtp-verification-level`: Every non-heading VTP test should declare whether it is `unit`,
+  `integration` or `system` verification — 62304 5.5, 5.6 and 5.7 are three activities with distinct
+  records (`verificationLevel`). Advisory.
+
+**When you draft, fill them in anyway.** Advisory describes what governance does about an omission, not
+whether the field matters — a new specification you write should have both set on every item, because
+the point of this tier is to spare *existing* projects a flag day, not to excuse a thin first draft.
+
+A project adopts a rule by naming it in the index's `enforce` array, which moves its findings into the
+blocking set:
+
+```json
+{ "type": "project", "enforce": ["srs-category", "vtp-verification-level"] }
+```
+
+Recommend that once a project's backlog is filled in — it is the difference between a practice and an
+intention.
 
 ## Validate before finishing
 

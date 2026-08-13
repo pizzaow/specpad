@@ -136,12 +136,13 @@ describe('checkGovernance', () => {
   it('exposes a stable list of rule ids', () => {
     expect(GOVERNANCE_RULES.map((r) => r.id).sort()).toEqual([
       'active-job-known', 'active-job-open', 'missing-expected', 'prd-coverage',
-      'prd-referential-integrity', 'referential-integrity', 'risk-cause',
+      'prd-referential-integrity', 'reference-covers', 'reference-located',
+      'referential-integrity', 'risk-cause',
       'risk-controlled', 'risk-referential-integrity', 'sdd-coverage',
       'sdd-referential-integrity', 'soup-identity',
-      'soup-referential-integrity', 'soup-requirements', 'threat-assessed',
+      'soup-referential-integrity', 'soup-requirements', 'srs-category', 'threat-assessed',
       'threat-controlled', 'threat-referential-integrity',
-      'traceability',
+      'traceability', 'vtp-verification-level',
     ]);
   });
 });

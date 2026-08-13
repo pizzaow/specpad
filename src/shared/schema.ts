@@ -3,11 +3,11 @@
 
 export const SCHEMA_VERSION = '1.0' as const;
 export type SchemaVersion = typeof SCHEMA_VERSION;
-export type DocType = 'project' | 'srs' | 'vtp' | 'prd' | 'sdd' | 'risk' | 'soup' | 'threat';
+export type DocType = 'project' | 'srs' | 'vtp' | 'prd' | 'sdd' | 'risk' | 'soup' | 'threat' | 'reference';
 export type TestResult = '' | 'not_tested' | 'passed' | 'failed';
 
 export interface ProjectDocRef {
-  type: 'srs' | 'vtp' | 'prd' | 'sdd' | 'risk' | 'soup' | 'threat';
+  type: 'srs' | 'vtp' | 'prd' | 'sdd' | 'risk' | 'soup' | 'threat' | 'reference';
   path: string;
   title: string;
 }
@@ -23,8 +23,98 @@ export interface ProjectDoc {
   editorBaseUrl?: string;
   /** Which project on a multi-project self-hosted server this repo is (MPT-10). */
   editorProjectId?: string;
+  /**
+   * The software safety class and why (IEC 62304 §4.3). Declared rather than derived:
+   * authoring stays at maximum rigor whatever the class says, so this is a record of the
+   * judgement, not a switch that removes content. Material beyond the declared class is
+   * highlighted as advice rather than dropped.
+   */
+  safetyClass?: SafetyClass;
+  safetyClassRationale?: string;
+  /**
+   * Advisory rules this project has chosen to be held to. Naming a rule here moves it from
+   * advice into the blocking result — the way a project adopts a practice when it is ready
+   * rather than on the day the rule ships.
+   */
+  enforce?: GovernanceRuleId[];
   documents: ProjectDocRef[];
 }
+
+/** IEC 62304 §4.3. Edition 2 replaces these with two rigor levels; not yet published. */
+export type SafetyClass = 'A' | 'B' | 'C';
+
+/**
+ * A controlled document SpecPad does not hold (IEC 62304 §5.1 planning, clause 6
+ * maintenance, clause 9 problem resolution, and the QMS procedures around them).
+ *
+ * These processes are required, but most organisations already run them in a quality system
+ * or an issue tracker, and duplicating that would put SpecPad in the tracker business it has
+ * deliberately avoided. So they are **named and located** rather than modelled — the same
+ * move `hazardRef` makes for the system risk management file. Keep this register short: an
+ * entry earns its place by discharging a clause, not by existing.
+ */
+export interface ReferenceItem {
+  id: string;
+  code?: string;
+  heading?: boolean;
+  level?: number;
+  /** What the document is called, as its owner would name it. */
+  title: string;
+  kind?: ReferenceKind;
+  /** The controlled-document number and revision, where there is one — "SOP-012 rev C". */
+  identifier?: string;
+  /** Where it is kept: a URL, a system, or the shelf it lives on. */
+  location?: string;
+  /** Who owns it — the function, not a person, so the entry survives staff changes. */
+  owner?: string;
+  /**
+   * What this document discharges, as free text: "IEC 62304 clause 9", "5.1 planning".
+   * Free text because the register points outward, and the clause list of the standard a
+   * project follows is not SpecPad's to enumerate.
+   */
+  covers?: string[];
+  notes?: string;
+}
+
+export type ReferenceKind = 'sop' | 'plan' | 'procedure' | 'tracker' | 'record' | 'standard' | 'other';
+
+export interface ReferenceDoc {
+  schemaVersion: SchemaVersion;
+  type: 'reference';
+  name: string;
+  title: string;
+  items: ReferenceItem[];
+}
+
+/**
+ * Every governance rule. Lives here rather than in `governance.ts` so the project index can
+ * name the rules it enforces; `governance.ts` re-exports it and owns the rule descriptions.
+ */
+export type GovernanceRuleId =
+  | 'traceability'
+  | 'referential-integrity'
+  | 'missing-expected'
+  | 'active-job-open'
+  | 'active-job-known'
+  | 'prd-referential-integrity'
+  | 'prd-coverage'
+  | 'sdd-referential-integrity'
+  | 'sdd-coverage'
+  | 'risk-referential-integrity'
+  | 'risk-cause'
+  | 'risk-controlled'
+  | 'soup-identity'
+  | 'soup-requirements'
+  | 'soup-referential-integrity'
+  | 'threat-referential-integrity'
+  | 'threat-assessed'
+  | 'threat-controlled'
+  // Advisory by default (JOB-56): reported without failing until a project enforces them.
+  | 'srs-category'
+  | 'vtp-verification-level'
+  // The external-reference register (opt-in, like every other pillar).
+  | 'reference-located'
+  | 'reference-covers';
 
 export interface SrsItem {
   id: string;
@@ -34,9 +124,28 @@ export interface SrsItem {
   level?: number;
   satisfies?: string[]; // ids of PRD items this requirement satisfies (upward trace; ids, never codes)
   design?: string[]; // ids of SDD sections implementing this requirement (downward trace; ids, never codes)
+  /**
+   * Which of IEC 62304 §5.2.2's content categories this requirement is. A coverage prompt
+   * rather than a label: the value of the list is the question "is there really nothing
+   * under alarms?", which free text cannot be asked.
+   */
+  category?: RequirementCategory;
   tags?: string[];
   hazards?: string[];
 }
+
+/** IEC 62304 §5.2.2 a)–i), which a software requirements specification is expected to cover. */
+export type RequirementCategory =
+  | 'functional'
+  | 'inputs-outputs'
+  | 'interfaces'
+  | 'alarms'
+  | 'security'
+  | 'usability'
+  | 'data-definition'
+  | 'installation'
+  | 'maintenance'
+  | 'regulatory';
 
 export interface SrsDoc {
   schemaVersion: SchemaVersion;
@@ -65,6 +174,14 @@ export interface VtpItem {
   verifies?: string[];
   expected?: string;
   result?: TestResult;
+  /**
+   * Which verification activity this test belongs to. IEC 62304 treats unit verification
+   * (§5.5), integration testing (§5.6) and system testing (§5.7) as three activities with
+   * distinct records; one flat register can show requirements are covered by something, but
+   * not that each activity was performed. Named in full because `level` is already the
+   * hierarchy indent depth on every item.
+   */
+  verificationLevel?: TestLevel;
   notes?: string;
   tags?: string[];
   automation?: AutomationLink[]; // the automated test(s) that execute this verification (empty = manual)
@@ -138,6 +255,9 @@ export interface SddSection {
 }
 
 export type SddSectionKind = 'unit' | 'view';
+
+/** The verification activity a test belongs to (IEC 62304 §5.5, §5.6, §5.7). */
+export type TestLevel = 'unit' | 'integration' | 'system';
 
 /**
  * One entry in the software risk analysis (IEC 62304 §7).
@@ -338,6 +458,9 @@ export const projectSchema = {
     description: { type: 'string', description: 'Optional free-text summary of the system under specification.' },
     editorBaseUrl: { type: 'string', description: 'Optional base URL the generated launcher opens (e.g. "https://specpad.internal.corp" for a self-hosted server). Absent uses the public hosted editor; the version path is always derived from schemaVersion.' },
     editorProjectId: { type: 'string', description: 'Optional project id on a self-hosted server that hosts several projects, so this repository\'s launcher opens its own project. Absent opens the server\'s only project.' },
+    safetyClass: { enum: ['A', 'B', 'C'], description: 'The software safety class (IEC 62304 4.3). Declared, not derived: authoring stays at maximum rigor whatever it says, so this records the judgement rather than switching content off. Material beyond the declared class is highlighted as advice, never dropped.' },
+    safetyClassRationale: { type: 'string', description: 'Why that class — the injury the software could contribute to, and the reasoning that places it. 4.3 asks for the rationale as much as the classification.' },
+    enforce: { ...stringArray, description: 'Advisory governance rules this project has chosen to be held to. Naming a rule here moves its findings from advice into the blocking result, so a team adopts a practice when ready rather than on the day the rule ships.' },
     documents: {
       type: 'array',
       description: 'The SRS and VTP files that make up this project.',
@@ -345,7 +468,7 @@ export const projectSchema = {
         type: 'object',
         required: ['type', 'path', 'title'],
         properties: {
-          type: { enum: ['srs', 'vtp', 'prd', 'sdd', 'risk', 'soup', 'threat'], description: 'Which kind of document this entry points at: "srs", "vtp", "prd", "sdd", "risk", "soup", or "threat".' },
+          type: { enum: ['srs', 'vtp', 'prd', 'sdd', 'risk', 'soup', 'threat', 'reference'], description: 'Which kind of document this entry points at: "srs", "vtp", "prd", "sdd", "risk", "soup", "threat", or "reference".' },
           path: { type: 'string', description: 'Path of the document file, relative to the project index.' },
           title: { type: 'string', description: 'Display title for the document.' },
         },
@@ -377,6 +500,7 @@ export const srsSchema = {
           level: { type: 'integer', minimum: 0, description: 'Indent depth for hierarchy; absent means 0. Headings form dotted section codes.' },
           satisfies: { ...stringArray, description: 'Ids of the PRD product requirements this requirement satisfies — ids, never codes, so renames cannot break the upward trace. Empty/absent unless a PRD register is in use.' },
           design: { ...stringArray, description: 'Ids of the SDD sections that implement this requirement — the downward trace (IEC 62304 5.4; FDA SDS). Ids, never codes, so a section can be retitled or rewritten without breaking the link. Empty/absent unless an SDD is in use.' },
+          category: { enum: ['functional', 'inputs-outputs', 'interfaces', 'alarms', 'security', 'usability', 'data-definition', 'installation', 'maintenance', 'regulatory'], description: 'Which of IEC 62304 5.2.2 a)-i) this requirement is. Its worth is coverage: a category with no requirement is a question to answer once, not an omission to discover at review.' },
           tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
           hazards: { ...stringArray, description: 'Reserved hazard labels (legacy v1 field; the editor no longer surfaces it).' },
         },
@@ -409,6 +533,7 @@ export const vtpSchema = {
           verifies: { ...stringArray, description: 'Ids of the SRS requirements this test verifies — ids, never codes, so renames cannot break traceability.' },
           expected: { type: 'string', description: 'The expected result that defines a pass.' },
           result: { enum: ['', 'not_tested', 'passed', 'failed'], description: 'Latest recorded outcome for a MANUAL test: "", "not_tested", "passed", or "failed". For automated tests the outcome is derived from a captured run, not stored here. Roll-ups are computed on read.' },
+          verificationLevel: { enum: ['unit', 'integration', 'system'], description: 'Which verification activity this test belongs to: unit verification (IEC 62304 5.5), integration testing (5.6) or system testing (5.7). Without it a register can show requirements are covered by something, but not that each of the three activities was performed.' },
           notes: { type: 'string', description: 'Evidence and context for the recorded result (free text; the machine link lives in automation).' },
           tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
           automation: {
@@ -562,6 +687,39 @@ export const soupSchema = {
           maintenance: { type: 'string', description: "The supplier's development and support practices, and the plan for when support ends — obsolescence contingency (FDA, Enhanced documentation level)." },
           notes: { type: 'string', description: 'Free-text assessment notes.' },
           tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
+        },
+      },
+    },
+  },
+} as const;
+
+export const referenceSchema = {
+  $id: 'specpad/v1/reference',
+  type: 'object',
+  required: ['schemaVersion', 'type', 'name', 'title', 'items'],
+  properties: {
+    schemaVersion: { const: '1.0', description: 'Contract version of this file; "1.0" documents open in the pinned editor build at /v01/.' },
+    type: { const: 'reference', description: 'Document discriminator; selects the schema this file is validated against.' },
+    name: { type: 'string', description: 'Short system name; also the filename stem ([name].reference.json).' },
+    title: { type: 'string', description: 'Human-readable document title.' },
+    items: {
+      type: 'array',
+      description: 'The controlled documents this project relies on but does not hold — planning, maintenance and problem-resolution procedures kept in a quality system or issue tracker.',
+      items: {
+        type: 'object',
+        required: ['id', 'title'],
+        properties: {
+          id: { type: 'string', minLength: 1, description: 'Stable machine identifier, generated once and never changed; all cross-references target it.' },
+          code: { type: 'string', description: 'Human-facing label (e.g. "REF-1"); freely renameable because references never use it.' },
+          title: { type: 'string', description: 'What the document is called, as its owner would name it.' },
+          heading: { type: 'boolean', description: 'True when this item is a section heading rather than a reference.' },
+          level: { type: 'integer', minimum: 0, description: 'Indent depth for hierarchy; absent means 0.' },
+          kind: { enum: ['sop', 'plan', 'procedure', 'tracker', 'record', 'standard', 'other'], description: 'What sort of document it is: a standard operating procedure, a plan, a procedure, an issue tracker, a record, an external standard, or something else.' },
+          identifier: { type: 'string', description: 'The controlled-document number and revision where there is one, e.g. "SOP-012 rev C". An entry a reviewer cannot request by number is hard to audit.' },
+          location: { type: 'string', description: 'Where the document is kept: a URL, a system, or the shelf it lives on.' },
+          owner: { type: 'string', description: 'Which function owns it — a role rather than a person, so the entry survives staff changes.' },
+          covers: { ...stringArray, description: 'What this document discharges, as free text: "IEC 62304 clause 9", "5.1 planning". Free text because the register points outward, and the clause list of whichever standard a project follows is not SpecPad\'s to enumerate.' },
+          notes: { type: 'string', description: 'Anything a reader needs in order to find or use the document.' },
         },
       },
     },

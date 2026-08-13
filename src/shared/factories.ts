@@ -1,5 +1,5 @@
 import { SCHEMA_VERSION } from './schema';
-import type { ProjectDoc, ProjectDocRef, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SoupDoc, ThreatDoc, SrsItem, VtpItem, PrdItem, SddSection, RiskItem, SoupItem, ThreatItem, JobsDoc, JobRecord } from './schema';
+import type { ProjectDoc, ProjectDocRef, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SoupDoc, ThreatDoc, ReferenceDoc, SrsItem, VtpItem, PrdItem, SddSection, RiskItem, SoupItem, ThreatItem, ReferenceItem, JobsDoc, JobRecord } from './schema';
 import { generateId, ID_PREFIX } from './ids';
 import { REGISTER_TYPES } from './docTypes';
 
@@ -68,6 +68,17 @@ export function createThreatDoc(name: string, title: string): ThreatDoc {
 /** A new threat. Ids are `x_…`; residual starts unassessed rather than quietly acceptable. */
 export function createThreatItem(existingIds: Iterable<string>, level = 0): ThreatItem {
   const item: ThreatItem = { id: generateId(ID_PREFIX.threat, existingIds), text: '', residual: 'not_assessed' };
+  if (level > 0) item.level = level;
+  return item;
+}
+
+export function createReferenceDoc(name: string, title: string): ReferenceDoc {
+  return { schemaVersion: SCHEMA_VERSION, type: 'reference', name, title, items: [] };
+}
+
+/** A new external reference. Ids are `f_…`. */
+export function createReferenceItem(existingIds: Iterable<string>, level = 0): ReferenceItem {
+  const item: ReferenceItem = { id: generateId(ID_PREFIX.reference, existingIds), title: '' };
   if (level > 0) item.level = level;
   return item;
 }
