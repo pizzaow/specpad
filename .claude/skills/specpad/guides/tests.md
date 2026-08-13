@@ -16,9 +16,35 @@ the trace chain requirement → verification.
 - **The expected result** (`expected`): the observable outcome that *defines a pass*. Never blank for a
   non-heading test (`missing-expected`). "It works" is not an expected result.
 - **`verifies`**: the **id(s)** of the requirement(s) this proves (never the `code`).
+- **`verificationLevel`**: `unit`, `integration` or `system` — see below.
 - **The automated test** where automatable: name the real test (e.g. the vitest file) in `notes`, and set
   `result` to reflect it (`passed`/`failed`). Where there is no automated test yet, record it as
   `not_tested` rather than omitting the gap.
+
+## Verification level — three activities, not one register
+
+IEC 62304 treats unit verification (§5.5), integration testing (§5.6) and system testing (§5.7) as
+**three separate activities**, each with its own records. A flat register can show that every
+requirement is covered by *something*; it cannot show that each activity happened. `verificationLevel`
+is what makes the difference.
+
+| Level | What it exercises | Typical shape |
+|---|---|---|
+| `unit` | One software unit against its acceptance criteria (§5.5.3) | A test of one module's function, boundaries and error paths |
+| `integration` | Units working together, and the interfaces between them (§5.6) | Two or more units, or a unit against a real dependency |
+| `system` | The software as a whole against a requirement (§5.7) | Drive it the way a user or a caller does, end to end |
+
+Pick by **what the test exercises, not where the file lives**. A test in a folder called `unit/` that
+starts a server and issues HTTP requests is a system test; a test named `integration.test.ts` that
+exercises one pure function is a unit test. The folder is a convention; the level is a claim about
+scope, and a reviewer reads it as one.
+
+Requirements will usually attract system tests, and units usually attract unit tests — but the interesting
+gap is `integration`. Ask directly: *where do two units meet, and what proves that join?* An empty
+integration level in a system with several collaborating units is a finding waiting to happen.
+
+**Set it on every test you write.** Advisory means existing registers are not lit up overnight; it does
+not mean a new draft may leave it blank.
 
 ## How to phrase
 

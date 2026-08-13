@@ -7,7 +7,7 @@
  */
 import React from 'react';
 
-export type ViewKey = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'arch' | 'sdd' | 'risk' | 'soup' | 'threat' | 'sec' | 'audit' | 'trace' | 'releases' | 'jobs';
+export type ViewKey = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'arch' | 'sdd' | 'risk' | 'soup' | 'threat' | 'sec' | 'reference' | 'audit' | 'trace' | 'releases' | 'jobs';
 
 // `phase` is the design-control element this tab contributes evidence to; tabs with
 // the same adjacent phase share one band. Overview has none (it's the home view).
@@ -20,6 +20,7 @@ const TABS: { key: ViewKey; label: string; title?: string; phase?: string }[] = 
   { key: 'overview', label: 'Overview' },
   { key: 'prd', label: 'PRD', title: 'Product Requirements', phase: 'Design Inputs' },
   { key: 'srs', label: 'SRS', title: 'Software Requirements', phase: 'Design Inputs' },
+  { key: 'reference', label: 'Refs', title: 'Controlled documents this project relies on but does not hold (IEC 62304 5.1, clause 6, clause 9)', phase: 'Design Inputs' },
   { key: 'arch', label: 'SAD', title: 'Software Architecture Document', phase: 'Design Outputs' },
   { key: 'sdd', label: 'SDD', title: 'Software Detailed Design', phase: 'Design Outputs' },
   { key: 'soup', label: 'SOUP', title: 'Third-party software (IEC 62304 SOUP; FDA off-the-shelf)', phase: 'Design Outputs' },

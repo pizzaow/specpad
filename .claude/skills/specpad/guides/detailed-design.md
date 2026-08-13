@@ -86,7 +86,7 @@ Answer these where they carry information, and skip them where they do not:
 - What the unit is responsible for, and what it hides.
 - Its interface, and its behaviour on invalid input (§5.4.3) — say this whenever misuse is possible.
 - Algorithm, data owned, error handling, timing (§5.4.2) — say this where any of it is non-obvious.
-- Acceptance criteria (§5.5.3) — say this where "does it work" is not self-evident from the interface.
+- Acceptance criteria go in the **`acceptance` field**, not the body — see below.
 
 ### Cut these
 
@@ -125,6 +125,43 @@ in the job that made it. Threading it through every unit description is what tur
 
 Same information. The second is shorter, states the interface first, and has nothing in it that exists
 to sound insightful.
+
+## Acceptance criteria — a field, not a paragraph
+
+Every section of kind `unit` carries `acceptance`: **what "verified" means for this unit** (§5.5.3).
+
+It is a field rather than a line of prose for a plain reason: §5.5.3 is asked *per unit*, and a
+criterion buried in a body paragraph cannot be rolled up, governed, or handed to a reviewer as a list.
+"We write acceptance criteria" and "we can show you our acceptance criteria" are different claims, and
+only the second survives an audit.
+
+Write the condition under which you would call the unit correct:
+
+> ✅ *"Rejects a rate outside 0.1–99 mL/h and leaves the prior value in place; accepts the boundaries."*
+> ❌ *"Unit tests pass."* — names the evidence, not the criterion. If the tests changed, would the unit
+> still be correct? That answer is the criterion.
+
+At **Class C**, §5.5.4 asks for four more where they apply. Cover them in the same field:
+
+- **event sequencing** — what must happen in what order, and what happens when it does not
+- **resource use** — memory, handles, time held
+- **fault handling** — what the unit does with an error it cannot resolve
+- **boundary values** — the edges, and which side of each is accepted
+
+Not every unit needs all four; a pure function has no event sequencing. Say the ones that apply and
+leave the rest, rather than writing "N/A" four times.
+
+## Segregation (§5.3.5) — only where it is load-bearing
+
+Where separation between two units is **essential to risk control**, record it: `segregatedFrom` names
+the other sections, and `segregationRationale` says *why the separation holds*.
+
+A1:2015 strengthened this deliberately. Intending separation is not ensuring it, so the rationale is
+the requirement — "separate OS processes with no shared memory; the safety task runs at a higher
+priority on a different core" is a rationale, "the modules are independent" is a hope.
+
+**Most units need none of this.** Do not annotate every pair; 5.3.5 applies where a risk control
+depends on the separation, and a register that claims segregation everywhere has claimed it nowhere.
 
 ## Choosing units — the hard part
 

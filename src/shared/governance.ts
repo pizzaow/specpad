@@ -152,6 +152,26 @@ const RULES: GovernanceRule[] = [
       'When a references register is present, every non-heading entry must say what it covers. The register exists to account for the processes SpecPad does not hold; an entry that discharges nothing is decoration, and this register is meant to stay short.',
   },
   {
+    id: 'sdd-segregation',
+    title: 'Segregation says why it holds',
+    description:
+      'When an SDD is present, a section naming other sections it is segregated from must say why the segregation is effective, and each named section must resolve (IEC 62304 5.3.5, strengthened by A1:2015 — separation intended is not separation ensured).',
+  },
+  {
+    id: 'sdd-acceptance',
+    tier: 'advisory',
+    title: 'Units say what verified means',
+    description:
+      'When an SDD is present, every section of kind "unit" should state its acceptance criteria (IEC 62304 5.5.3; at Class C also 5.5.4). Advisory: asked per unit, and answerable only by someone who knows the unit.',
+  },
+  {
+    id: 'risk-sequence',
+    tier: 'advisory',
+    title: 'Risks state the sequence of events',
+    description:
+      'When a risk register is present, every non-heading risk should record the sequence of events from the software failure to the hazardous situation (IEC 62304 7.1.5). Advisory: it is the analysis rather than a field, and recording only the endpoint hides the steps a control could break.',
+  },
+  {
     id: 'srs-category',
     tier: 'advisory',
     title: 'Requirements declare their content category',
@@ -219,6 +239,16 @@ function advisoryFindings(bundle: ProjectBundle): GovernanceFinding[] {
   for (const test of bundle.vtp?.items ?? []) {
     if (test.heading || test.verificationLevel) continue;
     advise('vtp-verification-level', test.id, `Test ${test.code ?? test.id} does not say whether it is unit, integration or system verification.`);
+  }
+  // Only units: a design view is not something "verified" is asked of.
+  for (const section of bundle.sdd?.items ?? []) {
+    if (section.heading || (section.kind ?? 'unit') !== 'unit') continue;
+    if ((section.acceptance ?? '').trim()) continue;
+    advise('sdd-acceptance', section.id, `Unit ${section.code ?? section.title} does not state what verified means for it.`);
+  }
+  for (const risk of bundle.risk?.items ?? []) {
+    if (risk.heading || (risk.sequence ?? '').trim()) continue;
+    advise('risk-sequence', risk.id, `Risk ${risk.code ?? risk.id} does not record the sequence of events leading to the hazardous situation.`);
   }
   return out;
 }
@@ -506,6 +536,34 @@ export function checkGovernance(bundle: ProjectBundle): GovernanceViolation[] {
           rule: 'threat-controlled',
           itemId: threat.id,
           message: `Threat ${label} has no controlling requirement and no justification for having none.`,
+        });
+      }
+    }
+  }
+
+  // sdd-segregation: only where a section claims segregation. Unlike the other SDD rules
+  // this asks nothing of a project that makes no such claim — 5.3.5 applies when separation
+  // is essential to risk control, which most units never are.
+  if (bundle.sdd) {
+    const sectionIds = new Set(bundle.sdd.items.map((s) => s.id));
+    for (const section of bundle.sdd.items) {
+      const named = (section.segregatedFrom ?? []).filter((r) => r.trim());
+      if (!named.length) continue;
+      const label = section.code ?? section.title ?? section.id;
+      for (const ref of named) {
+        if (!sectionIds.has(ref)) {
+          violations.push({
+            rule: 'sdd-segregation',
+            itemId: section.id,
+            message: `Section ${label} is segregated from "${ref}", which is not a known design section id.`,
+          });
+        }
+      }
+      if (!(section.segregationRationale ?? '').trim()) {
+        violations.push({
+          rule: 'sdd-segregation',
+          itemId: section.id,
+          message: `Section ${label} claims segregation but does not say why it is effective.`,
         });
       }
     }

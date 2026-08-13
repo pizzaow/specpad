@@ -114,7 +114,11 @@ export type GovernanceRuleId =
   | 'vtp-verification-level'
   // The external-reference register (opt-in, like every other pillar).
   | 'reference-located'
-  | 'reference-covers';
+  | 'reference-covers'
+  | 'sdd-segregation'
+  // Advisory (JOB-56): asked of every unit and every risk, adopted when a project is ready.
+  | 'sdd-acceptance'
+  | 'risk-sequence';
 
 export interface SrsItem {
   id: string;
@@ -146,6 +150,20 @@ export type RequirementCategory =
   | 'installation'
   | 'maintenance'
   | 'regulatory';
+
+/** The nine, with display labels — one list, so the editor and the reference agree. */
+export const REQUIREMENT_CATEGORIES: { value: RequirementCategory; label: string }[] = [
+  { value: 'functional', label: 'Functional' },
+  { value: 'inputs-outputs', label: 'Inputs/outputs' },
+  { value: 'interfaces', label: 'Interfaces' },
+  { value: 'alarms', label: 'Alarms' },
+  { value: 'security', label: 'Security' },
+  { value: 'usability', label: 'Usability' },
+  { value: 'data-definition', label: 'Data' },
+  { value: 'installation', label: 'Installation' },
+  { value: 'maintenance', label: 'Maintenance' },
+  { value: 'regulatory', label: 'Regulatory' },
+];
 
 export interface SrsDoc {
   schemaVersion: SchemaVersion;
@@ -251,6 +269,21 @@ export interface SddSection {
   kind?: SddSectionKind;
   /** Repository paths this section describes — what makes it checkable against code. */
   source?: string[];
+  /**
+   * What "verified" means for this unit (IEC 62304 §5.5.3, and §5.5.4's additional criteria
+   * at Class C: event sequencing, resource use, fault handling, boundary values).
+   *
+   * A field rather than a line of prose because §5.5.3 is asked per unit and answered as a
+   * list; buried in `body` it cannot be rolled up, governed, or shown to a reviewer.
+   */
+  acceptance?: string;
+  /**
+   * Other units this one is segregated from, where the separation is essential to risk
+   * control (IEC 62304 §5.3.5). Ids, never codes.
+   */
+  segregatedFrom?: string[];
+  /** Why the segregation holds — A1:2015 asks how effectiveness is ensured, not only that it exists. */
+  segregationRationale?: string;
   tags?: string[];
 }
 
@@ -258,6 +291,12 @@ export type SddSectionKind = 'unit' | 'view';
 
 /** The verification activity a test belongs to (IEC 62304 §5.5, §5.6, §5.7). */
 export type TestLevel = 'unit' | 'integration' | 'system';
+
+export const TEST_LEVELS: { value: TestLevel; label: string }[] = [
+  { value: 'unit', label: 'Unit' },
+  { value: 'integration', label: 'Integration' },
+  { value: 'system', label: 'System' },
+];
 
 /**
  * One entry in the software risk analysis (IEC 62304 §7).
@@ -280,6 +319,15 @@ export interface RiskItem {
   /** Identifier of the hazard or hazardous situation in the system risk management file. */
   hazardRef?: string;
   severity?: RiskSeverity;
+  /**
+   * The sequence of events that turns the software failure into the hazardous situation
+   * (IEC 62304 §7.1.5, and §7.3.2 for a sequence a control itself introduces).
+   *
+   * This is the analysis, not decoration: "the value is wrong" is a defect, while "the value
+   * is wrong, no range check rejects it, the clinician reads it as measured, and dosing
+   * follows" is a risk. Recording only the endpoint hides every step a control could break.
+   */
+  sequence?: string;
   /**
    * Ids of the software items that could cause it (§7.1): SDD sections describing a
    * unit, or SOUP components. A cause is whatever could fail, ours or a supplier's.
@@ -442,7 +490,8 @@ export interface SddDoc {
   items: SddSection[];
 }
 
-export type SpecPadDoc = ProjectDoc | SrsDoc | VtpDoc | PrdDoc | SddDoc | RiskDoc | SoupDoc | ThreatDoc;
+export type SpecPadDoc = ProjectDoc | SrsDoc | VtpDoc | PrdDoc | SddDoc | RiskDoc | SoupDoc | ThreatDoc
+  | ReferenceDoc;
 
 const stringArray = { type: 'array', items: { type: 'string' } } as const;
 
@@ -608,6 +657,9 @@ export const sddSchema = {
           kind: { enum: ['unit', 'view'], description: 'Whether this section describes a software unit (IEC 62304 5.4.2) or a cross-cutting design view (IEEE 1016 viewpoint). Absent means "unit". Only units may be named as the cause of a risk, and the unit list required by 5.4.1 is derived from this.' },
           body: { type: 'string', description: 'The design, as markdown: what the unit hides, its algorithm and data, interface behaviour for valid and invalid input (5.4.3), and unit acceptance criteria (5.5.3). May embed images and diagrams like the architecture document.' },
           source: { ...stringArray, description: 'Repository paths this section describes, so the design can be checked against the code it claims to describe.' },
+          acceptance: { type: 'string', description: 'What "verified" means for this unit (IEC 62304 5.5.3; at Class C also 5.5.4 — event sequencing, resource use, fault handling, boundary values). A field rather than a line of prose, because 5.5.3 is asked per unit and buried in the body it cannot be rolled up or shown.' },
+          segregatedFrom: { ...stringArray, description: 'Ids of other design sections this unit is segregated from, where the separation is essential to risk control (IEC 62304 5.3.5). Ids, never codes.' },
+          segregationRationale: { type: 'string', description: 'Why the segregation holds. A1:2015 asks how effectiveness is ensured, not merely that separation was intended.' },
           tags: { ...stringArray, description: 'Free-form labels; "draft" marks a generated section awaiting author review.' },
         },
       },
@@ -638,6 +690,7 @@ export const riskSchema = {
           level: { type: 'integer', minimum: 0, description: 'Indent depth for hierarchy; absent means 0.' },
           hazardRef: { type: 'string', description: 'Identifier of the hazard or hazardous situation in the system risk management file, which the quality system owns. SpecPad holds the software slice and references the rest rather than restating it.' },
           severity: { enum: ['negligible', 'minor', 'serious', 'critical', 'catastrophic'], description: 'Severity of the resulting harm. There is deliberately no probability: for software you cannot argue probability down, so severity drives the analysis. ISO 14971 leaves the scale to the manufacturer; a project using a different one maps onto this.' },
+          sequence: { type: 'string', description: 'The sequence of events that turns the software failure into the hazardous situation (IEC 62304 7.1.5; 7.3.2 for a sequence a control introduces). The analysis rather than decoration: recording only the endpoint hides every step a control could break.' },
           causes: { ...stringArray, description: 'Ids of the software items that could cause this hazardous situation (IEC 62304 7.1): SDD sections of kind "unit", or SOUP components whose anomalies could contribute (7.1.2). Ids, never codes.' },
           controls: { ...stringArray, description: 'Ids of the SRS requirements implementing the risk control measures (IEC 62304 7.2; 5.2.2 requires a control implemented in software to be a software requirement). Their verifying tests are the evidence the control works (7.3), derived rather than restated.' },
           justification: { type: 'string', description: 'Why no software control is needed, when there is none — for example a risk controlled in hardware, by labelling, or accepted at system level.' },
@@ -787,6 +840,29 @@ export interface ReleaseEntry {
   date: string;
   author: AuthorRef; // the author of the tagged commit (release-granularity attribution)
   snapshot: string | null; // path under docs/specpad/, or null if not yet cached
+  /**
+   * Defects known to be present when this version shipped, each with the evaluation that
+   * made shipping acceptable (IEC 62304 §5.8.2 and §5.8.3).
+   *
+   * Per release rather than in a register with a lifecycle, because §5.8.3 asks for the
+   * evaluation *at release*: the same defect can be acceptable in one version and not the
+   * next, and re-stating it is the point rather than duplication.
+   */
+  anomalies?: ReleaseAnomaly[];
+  /**
+   * How this version was built (§5.8.5) and what makes that repeatable (§5.8.8): the
+   * toolchain and its versions, the environment, and where the build procedure lives.
+   */
+  build?: string;
+}
+
+export interface ReleaseAnomaly {
+  /** The defect, in terms of what a user would experience rather than the code at fault. */
+  text: string;
+  /** Why shipping with it was acceptable — the §5.8.3 evaluation against safety. */
+  evaluation?: string;
+  /** Where it is tracked, when it lives in an issue tracker named in the references register. */
+  ref?: string;
 }
 
 export interface ReleasesDoc {
@@ -903,6 +979,8 @@ export const releasesSchema = {
           date: { type: 'string', description: 'Commit date (ISO).' },
           author: { ...authorRefSchema, description: 'Author of the tagged commit (release-granularity attribution).' },
           snapshot: { ...nullableString, description: 'Path of the cached snapshot under docs/specpad/, or null if not yet cached.' },
+          anomalies: { type: 'array', description: 'Defects known to be present when this version shipped, each with the evaluation that made shipping acceptable (IEC 62304 5.8.2, 5.8.3).', items: { type: 'object', required: ['text'], properties: { text: { type: 'string', description: 'The defect, in terms of what a user would experience.' }, evaluation: { type: 'string', description: 'Why shipping with it was acceptable — the 5.8.3 evaluation against safety.' }, ref: { type: 'string', description: 'Where it is tracked, when it lives in an issue tracker.' } } } },
+          build: { type: 'string', description: 'How this version was built (5.8.5) and what makes that repeatable (5.8.8): toolchain and versions, environment, and where the build procedure lives.' },
         },
       },
     },

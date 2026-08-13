@@ -22,6 +22,36 @@ evidence — so it must be true, singular, and checkable.
 The litmus test: *could I write a test that fails if this behavior regressed?* If yes, it's a requirement.
 If the only test you can imagine asserts how the code is structured, it's not.
 
+## Category — walk the nine, once
+
+Each requirement carries a `category`: which of IEC 62304 §5.2.2 a)–i) it is. Setting it on an item is
+trivial. **The reason it exists is the sweep**, and the sweep is what you owe the draft:
+
+| Category | Ask |
+|---|---|
+| `functional` | What the software does — the bulk of most registers |
+| `inputs-outputs` | Ranges, units, accuracy, limits on every input and output |
+| `interfaces` | Interfaces to other systems, devices and software |
+| `alarms` | Alarms, warnings, and operator messages |
+| `security` | Authentication, authorization, confidentiality, integrity, audit |
+| `usability` | What the software must do so a user does not err — not "it shall be intuitive" |
+| `data-definition` | Data definitions and database requirements; retention and format |
+| `installation` | Installation and acceptance at the point of use |
+| `maintenance` | Operation and maintenance by the user, including servicing |
+| `regulatory` | Requirements imposed by regulation or by a standard the product claims |
+
+Go through all ten with the system in front of you and ask *"is there really nothing here?"* — the same
+move STRIDE makes in the threat model. **A category with no requirement is a question, not an
+omission**, and the answer is often "nothing, because …", which is worth writing down once rather than
+rediscovering at review.
+
+The categories a first draft nearly always misses are `alarms`, `installation`, `maintenance` and
+`data-definition` — because they describe the product's life rather than its behaviour, and a
+conversation about building something rarely reaches them. Ask about them explicitly.
+
+**Set it on every requirement you write.** The rule is advisory so that established registers are not
+lit up overnight; that is a concession to existing projects, not permission for a thin new draft.
+
 ## How to phrase
 
 - Start from the subject and use **"shall"**: "The editor shall …", "The skill shall …".

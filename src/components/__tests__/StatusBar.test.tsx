@@ -31,9 +31,15 @@ describe('StatusBar', () => {
         { id: 't_002', text: 'Logout', verifies: [], expected: '' },
       ],
     };
-    render(<StatusBar path="p" srsDoc={srs} vtpDoc={vtp} projectDoc={null} />);
+    const { container } = render(<StatusBar path="p" srsDoc={srs} vtpDoc={vtp} projectDoc={null} />);
     const summary = screen.getByText(/error|warning|problem/i);
     fireEvent.click(summary);
-    expect(screen.getByText(/r_002/)).toBeInTheDocument(); // a governance detail naming the item
+    // The blocking detail names the item. r_002 is also advised on (it declares no 5.2.2
+    // category), so target the warning rather than any text mentioning the id.
+    const warnings = [...container.querySelectorAll('.status-warning')].map((n) => n.textContent);
+    expect(warnings.some((w) => /r_002/.test(w ?? ''))).toBe(true);
+    // Advice is counted apart and does not read as a failure.
+    expect(screen.getByText(/suggestions?/)).toBeInTheDocument();
+    expect(container.querySelectorAll('.status-advice-item').length).toBeGreaterThan(0);
   });
 });

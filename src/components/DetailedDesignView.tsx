@@ -390,6 +390,27 @@ const DetailedDesignView: React.FC<DetailedDesignViewProps> = ({
                 )
               )}
 
+              {/* Acceptance criteria (IEC 62304 5.5.3; at Class C also 5.5.4). A field rather
+                  than a body paragraph, so it can be rolled up and shown as a list. */}
+              {(section.kind ?? 'unit') === 'unit' && (editing ? (
+                <textarea
+                  className="form-control"
+                  aria-label="Acceptance criteria"
+                  placeholder="Acceptance criteria — what verified means for this unit (§5.5.3)"
+                  rows={2}
+                  style={{ margin: '6px 0' }}
+                  value={section.acceptance ?? ''}
+                  onChange={(e) => update(section.id, { acceptance: e.target.value })}
+                />
+              ) : (
+                section.acceptance ? (
+                  <p style={{ margin: '2px 0' }}>
+                    <strong>Acceptance:</strong>{' '}
+                    <span className="text-muted">{section.acceptance}</span>
+                  </p>
+                ) : null
+              ))}
+
               <div className="dd-refs" style={{ margin: '4px 0 8px' }}>
                 <strong>Implements:</strong>{' '}
                 <RefPicker

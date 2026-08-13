@@ -162,7 +162,22 @@ launcher — with no manual configuration. Re-running it must be a safe no-op.
    optional — a project may delete it; but it is scaffolded by default so user-need traceability is
    on from the start.)
 2. **Ask the project path (short quiz):** "Is this a **medical** device project (IEC 62304 / FDA), or a
-   **generic** project?" For **generic** (the default), scaffold `sad.generic.md` → `<name>.sad.md` and
+   **generic** project?"
+
+   For a **medical** project, ask three more — each records something a submission is asked for and
+   nothing else in the repo can supply:
+
+   - **"What software safety class, and why?"** → `safetyClass` and `safetyClassRationale` in the
+     project index (§4.3). Take the rationale, not just the letter; a class with no reasoning is the
+     half of 4.3 that gets cited. Authoring stays at maximum rigor whatever the answer.
+   - **"Where do your planning, maintenance and problem-resolution procedures live?"** → scaffold
+     `starter.reference.json` and record what they name (§5.1, clause 6, clause 9). If the answer is
+     "we don't have them yet", say plainly that those clauses are unmet and leave the register empty —
+     an entry pointing at an unwritten SOP reads exactly like one pointing at a real document.
+   - **"Did this software exist before you started following 62304?"** → if yes, §4.4 wants a gap
+     analysis and a risk-based justification; record where it lives in the references register.
+
+   For **generic** (the default), skip all three. Then scaffold `sad.generic.md` → `<name>.sad.md` and
    `sad.guide.generic.md` → `<name>.sad.guide.md` (replace `PROJECT_NAME`). For **medical**, use the
    **`specpad-medical`** add-on skill (its templates) — if it isn't installed, tell the user to add it.
    The SAD references diagrams (draw.io SVGs) the user adds; the Structurizr `workspace.dsl` is opt-in
@@ -559,6 +574,25 @@ generated from. The release→jobs mapping is **derived** (from `job.version`), 
 If there are **no matching tags**, write a manifest with `baseline: null` and `releases: []` (copy
 `templates/starter.releases.json`); the editor degrades gracefully.
 
+### What a release entry records about itself (IEC 62304 §5.8)
+
+Two optional fields on each release entry, both asked for at cut time rather than backfilled:
+
+- **`anomalies`** — the defects **known to be present when this version shipped**, each with the
+  `evaluation` that made shipping acceptable (§5.8.2 and §5.8.3). Every release has some; a release
+  claiming none is usually a release nobody asked. Write them as a user would experience them, not as
+  the code at fault, and point `ref` at the tracker entry where one exists.
+
+  This is **not** the SOUP anomaly question (§7.1.3), which is about a supplier's published defect list
+  and belongs with the bill of materials. These are your own.
+
+- **`build`** — how the version was built (§5.8.5) and what makes that repeatable (§5.8.8): toolchain
+  and versions, the environment, and where the build procedure lives. "Node 22.4.0, npm 10.8, Ubuntu
+  24.04 runner; procedure in SOP-030" answers both; "CI" answers neither.
+
+Neither is governed, because the releases manifest is not part of the document bundle governance reads.
+Ask for them at the cut — an ungoverned field is one nobody is reminded about.
+
 ### Cutting a release — the cut job closes itself
 A release is cut **under a job** (e.g. "Cut release v1.4"). That job is the release's final act, so it
 must **close itself as the last step before the release** — never leave it open. In order:
@@ -736,6 +770,10 @@ declaring a task done:
   section via `design` — the evidence that the design implements the requirements. With no SDD, neither
   rule applies — the detailed design is opt-in, but once adopted it is checked at full rigor (see
   *Detailed design*).
+- `sdd-segregation`: When an SDD is present, a section naming other sections it is `segregatedFrom`
+  must say why the segregation is effective (`segregationRationale`), and each named section must
+  resolve. Asks nothing of a project that claims no segregation — 5.3.5 applies where separation is
+  essential to risk control, which most units are not.
 - `risk-referential-integrity`: When a risk register is present, every `causes` entry resolves to an SDD
   section of kind `unit`, and every `controls` entry to an existing SRS requirement.
 - `risk-cause`: When a risk register is present, every non-heading risk names at least one software item
@@ -767,7 +805,7 @@ Also confirm structural validity: required fields present, `result` within its e
 
 ### The advisory tier
 
-Two rules **report without failing**. They exist because not everything worth saying is a defect: a
+Four rules **report without failing**. They exist because not everything worth saying is a defect: a
 rule that fires on every requirement in an established project on the day it ships teaches people to
 ignore governance rather than to use it, and material beyond a declared safety class needs pointing at
 without being called wrong.
@@ -777,6 +815,10 @@ without being called wrong.
 - `vtp-verification-level`: Every non-heading VTP test should declare whether it is `unit`,
   `integration` or `system` verification — 62304 5.5, 5.6 and 5.7 are three activities with distinct
   records (`verificationLevel`). Advisory.
+- `sdd-acceptance`: Every SDD section of kind `unit` should state its `acceptance` criteria — what
+  "verified" means for it (5.5.3; at Class C also 5.5.4). Not asked of a design view. Advisory.
+- `risk-sequence`: Every non-heading risk should record the `sequence` of events from the software
+  failure to the hazardous situation (7.1.5). Advisory.
 
 **When you draft, fill them in anyway.** Advisory describes what governance does about an omission, not
 whether the field matters — a new specification you write should have both set on every item, because

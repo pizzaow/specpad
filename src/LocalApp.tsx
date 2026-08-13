@@ -5,7 +5,7 @@
  * persisted directory handles so return visits reopen without re-picking.
  */
 import React, { useEffect, useRef, useState } from 'react';
-import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SoupDoc, ThreatDoc, ReleasesDoc, JobDoc, JobsDoc, RunRecord } from './shared';
+import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SoupDoc, ThreatDoc, ReleasesDoc, JobDoc, JobsDoc, RunRecord, ReferenceDoc } from './shared';
 import {
   DocumentListItem,
   isFileSystemAccessSupported,
@@ -25,6 +25,7 @@ import {
   loadRisk,
   loadSoup,
   loadThreat,
+  loadReference,
   loadRun,
   saveDocument,
   createNewDocument,
@@ -90,6 +91,7 @@ import DetailedDesignView from './components/DetailedDesignView';
 import RiskTable from './components/RiskTable';
 import SoupTable from './components/SoupTable';
 import ThreatTable from './components/ThreatTable';
+import ReferenceTable from './components/ReferenceTable';
 import SecurityView from './components/SecurityView';
 import ReleasesView from './components/ReleasesView';
 import AuditView from './components/AuditView';
@@ -101,7 +103,7 @@ import type { ThemeId } from './theme';
 import StatusBar from './components/StatusBar';
 import ViewTabs from './components/ViewTabs';
 
-type ViewMode = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'sdd' | 'risk' | 'soup' | 'threat' | 'sec' | 'releases' | 'audit' | 'trace';
+type ViewMode = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'sdd' | 'risk' | 'soup' | 'threat' | 'sec' | 'reference' | 'releases' | 'audit' | 'trace';
 type OpenResult = { name: string; documents: DocumentListItem[] };
 // Items of any id-keyed register document (srs/vtp/prd/…); a per-job diff is keyed by doc type,
 // so newly-registered register types are diffed without changing this code.
@@ -202,6 +204,8 @@ const LocalApp: React.FC = () => {
   const [riskDoc, setRiskDoc] = useState<RiskDoc | null>(null);
   const [soupDoc, setSoupDoc] = useState<SoupDoc | null>(null);
   const [threatDoc, setThreatDoc] = useState<ThreatDoc | null>(null);
+  const [referenceDoc, setReferenceDoc] = useState<ReferenceDoc | null>(null);
+  const [dirtyReference, setDirtyReference] = useState(false);
   const [sec, setSec] = useState<string | null>(null);
   const [prdBaseline, setPrdBaseline] = useState<PrdDoc | null>(null);
   const [runRecord, setRunRecord] = useState<RunRecord | null>(null);
@@ -298,7 +302,7 @@ const LocalApp: React.FC = () => {
   // Live in-progress diff for each active open job: its `before` snapshot vs the working copy,
   // per register document type (srs/vtp/prd/…) — new types are picked up automatically.
   const activeDiffs = React.useMemo(() => {
-    const working: Record<string, SpecPadDoc | null> = { srs: srsDoc, vtp: vtpDoc, prd: prdDoc, sdd: sddDoc, risk: riskDoc, soup: soupDoc, threat: threatDoc };
+    const working: Record<string, SpecPadDoc | null> = { srs: srsDoc, vtp: vtpDoc, prd: prdDoc, sdd: sddDoc, risk: riskDoc, soup: soupDoc, threat: threatDoc, reference: referenceDoc };
     const out: Record<string, JobDiff> = {};
     for (const [id, before] of Object.entries(activeBefore)) {
       const entry: JobDiff = {};
@@ -309,7 +313,7 @@ const LocalApp: React.FC = () => {
       if (Object.keys(entry).length) out[id] = entry;
     }
     return out;
-  }, [activeBefore, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, soupDoc, threatDoc]);
+  }, [activeBefore, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, soupDoc, threatDoc, referenceDoc]);
 
   // Live in-progress architecture diff for active open jobs: before arch snapshot vs the working SAD/diagrams.
   const activeArch = React.useMemo(() => {
@@ -470,6 +474,7 @@ const LocalApp: React.FC = () => {
     const rsk = documents.find((d) => d.name === name && d.type === 'risk');
     const spu = documents.find((d) => d.name === name && d.type === 'soup');
     const thr = documents.find((d) => d.name === name && d.type === 'threat');
+    const rfr = documents.find((d) => d.name === name && d.type === 'reference');
     setProjectDoc(proj ? await loadProject(name) : null);
     setSrsDoc(srs ? await loadDocument('srs', name) : null);
     setVtpDoc(vtp ? await loadDocument('vtp', name) : null);
@@ -478,6 +483,7 @@ const LocalApp: React.FC = () => {
     setRiskDoc(rsk ? await loadRisk(name) : null);
     setSoupDoc(spu ? await loadSoup(name) : null);
     setThreatDoc(thr ? await loadThreat(name) : null);
+    setReferenceDoc(rfr ? await loadReference(name) : null);
     setSelectedDocName(name);
     await loadChangeTracking(name);
     setDirtySrs(false);
@@ -500,6 +506,7 @@ const LocalApp: React.FC = () => {
     const rsk = docs.find((d) => d.name === name && d.type === 'risk');
     const spu = docs.find((d) => d.name === name && d.type === 'soup');
     const thr = docs.find((d) => d.name === name && d.type === 'threat');
+    const rfr = docs.find((d) => d.name === name && d.type === 'reference');
     setProjectDoc(proj ? await loadProject(name) : null);
     setSrsDoc(srs ? await loadDocument('srs', name) : null);
     setVtpDoc(vtp ? await loadDocument('vtp', name) : null);
@@ -508,6 +515,7 @@ const LocalApp: React.FC = () => {
     setRiskDoc(rsk ? await loadRisk(name) : null);
     setSoupDoc(spu ? await loadSoup(name) : null);
     setThreatDoc(thr ? await loadThreat(name) : null);
+    setReferenceDoc(rfr ? await loadReference(name) : null);
     setSelectedDocName(name);
     await loadChangeTracking(name);
     setDirtySrs(false);
@@ -821,7 +829,7 @@ const LocalApp: React.FC = () => {
    */
   const sessionReadOnly = !!serverSession && !serverSession.capabilities.write;
 
-  const persist = async (doc: SrsDoc | VtpDoc | PrdDoc | SddDoc | RiskDoc | SoupDoc | ThreatDoc) => {
+  const persist = async (doc: SrsDoc | VtpDoc | PrdDoc | SddDoc | RiskDoc | SoupDoc | ThreatDoc | ReferenceDoc) => {
     // The demo has nowhere to write: hand the document back as a file instead, so the
     // sandbox has an exit and an edit is never silently lost.
     if (launch.demo) {
@@ -876,6 +884,7 @@ const LocalApp: React.FC = () => {
       if (dirtyRisk && riskDoc) { await persist(riskDoc); setDirtyRisk(false); }
       if (dirtySoup && soupDoc) { await persist(soupDoc); setDirtySoup(false); }
       if (dirtyThreat && threatDoc) { await persist(threatDoc); setDirtyThreat(false); }
+      if (dirtyReference && referenceDoc) { await persist(referenceDoc); setDirtyReference(false); }
       if (dirtySec && sec !== null) { await saveProjectText(`${selectedDocName || projectName}.sec.md`, sec); setDirtySec(false); }
       if (dirtyJobs && jobsDoc) { await saveJobs(name, jobsDoc); setDirtyJobs(false); }
       if (dirtySad && sad !== null) { await saveProjectText(`${name}.sad.md`, sad); setDirtySad(false); }
@@ -1044,7 +1053,7 @@ const LocalApp: React.FC = () => {
       {isDirectoryOpen && (
         <ViewTabs
           current={currentView}
-          enabled={{ overview: true, prd: !!prdDoc, srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl), sdd: !!sddDoc, risk: !!riskDoc, soup: !!soupDoc, threat: !!threatDoc, sec: sec !== null, releases: !!releases, audit: !!srsDoc, trace: !!srsDoc }}
+          enabled={{ overview: true, prd: !!prdDoc, srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl), sdd: !!sddDoc, risk: !!riskDoc, soup: !!soupDoc, threat: !!threatDoc, sec: sec !== null, reference: !!referenceDoc, releases: !!releases, audit: !!srsDoc, trace: !!srsDoc }}
           onSelect={setCurrentView}
         />
       )}
@@ -1137,6 +1146,14 @@ const LocalApp: React.FC = () => {
             readOnly={sessionReadOnly}
           />
         )}
+        {currentView === 'reference' && referenceDoc && (
+          <ReferenceTable
+            key={selectedDocName}
+            doc={referenceDoc}
+            onChange={(next) => { setReferenceDoc(next); setDirtyReference(true); }}
+            readOnly={sessionReadOnly}
+          />
+        )}
         {currentView === 'sec' && isDirectoryOpen && (
           <SecurityView
             sec={sec}
@@ -1197,7 +1214,7 @@ const LocalApp: React.FC = () => {
         <StatusBar
           path={launch.demo ? 'demo (hosted copy of docs/specpad/)' : `docs/specpad/${projectName}`}
           srsDoc={srsDoc} vtpDoc={vtpDoc} projectDoc={projectDoc}
-          prdDoc={prdDoc} sddDoc={sddDoc} riskDoc={riskDoc} soupDoc={soupDoc} threatDoc={threatDoc} jobsDoc={jobsDoc} job={job}
+          prdDoc={prdDoc} sddDoc={sddDoc} riskDoc={riskDoc} soupDoc={soupDoc} threatDoc={threatDoc} referenceDoc={referenceDoc} jobsDoc={jobsDoc} job={job}
           demo={launch.demo}
         />
       )}

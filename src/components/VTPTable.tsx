@@ -8,7 +8,7 @@
  */
 import React, { useEffect, useMemo, useState } from 'react';
 import type { SrsDoc, VtpDoc, VtpItem } from '../shared';
-import { createVtpItem, generateId, ID_PREFIX } from '../shared';
+import { createVtpItem, generateId, ID_PREFIX, TEST_LEVELS } from '../shared';
 import type { RedlineView, AttributionView } from '../changeTracking';
 import { rowStatusClass, isCellChanged } from '../changeTrackingView';
 import { deriveHeadingCodes } from '../outline';
@@ -48,6 +48,13 @@ const VTPTable: React.FC<VTPTableProps> = ({
 }) => {
   const data = doc;
   const update = (items: VtpItem[]) => onChange({ ...doc, items });
+
+  /** Set one field on one row, for the controls that are not free-text cells. */
+  const setField = (index: number, patch: Partial<VtpItem>) => {
+    const items = [...data.items];
+    items[index] = { ...items[index], ...patch };
+    onChange({ ...data, items });
+  };
   const [editing, setEditing] = useState<EditTarget>(null);
   const [editValue, setEditValue] = useState('');
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
@@ -186,6 +193,7 @@ const VTPTable: React.FC<VTPTableProps> = ({
             <th>Text</th>
             <th style={{ width: 80 }}>Verifies</th>
             <th style={{ width: 220 }}>Expected</th>
+            <th style={{ width: 110 }} title="Unit verification (§5.5), integration testing (§5.6) or system testing (§5.7) — three activities, each with its own records">Level</th>
             <th style={{ width: 44 }} />
           </tr>
         </thead>
@@ -235,6 +243,22 @@ const VTPTable: React.FC<VTPTableProps> = ({
                     </button>
                   </td>
                   <td className={isCellChanged(entry, 'expected') ? 'ct-changed' : undefined}>{renderCell(index, 'expected')}</td>
+                  <td>
+                    {item.heading ? '' : (
+                      <select
+                        className="form-control input-sm"
+                        aria-label={`Verification level for ${item.code ?? item.id}`}
+                        value={item.verificationLevel ?? ''}
+                        disabled={readOnly}
+                        onChange={(e) => setField(index, { verificationLevel: (e.target.value || undefined) as VtpItem['verificationLevel'] })}
+                      >
+                        <option value="">—</option>
+                        {TEST_LEVELS.map((l) => (
+                          <option key={l.value} value={l.value}>{l.label}</option>
+                        ))}
+                      </select>
+                    )}
+                  </td>
                   <td>
                     {!readOnly && (
                     <RowMenu noun="test"

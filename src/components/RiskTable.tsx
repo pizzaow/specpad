@@ -289,6 +289,20 @@ const RiskTable: React.FC<RiskTableProps> = ({ doc, sddDoc, srsDoc, vtpDoc, run,
                   <tr className="srs-tests-row">
                     <td />
                     <td colSpan={7}>
+                      {/* The sequence of events (§7.1.5): the steps between the software
+                          failure and the hazardous situation, which is where controls go. */}
+                      <div style={{ marginBottom: 8 }}>
+                        <strong>Sequence of events:</strong>{' '}
+                        <textarea
+                          className="form-control"
+                          aria-label={`Sequence of events for ${item.code ?? item.id}`}
+                          placeholder="What happens between the software failure and the hazardous situation (§7.1.5) — each step is somewhere a control could break the chain"
+                          rows={2}
+                          value={item.sequence ?? ''}
+                          disabled={readOnly}
+                          onChange={(e) => setField(index, { sequence: e.target.value })}
+                        />
+                      </div>
                       {(item.controls ?? []).length === 0 ? (
                         <div style={{ marginBottom: 6 }}>
                           <strong>No software control.</strong>{' '}

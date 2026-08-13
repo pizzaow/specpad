@@ -30,12 +30,34 @@ One entry per hazardous situation software can contribute to:
 | Field | |
 |---|---|
 | `text` | The hazardous situation, in terms of what the software does or fails to do |
+| `sequence` | The events between the software failure and the hazardous situation (§7.1.5) |
 | `hazardRef` | The hazard or hazardous situation in the system risk file, if there is one |
 | `severity` | Severity of the resulting harm |
 | `causes` | The **software units** that could cause it (§7.1) |
 | `controls` | The **requirements** implementing the control measures (§7.2, §5.2.2) |
 | `justification` | Why no software control is needed, when there is none |
 | `residual` | The judgement once the controls are in place |
+
+## The sequence of events is the analysis
+
+`text` records the hazardous situation. `sequence` records **how the software gets there** — and §7.1.5
+asks for it because the steps are where the controls go.
+
+> ❌ *"An overdose is delivered."*
+> ✅ *"The rate is mis-parsed as 200 rather than 20, no range check rejects it, the pump accepts the
+> value, and infusion proceeds at ten times the intended rate."*
+
+The second version has four steps, and **each one is a place a control could break the chain**. The
+first has none, which is why a register full of endpoints tends to produce a single vague control per
+risk. Write the sequence and the controls suggest themselves.
+
+Two habits worth keeping:
+
+- **Include the human step where there is one.** "The clinician reads it as measured" is part of the
+  sequence, and it is usually the step that decides severity.
+- **§7.3.2 asks the same question of your controls.** A control that introduces a new sequence — a
+  watchdog that reboots mid-infusion, say — needs its own entry. Adding a control is a reason to
+  re-read this register, not just to fill a column.
 
 ## There is no probability, and that is deliberate
 

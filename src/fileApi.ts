@@ -16,6 +16,7 @@ import type {
   RiskDoc,
   SoupDoc,
   ThreatDoc,
+  ReferenceDoc,
   SpecPadDoc,
   ReleasesDoc,
   JobDoc,
@@ -303,7 +304,11 @@ export async function loadThreat(name: string): Promise<ThreatDoc> {
   return (await requireJson(`${name}.threat.json`)) as ThreatDoc;
 }
 
-export async function saveDocument(doc: SrsDoc | VtpDoc | PrdDoc | SddDoc | RiskDoc | SoupDoc | ThreatDoc | ProjectDoc): Promise<void> {
+export async function loadReference(name: string): Promise<ReferenceDoc> {
+  return (await requireJson(`${name}.reference.json`)) as ReferenceDoc;
+}
+
+export async function saveDocument(doc: SrsDoc | VtpDoc | PrdDoc | SddDoc | RiskDoc | SoupDoc | ThreatDoc | ReferenceDoc | ProjectDoc): Promise<void> {
   assertWritable();
   // The schema uses type 'project', but the filename suffix is 'proj'.
   const kind = doc.type === 'project' ? 'proj' : doc.type;

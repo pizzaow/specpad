@@ -17,6 +17,7 @@ import RowMenu from './RowMenu';
 import RefPicker from './RefPicker';
 import type { RefOption } from './RefPicker';
 import ItemInfo from './ItemInfo';
+import { REQUIREMENT_CATEGORIES } from '../shared';
 
 interface SRSTableProps {
   doc: SrsDoc;
@@ -82,6 +83,13 @@ const SRSTable: React.FC<SRSTableProps> = ({
 
   const ids = () => data.items.map((i) => i.id);
   const update = (items: SrsItem[]) => onChange({ ...doc, items });
+
+  /** Set one field on one row, for the controls that are not free-text cells. */
+  const setField = (index: number, patch: Partial<SrsItem>) => {
+    const items = [...data.items];
+    items[index] = { ...items[index], ...patch };
+    onChange({ ...data, items });
+  };
 
   // Tell the shell which row is open for editing, so it can announce it to other
   // people in the same document. Advisory only — nothing here blocks on it (CE-4).
@@ -215,6 +223,7 @@ const SRSTable: React.FC<SRSTableProps> = ({
           <tr>
             <th style={{ width: 160 }}>Code</th>
             <th>Text</th>
+            <th style={{ width: 110 }} title="IEC 62304 §5.2.2 a)–i) — a category with no requirement is a question, not an omission">Category</th>
             <th style={{ width: 150 }}>Tags</th>
             <th style={{ width: 70 }}>Tests</th>
             <th style={{ width: 44 }} />
@@ -265,6 +274,22 @@ const SRSTable: React.FC<SRSTableProps> = ({
                   <td className={isCellChanged(entry, 'text') ? 'ct-changed' : undefined}
                     style={item.heading ? { fontWeight: 'bold' } : undefined}>
                     {renderCell(index, 'text')}
+                  </td>
+                  <td>
+                    {item.heading ? '' : (
+                      <select
+                        className="form-control input-sm"
+                        aria-label={`Category for ${item.code ?? item.id}`}
+                        value={item.category ?? ''}
+                        disabled={readOnly}
+                        onChange={(e) => setField(index, { category: (e.target.value || undefined) as SrsItem['category'] })}
+                      >
+                        <option value="">—</option>
+                        {REQUIREMENT_CATEGORIES.map((c) => (
+                          <option key={c.value} value={c.value}>{c.label}</option>
+                        ))}
+                      </select>
+                    )}
                   </td>
                   <td className={isCellChanged(entry, 'tags') ? 'ct-changed' : undefined}>
                     {item.heading ? '' : renderCell(index, 'tags')}

@@ -3901,6 +3901,82 @@
         "governance"
       ],
       "text": "When a references register is present, every non-heading entry shall record a kind and a location, and shall state what it covers."
+    },
+    {
+      "id": "r_rig1",
+      "code": "RIG-1",
+      "design": [
+        "d_ctx001",
+        "d_dep001"
+      ],
+      "category": "regulatory",
+      "tags": [
+        "62304"
+      ],
+      "text": "A design section describing a software unit shall be able to record its acceptance criteria as a field, and the criteria shall be advised on rather than enforced until a project adopts the rule."
+    },
+    {
+      "id": "r_rig2",
+      "code": "RIG-2",
+      "design": [
+        "d_ctx001",
+        "d_dep001"
+      ],
+      "category": "regulatory",
+      "tags": [
+        "62304"
+      ],
+      "text": "A design section shall be able to name other sections it is segregated from where the separation is essential to risk control, and a section claiming segregation shall state why the segregation is effective."
+    },
+    {
+      "id": "r_rig3",
+      "code": "RIG-3",
+      "design": [
+        "d_ctx001",
+        "d_dep001"
+      ],
+      "category": "regulatory",
+      "tags": [
+        "62304"
+      ],
+      "text": "A risk shall be able to record the sequence of events between the software failure and the hazardous situation."
+    },
+    {
+      "id": "r_rig4",
+      "code": "RIG-4",
+      "design": [
+        "d_ctx001"
+      ],
+      "category": "regulatory",
+      "tags": [
+        "62304"
+      ],
+      "text": "A release entry shall be able to record the defects known to be present when that version shipped, each with the evaluation that made shipping acceptable, and how the version was built."
+    },
+    {
+      "id": "r_ref3",
+      "code": "REF-3",
+      "design": [
+        "d_app001"
+      ],
+      "category": "functional",
+      "tags": [
+        "editor"
+      ],
+      "text": "The editor shall present the references register as a table in which each entry can be read and edited, and shall offer it only when the project has one."
+    },
+    {
+      "id": "r_gov23",
+      "code": "GOV-23",
+      "design": [
+        "d_app001"
+      ],
+      "category": "usability",
+      "tags": [
+        "editor",
+        "governance"
+      ],
+      "text": "The editor shall count and display advisory findings separately from problems, so that advice never reads as a failure."
     }
   ]
 }
