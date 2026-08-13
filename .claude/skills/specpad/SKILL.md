@@ -434,6 +434,14 @@ AAMI SW96/TIR57.
 - **`safetyRisk` links a threat to the harm it would cause.** That join is why security risk sits
   beside safety risk rather than inside it: a security finding with a patient consequence belongs in
   both files.
+- **Threat modelling follows the MITRE/MDIC playbook's four questions** — decompose, walk
+  STRIDE across each element, decide, then say what the pass did not do. Record the pass as
+  its own document (`<name>.tm.md`), separate from the register it produces and the
+  architecture views it reads. Walking *elements* rather than listing attacks is what finds
+  threats in the seam between two controls, and control categories that are empty.
+- **Controls are categorised.** A requirement named as a control carries `securityControl`:
+  which of FDA's eight categories (§V.B.1) it implements. The coverage argument is made from
+  those categories, and an empty one is a question to answer once.
 - **Four view types, and as many views as the attack surface needs.** Global system, multi-patient
   harm, updateability and patchability, security use cases. A single global view rarely carries every
   data flow: write one system-level overview, then a view per system or deployment. Where they and the
@@ -812,6 +820,9 @@ without being called wrong.
 
 - `srs-category`: Every non-heading SRS requirement should declare which of IEC 62304 5.2.2 a)–l) it
   is (`category`) — **one or more**, since A1:2015 NOTE 10 states the categories can overlap. Advisory.
+- `srs-security-control`: A requirement a threat names as a control should declare which FDA security
+  control categories it implements (`securityControl`). Asked only of requirements the threat model
+  already leans on. Advisory.
 - `vtp-verification-level`: Every non-heading VTP test should declare whether it is `unit`,
   `integration` or `system` verification — 62304 5.5, 5.6 and 5.7 are three activities with distinct
   records (`verificationLevel`). Advisory.

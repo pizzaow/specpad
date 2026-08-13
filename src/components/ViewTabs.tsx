@@ -7,7 +7,7 @@
  */
 import React from 'react';
 
-export type ViewKey = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'arch' | 'sdd' | 'risk' | 'soup' | 'threat' | 'sec' | 'reference' | 'audit' | 'trace' | 'releases' | 'jobs';
+export type ViewKey = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'arch' | 'sdd' | 'risk' | 'soup' | 'threat' | 'controls' | 'sec' | 'tm' | 'reference' | 'audit' | 'trace' | 'releases' | 'jobs';
 
 // `phase` is the design-control element this tab contributes evidence to; tabs with
 // the same adjacent phase share one band. Overview has none (it's the home view).
@@ -28,6 +28,8 @@ const TABS: { key: ViewKey; label: string; title?: string; phase?: string }[] = 
   { key: 'sec', label: 'Security', title: 'Security architecture — the four views a submission is expected to contain', phase: 'Design Outputs' },
   { key: 'risk', label: 'Risk', title: 'Software risk analysis (IEC 62304 clause 7)', phase: 'Risk Management' },
   { key: 'threat', label: 'Threats', title: 'Threat model and security risk (FDA cybersecurity; IEC 81001-5-1)', phase: 'Risk Management' },
+  { key: 'tm', label: 'TM', title: 'The threat modelling pass — decomposition and the STRIDE walk (MITRE/MDIC playbook)', phase: 'Risk Management' },
+  { key: 'controls', label: 'Controls', title: 'Security controls by FDA category (Cybersecurity in Medical Devices, February 2026, §V.B.1)', phase: 'Risk Management' },
   { key: 'vtp', label: 'VTP', title: 'Verification Test Plan', phase: 'Design Verification' },
   { key: 'testing', label: 'Results', title: 'Verification results', phase: 'Design Verification' },
   { key: 'trace', label: 'Traceability', phase: 'Traceability' },

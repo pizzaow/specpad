@@ -141,6 +141,7 @@ describe('checkGovernance', () => {
       'risk-referential-integrity', 'risk-sequence', 'sdd-acceptance', 'sdd-coverage',
       'sdd-referential-integrity', 'sdd-segregation', 'soup-identity',
       'soup-referential-integrity', 'soup-requirements', 'srs-category',
+      'srs-security-control',
       'threat-assessed', 'threat-controlled', 'threat-referential-integrity',
       'traceability', 'vtp-verification-level',
     ]);

@@ -111,6 +111,7 @@ export type GovernanceRuleId =
   | 'threat-controlled'
   // Advisory by default (JOB-56): reported without failing until a project enforces them.
   | 'srs-category'
+  | 'srs-security-control'
   | 'vtp-verification-level'
   // The external-reference register (opt-in, like every other pillar).
   | 'reference-located'
@@ -138,8 +139,44 @@ export interface SrsItem {
    * is no second free-form label competing with this one.
    */
   category?: RequirementCategory[];
+  /**
+   * Which FDA security control categories this requirement implements (Cybersecurity in
+   * Medical Devices, February 2026, §V.B.1 and Appendix 1).
+   *
+   * A list, because one requirement often serves several — refusing a request from an
+   * untrusted peer is authentication and authorization at once. Separate from `category`
+   * because §5.2.2 e) says only "this is a security requirement"; this says which control
+   * it is, which is what an adequate-coverage argument is built from.
+   */
+  securityControl?: SecurityControl[];
   hazards?: string[];
 }
+
+/**
+ * The eight control categories FDA expects an adequate set to draw from (§V.B.1). Named
+ * from the normative list in the body; Appendix 1 words the last one as "Firmware and
+ * Software Updates" and details recommendations for each.
+ */
+export type SecurityControl =
+  | 'authentication'
+  | 'authorization'
+  | 'cryptography'
+  | 'integrity'
+  | 'confidentiality'
+  | 'event-detection'
+  | 'resiliency'
+  | 'updatability';
+
+export const SECURITY_CONTROLS: { value: SecurityControl; label: string; text: string }[] = [
+  { value: 'authentication', label: 'Authentication', text: 'Proving the origin of information and the identity of an endpoint or operator — at rest, in transit, and for software binaries' },
+  { value: 'authorization', label: 'Authorization', text: 'What an authenticated party is permitted to do, enforced where the decision cannot be bypassed' },
+  { value: 'cryptography', label: 'Cryptography', text: 'Algorithms, key lengths and key management; and the discipline of not inventing any of it' },
+  { value: 'integrity', label: 'Code, data and execution integrity', text: 'That code, data and commands are what they were, and that running software has not been altered' },
+  { value: 'confidentiality', label: 'Confidentiality', text: 'Keeping information from parties who should not read it, in transit and at rest' },
+  { value: 'event-detection', label: 'Event detection and logging', text: 'Recording security-relevant events so an incident can be detected and later reconstructed' },
+  { value: 'resiliency', label: 'Resiliency and recovery', text: 'Continuing to operate safely under attack, and returning to a known-good state afterwards' },
+  { value: 'updatability', label: 'Updatability and patchability', text: 'Delivering a fix to a deployed device securely, and being able to show it arrived' },
+];
 
 /**
  * IEC 62304 §5.2.2 a)–l), the content a software requirements specification is expected to
@@ -557,6 +594,7 @@ export const srsSchema = {
           level: { type: 'integer', minimum: 0, description: 'Indent depth for hierarchy; absent means 0. Headings form dotted section codes.' },
           satisfies: { ...stringArray, description: 'Ids of the PRD product requirements this requirement satisfies — ids, never codes, so renames cannot break the upward trace. Empty/absent unless a PRD register is in use.' },
           design: { ...stringArray, description: 'Ids of the SDD sections that implement this requirement — the downward trace (IEC 62304 5.4; FDA SDS). Ids, never codes, so a section can be retitled or rewritten without breaking the link. Empty/absent unless an SDD is in use.' },
+          securityControl: { type: 'array', items: { enum: ['authentication', 'authorization', 'cryptography', 'integrity', 'confidentiality', 'event-detection', 'resiliency', 'updatability'] }, description: 'Which FDA security control categories this requirement implements (Cybersecurity in Medical Devices, February 2026, V.B.1 and Appendix 1). A list, because one requirement often serves several. Distinct from category: 5.2.2 e) says a requirement is a security requirement, this says which control it is.' },
           category: { type: 'array', items: { enum: ['functional', 'inputs-outputs', 'interfaces', 'alarms', 'security', 'user-interface', 'data-definition', 'installation', 'operation-maintenance', 'it-network', 'user-maintenance', 'regulatory'] }, description: 'Which of IEC 62304 5.2.2 a)-l) this requirement is. A list, because A1:2015 NOTE 10 states that the requirements in a) through l) can overlap. Its worth is coverage: a category with no requirement is a question to answer once, not an omission to discover at review.' },
           hazards: { ...stringArray, description: 'Reserved hazard labels (legacy v1 field; the editor no longer surfaces it).' },
         },

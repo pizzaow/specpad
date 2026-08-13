@@ -179,6 +179,13 @@ const RULES: GovernanceRule[] = [
       'Every non-heading SRS requirement should declare which of IEC 62304 5.2.2 a)–l) it is — one or more, since A1:2015 NOTE 10 states the categories can overlap. Advisory: the worth of the list is coverage, and a category with no requirement is a question to answer once rather than an omission found at review.',
   },
   {
+    id: 'srs-security-control',
+    tier: 'advisory',
+    title: 'Security controls say which control they are',
+    description:
+      'A requirement named as a control by a threat should declare which FDA security control categories it implements (Cybersecurity in Medical Devices, February 2026, V.B.1). Advisory: it is asked only of requirements the threat model already relies on, and an adequate-coverage argument is built from these categories rather than from the word "security".',
+  },
+  {
     id: 'vtp-verification-level',
     tier: 'advisory',
     title: 'Tests declare their verification level',
@@ -245,6 +252,17 @@ function advisoryFindings(bundle: ProjectBundle): GovernanceFinding[] {
     if (section.heading || (section.kind ?? 'unit') !== 'unit') continue;
     if ((section.acceptance ?? '').trim()) continue;
     advise('sdd-acceptance', section.id, `Unit ${section.code ?? section.title} does not state what verified means for it.`);
+  }
+  // Asked only of requirements a threat already leans on: those are the ones an
+  // adequate-coverage argument is made from, and asking it of every requirement would be
+  // noise on a register that is mostly not about security.
+  if (bundle.threat) {
+    const controlled = new Set((bundle.threat.items ?? []).flatMap((t) => t.controls ?? []));
+    for (const req of bundle.srs?.items ?? []) {
+      if (req.heading || !controlled.has(req.id)) continue;
+      if ((req.securityControl ?? []).length) continue;
+      advise('srs-security-control', req.id, `Requirement ${req.code ?? req.id} is named as a security control but does not say which FDA control category it implements.`);
+    }
   }
   for (const risk of bundle.risk?.items ?? []) {
     if (risk.heading || (risk.sequence ?? '').trim()) continue;

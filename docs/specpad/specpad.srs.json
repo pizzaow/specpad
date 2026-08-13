@@ -373,6 +373,9 @@
       "category": [
         "interfaces",
         "installation"
+      ],
+      "securityControl": [
+        "updatability"
       ]
     },
     {
@@ -1439,6 +1442,9 @@
       "category": [
         "functional",
         "regulatory"
+      ],
+      "securityControl": [
+        "integrity"
       ]
     },
     {
@@ -1650,6 +1656,9 @@
       "category": [
         "installation",
         "functional"
+      ],
+      "securityControl": [
+        "updatability"
       ]
     },
     {
@@ -2447,6 +2456,10 @@
       "category": [
         "security",
         "functional"
+      ],
+      "securityControl": [
+        "authorization",
+        "integrity"
       ]
     },
     {
@@ -2462,6 +2475,10 @@
       "category": [
         "security",
         "functional"
+      ],
+      "securityControl": [
+        "authorization",
+        "integrity"
       ]
     },
     {
@@ -2495,6 +2512,9 @@
       "category": [
         "functional",
         "regulatory"
+      ],
+      "securityControl": [
+        "integrity"
       ]
     },
     {
@@ -2526,6 +2546,9 @@
       "category": [
         "installation",
         "operation-maintenance"
+      ],
+      "securityControl": [
+        "resiliency"
       ]
     },
     {
@@ -2541,6 +2564,9 @@
       "category": [
         "installation",
         "functional"
+      ],
+      "securityControl": [
+        "updatability"
       ]
     },
     {
@@ -2562,6 +2588,9 @@
       "category": [
         "security",
         "functional"
+      ],
+      "securityControl": [
+        "authentication"
       ]
     },
     {
@@ -2577,6 +2606,9 @@
       "category": [
         "security",
         "functional"
+      ],
+      "securityControl": [
+        "authentication"
       ]
     },
     {
@@ -2592,6 +2624,9 @@
       "category": [
         "security",
         "functional"
+      ],
+      "securityControl": [
+        "authentication"
       ]
     },
     {
@@ -2607,6 +2642,9 @@
       "category": [
         "security",
         "functional"
+      ],
+      "securityControl": [
+        "authentication"
       ]
     },
     {
@@ -2622,6 +2660,9 @@
       "category": [
         "security",
         "functional"
+      ],
+      "securityControl": [
+        "authorization"
       ]
     },
     {
@@ -2638,6 +2679,10 @@
       "category": [
         "security",
         "functional"
+      ],
+      "securityControl": [
+        "authentication",
+        "integrity"
       ]
     },
     {
@@ -2703,6 +2748,9 @@
       ],
       "category": [
         "functional"
+      ],
+      "securityControl": [
+        "integrity"
       ]
     },
     {
@@ -2719,6 +2767,10 @@
       "category": [
         "functional",
         "regulatory"
+      ],
+      "securityControl": [
+        "authentication",
+        "integrity"
       ]
     },
     {
@@ -2735,6 +2787,10 @@
       "category": [
         "it-network",
         "functional"
+      ],
+      "securityControl": [
+        "resiliency",
+        "integrity"
       ]
     },
     {
@@ -2837,6 +2893,9 @@
       ],
       "category": [
         "functional"
+      ],
+      "securityControl": [
+        "integrity"
       ]
     },
     {
@@ -2851,6 +2910,9 @@
       ],
       "category": [
         "functional"
+      ],
+      "securityControl": [
+        "integrity"
       ]
     },
     {
@@ -2865,6 +2927,9 @@
       ],
       "category": [
         "functional"
+      ],
+      "securityControl": [
+        "integrity"
       ]
     },
     {
@@ -2894,6 +2959,9 @@
       ],
       "category": [
         "functional"
+      ],
+      "securityControl": [
+        "integrity"
       ]
     },
     {
@@ -2965,6 +3033,9 @@
       "category": [
         "security",
         "user-interface"
+      ],
+      "securityControl": [
+        "authorization"
       ]
     },
     {
@@ -3049,6 +3120,10 @@
       "category": [
         "security",
         "functional"
+      ],
+      "securityControl": [
+        "authorization",
+        "confidentiality"
       ]
     },
     {
@@ -3065,6 +3140,9 @@
       "category": [
         "security",
         "functional"
+      ],
+      "securityControl": [
+        "authorization"
       ]
     },
     {
@@ -3080,6 +3158,9 @@
       "category": [
         "security",
         "functional"
+      ],
+      "securityControl": [
+        "authorization"
       ]
     },
     {
@@ -3096,6 +3177,10 @@
       "category": [
         "security",
         "functional"
+      ],
+      "securityControl": [
+        "authorization",
+        "confidentiality"
       ]
     },
     {
@@ -3112,6 +3197,9 @@
       "category": [
         "security",
         "it-network"
+      ],
+      "securityControl": [
+        "confidentiality"
       ]
     },
     {
@@ -3213,6 +3301,9 @@
       "category": [
         "operation-maintenance",
         "functional"
+      ],
+      "securityControl": [
+        "resiliency"
       ]
     },
     {
@@ -3228,6 +3319,9 @@
       "category": [
         "operation-maintenance",
         "functional"
+      ],
+      "securityControl": [
+        "resiliency"
       ]
     },
     {
@@ -3243,6 +3337,9 @@
       "category": [
         "operation-maintenance",
         "functional"
+      ],
+      "securityControl": [
+        "resiliency"
       ]
     },
     {
@@ -3453,6 +3550,9 @@
       "category": [
         "security",
         "user-interface"
+      ],
+      "securityControl": [
+        "authorization"
       ]
     },
     {
@@ -4152,6 +4252,65 @@
         "user-interface"
       ],
       "text": "The Auditor tab shall sit immediately to the right of the Overview, so a reviewer opens the orientation before the documents it indexes."
+    },
+    {
+      "id": "r_ctl1",
+      "code": "CTL-1",
+      "design": [
+        "d_ctx001"
+      ],
+      "category": [
+        "regulatory",
+        "security"
+      ],
+      "text": "A requirement shall be able to declare which FDA security control categories it implements, as a list, since one requirement often serves several."
+    },
+    {
+      "id": "r_ctl2",
+      "code": "CTL-2",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "regulatory",
+        "user-interface"
+      ],
+      "text": "The editor shall present the security controls grouped by FDA control category, showing every category including those with no control, so that coverage is argued from the categories rather than from the word security."
+    },
+    {
+      "id": "r_ctl3",
+      "code": "CTL-3",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "regulatory",
+        "user-interface"
+      ],
+      "text": "For each security control the editor shall show the threats it answers and whether a test verifies it, and shall surface any requirement the threat model names as a control that declares no category."
+    },
+    {
+      "id": "r_ctl4",
+      "code": "CTL-4",
+      "design": [
+        "d_dep001"
+      ],
+      "category": [
+        "regulatory"
+      ],
+      "text": "A requirement named as a control by a threat shall be advised on when it declares no FDA security control category."
+    },
+    {
+      "id": "r_tm1",
+      "code": "TM-1",
+      "design": [
+        "d_ctx001",
+        "d_app001"
+      ],
+      "category": [
+        "regulatory"
+      ],
+      "text": "The system shall support an optional threat model document recording the modelling pass itself — the decomposition, the walk, and what the pass did not do — separate from the threat register it produces and from the security architecture views."
     }
   ]
 }

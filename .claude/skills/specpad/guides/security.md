@@ -12,6 +12,51 @@ The security architecture document describes **the system those threats act agai
 They are one activity split across two documents because they answer different questions: the register
 is per-threat and governed; the architecture is per-view and read whole.
 
+## The method: the playbook's four questions
+
+Threat modelling here follows the *Playbook for Threat Modeling Medical Devices* (MITRE and
+MDIC, commissioned by FDA, 2021 — still the current edition). It is deliberately not
+prescriptive about technique; it is organised around four questions, and the discipline is
+answering all four rather than only the second.
+
+1. **What are we working on?** Decompose the system — elements, trust boundaries, data flows.
+   **Take the elements from the detailed design**, not from memory: then nothing is analysed
+   that does not exist, and nothing that exists is skipped.
+2. **What can go wrong?** Walk STRIDE across **each element**, rather than listing attacks and
+   labelling them afterwards. The order matters more than it sounds — see below.
+3. **What are we going to do about it?** A control (a requirement), an accepted risk with a
+   reason, or a transfer to the deployment or the operator. All three are legitimate answers;
+   silence is not.
+4. **Did we do a good enough job?** Say what gives confidence and what does not. An analysis
+   with no stated weakness has not been reviewed, it has been asserted.
+
+Record the pass as its own document (`<name>.tm.md`) — the analysis is not the register and
+not the architecture views. Three artefacts because they answer different questions and go
+stale at different rates: the register when a threat changes, the views when the system does,
+the pass when either does enough to need re-walking.
+
+### Walk elements, not attacks
+
+Listing attacks finds the attacks you already know. Walking elements finds the ones you do
+not, and the difference is not marginal. Threats that show up only this way:
+
+- **Between two controls.** Each looks complete alone; the threat lives in the seam. Path
+  validation and a restricted checkout can both be correct and still not resolve a symlink.
+- **Without an attacker.** The likeliest integrity failure is often an authorised person
+  taking a normal route that bypasses the gate. Attacker-first thinking looks for attackers.
+- **From a category that is empty.** An entry point with no threat in a STRIDE category is a
+  question. So is a *control* category with nothing in it — walking the FDA control
+  categories is how "we log nothing at all" gets found, because a threat list cannot raise it.
+- **Individually minor, jointly not.** A stored credential or handle is dull on its own and
+  changes the impact of every code-execution threat in the model.
+
+### Say what the pass did not do
+
+Question four is the one people skip. Name the missing: no adversarial review by a second
+person, no attack trees on the paths that deserve them, no penetration testing, an area
+walked less thoroughly than another. A reader can weigh an analysis whose limits are stated;
+one that claims none reads as unreviewed.
+
 ## One register, not two
 
 A threat model and a security risk analysis are the same register here. Identifying a threat and
@@ -59,6 +104,22 @@ Spoofing, tampering, repudiation, information disclosure, denial of service, ele
 Its value is not the label on a threat you already found: it is the prompt. Take each entry point and
 ask all six. **An entry point with no threat in a category is a question**, and the answer is often
 "because nothing there is worth that" — which is worth recording once rather than rediscovering.
+
+### Controls are grouped by the FDA categories
+
+`controls` names the requirements; `securityControl` on each of those requirements says
+**which FDA category it is** (*Cybersecurity in Medical Devices*, February 2026, §V.B.1):
+authentication, authorization, cryptography, code/data/execution integrity, confidentiality,
+event detection and logging, resiliency and recovery, updatability and patchability.
+
+This is the coverage argument. "We have security requirements" is not one; "here is what we
+have in each of the eight categories" is. Walk all eight — **an empty category is a question**,
+and the honest answers differ: a product that implements no cryptography of its own has a
+real reason, while a product that logs nothing has found a gap. Both are worth knowing, and
+only the sweep distinguishes them.
+
+FDA asks for requirements **and acceptance criteria** per category, so a control with no
+verifying test is an incomplete answer even when the requirement is well written.
 
 ### A control is a requirement
 

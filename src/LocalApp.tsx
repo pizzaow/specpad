@@ -93,6 +93,7 @@ import SoupTable from './components/SoupTable';
 import ThreatTable from './components/ThreatTable';
 import ReferenceTable from './components/ReferenceTable';
 import SecurityView from './components/SecurityView';
+import SecurityControlsView from './components/SecurityControlsView';
 import ReleasesView from './components/ReleasesView';
 import AuditView from './components/AuditView';
 import TraceabilityView from './components/TraceabilityView';
@@ -103,7 +104,7 @@ import type { ThemeId } from './theme';
 import StatusBar from './components/StatusBar';
 import ViewTabs from './components/ViewTabs';
 
-type ViewMode = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'sdd' | 'risk' | 'soup' | 'threat' | 'sec' | 'reference' | 'releases' | 'audit' | 'trace';
+type ViewMode = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'jobs' | 'arch' | 'sdd' | 'risk' | 'soup' | 'threat' | 'controls' | 'sec' | 'tm' | 'reference' | 'releases' | 'audit' | 'trace';
 type OpenResult = { name: string; documents: DocumentListItem[] };
 // Items of any id-keyed register document (srs/vtp/prd/…); a per-job diff is keyed by doc type,
 // so newly-registered register types are diffed without changing this code.
@@ -205,6 +206,8 @@ const LocalApp: React.FC = () => {
   const [soupDoc, setSoupDoc] = useState<SoupDoc | null>(null);
   const [threatDoc, setThreatDoc] = useState<ThreatDoc | null>(null);
   const [referenceDoc, setReferenceDoc] = useState<ReferenceDoc | null>(null);
+  const [tm, setTm] = useState<string | null>(null);
+  const [dirtyTm, setDirtyTm] = useState(false);
   const [dirtyReference, setDirtyReference] = useState(false);
   const [sec, setSec] = useState<string | null>(null);
   const [prdBaseline, setPrdBaseline] = useState<PrdDoc | null>(null);
@@ -436,7 +439,9 @@ const LocalApp: React.FC = () => {
     setSadGuide(await loadProjectText(`${name}.sad.guide.md`));
     const secText = await loadProjectText(`${name}.sec.md`);
     setSec(secText);
-    setDiagrams(await loadDiagrams(sadText, secText));
+    const tmText = await loadProjectText(`${name}.tm.md`);
+    setTm(tmText);
+    setDiagrams(await loadDiagrams(sadText, secText, tmText));
     setDirtySad(false);
     setDirtyDsl(false);
     const cached = cachedReleases(rel);
@@ -886,6 +891,7 @@ const LocalApp: React.FC = () => {
       if (dirtyThreat && threatDoc) { await persist(threatDoc); setDirtyThreat(false); }
       if (dirtyReference && referenceDoc) { await persist(referenceDoc); setDirtyReference(false); }
       if (dirtySec && sec !== null) { await saveProjectText(`${selectedDocName || projectName}.sec.md`, sec); setDirtySec(false); }
+      if (dirtyTm && tm !== null) { await saveProjectText(`${selectedDocName || projectName}.tm.md`, tm); setDirtyTm(false); }
       if (dirtyJobs && jobsDoc) { await saveJobs(name, jobsDoc); setDirtyJobs(false); }
       if (dirtySad && sad !== null) { await saveProjectText(`${name}.sad.md`, sad); setDirtySad(false); }
       if (dirtyDsl && dsl !== null) { await saveProjectText(`${name}.workspace.dsl`, dsl); setDirtyDsl(false); }
@@ -1053,7 +1059,7 @@ const LocalApp: React.FC = () => {
       {isDirectoryOpen && (
         <ViewTabs
           current={currentView}
-          enabled={{ overview: true, prd: !!prdDoc, srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl), sdd: !!sddDoc, risk: !!riskDoc, soup: !!soupDoc, threat: !!threatDoc, sec: sec !== null, reference: !!referenceDoc, releases: !!releases, audit: !!srsDoc, trace: !!srsDoc }}
+          enabled={{ overview: true, prd: !!prdDoc, srs: !!srsDoc, vtp: !!vtpDoc, testing: !!vtpDoc, jobs: !launch.demo || !!jobsDoc, arch: !!(sad || dsl), sdd: !!sddDoc, risk: !!riskDoc, soup: !!soupDoc, threat: !!threatDoc, controls: !!srsDoc, sec: sec !== null, tm: tm !== null, reference: !!referenceDoc, releases: !!releases, audit: !!srsDoc, trace: !!srsDoc }}
           onSelect={setCurrentView}
         />
       )}
@@ -1148,6 +1154,27 @@ const LocalApp: React.FC = () => {
             run={runRecord}
             onChange={handleThreatChange}
             readOnly={sessionReadOnly}
+          />
+        )}
+        {currentView === 'tm' && tm !== null && (
+          <SecurityView
+            key={`${selectedDocName}-tm`}
+            sec={tm}
+            diagrams={diagrams}
+            readOnly={sessionReadOnly}
+            onChange={(next) => { setTm(next); setDirtyTm(true); }}
+            heading="Threat model pass"
+            hint="The decomposition and the STRIDE walk that produced the register. The threats themselves are the Threats tab; the views of the system are the Security tab."
+            empty="No threat model pass for this project."
+          />
+        )}
+        {currentView === 'controls' && (
+          <SecurityControlsView
+            srs={srsDoc}
+            threat={threatDoc}
+            vtp={vtpDoc}
+            run={runRecord}
+            onNavigate={setCurrentView}
           />
         )}
         {currentView === 'reference' && referenceDoc && (

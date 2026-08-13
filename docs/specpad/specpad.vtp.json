@@ -5286,6 +5286,86 @@
           "selector": "ViewTabs"
         }
       ]
+    },
+    {
+      "id": "t_ctl1",
+      "verifies": [
+        "r_ctl1"
+      ],
+      "verificationLevel": "unit",
+      "text": "Validate a requirement declaring several security control categories, and one declaring a value outside the eight.",
+      "expected": "Several categories on one requirement validate; a value outside FDA V.B.1 is rejected.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/shared/__tests__/advisory.test.ts",
+          "selector": "the rule register describes both tiers"
+        }
+      ]
+    },
+    {
+      "id": "t_ctl2",
+      "verifies": [
+        "r_ctl2"
+      ],
+      "verificationLevel": "unit",
+      "text": "Open the controls view for a project whose requirements cover some categories but not others.",
+      "expected": "All eight categories appear; a category with no control says so and asks the question rather than being omitted; the header counts how many of the eight are covered; a requirement serving two categories appears under both.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/SecurityControlsView.test.tsx",
+          "selector": "SecurityControlsView"
+        }
+      ]
+    },
+    {
+      "id": "t_ctl3",
+      "verifies": [
+        "r_ctl3"
+      ],
+      "verificationLevel": "unit",
+      "text": "Read a control that answers a threat and has a test, one with no test, and a threat control that declares no category.",
+      "expected": "Each control names the threats it answers and shows verified or no test; the uncategorised control is called out above the groups rather than dropped; a requirement that is not a control at all does not appear.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/SecurityControlsView.test.tsx",
+          "selector": "SecurityControlsView"
+        }
+      ]
+    },
+    {
+      "id": "t_ctl4",
+      "verifies": [
+        "r_ctl4"
+      ],
+      "verificationLevel": "unit",
+      "text": "Read the advisory result for a threat model whose controlling requirement declares no control category, and for one that does.",
+      "expected": "The uncategorised control is advised on and named; a requirement no threat relies on is never asked; the finding does not block.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/shared/__tests__/advisory.test.ts",
+          "selector": "advisories are findings that do not fail"
+        }
+      ]
+    },
+    {
+      "id": "t_tm1",
+      "verifies": [
+        "r_tm1"
+      ],
+      "verificationLevel": "unit",
+      "text": "Open a project holding a threat model pass and one without.",
+      "expected": "The document renders with its diagrams and is editable; a project without one says so and offers no editor; it is registered as a prose type captured in baselines and never generated.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/SecurityView.test.tsx",
+          "selector": "SecurityView"
+        }
+      ]
     }
   ]
 }
