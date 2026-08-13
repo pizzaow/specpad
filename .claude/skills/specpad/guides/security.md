@@ -101,21 +101,101 @@ none, and leaving it empty is a statement rather than an omission.
 
 ## The architecture views
 
-Four, and a submission is expected to contain all four (FDA). Write them for a reader who does not know
-the system:
+FDA names four *types* of view (*Cybersecurity in Medical Devices: Quality Management System
+Considerations and Content of Premarket Submissions*, 3 February 2026, §V.B.2 and Appendix 2). Write
+them for a reader who does not know the system:
 
 1. **Global system view** — the system and every connection in or out, and where trust begins.
 2. **Multi-patient harm view** — how an attack on one instance reaches beyond it. If the product has no
    fleet and no patient-facing function, **say so and state the indirect path**: an auditor reads the
    view's absence as an omission and its dismissal as an argument.
-3. **Updateability and patchability view** — how a fix reaches a deployed instance, who acts, and what
-   an operator who does nothing stays on.
+3. **Updateability and patchability view** — how a fix reaches a deployed instance end to end, who
+   acts, and what an operator who does nothing stays on.
 4. **Security use cases** — the flows where an attacker's interest meets the system's function, each
    naming the threats that act on it.
+
+Every view states what it covers, and the four should collectively answer: what the security-relevant
+elements and their interfaces are, where the boundaries and domains sit, **which user roles exist**,
+and how the architecture traces to the security requirements.
+
+### Four types, more than four views
+
+The count is a floor, not a target. The guidance is explicit that the number of views scales with the
+attack surface, and that a single global view need not carry every data flow — additional views may
+detail the communications instead.
+
+So: **one system-level overview, then a view per system or deployment.** A product with a device, a
+companion app and a cloud service has at least four global views, not one crowded one. Two deployments
+with different exposure — a hosted page and a self-hosted server, say — are two views, because drawing
+them as one misrepresents both.
+
+A view that is not appropriate is **omitted with a reason given**, never dropped silently.
+
+### Every view has a diagram
+
+The guidance asks for "both diagrams and explanatory text". Prose alone is an incomplete view, and so
+is a diagram nobody can follow. A reviewer should be able to trace data, code and commands from any
+asset to any other without asking a question.
+
+The multi-patient harm view is the one people leave as prose, usually because the answer is "not
+applicable". Draw it anyway: the harm path, however long and indirect, and — more useful — **the gates
+that interrupt it**. A drawn path with three gates on it is an argument; a paragraph saying the product
+treats nobody is an assertion.
+
+### Label every connector
+
+An unlabelled arrow says two things are connected and nothing else. Each connector carries what
+traverses it and over what: `identity headers (data) · HTTP 8080`, `commit + push (control) · HTTPS
+443`. Distinguish **data, code and commands** — the guidance asks for it specifically, and the
+distinction is what tells a reviewer whether a path can change behaviour or only content.
+
+Give each figure a **legend**: what the shape colours mean, and what solid, dashed and dotted lines
+mean. Mark third-party components with their `SOUP-n` code, which is also the SBOM link the guidance
+asks for.
+
+### The communication-path table
+
+A diagram cannot hold the detail Appendix 2 asks for — roughly nineteen items per path — so put it in a
+table beside the figure, one row per path between two assets, including indirect paths through an
+intermediary. Columns worth having: what it carries (data / code / commands), protocol, version and
+port, what authenticates it, what authorizes it, the threats on it, and the controls.
+
+Then cover in prose, once per view rather than once per row:
+
+- **Unused interfaces** — ports and functionality built but not enabled, and why they cannot be
+  activated. "There are none, and here is why" is a strong answer.
+- **Handoffs** — where a path changes protocol, network or medium, and what protects integrity across
+  the change. This is usually the weakest point in the system and the one reviewers go to first.
+- **Cryptography and credentials** — algorithms, key lengths, and how each credential is generated,
+  stored, distributed and retired. If you implement none of your own, say that plainly and name what
+  provides it.
+- **Sessions** — how they are established, maintained and torn down; or that there are none.
+- **Behaviour when things go wrong** — a connection dropped mid-transfer, a push that loses its race.
+- **Security configuration settings and their defaults.**
+
+### Traceability, without restating it
+
+The guidance wants diagram elements linked to hazards, controls and testing. Do not rebuild that chain
+in prose — it already exists and a copy will drift. State where it lives: each element is a design unit
+or a SOUP component, each threat names its `causes` and `controls`, and each control is a requirement
+that a test verifies. Following those fields *is* the trace.
 
 Where this and the architecture document describe the same structure, **the architecture document is
 the source** and this is the security reading of it. Two descriptions of one system will drift, and the
 drift will be found by a reviewer rather than by you.
+
+### ❌ Bad views (and why)
+
+- A global system view with one box labelled "Cloud" — ❌ hides exactly the connections the view exists
+  to show.
+- Arrows labelled "HTTPS" and nothing else — ❌ says how, never what. Two paths over the same protocol
+  can carry a document and a firmware image.
+- A multi-patient harm view reading "N/A — not a networked device" — ❌ a conclusion with no analysis
+  behind it. State the path you considered and where it stops.
+- An updateability view that stops at "the operator updates the device" — ❌ end-to-end means from where
+  the patch is built to where it runs, including the hops you do not control.
+- One global view carrying forty flows — ❌ decompose it. If the connectors cross more than about three
+  times, the diagram has outgrown its scope.
 
 ## Keeping it true
 

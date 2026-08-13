@@ -4691,6 +4691,36 @@
           "selector": "SecurityView"
         }
       ]
+    },
+    {
+      "id": "t_sec8b",
+      "verifies": [
+        "r_sec8"
+      ],
+      "text": "Inspect the project's own security architecture document and each figure it references.",
+      "expected": "All four view types are present with more than one global system view; every view references a diagram and every referenced diagram exists; each figure fits the canvas, uses only the palette, sets Arial with no text below 11px, carries a legend, and labels its connectors; the communication-path table names what each path carries and what protects it; and the guidance cited is the one in force.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/shared/__tests__/secviews.test.ts",
+          "selector": "security architecture views"
+        }
+      ]
+    },
+    {
+      "id": "t_sec9",
+      "verifies": [
+        "r_sec9"
+      ],
+      "text": "Resolve diagrams from an architecture document and a security document that reference different figures, from a single document, and from sources that are absent or name a missing file.",
+      "expected": "Every figure referenced by any source is loaded and a figure shared by two is loaded once; scanning one document alone yields only its own figure; an absent source is skipped and an unresolvable reference is omitted rather than loaded empty.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/__tests__/diagrams.test.ts",
+          "selector": "loadDiagrams"
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="760" viewBox="0 0 800 760" font-family="Arial, Helvetica, sans-serif">
+<defs><marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#64748B"/></marker><marker id="arwS" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748B"/></marker></defs>
+<rect width="800" height="760" fill="#FEFEFE"/>
+<text x="400" y="26" text-anchor="middle" font-size="16" font-weight="bold" fill="#0F172A">Security view 5 — Updateability and patchability: three paths, one manual</text>
+<rect x="300" y="80" width="200" height="52" rx="3" fill="#FAFAFA" stroke="#64748B" stroke-width="1.5"/>
+<text x="400" y="104" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">SpecPad release</text>
+<text x="400" y="120" text-anchor="middle" font-size="11" fill="#64748B">tagged, versioned build</text>
+<rect x="40" y="200" width="200" height="52" rx="3" fill="#FAFAFA" stroke="#64748B" stroke-width="1.5"/>
+<text x="140" y="224" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">CDN version path</text>
+<text x="140" y="240" text-anchor="middle" font-size="11" fill="#64748B">SpecPad-operated</text>
+<rect x="40" y="320" width="200" height="52" rx="3" fill="#FAFAFA" stroke="#64748B" stroke-width="1.5"/>
+<text x="140" y="344" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">Author's browser</text>
+<text x="140" y="360" text-anchor="middle" font-size="11" fill="#64748B">next page load</text>
+<rect x="300" y="200" width="200" height="52" rx="3" fill="#E5E7EB" stroke="#64748B" stroke-width="1.5"/>
+<text x="400" y="224" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">Container image</text>
+<text x="400" y="240" text-anchor="middle" font-size="11" fill="#64748B">operator pulls</text>
+<rect x="300" y="320" width="200" height="52" rx="3" fill="#E5E7EB" stroke="#64748B" stroke-width="1.5"/>
+<text x="400" y="344" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">Operator</text>
+<text x="400" y="360" text-anchor="middle" font-size="11" fill="#64748B">the operating company</text>
+<rect x="300" y="440" width="200" height="52" rx="3" fill="#FAFAFA" stroke="#64748B" stroke-width="1.5"/>
+<text x="400" y="464" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">Self-hosted server</text>
+<text x="400" y="480" text-anchor="middle" font-size="11" fill="#64748B">pinned until redeployed</text>
+<rect x="560" y="200" width="200" height="52" rx="3" fill="#FAFAFA" stroke="#64748B" stroke-width="1.5"/>
+<text x="660" y="224" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">Skill package</text>
+<text x="660" y="240" text-anchor="middle" font-size="11" fill="#64748B">ships with Claude Code</text>
+<rect x="560" y="320" width="200" height="52" rx="3" fill="#E5E7EB" stroke="#64748B" stroke-width="1.5"/>
+<text x="660" y="344" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">Author's workstation</text>
+<text x="660" y="360" text-anchor="middle" font-size="11" fill="#64748B">updates with the CLI</text>
+<text x="40" y="540" font-size="12" fill="#64748B">Automatic: the hosted editor updates on the next page load; old version paths stay live indefinitely.</text>
+<text x="40" y="555" font-size="12" fill="#64748B">Manual: the self-hosted server updates only when its operator redeploys, so advisories must reach them.</text>
+<text x="40" y="570" font-size="12" fill="#64748B">State on disk is a bare clone and worktrees, all regenerable from git, so no update migrates data.</text>
+<rect x="32" y="600" width="736" height="66" rx="2" fill="none" stroke="#64748B" stroke-width="0.5"/>
+<text x="42" y="617" font-size="12" font-weight="bold" fill="#1E293B">Legend</text>
+<rect x="42" y="628" width="22" height="13" rx="3" fill="#FAFAFA" stroke="#64748B" stroke-width="1.5"/>
+<text x="72" y="639" font-size="11" fill="#1E293B">SpecPad-controlled element</text>
+<rect x="42" y="648" width="22" height="13" rx="3" fill="#E5E7EB" stroke="#64748B" stroke-width="1.5"/>
+<text x="72" y="659" font-size="11" fill="#1E293B">Operator- or third-party-controlled</text>
+<path d="M410 634 L440 634" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<text x="450" y="638" font-size="11" fill="#1E293B">Data flow</text>
+<path d="M410 654 L440 654" stroke="#64748B" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arw)"/>
+<text x="450" y="658" font-size="11" fill="#1E293B">Control / command flow</text>
+<path d="M350 132 L350 166 L140 166 L140 200" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="206.7" y="151.0" width="76.6" height="30" fill="#FEFEFE" opacity="0.92"/>
+<text x="245.0" y="162.0" text-anchor="middle" font-size="11" fill="#475569">build (code)</text>
+<text x="245.0" y="175.0" text-anchor="middle" font-size="11" fill="#475569">HTTPS 443</text>
+<path d="M400 132 L400 200" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="358.8" y="151.0" width="82.4" height="30" fill="#FEFEFE" opacity="0.92"/>
+<text x="400.0" y="162.0" text-anchor="middle" font-size="11" fill="#475569">image (code)</text>
+<text x="400.0" y="175.0" text-anchor="middle" font-size="11" fill="#475569">registry pull</text>
+<path d="M450 132 L450 166 L660 166 L660 200" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="516.7" y="158.0" width="76.6" height="16" fill="#FEFEFE" opacity="0.92"/>
+<text x="555.0" y="169.0" text-anchor="middle" font-size="11" fill="#475569">skill (code)</text>
+<path d="M140 252 L140 320" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="90.2" y="278.0" width="99.5" height="16" fill="#FEFEFE" opacity="0.92"/>
+<text x="140.0" y="289.0" text-anchor="middle" font-size="11" fill="#475569">new build served</text>
+<path d="M400 252 L400 320" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="364.5" y="278.0" width="70.9" height="16" fill="#FEFEFE" opacity="0.92"/>
+<text x="400.0" y="289.0" text-anchor="middle" font-size="11" fill="#475569">pull (code)</text>
+<path d="M400 372 L400 440" fill="none" stroke="#64748B" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arw)"/>
+<rect x="373.1" y="398.0" width="53.8" height="16" fill="#FEFEFE" opacity="0.92"/>
+<text x="400.0" y="409.0" text-anchor="middle" font-size="11" fill="#475569">redeploy</text>
+<path d="M660 252 L660 320" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="607.4" y="278.0" width="105.2" height="16" fill="#FEFEFE" opacity="0.92"/>
+<text x="660.0" y="289.0" text-anchor="middle" font-size="11" fill="#475569">CLI update (code)</text>
+<text x="24" y="748" font-size="12" fill="#64748B">SpecPad cannot push an update to a self-hosted instance. An operator who does not redeploy stays on the installed version.</text>
+</svg>

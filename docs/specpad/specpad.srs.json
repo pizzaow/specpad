@@ -3814,7 +3814,18 @@
       "tags": [
         "security"
       ],
-      "text": "The system shall support an optional security architecture document holding the global system, multi-patient harm, updateability and patchability, and security use case views, rendered with its diagrams and editable in the browser."
+      "text": "The system shall support an optional security architecture document holding the global system, multi-patient harm, updateability and patchability, and security use case view types, with as many views as the attack surface requires, each carrying a diagram whose connections are labelled with what they carry and a legend, rendered with its diagrams and editable in the browser."
+    },
+    {
+      "id": "r_sec9",
+      "code": "SEC-9",
+      "design": [
+        "d_arv001"
+      ],
+      "tags": [
+        "security"
+      ],
+      "text": "Diagrams shall be resolved from every prose document that declares one, so that a figure referenced only by the security architecture renders inline as one referenced by the architecture document does."
     }
   ]
 }

@@ -244,7 +244,7 @@ export interface SoupItem {
 }
 
 /**
- * One threat against the product (FDA cybersecurity guidance, June 2025; IEC 81001-5-1;
+ * One threat against the product (FDA cybersecurity guidance, February 2026; IEC 81001-5-1;
  * AAMI SW96/TIR57).
  *
  * The threat model and the security risk analysis are one register, because assessing a

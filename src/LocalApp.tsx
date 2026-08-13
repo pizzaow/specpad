@@ -172,13 +172,17 @@ async function loadJobCaches(
   return { diffs, commits, arch, runs };
 }
 
-// The arc42 markdown declares its diagrams via ![alt](name.svg); load exactly those
-// referenced files so the Architecture view can render each inline at its place.
-async function loadDiagrams(sad: string | null): Promise<Record<string, string>> {
-  if (!sad) return {};
-  const out: Record<string, string> = {};
+// Every prose document declares its diagrams via ![alt](name.svg); load exactly those
+// referenced files so each view can render them inline at their place. All prose sources
+// are scanned together — the security views carry figures the architecture never mentions,
+// and scanning only the arc42 text left those unresolved (JOB-55).
+export async function loadDiagrams(...sources: (string | null | undefined)[]): Promise<Record<string, string>> {
   const refs = new Set<string>();
-  for (const m of sad.matchAll(/!\[[^\]]*\]\(([^)]+\.svg)\)/g)) refs.add(m[1]);
+  for (const src of sources) {
+    if (!src) continue;
+    for (const m of src.matchAll(/!\[[^\]]*\]\(([^)]+\.svg)\)/g)) refs.add(m[1]);
+  }
+  const out: Record<string, string> = {};
   for (const ref of refs) {
     const svg = await loadProjectText(ref);
     if (svg) out[ref] = svg;
@@ -422,8 +426,9 @@ const LocalApp: React.FC = () => {
     setSad(sadText);
     setDsl(await loadProjectText(`${name}.workspace.dsl`));
     setSadGuide(await loadProjectText(`${name}.sad.guide.md`));
-    setSec(await loadProjectText(`${name}.sec.md`));
-    setDiagrams(await loadDiagrams(sadText));
+    const secText = await loadProjectText(`${name}.sec.md`);
+    setSec(secText);
+    setDiagrams(await loadDiagrams(sadText, secText));
     setDirtySad(false);
     setDirtyDsl(false);
     const cached = cachedReleases(rel);

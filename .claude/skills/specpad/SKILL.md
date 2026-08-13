@@ -402,8 +402,10 @@ software it depends on, assessed. Read `guides/soup.md` before authoring one.
 
 A project may add an optional **threat model** (`<name>.threat.json`, `type: "threat"`) and a
 **security architecture document** (`<name>.sec.md`). Read `guides/security.md` before authoring
-either. Current regime: FDA *Cybersecurity in Medical Devices* (June 2025, which supersedes the
-September 2023 guidance and adds the §524B obligations), IEC 81001-5-1, and AAMI SW96/TIR57.
+either. Current regime: FDA *Cybersecurity in Medical Devices: Quality Management System
+Considerations and Content of Premarket Submissions* (3 February 2026, which supersedes the June 2025
+edition, aligns the guidance with the QMSR, and carries the §524B obligations), IEC 81001-5-1, and
+AAMI SW96/TIR57.
 
 - **One register, not two.** The threat model and the security risk analysis are the same document:
   identifying a threat and assessing it are one act.
@@ -417,9 +419,13 @@ September 2023 guidance and adds the §524B obligations), IEC 81001-5-1, and AAM
 - **`safetyRisk` links a threat to the harm it would cause.** That join is why security risk sits
   beside safety risk rather than inside it: a security finding with a patient consequence belongs in
   both files.
-- **Four architecture views**, all of which a submission is expected to contain: global system,
-  multi-patient harm, updateability and patchability, security use cases. Where they and the
+- **Four view types, and as many views as the attack surface needs.** Global system, multi-patient
+  harm, updateability and patchability, security use cases. A single global view rarely carries every
+  data flow: write one system-level overview, then a view per system or deployment. Where they and the
   architecture document describe the same structure, the architecture document is the source.
+- **Every view has a diagram, and every connector is labelled** with what traverses it and over what
+  protocol. A view that is prose alone is incomplete; so is an unlabelled arrow. Each figure carries a
+  legend, and each view carries a communication-path table (Appendix 2 of the guidance).
 - **Opt-in governance:** when a threat model is present, `threat-referential-integrity`,
   `threat-assessed` and `threat-controlled` apply.
 
