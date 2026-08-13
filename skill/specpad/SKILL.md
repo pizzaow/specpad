@@ -435,10 +435,11 @@ AAMI SW96/TIR57.
   beside safety risk rather than inside it: a security finding with a patient consequence belongs in
   both files.
 - **Threat modelling follows the MITRE/MDIC playbook's four questions** — decompose, walk
-  STRIDE across each element, decide, then say what the pass did not do. Record the pass as
-  its own document (`<name>.tm.md`), separate from the register it produces and the
-  architecture views it reads. Walking *elements* rather than listing attacks is what finds
-  threats in the seam between two controls, and control categories that are empty.
+  STRIDE across each element, decide, then say what the pass did not do. Walking *elements*
+  rather than listing attacks is what finds threats in the seam between two controls, and
+  control categories that are empty. The **method** belongs in a procedure (the development
+  plan, or a threat modelling SOP) named in the references register — not restated per
+  project. SpecPad holds the output: the register and the views.
 - **Controls are categorised.** A requirement named as a control carries `securityControl`:
   which of FDA's eight categories (§V.B.1) it implements. The coverage argument is made from
   those categories, and an empty one is a question to answer once.

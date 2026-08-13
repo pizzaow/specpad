@@ -5352,18 +5352,55 @@
       ]
     },
     {
-      "id": "t_tm1",
+      "id": "t_tr10",
       "verifies": [
-        "r_tm1"
+        "r_tr10"
       ],
       "verificationLevel": "unit",
-      "text": "Open a project holding a threat model pass and one without.",
-      "expected": "The document renders with its diagrams and is editable; a project without one says so and offers no editor; it is registered as a prose type captured in baselines and never generated.",
+      "text": "Build the report for a project holding a design, a risk register and a threat model, including a requirement whose design reference does not resolve.",
+      "expected": "Each requirement resolves the design sections implementing it, and the risks and threats naming it as a control; an unresolvable design reference is reported separately rather than silently dropped.",
       "automation": [
         {
           "runner": "vitest",
-          "file": "src/components/__tests__/SecurityView.test.tsx",
-          "selector": "SecurityView"
+          "file": "src/__tests__/auditReport.test.ts",
+          "selector": "the whole chain"
+        }
+      ]
+    },
+    {
+      "id": "t_tr11",
+      "verifies": [
+        "r_tr11"
+      ],
+      "verificationLevel": "unit",
+      "text": "Build the report for a project with only requirements and tests, and for one holding every register.",
+      "expected": "The report states which registers are present, and the view renders a column only for those; a project with no PRD shows no need column and no need step in the chain.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/__tests__/auditReport.test.ts",
+          "selector": "the whole chain"
+        },
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/TraceabilityView.test.tsx",
+          "selector": "TraceabilityView"
+        }
+      ]
+    },
+    {
+      "id": "t_tr12",
+      "verifies": [
+        "r_tr12"
+      ],
+      "verificationLevel": "unit",
+      "text": "Build the report for a project where every requirement is verified but only some reach a design or declare a category.",
+      "expected": "Breadth reports full verification while depth reports the shortfall in design coverage, categorisation and verification levels, so a complete-looking register is not mistaken for a deep one.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/__tests__/auditReport.test.ts",
+          "selector": "the whole chain"
         }
       ]
     }

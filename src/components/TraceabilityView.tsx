@@ -1,11 +1,20 @@
 /**
- * TraceabilityView — the Traceability tab. The per-requirement matrix
- * (PRD → requirement → verification) with a result roll-up and unverified-row
- * flags, a coverage summary, and the governance gap list. Read-only; computed
- * live via the shared buildAuditReport (so it agrees with the skill).
+ * TraceabilityView — the Traceability tab: the whole chain the registers now describe,
+ * one row per requirement.
+ *
+ *   need → requirement → design → verification, with the risks and threats that made the
+ *   requirement necessary resolved backwards onto it.
+ *
+ * Columns appear only for registers the project actually has, so a project with no design
+ * or no threat model sees the matrix it earned rather than a wall of dashes.
+ *
+ * Coverage is reported in two parts on purpose. Breadth — is every requirement verified —
+ * was always here. Depth — does it reach a design, does it say which §5.2.2 category it is,
+ * were all three verification activities performed — is new, and is where a register that
+ * looks complete usually turns out not to be.
  */
 import React, { useMemo } from 'react';
-import type { PrdDoc, SrsDoc, VtpDoc, RunRecord } from '../shared';
+import type { PrdDoc, SrsDoc, VtpDoc, SddDoc, RiskDoc, ThreatDoc, RunRecord } from '../shared';
 import { buildAuditReport } from '../auditReport';
 import type { TestRollup } from '../auditReport';
 
@@ -13,6 +22,9 @@ interface TraceabilityViewProps {
   prd: PrdDoc | null;
   srs: SrsDoc | null;
   vtp: VtpDoc | null;
+  sdd?: SddDoc | null;
+  risk?: RiskDoc | null;
+  threat?: ThreatDoc | null;
   run?: RunRecord | null;
 }
 
@@ -36,21 +48,27 @@ const Stat: React.FC<{ label: string; value: React.ReactNode; muted?: boolean; a
   </div>
 );
 
-const TraceabilityView: React.FC<TraceabilityViewProps> = ({ prd, srs, vtp, run }) => {
-  const report = useMemo(() => buildAuditReport({ prd, srs, vtp }, run ?? null), [prd, srs, vtp, run]);
+const TraceabilityView: React.FC<TraceabilityViewProps> = ({ prd, srs, vtp, sdd, risk, threat, run }) => {
+  const report = useMemo(
+    () => buildAuditReport({ prd, srs, vtp, sdd, risk, threat }, run ?? null),
+    [prd, srs, vtp, sdd, risk, threat, run],
+  );
 
   if (!srs) {
     return <div className="alert alert-info">Open a project with a requirements document to see traceability.</div>;
   }
 
-  const { coverage: c, trace, violations } = report;
+  const { coverage: c, trace, violations, has, depth } = report;
   const reqPct = c.requirements.total ? Math.round((c.requirements.verified / c.requirements.total) * 100) : 0;
+  const total = c.requirements.total;
+  const cols = 3 + (has.prd ? 1 : 0) + (has.sdd ? 1 : 0) + (has.risk || has.threat ? 1 : 0);
 
   return (
     <div className="audit-view">
       <h3 style={{ marginTop: 0 }}>Traceability</h3>
       <p className="text-muted" style={{ marginTop: -6 }}>
-        {report.hasPrd ? 'Product requirement → requirement → verification.' : 'Requirement → verification (no PRD register).'}
+        {[has.prd && 'need', 'requirement', has.sdd && 'design', 'verification'].filter(Boolean).join(' → ')}
+        {(has.risk || has.threat) && ', with the risks and threats each requirement controls'}.
         {' '}Source &amp; release attribution per change is in the Jobs and Releases tabs.
       </p>
 
@@ -69,12 +87,37 @@ const TraceabilityView: React.FC<TraceabilityViewProps> = ({ prd, srs, vtp, run 
       </section>
 
       <section style={{ marginBottom: 18 }}>
+        <h4 style={{ borderBottom: '1px solid var(--border)', paddingBottom: 4 }}>Depth of the record</h4>
+        <p className="text-muted" style={{ fontSize: '0.85em', marginTop: -2 }}>
+          Breadth above says every requirement is verified. These say how much is behind each one —
+          the questions a reviewer asks after the coverage percentage.
+        </p>
+        <div className="overview-metrics">
+          {has.sdd && <Stat label="reach a design section" value={`${depth.designed}/${total}`} muted={depth.designed === total} />}
+          <Stat label="declare a §5.2.2 category" value={`${depth.categorised}/${total}`} muted={depth.categorised === total} />
+          {(has.risk || has.threat) && <Stat label="control a risk or threat" value={depth.controlling} />}
+          <Stat label="unit tests" value={depth.levels.unit} />
+          <Stat label="integration tests" value={depth.levels.integration} muted={depth.levels.integration === 0} />
+          <Stat label="system tests" value={depth.levels.system} />
+          {depth.unlevelled > 0 && <Stat label="tests with no level" value={depth.unlevelled} />}
+        </div>
+        {depth.levels.integration === 0 && depth.levels.unit + depth.levels.system > 0 && (
+          <p className="text-muted" style={{ fontSize: '0.85em' }}>
+            No test is recorded as integration testing. IEC 62304 §5.6 treats it as its own activity —
+            worth confirming that is true rather than unrecorded.
+          </p>
+        )}
+      </section>
+
+      <section style={{ marginBottom: 18 }}>
         <h4 style={{ borderBottom: '1px solid var(--border)', paddingBottom: 4 }}>Matrix</h4>
         <table className="table table-condensed audit-trace">
           <thead>
             <tr>
-              {report.hasPrd && <th>Product req</th>}
+              {has.prd && <th>Need</th>}
               <th>Requirement</th>
+              {has.sdd && <th>Design</th>}
+              {(has.risk || has.threat) && <th>Controls</th>}
               <th>Verified by</th>
               <th>Result</th>
             </tr>
@@ -82,7 +125,7 @@ const TraceabilityView: React.FC<TraceabilityViewProps> = ({ prd, srs, vtp, run 
           <tbody>
             {trace.map((row) => (
               <tr key={row.req.id} className={row.rollup === 'no_test' ? 'danger' : undefined}>
-                {report.hasPrd && (
+                {has.prd && (
                   <td>
                     {row.prds.map((p) => <span key={p.id} className="label label-default" style={{ marginRight: 4 }}>{p.code ?? p.id}</span>)}
                     {row.danglingPrdRefs.map((id) => <span key={id} className="label label-danger" style={{ marginRight: 4 }} title="unresolved PRD reference">{id}?</span>)}
@@ -91,7 +134,27 @@ const TraceabilityView: React.FC<TraceabilityViewProps> = ({ prd, srs, vtp, run 
                 <td>
                   {row.req.code && <span className="text-muted" style={{ marginRight: 6 }}>{row.req.code}</span>}
                   {row.req.text}
+                  {(row.req.category ?? []).length > 0 && (
+                    <div className="text-muted" style={{ fontSize: '0.8em', marginTop: 2 }}>
+                      {(row.req.category ?? []).join(' · ')}
+                    </div>
+                  )}
                 </td>
+                {has.sdd && (
+                  <td>
+                    {row.designs.length === 0
+                      ? <span className="text-muted">—</span>
+                      : row.designs.map((d) => <span key={d.id} className="label label-default" style={{ marginRight: 4 }}>{d.code ?? d.title}</span>)}
+                    {row.danglingDesignRefs.map((id) => <span key={id} className="label label-danger" style={{ marginRight: 4 }} title="unresolved design reference">{id}?</span>)}
+                  </td>
+                )}
+                {(has.risk || has.threat) && (
+                  <td>
+                    {row.risks.length === 0 && row.threats.length === 0 && <span className="text-muted">—</span>}
+                    {row.risks.map((k) => <span key={k.id} className="label label-warning" style={{ marginRight: 4 }} title={k.text}>{k.code ?? k.id}</span>)}
+                    {row.threats.map((x) => <span key={x.id} className="label label-warning" style={{ marginRight: 4 }} title={x.text}>{x.code ?? x.id}</span>)}
+                  </td>
+                )}
                 <td>
                   {row.tests.length === 0
                     ? <span className="text-danger">— none —</span>
@@ -101,7 +164,7 @@ const TraceabilityView: React.FC<TraceabilityViewProps> = ({ prd, srs, vtp, run 
               </tr>
             ))}
             {trace.length === 0 && (
-              <tr><td colSpan={report.hasPrd ? 4 : 3} className="text-muted">No requirements yet.</td></tr>
+              <tr><td colSpan={cols} className="text-muted">No requirements yet.</td></tr>
             )}
           </tbody>
         </table>
@@ -110,7 +173,7 @@ const TraceabilityView: React.FC<TraceabilityViewProps> = ({ prd, srs, vtp, run 
       <section style={{ marginBottom: 18 }}>
         <h4 style={{ borderBottom: '1px solid var(--border)', paddingBottom: 4 }}>Gaps &amp; findings</h4>
         {violations.length === 0 ? (
-          <p className="text-success">✓ Governance-clean — every requirement is verified, every reference resolves, every test declares an expected result.</p>
+          <p className="text-success">✓ Governance-clean across every register the project holds — every requirement verified and reaching a design, every reference resolving, every risk and threat controlled or justified.</p>
         ) : (
           <ul className="list-unstyled">
             {violations.map((v, i) => (

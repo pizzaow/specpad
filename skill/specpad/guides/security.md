@@ -30,10 +30,14 @@ answering all four rather than only the second.
 4. **Did we do a good enough job?** Say what gives confidence and what does not. An analysis
    with no stated weakness has not been reviewed, it has been asserted.
 
-Record the pass as its own document (`<name>.tm.md`) — the analysis is not the register and
-not the architecture views. Three artefacts because they answer different questions and go
-stale at different rates: the register when a threat changes, the views when the system does,
-the pass when either does enough to need re-walking.
+**The method is not a per-project document.** How your organisation threat-models — the four
+questions, who attends, when it is re-run, what evidence is kept — belongs in a procedure: the
+software development plan, or a threat modelling SOP. Name it in the references register and
+it is accounted for once, for every project, instead of being restated in each one.
+
+What SpecPad holds is the *output*: the register of threats, and the architecture views of the
+system they act against. The reasoning that produced a particular threat belongs in that
+threat's `notes`, where it stays attached to the thing it explains.
 
 ### Walk elements, not attacks
 
@@ -52,10 +56,11 @@ not, and the difference is not marginal. Threats that show up only this way:
 
 ### Say what the pass did not do
 
-Question four is the one people skip. Name the missing: no adversarial review by a second
-person, no attack trees on the paths that deserve them, no penetration testing, an area
-walked less thoroughly than another. A reader can weigh an analysis whose limits are stated;
-one that claims none reads as unreviewed.
+Question four is the one people skip, and it has a home: the residual on each threat, and the
+`justification` on each threat you chose not to control. A threat recorded `not_assessed`
+because the position genuinely has not been taken is worth more than one marked acceptable by
+nobody. Where a whole pass has a known limit — no adversarial review, no penetration testing —
+that belongs with the procedure, not scattered across the register.
 
 ## One register, not two
 

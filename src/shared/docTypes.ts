@@ -54,10 +54,6 @@ export const DOC_TYPES: DocTypeSpec[] = [
   // Security architecture: prose plus diagrams, like the arc42 document, holding the four
   // views a submission is expected to contain.
   { type: 'sec', label: 'Security', kind: 'prose', optional: true, inBaseline: true, generate: 'optional' },
-  // The threat modelling pass itself — the decomposition and the STRIDE walk that produced
-  // the register. Separate from the register (its output) and from the architecture views
-  // (which describe the system, not the analysis of it).
-  { type: 'tm', label: 'Threat model', kind: 'prose', optional: true, inBaseline: true, generate: 'never' },
   // The controlled documents a project relies on but does not hold — planning, maintenance
   // and problem resolution, which live in a quality system or a tracker. Never generated:
   // where a company keeps its SOPs is not derivable from source.

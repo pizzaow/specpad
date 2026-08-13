@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ViewTabs from '../ViewTabs';
 
-const enabled = { overview: true, prd: true, srs: true, vtp: true, testing: true, jobs: true, arch: true, sdd: false, risk: false, soup: false, threat: false, controls: false, tm: false, sec: false, reference: false, releases: true, audit: true, trace: true };
+const enabled = { overview: true, prd: true, srs: true, vtp: true, testing: true, jobs: true, arch: true, sdd: false, risk: false, soup: false, threat: false, controls: false, sec: false, reference: false, releases: true, audit: true, trace: true };
 
 describe('ViewTabs', () => {
   it('labels each document tab by its acronym, with the full name on hover', () => {
@@ -27,7 +27,7 @@ describe('ViewTabs', () => {
   it('orders the tabs chronologically through the design-control phases', () => {
     const { container } = render(<ViewTabs current="overview" enabled={enabled} onSelect={vi.fn()} />);
     const labels = [...container.querySelectorAll('.view-tab')].map((a) => a.textContent);
-    expect(labels).toEqual(['Overview', 'Auditor', 'PRD', 'SRS', 'Refs', 'SAD', 'SDD', 'SOUP', 'Security', 'Risk', 'Threats', 'TM', 'Controls', 'VTP', 'Results', 'Traceability', 'Releases', 'Jobs']);
+    expect(labels).toEqual(['Overview', 'Auditor', 'PRD', 'SRS', 'Refs', 'SAD', 'SDD', 'SOUP', 'Security', 'Risk', 'Threats', 'Controls', 'VTP', 'Results', 'Traceability', 'Releases', 'Jobs']);
   });
 
   it('labels each design-control phase with a band (Design Inputs spans the requirements tabs)', () => {
@@ -38,10 +38,10 @@ describe('ViewTabs', () => {
     // reviewer starts. "Design Inputs" then spans PRD + SRS + Refs (columns 3–5).
     const inputs = [...container.querySelectorAll('.phase-band')].find((b) => b.textContent === 'Design Inputs') as HTMLElement;
     expect(inputs.style.gridColumn).toBe('3 / span 3');
-    // "Design Verification" spans VTP + Results — columns 14–15: Design Outputs covers
-    // SAD, SDD, SOUP and Security, and Risk Management covers Risk, Threats, TM and Controls.
+    // "Design Verification" spans VTP + Results — columns 13–14: Design Outputs covers
+    // SAD, SDD, SOUP and Security, and Risk Management covers Risk, Threats and Controls.
     const verification = [...container.querySelectorAll('.phase-band')].find((b) => b.textContent === 'Design Verification') as HTMLElement;
-    expect(verification.style.gridColumn).toBe('14 / span 2');
+    expect(verification.style.gridColumn).toBe('13 / span 2');
   });
 
   it('selects a tab on click', () => {
@@ -54,7 +54,7 @@ describe('ViewTabs', () => {
   it('disables a tab whose document is absent and does not select it', () => {
     const onSelect = vi.fn();
     render(
-      <ViewTabs current="srs" enabled={{ overview: true, prd: false, srs: true, vtp: false, testing: false, jobs: false, arch: false, sdd: false, risk: false, soup: false, threat: false, controls: false, tm: false, sec: false, reference: false, releases: false, audit: false, trace: false }} onSelect={onSelect} />,
+      <ViewTabs current="srs" enabled={{ overview: true, prd: false, srs: true, vtp: false, testing: false, jobs: false, arch: false, sdd: false, risk: false, soup: false, threat: false, controls: false, sec: false, reference: false, releases: false, audit: false, trace: false }} onSelect={onSelect} />,
     );
     const vtpTab = screen.getByText('VTP');
     expect(vtpTab.className).toContain('disabled');

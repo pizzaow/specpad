@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { buildAuditReport } from '../auditReport';
-import type { PrdDoc, SrsDoc, VtpDoc } from '../shared';
+import type { PrdDoc, SrsDoc, VtpDoc, SddDoc, RiskDoc, ThreatDoc } from '../shared';
 
 const prd: PrdDoc = {
   schemaVersion: '1.0', type: 'prd', name: 'Acme', title: 'PRD',
@@ -90,5 +90,66 @@ describe('buildAuditReport', () => {
     const r = buildAuditReport({ srs, vtp: autoVtp }, run);
     expect(r.coverage.tests.passed).toBe(1);
     expect(r.trace.find((t) => t.req.id === 'r_1')!.rollup).toBe('passed');
+  });
+});
+
+describe('the whole chain, not just PRD → SRS → VTP', () => {
+  const srs: SrsDoc = {
+    schemaVersion: '1.0', type: 'srs', name: 'A', title: 'SRS',
+    items: [
+      { id: 'r_1', code: 'R-1', text: 'Range-check the rate.', design: ['d_1'], category: ['functional', 'security'] },
+      { id: 'r_2', code: 'R-2', text: 'Something else.', design: ['d_gone'] },
+    ],
+  };
+  const vtp: VtpDoc = {
+    schemaVersion: '1.0', type: 'vtp', name: 'A', title: 'VTP',
+    items: [
+      { id: 't_1', text: 'Enter 200.', verifies: ['r_1'], expected: 'Refused.', verificationLevel: 'unit' },
+      { id: 't_2', text: 'End to end.', verifies: ['r_2'], expected: 'Works.', verificationLevel: 'system' },
+    ],
+  };
+  const sdd: SddDoc = {
+    schemaVersion: '1.0', type: 'sdd', name: 'A', title: 'Design',
+    items: [{ id: 'd_1', code: 'SDD-1', title: 'Rate check', kind: 'unit' }],
+  };
+  const risk: RiskDoc = {
+    schemaVersion: '1.0', type: 'risk', name: 'A', title: 'Risk',
+    items: [{ id: 'k_1', code: 'RISK-1', text: 'Overdose.', causes: ['d_1'], controls: ['r_1'] }],
+  };
+  const threat: ThreatDoc = {
+    schemaVersion: '1.0', type: 'threat', name: 'A', title: 'Threats',
+    items: [{ id: 'x_1', code: 'THR-1', text: 'Spoof.', controls: ['r_1'] }],
+  };
+
+  it('resolves the design a requirement reaches, and flags one that resolves to nothing', () => {
+    const r = buildAuditReport({ srs, vtp, sdd });
+    const [one, two] = r.trace;
+    expect(one.designs.map((d) => d.code)).toEqual(['SDD-1']);
+    expect(two.designs).toEqual([]);
+    expect(two.danglingDesignRefs).toEqual(['d_gone']);
+  });
+
+  it('resolves risks and threats backwards onto the requirement that controls them', () => {
+    // The edge is stored on the risk and the threat; a requirement does not know it is a
+    // control, which is exactly what a reviewer needs told.
+    const r = buildAuditReport({ srs, vtp, sdd, risk, threat });
+    expect(r.trace[0].risks.map((k) => k.code)).toEqual(['RISK-1']);
+    expect(r.trace[0].threats.map((x) => x.code)).toEqual(['THR-1']);
+    expect(r.trace[1].risks).toEqual([]);
+    expect(r.depth.controlling).toBe(1);
+  });
+
+  it('reports which registers are present, so the view shows only columns that mean something', () => {
+    expect(buildAuditReport({ srs, vtp }).has).toEqual({ prd: false, sdd: false, risk: false, threat: false });
+    expect(buildAuditReport({ srs, vtp, sdd, risk, threat }).has).toEqual({ prd: false, sdd: true, risk: true, threat: true });
+  });
+
+  it('measures depth as well as breadth', () => {
+    const r = buildAuditReport({ srs, vtp, sdd });
+    expect(r.coverage.requirements).toEqual({ total: 2, verified: 2 }); // breadth: complete
+    expect(r.depth.designed).toBe(1);      // depth: only one reaches a design
+    expect(r.depth.categorised).toBe(1);   // and only one says what it is
+    expect(r.depth.levels).toEqual({ unit: 1, integration: 0, system: 1 });
+    expect(r.depth.unlevelled).toBe(0);
   });
 });

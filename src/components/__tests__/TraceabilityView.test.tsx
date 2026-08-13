@@ -44,6 +44,8 @@ describe('TraceabilityView', () => {
 
   it('works without a PRD register', () => {
     render(<TraceabilityView prd={null} srs={srs} vtp={vtp} />);
-    expect(screen.getByText(/Requirement → verification \(no PRD register\)/i)).toBeInTheDocument();
+    // The chain names only the registers the project holds, so no PRD means no 'need'.
+    expect(screen.getByText(/requirement → verification/i)).toBeInTheDocument();
+    expect(screen.queryByText(/need →/)).toBeNull();
   });
 });
