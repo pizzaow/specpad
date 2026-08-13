@@ -1084,7 +1084,11 @@ const LocalApp: React.FC = () => {
             jobs={jobsDoc?.jobs ?? []} releases={releases}
             sdd={sddDoc}
             risk={riskDoc}
+            soup={soupDoc}
+            threat={threatDoc}
+            reference={referenceDoc}
             hasArchitecture={!!(sad || dsl)}
+            hasSecurityArchitecture={sec !== null}
             onNavigate={setCurrentView}
           />
         )}

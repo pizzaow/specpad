@@ -649,6 +649,16 @@ tr.warning { background-color: var(--warn-weak) !important; }
 .dc-status.present { background: var(--ok-weak); color: var(--ok); }
 .dc-status.partial { background: var(--warn-weak); color: var(--warn); }
 .dc-status.gap { background: var(--danger-weak); color: var(--danger); }
+/* A clause another system holds is a decision, not an alarm, so it reads neutral. */
+.dc-status.elsewhere,
+.dc-status.not-applicable { background: var(--surface-2); color: var(--text-muted); }
+
+.audit-omissions dt { margin-top: 10px; }
+.audit-omissions dd { margin: 2px 0 0 0; }
+
+/* Advice is counted apart from problems and must not read like a failure. */
+.status-advice { color: var(--warn); cursor: pointer; margin-left: 12px; }
+.status-advice-item { color: var(--warn); }
 
 /* ── change-tracking bits (token-ised) ────────────────────────────────────── */
 td.ct-changed { box-shadow: inset 3px 0 0 var(--warn); }

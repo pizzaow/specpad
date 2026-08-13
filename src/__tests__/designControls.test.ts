@@ -41,15 +41,15 @@ describe('buildDesignControls', () => {
     expect(byKey(els, 'verification').status).toBe('partial'); // 1 of 2 verified
     expect(byKey(els, 'changes').status).toBe('present'); // a job exists
     expect(byKey(els, 'dhf').status).toBe('present'); // a release exists
-    expect(byKey(els, 'validation').status).toBe('gap'); // not built
-    expect(byKey(els, 'risk').status).toBe('gap'); // not built
+    expect(byKey(els, 'validation').status).toBe('elsewhere'); // not built
+    expect(byKey(els, 'risk').status).toBe('elsewhere'); // not built
   });
 
-  it('marks gaps when the project is empty', () => {
+  it('points elsewhere when the project is empty', () => {
     const els = buildDesignControls({ srs: null, vtp: null, jobs: [], releases: null, hasArchitecture: false });
-    expect(byKey(els, 'inputs').status).toBe('gap');
-    expect(byKey(els, 'outputs').status).toBe('gap');
-    expect(byKey(els, 'changes').status).toBe('gap');
+    expect(byKey(els, 'inputs').status).toBe('elsewhere');
+    expect(byKey(els, 'outputs').status).toBe('elsewhere');
+    expect(byKey(els, 'changes').status).toBe('elsewhere');
   });
 
   it('links elements to the tab holding their evidence', () => {
@@ -78,9 +78,9 @@ const designed: SrsDoc = {
 };
 
 describe('buildDesignControls — Design Outputs covers architecture and detailed design', () => {
-  it('is a gap with neither', () => {
+  it('is held elsewhere with neither', () => {
     const el = byKey(buildDesignControls({ srs, vtp, hasArchitecture: false }), 'outputs');
-    expect(el.status).toBe('gap');
+    expect(el.status).toBe('elsewhere');
     expect(el.detail).toMatch(/No architecture or detailed design/i);
   });
 
@@ -127,9 +127,9 @@ describe('buildDesignControls — Risk Management derives from the register', ()
     ],
   });
 
-  it('is a gap with no register', () => {
+  it('is held elsewhere with no register', () => {
     const el = byKey(buildDesignControls({ srs, vtp }), 'risk');
-    expect(el.status).toBe('gap');
+    expect(el.status).toBe('elsewhere');
     expect(el.link).toBeUndefined();
   });
 

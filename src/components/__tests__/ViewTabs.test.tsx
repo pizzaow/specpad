@@ -27,20 +27,21 @@ describe('ViewTabs', () => {
   it('orders the tabs chronologically through the design-control phases', () => {
     const { container } = render(<ViewTabs current="overview" enabled={enabled} onSelect={vi.fn()} />);
     const labels = [...container.querySelectorAll('.view-tab')].map((a) => a.textContent);
-    expect(labels).toEqual(['Overview', 'PRD', 'SRS', 'Refs', 'SAD', 'SDD', 'SOUP', 'Security', 'Risk', 'Threats', 'VTP', 'Results', 'Auditor', 'Traceability', 'Releases', 'Jobs']);
+    expect(labels).toEqual(['Overview', 'Auditor', 'PRD', 'SRS', 'Refs', 'SAD', 'SDD', 'SOUP', 'Security', 'Risk', 'Threats', 'VTP', 'Results', 'Traceability', 'Releases', 'Jobs']);
   });
 
   it('labels each design-control phase with a band (Design Inputs spans the requirements tabs)', () => {
     const { container } = render(<ViewTabs current="overview" enabled={enabled} onSelect={vi.fn()} />);
     const bands = [...container.querySelectorAll('.phase-band')].map((b) => b.textContent);
-    expect(bands).toEqual(['Design Inputs', 'Design Outputs', 'Risk Management', 'Design Verification', 'Design Controls', 'Traceability', 'Design History', 'Design Changes']);
-    // "Design Inputs" spans PRD + SRS + Refs (columns 2–4).
+    expect(bands).toEqual(['Design Controls', 'Design Inputs', 'Design Outputs', 'Risk Management', 'Design Verification', 'Traceability', 'Design History', 'Design Changes']);
+    // The Auditor comes first after the Overview: a reviewer's orientation is where a
+    // reviewer starts. "Design Inputs" then spans PRD + SRS + Refs (columns 3–5).
     const inputs = [...container.querySelectorAll('.phase-band')].find((b) => b.textContent === 'Design Inputs') as HTMLElement;
-    expect(inputs.style.gridColumn).toBe('2 / span 3');
-    // "Design Verification" spans VTP + Results — columns 11–12: Design Outputs covers
+    expect(inputs.style.gridColumn).toBe('3 / span 3');
+    // "Design Verification" spans VTP + Results — columns 12–13: Design Outputs covers
     // SAD, SDD, SOUP and Security, and Risk Management covers Risk and Threats.
     const verification = [...container.querySelectorAll('.phase-band')].find((b) => b.textContent === 'Design Verification') as HTMLElement;
-    expect(verification.style.gridColumn).toBe('11 / span 2');
+    expect(verification.style.gridColumn).toBe('12 / span 2');
   });
 
   it('selects a tab on click', () => {

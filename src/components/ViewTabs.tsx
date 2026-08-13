@@ -18,6 +18,7 @@ export type ViewKey = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'arch' | 
 // Views that are not a document (Overview, Auditor, …) keep their word.
 const TABS: { key: ViewKey; label: string; title?: string; phase?: string }[] = [
   { key: 'overview', label: 'Overview' },
+  { key: 'audit', label: 'Auditor', phase: 'Design Controls' },
   { key: 'prd', label: 'PRD', title: 'Product Requirements', phase: 'Design Inputs' },
   { key: 'srs', label: 'SRS', title: 'Software Requirements', phase: 'Design Inputs' },
   { key: 'reference', label: 'Refs', title: 'Controlled documents this project relies on but does not hold (IEC 62304 5.1, clause 6, clause 9)', phase: 'Design Inputs' },
@@ -29,7 +30,6 @@ const TABS: { key: ViewKey; label: string; title?: string; phase?: string }[] = 
   { key: 'threat', label: 'Threats', title: 'Threat model and security risk (FDA cybersecurity; IEC 81001-5-1)', phase: 'Risk Management' },
   { key: 'vtp', label: 'VTP', title: 'Verification Test Plan', phase: 'Design Verification' },
   { key: 'testing', label: 'Results', title: 'Verification results', phase: 'Design Verification' },
-  { key: 'audit', label: 'Auditor', phase: 'Design Controls' },
   { key: 'trace', label: 'Traceability', phase: 'Traceability' },
   { key: 'releases', label: 'Releases', phase: 'Design History' },
   { key: 'jobs', label: 'Jobs', phase: 'Design Changes' },

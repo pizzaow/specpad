@@ -5190,6 +5190,102 @@
           "selector": "StatusBar"
         }
       ]
+    },
+    {
+      "id": "t_aud10",
+      "verifies": [
+        "r_aud10"
+      ],
+      "verificationLevel": "unit",
+      "text": "Open the Auditor view and read the cover, then open each standard tab in turn.",
+      "expected": "A tab is offered for each standard and for the connected standards; the cover states each standard with a count of clauses met, partial and held elsewhere, the design-control map, and what is deliberately not held here.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/AuditView.test.tsx",
+          "selector": "AuditView"
+        }
+      ]
+    },
+    {
+      "id": "t_aud11",
+      "verifies": [
+        "r_aud11"
+      ],
+      "verificationLevel": "unit",
+      "text": "Open a standard tab for a project holding requirements, a design, tests and a risk register.",
+      "expected": "Each clause names what the project holds, with counts derived from the loaded documents rather than asserted, and links to the tab holding the evidence.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/AuditView.test.tsx",
+          "selector": "AuditView"
+        }
+      ]
+    },
+    {
+      "id": "t_aud12",
+      "verifies": [
+        "r_aud12"
+      ],
+      "verificationLevel": "unit",
+      "text": "Read a clause the project holds elsewhere, once with a references register that covers it and once with none.",
+      "expected": "No clause is ever labelled a gap; with a covering reference the row names that document, its identifier and its owner; with none it says so plainly rather than reporting a hole.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/AuditView.test.tsx",
+          "selector": "AuditView"
+        }
+      ]
+    },
+    {
+      "id": "t_aud13",
+      "verifies": [
+        "r_aud13"
+      ],
+      "verificationLevel": "unit",
+      "text": "Open the connected-standards tab.",
+      "expected": "ISO 13485 and ISO 14971 are named with their role and the boundary between them and SpecPad, alongside the security lifecycle and usability standards.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/AuditView.test.tsx",
+          "selector": "AuditView"
+        }
+      ]
+    },
+    {
+      "id": "t_aud14",
+      "verifies": [
+        "r_aud14"
+      ],
+      "verificationLevel": "unit",
+      "text": "Read the design-control map and search it for the superseded citations.",
+      "expected": "Every element cites its ISO 13485 clause; no 21 CFR 820.30 subpart appears anywhere in the view.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/AuditView.test.tsx",
+          "selector": "AuditView"
+        }
+      ]
+    },
+    {
+      "id": "t_tab4",
+      "verifies": [
+        "r_tab4"
+      ],
+      "verificationLevel": "unit",
+      "text": "Read the tab order and the phase bands.",
+      "expected": "The Auditor is the second tab, immediately after the Overview, and its Design Controls band precedes Design Inputs.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/ViewTabs.test.tsx",
+          "selector": "ViewTabs"
+        }
+      ]
     }
   ]
 }

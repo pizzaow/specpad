@@ -1,9 +1,0 @@
-
-/* Advice: shown apart from problems, and styled apart from them. An advisory does not
-   fail the project, so it must not read like a failure. */
-.status-advice {
-  color: #6b5900;
-  cursor: pointer;
-  margin-left: 12px;
-}
-.status-advice-item { color: #6b5900; }

@@ -1,6 +1,6 @@
 /**
  * designControls — the Auditor view's design-control map. Pure: from the loaded
- * project it produces the formal elements (FDA 21 CFR 820.30 + IEC 62304), each
+ * project it produces the formal elements (ISO 13485 §7.3 + IEC 62304), each
  * with a citation, a plain statement, a status derived live, and a link to the
  * tab that holds the evidence. This is the surface an engineer uses to answer an
  * auditor's "where are your design inputs / verification / …?".
@@ -9,7 +9,12 @@ import type { PrdDoc, SrsDoc, VtpDoc, SddDoc, RiskDoc, ReleasesDoc, JobRecord } 
 import { buildAuditReport } from './auditReport';
 import type { ViewKey } from './components/ViewTabs';
 
-export type ControlStatus = 'present' | 'partial' | 'gap';
+/**
+ * `elsewhere` rather than `gap`: an element SpecPad does not hold is not missing evidence,
+ * it is evidence another system holds. Saying which system is more use to a reviewer than
+ * raising an alarm about a boundary that was drawn on purpose.
+ */
+export type ControlStatus = 'present' | 'partial' | 'elsewhere';
 
 export interface ControlElement {
   key: string;
@@ -54,7 +59,7 @@ export function buildDesignControls(input: DesignControlsInput): ControlElement[
   const hasSdd = designSections.length > 0;
   // 62304 5.3 (architecture) and 5.4 (detailed design) are both Design Outputs, so the
   // element is complete only with both, and partial with either alone.
-  const outputsStatus: ControlStatus = hasArch && hasSdd ? 'present' : hasArch || hasSdd ? 'partial' : 'gap';
+  const outputsStatus: ControlStatus = hasArch && hasSdd ? 'present' : hasArch || hasSdd ? 'partial' : 'elsewhere';
   const undesigned = reqs.total > 0 ? (input.srs?.items ?? []).filter((r) => !r.heading && (r.design ?? []).length === 0).length : 0;
 
   // Risk Management (ISO 14971 / 62304 §7). Derived from the register rather than
@@ -64,7 +69,7 @@ export function buildDesignControls(input: DesignControlsInput): ControlElement[
   const uncontrolled = risks.filter((r) => (r.controls ?? []).length === 0 && !(r.justification ?? '').trim());
   const unassessed = risks.filter((r) => (r.residual ?? 'not_assessed') === 'not_assessed');
   const riskStatus: ControlStatus =
-    risks.length === 0 ? 'gap' : uncontrolled.length === 0 && unassessed.length === 0 ? 'present' : 'partial';
+    risks.length === 0 ? 'elsewhere' : uncontrolled.length === 0 && unassessed.length === 0 ? 'present' : 'partial';
   const riskDetail =
     risks.length === 0
       ? 'No software risk analysis yet'
@@ -75,15 +80,15 @@ export function buildDesignControls(input: DesignControlsInput): ControlElement[
         ].join(' · ');
 
   const verifyStatus: ControlStatus =
-    reqs.total === 0 ? 'gap' : reqs.verified === reqs.total ? 'present' : 'partial';
+    reqs.total === 0 ? 'elsewhere' : reqs.verified === reqs.total ? 'present' : 'partial';
 
   return [
     {
       key: 'inputs',
       name: 'Design Inputs',
-      cite: 'IEC 62304 §5.2 · 21 CFR 820.30(c)',
+      cite: 'IEC 62304 §5.2 · ISO 13485 §7.3.3',
       statement: 'What the software must do — the requirements, traced to product/user needs.',
-      status: reqs.total > 0 ? 'present' : 'gap',
+      status: reqs.total > 0 ? 'present' : 'elsewhere',
       detail:
         reqs.total > 0
           ? `${reqs.total} requirements${report.hasPrd ? ' · PRD register present' : ''}`
@@ -93,7 +98,7 @@ export function buildDesignControls(input: DesignControlsInput): ControlElement[
     {
       key: 'outputs',
       name: 'Design Outputs',
-      cite: 'IEC 62304 §5.3–5.4 · 21 CFR 820.30(d)',
+      cite: 'IEC 62304 §5.3–5.4 · ISO 13485 §7.3.4',
       statement: 'The realized design — the software architecture and the detailed design.',
       status: outputsStatus,
       detail: describeOutputs(hasArch, hasSdd, designSections.length, undesigned),
@@ -102,7 +107,7 @@ export function buildDesignControls(input: DesignControlsInput): ControlElement[
     {
       key: 'verification',
       name: 'Design Verification',
-      cite: 'IEC 62304 §5.5–5.7 · 21 CFR 820.30(f)',
+      cite: 'IEC 62304 §5.5–5.7 · ISO 13485 §7.3.6',
       statement: 'Evidence the outputs meet the inputs — verification tests and results.',
       status: verifyStatus,
       detail: `${reqs.verified}/${reqs.total} requirements verified`,
@@ -111,33 +116,33 @@ export function buildDesignControls(input: DesignControlsInput): ControlElement[
     {
       key: 'validation',
       name: 'Design Validation',
-      cite: '21 CFR 820.30(g)',
+      cite: 'ISO 13485 §7.3.7',
       statement: 'Evidence the product meets user needs / intended use (distinct from verification).',
-      status: 'gap',
-      detail: 'Not yet captured — roadmap (PROD-13)',
+      status: 'elsewhere',
+      detail: 'A system-level activity — clinical evaluation and human factors, outside the software record',
     },
     {
       key: 'traceability',
       name: 'Traceability',
       cite: 'IEC 62304 §5.1 · trace matrix',
       statement: 'The linkage product requirement → requirement → verification.',
-      status: reqs.total > 0 ? 'present' : 'gap',
+      status: reqs.total > 0 ? 'present' : 'elsewhere',
       detail: 'PRD → requirement → test',
       link: 'trace',
     },
     {
       key: 'changes',
       name: 'Design Changes',
-      cite: 'IEC 62304 §6, §8 · 21 CFR 820.30(i)',
+      cite: 'IEC 62304 §6, §8 · ISO 13485 §7.3.9',
       statement: 'Controlled, attributed change — every change tied to an authorized job.',
-      status: jobs.length > 0 ? 'present' : 'gap',
+      status: jobs.length > 0 ? 'present' : 'elsewhere',
       detail: jobs.length > 0 ? `${jobs.length} jobs · Job: commit trailers` : 'No jobs recorded yet',
       link: 'jobs',
     },
     {
       key: 'dhf',
       name: 'Design History File',
-      cite: '21 CFR 820.30(j)',
+      cite: 'ISO 13485 §7.3.10',
       statement: 'The complete, versioned record of the design.',
       status: releaseCount > 0 ? 'present' : 'partial',
       detail: releaseCount > 0 ? `${releaseCount} releases + the repository` : 'The repository (no tagged releases yet)',
@@ -146,10 +151,10 @@ export function buildDesignControls(input: DesignControlsInput): ControlElement[
     {
       key: 'reviews',
       name: 'Design Reviews',
-      cite: '21 CFR 820.30(e)',
+      cite: 'ISO 13485 §7.3.5',
       statement: 'Review and ratification of the design at defined stages.',
       status: 'partial',
-      detail: 'Governance checks + git review; no formal review records yet',
+      detail: 'Governance checks and git review here; formal review records are a quality-system document',
     },
     {
       key: 'risk',
@@ -163,7 +168,7 @@ export function buildDesignControls(input: DesignControlsInput): ControlElement[
     {
       key: 'config',
       name: 'Configuration Management',
-      cite: 'IEC 62304 §8 · 21 CFR 820.40',
+      cite: 'IEC 62304 §8 · ISO 13485 §4.2.4–4.2.5',
       statement: 'Identification and control of versions and baselines.',
       status: 'present',
       detail: 'git + release snapshots + schemaVersion',

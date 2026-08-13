@@ -4084,6 +4084,74 @@
         "user-interface"
       ],
       "text": "The editor shall count and display advisory findings separately from problems, so that advice never reads as a failure."
+    },
+    {
+      "id": "r_aud10",
+      "code": "AUD-10",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "regulatory",
+        "user-interface"
+      ],
+      "text": "The Auditor view shall present conformity one standard at a time, with a cover stating where the project stands against each and what is deliberately not held here."
+    },
+    {
+      "id": "r_aud11",
+      "code": "AUD-11",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "regulatory",
+        "user-interface"
+      ],
+      "text": "For each standard the Auditor view shall report, clause by clause, what the project holds and where it is, deriving the status from the loaded documents wherever it can be derived."
+    },
+    {
+      "id": "r_aud12",
+      "code": "AUD-12",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "regulatory"
+      ],
+      "text": "A clause the project does not hold shall be reported as held elsewhere, naming the system or document that holds it, and shall never be reported as a gap."
+    },
+    {
+      "id": "r_aud13",
+      "code": "AUD-13",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "regulatory"
+      ],
+      "text": "The Auditor view shall name the standards that govern the project around SpecPad without being implemented by it, and state which side of each boundary a record sits on."
+    },
+    {
+      "id": "r_aud14",
+      "code": "AUD-14",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "regulatory"
+      ],
+      "text": "Design controls shall be cited at their ISO 13485 clause, which the FDA Quality Management System Regulation incorporates by reference, rather than at the superseded 21 CFR 820.30 subparts."
+    },
+    {
+      "id": "r_tab4",
+      "code": "TAB-4",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "user-interface"
+      ],
+      "text": "The Auditor tab shall sit immediately to the right of the Overview, so a reviewer opens the orientation before the documents it indexes."
     }
   ]
 }
