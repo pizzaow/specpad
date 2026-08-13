@@ -395,8 +395,8 @@ software it depends on, assessed. Read `guides/soup.md` before authoring one.
   answers to one question means the stale one gets read.
 - **This is not an SBOM.** An SBOM is a recursive inventory of every dependency, generated from the
   manifests; this is the assessed subset. Do not let one stand in for the other.
-- **Opt-in governance:** when a SOUP register is present, `soup-identity`, `soup-requirements`,
-  `soup-anomalies` and `soup-referential-integrity` apply.
+- **Opt-in governance:** when a SOUP register is present, `soup-identity`, `soup-requirements` and
+  `soup-referential-integrity` apply.
 
 ## Cybersecurity (threat model and security architecture) — optional
 

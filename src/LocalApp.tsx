@@ -320,6 +320,10 @@ const LocalApp: React.FC = () => {
       if (sad != null) working[`${name}.sad.md`] = sad;
       if (sadGuide != null) working[`${name}.sad.guide.md`] = sadGuide;
       if (dsl != null) working[`${name}.workspace.dsl`] = dsl;
+      // The security architecture is prose tracked the same way: its figures already
+      // reach the working set through the diagram map, so omitting the document itself
+      // reported the figures as added while never showing what the text said (JOB-51).
+      if (sec != null) working[`${name}.sec.md`] = sec;
       for (const [k, v] of Object.entries(diagrams)) working[k] = v;
       const after = Object.keys(working);
       const bSet = new Set(before.files), aSet = new Set(after);
@@ -341,7 +345,7 @@ const LocalApp: React.FC = () => {
       if (added.length || removed.length || modified.length) out[id] = { added, removed, modified, mdDiffs: mdDiffs.length ? mdDiffs : undefined };
     }
     return out;
-  }, [activeBeforeArch, sad, sadGuide, dsl, diagrams, selectedDocName, projectName]);
+  }, [activeBeforeArch, sad, sadGuide, dsl, sec, diagrams, selectedDocName, projectName]);
 
   // Set the active jobs (one or many). Writes the canonical `jobs` array form;
   // `title` is only kept for a single free-text job with no register.

@@ -14,9 +14,20 @@ describe('skill ↔ module governance parity', () => {
 
   it('does not reference governance rule ids the module no longer defines', () => {
     const known = new Set<string>(GOVERNANCE_RULES.map((r) => r.id));
-    const referenced = skill.match(/`(traceability|referential-integrity|missing-expected|active-job-open|active-job-known)`/g) ?? [];
+    // Matched by namespace rather than by a fixed list of five legacy names: the old
+    // pattern never looked at the prd-, sdd-, risk-, soup- or threat- rules, so SKILL.md
+    // documented `soup-anomalies` for a release after the rule was removed and this test
+    // stayed green (found by the IEC 62304 trace, JOB-51).
+    // Gates the skill enforces itself, which are deliberately not in the data-only set the
+    // editor runs because they need git state rather than the documents alone.
+    const skillSideGates = new Set(['active-job-required-for-spec-changes']);
+    const referenced =
+      skill.match(/`(traceability|referential-integrity|missing-expected|(?:active-job|prd|sdd|risk|soup|threat)-[a-z-]+)`/g) ?? [];
+    expect(referenced.length).toBeGreaterThan(0);
     for (const token of referenced) {
-      expect(known.has(token.replace(/`/g, ''))).toBe(true);
+      const id = token.replace(/`/g, '');
+      if (skillSideGates.has(id)) continue;
+      expect(known.has(id), `SKILL.md documents "${id}", which the module does not define`).toBe(true);
     }
   });
 });
