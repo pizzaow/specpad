@@ -21,7 +21,6 @@ describe('on-demand authoring guides', () => {
         'risk.md',
         'soup.md',
         'security.md',
-        'references.md',
       ]),
     );
   });

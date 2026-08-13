@@ -170,12 +170,13 @@ launcher — with no manual configuration. Re-running it must be a safe no-op.
    - **"What software safety class, and why?"** → `safetyClass` and `safetyClassRationale` in the
      project index (§4.3). Take the rationale, not just the letter; a class with no reasoning is the
      half of 4.3 that gets cited. Authoring stays at maximum rigor whatever the answer.
-   - **"Where do your planning, maintenance and problem-resolution procedures live?"** → scaffold
-     `starter.reference.json` and record what they name (§5.1, clause 6, clause 9). If the answer is
-     "we don't have them yet", say plainly that those clauses are unmet and leave the register empty —
-     an entry pointing at an unwritten SOP reads exactly like one pointing at a real document.
    - **"Did this software exist before you started following 62304?"** → if yes, §4.4 wants a gap
-     analysis and a risk-based justification; record where it lives in the references register.
+     analysis and a risk-based justification, which is a quality-system document; say so plainly
+     rather than leaving the clause unanswered.
+
+   SpecPad does not keep a register of the quality-system documents it relies on — a quality system
+   already indexes what it holds, and a second index in a git repository would be the one that goes
+   stale. The editor's Planning view names the *kind* of system that holds each process instead.
 
    For **generic** (the default), skip all three. Then scaffold `sad.generic.md` → `<name>.sad.md` and
    `sad.guide.generic.md` → `<name>.sad.guide.md` (replace `PROJECT_NAME`). For **medical**, use the
@@ -438,8 +439,8 @@ AAMI SW96/TIR57.
   STRIDE across each element, decide, then say what the pass did not do. Walking *elements*
   rather than listing attacks is what finds threats in the seam between two controls, and
   control categories that are empty. The **method** belongs in a procedure (the development
-  plan, or a threat modelling SOP) named in the references register — not restated per
-  project. SpecPad holds the output: the register and the views.
+  plan, or a threat modelling SOP) — not restated per project. SpecPad holds the output: the
+  register and the views.
 - **Controls are categorised.** A requirement named as a control carries `securityControl`:
   which of FDA's eight categories (§V.B.1) it implements. The coverage argument is made from
   those categories, and an empty one is a question to answer once.
@@ -468,26 +469,6 @@ outcome is a delayed report" is a rationale; "Class A" alone is not.
 
 Edition 2 replaces A/B/C with two rigor levels. It is still in ballot (publication expected around
 May 2027), so classify against Ed 1.1 today.
-
-## References — the documents SpecPad does not hold
-
-A project may add an optional **references register** (`<name>.reference.json`, `type: "reference"`).
-Read `guides/references.md` before adding to it.
-
-62304 requires development planning (§5.1), maintenance (clause 6) and problem resolution (clause 9).
-SpecPad models **none** of them, and that is deliberate: companies already run these in a quality
-system and an issue tracker, and a second copy in the repo would be the stale one. So the register
-**names and locates** them — the move `hazardRef` already makes for the system risk management file.
-
-- **Keep it short.** An entry earns its place by discharging a clause, not by existing. A register
-  listing forty documents is a filing cabinet, not a statement about this project.
-- **Each entry says what it covers**, in free text (`"IEC 62304 clause 9"`). Free text because the
-  register points outward, and the clause list of whichever standard a project follows is not
-  SpecPad's to enumerate.
-- **Each entry can be found**: `kind`, `location`, and `identifier` where the document is controlled.
-  A reviewer who cannot open it has been given a claim, not a record.
-- **Opt-in governance:** when a references register is present, `reference-located` and
-  `reference-covers` apply.
 
 ## Hierarchy (sections and sub-requirements)
 
@@ -804,10 +785,6 @@ declaring a task done:
 - `threat-controlled`: When a threat model is present, every non-heading threat references at least one
   controlling requirement or records why none is needed. With no threat model, none of the three
   applies.
-- `reference-located`: When a references register is present, every non-heading entry says what sort of
-  document it is (`kind`) and where it is kept (`location`).
-- `reference-covers`: When a references register is present, every non-heading entry says what it
-  covers. With no register, neither applies.
 
 Also confirm structural validity: required fields present, `result` within its enum,
 `schemaVersion` is "1.0".

@@ -1,4 +1,4 @@
-import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SoupDoc, ThreatDoc, ReferenceDoc, JobsDoc, JobDoc } from './schema';
+import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SoupDoc, ThreatDoc, JobsDoc, JobDoc } from './schema';
 import type { GovernanceRuleId } from './schema';
 
 // Defined in schema.ts so the project index can name the rules it enforces without a
@@ -140,18 +140,6 @@ const RULES: GovernanceRule[] = [
       'When a threat model is present, every non-heading threat must reference at least one controlling requirement, or record why none is needed — for example a threat accepted, or controlled by the deployment environment.',
   },
   {
-    id: 'reference-located',
-    title: 'Every reference can be found',
-    description:
-      'When a references register is present, every non-heading entry must say where the document is kept (`location`) and what sort of document it is (`kind`). A reference a reviewer cannot open is a claim, not a record.',
-  },
-  {
-    id: 'reference-covers',
-    title: 'Every reference discharges something',
-    description:
-      'When a references register is present, every non-heading entry must say what it covers. The register exists to account for the processes SpecPad does not hold; an entry that discharges nothing is decoration, and this register is meant to stay short.',
-  },
-  {
     id: 'sdd-segregation',
     title: 'Segregation says why it holds',
     description:
@@ -208,7 +196,6 @@ export interface ProjectBundle {
   risk?: RiskDoc | null;
   soup?: SoupDoc | null;
   threat?: ThreatDoc | null;
-  reference?: ReferenceDoc | null;
   jobs?: JobsDoc | null;
   job?: JobDoc | null;
 }
@@ -582,31 +569,6 @@ export function checkGovernance(bundle: ProjectBundle): GovernanceViolation[] {
           rule: 'sdd-segregation',
           itemId: section.id,
           message: `Section ${label} claims segregation but does not say why it is effective.`,
-        });
-      }
-    }
-  }
-
-  // reference-*: only when a references register is present (opt-in, as with the other
-  // pillars). This register accounts for the processes SpecPad does not hold, so both rules
-  // ask the same thing in different directions — can it be found, and does it discharge
-  // anything. An entry that fails either is not carrying its weight.
-  if (bundle.reference) {
-    for (const ref of bundle.reference.items) {
-      if (ref.heading) continue;
-      const label = ref.code ?? ref.title ?? ref.id;
-      if (!(ref.location ?? '').trim() || !ref.kind) {
-        violations.push({
-          rule: 'reference-located',
-          itemId: ref.id,
-          message: `Reference ${label} does not say both what sort of document it is and where it is kept.`,
-        });
-      }
-      if ((ref.covers ?? []).filter((c) => c.trim()).length === 0) {
-        violations.push({
-          rule: 'reference-covers',
-          itemId: ref.id,
-          message: `Reference ${label} does not say what it covers, so nothing accounts for why it is listed.`,
         });
       }
     }

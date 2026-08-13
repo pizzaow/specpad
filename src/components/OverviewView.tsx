@@ -99,7 +99,7 @@ const OverviewView: React.FC<OverviewViewProps> = ({ projectName, prd, srs, vtp,
       <div className="overview-jump">
         <button className="btn btn-primary btn-sm" onClick={() => onNavigate('srs')}>Open requirements</button>
         <button className="btn btn-default btn-sm" onClick={() => onNavigate('vtp')}>Verification tests</button>
-        <button className="btn btn-default btn-sm" onClick={() => onNavigate('audit')}>Auditor view</button>
+        <button className="btn btn-default btn-sm" onClick={() => onNavigate('planning')}>Planning</button>
         <button className="btn btn-default btn-sm" onClick={() => onNavigate('jobs')}>Jobs</button>
       </div>
     </div>

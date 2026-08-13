@@ -8,11 +8,13 @@
  *
  * There is deliberately no "gap" status. A clause SpecPad does not hold is not a hole in
  * the evidence — it is evidence kept somewhere else, and saying which system holds it is
- * more useful to a reviewer than an alarm. `elsewhere` carries that pointer, and the
- * references register is where a project records the document it points at.
+ * more useful to a reviewer than an alarm. `elsewhere` says so, and the Planning view names
+ * the kind of system that holds it. SpecPad does not keep a register of those documents:
+ * a quality system already indexes its own, and a second index in a git repository would
+ * be the stale one.
  */
 import type {
-  PrdDoc, SrsDoc, VtpDoc, SddDoc, RiskDoc, SoupDoc, ThreatDoc, ReferenceDoc, ReleasesDoc, JobRecord,
+  PrdDoc, SrsDoc, VtpDoc, SddDoc, RiskDoc, SoupDoc, ThreatDoc, ReleasesDoc, JobRecord,
 } from './shared';
 import type { ViewKey } from './components/ViewTabs';
 
@@ -46,7 +48,6 @@ export interface StandardsInput {
   risk?: RiskDoc | null;
   soup?: SoupDoc | null;
   threat?: ThreatDoc | null;
-  reference?: ReferenceDoc | null;
   releases?: ReleasesDoc | null;
   jobs?: JobRecord[];
   hasArchitecture?: boolean;
@@ -56,19 +57,6 @@ export interface StandardsInput {
 const live = <T,>(items: T[] | undefined, isHeading: (t: T) => boolean) =>
   (items ?? []).filter((i) => !isHeading(i));
 
-/**
- * Where a clause is held outside SpecPad, name the reference that accounts for it — the
- * register exists precisely so this pointer resolves to a real document.
- */
-function heldElsewhere(reference: ReferenceDoc | null | undefined, match: RegExp, fallback: string): ClauseEntry['detail'] {
-  const entry = (reference?.items ?? []).find(
-    (r) => !r.heading && (r.covers ?? []).some((c) => match.test(c)),
-  );
-  if (!entry) return `${fallback} — not yet named in the references register`;
-  const id = entry.identifier ? ` (${entry.identifier})` : '';
-  return `Held in ${entry.title}${id}${entry.owner ? `, owned by ${entry.owner}` : ''}`;
-}
-
 export function buildStandards(input: StandardsInput): StandardSection[] {
   const reqs = live(input.srs?.items, (i) => !!i.heading);
   const tests = live(input.vtp?.items, (i) => !!i.heading);
@@ -76,7 +64,6 @@ export function buildStandards(input: StandardsInput): StandardSection[] {
   const risks = live(input.risk?.items, (i) => !!i.heading);
   const components = live(input.soup?.items, (i) => !!i.heading);
   const threats = live(input.threat?.items, (i) => !!i.heading);
-  const ref = input.reference;
 
   const verified = reqs.filter((r) => tests.some((t) => (t.verifies ?? []).includes(r.id))).length;
   const designed = reqs.filter((r) => (r.design ?? []).length > 0).length;
@@ -107,8 +94,7 @@ export function buildStandards(input: StandardsInput): StandardSection[] {
         clause: '5.1',
         title: 'Software development planning',
         status: 'elsewhere',
-        detail: heldElsewhere(ref, /5\.1|planning/i, 'The software development plan is a quality-system document'),
-        link: 'reference',
+        detail: 'The software development plan and the procedure governing it are quality-system documents — see Processes held elsewhere.',
       },
       {
         clause: '5.2',
@@ -158,8 +144,7 @@ export function buildStandards(input: StandardsInput): StandardSection[] {
         clause: '6',
         title: 'Software maintenance',
         status: 'elsewhere',
-        detail: heldElsewhere(ref, /clause 6|maintenance/i, 'The maintenance plan and feedback intake are quality-system processes'),
-        link: 'reference',
+        detail: 'The maintenance plan and the intake of user feedback are quality-system processes — see Processes held elsewhere.',
       },
       {
         clause: '7',
@@ -181,8 +166,7 @@ export function buildStandards(input: StandardsInput): StandardSection[] {
         clause: '9',
         title: 'Software problem resolution',
         status: 'elsewhere',
-        detail: heldElsewhere(ref, /clause 9|problem/i, 'Problem reports live in the issue tracker'),
-        link: 'reference',
+        detail: 'Problem reports live in the issue tracker, and their handling in a procedure — see Processes held elsewhere.',
       },
     ],
   };
@@ -219,7 +203,7 @@ export function buildStandards(input: StandardsInput): StandardSection[] {
       { clause: 'Security architecture views', title: 'Global, multi-patient, updateability, use cases', status: input.hasSecurityArchitecture ? 'met' : 'elsewhere', detail: input.hasSecurityArchitecture ? 'All four view types, with a diagram and a communication-path table per view' : 'No security architecture document', link: 'sec' },
       { clause: 'Security controls', title: 'Implemented and verified', status: threats.length > 0 ? 'met' : 'elsewhere', detail: 'A control is recorded as a requirement, so its verification comes from the ordinary trace', link: 'srs' },
       { clause: 'SBOM', title: 'Machine-readable inventory (§524B)', status: 'elsewhere', detail: 'Generated from the dependency manifests by the build; the SOUP register is the assessed subset, not the SBOM', link: 'soup' },
-      { clause: 'Vulnerability management', title: 'Monitoring, triage, disclosure', status: 'elsewhere', detail: heldElsewhere(ref, /vulnerab|disclosure|524B/i, 'Post-market monitoring and disclosure are quality-system processes'), link: 'reference' },
+      { clause: 'Vulnerability management', title: 'Monitoring, triage, disclosure', status: 'elsewhere', detail: 'Monitoring advisories, triage and disclosure to operators are post-market processes — see Processes held elsewhere.' },
       { clause: 'Security testing', title: 'Beyond ordinary V&V', status: 'partial', detail: 'Control effectiveness is verified through the requirement trace; penetration testing is not held here', link: 'vtp' },
     ],
   };
@@ -244,6 +228,130 @@ export function buildStandards(input: StandardsInput): StandardSection[] {
 
   return [iec62304, fdaSoftware, fdaCyber, fdaOts];
 }
+
+/**
+ * The methods this project works by. Not standards it conforms to — techniques it has
+ * chosen, which a reviewer reads to know what kind of evidence to expect and which a new
+ * engineer reads to know how to work. Named here rather than scattered through the guides
+ * so there is one answer to "how do you do this?".
+ */
+export interface Methodology {
+  area: string;
+  method: string;
+  why: string;
+}
+
+export const METHODOLOGIES: Methodology[] = [
+  {
+    area: 'Requirements',
+    method: 'Spec-first capture, one behaviour per requirement, categorised against IEC 62304 §5.2.2 a)–l)',
+    why: 'Requirements are written alongside the work rather than reconstructed after it, and the category list is walked as a coverage prompt so an empty category is a question rather than an oversight.',
+  },
+  {
+    area: 'Architecture',
+    method: 'arc42 with C4 views (Structurizr DSL optional); diagrams authored in draw.io',
+    why: 'arc42 gives a section order a reviewer can navigate; C4 gives four levels of zoom without inventing a notation.',
+  },
+  {
+    area: 'Detailed design',
+    method: 'IEEE 1016 design views, with each section declaring whether it is a software unit or a cross-cutting view',
+    why: '§5.4.1 asks for a unit list and §5.5.3 for acceptance criteria per unit; both need units to be identifiable in the data rather than inferred by reading.',
+  },
+  {
+    area: 'Software risk',
+    method: 'ISO 14971 applied through IEC 62304 clause 7 — severity and control, no probability',
+    why: 'Software fails deterministically, so a frequency estimate would be invented. A control is recorded as a requirement, which makes §7.3 verification fall out of the ordinary trace.',
+  },
+  {
+    area: 'Threat modelling',
+    method: 'The MITRE/MDIC Playbook for Threat Modeling Medical Devices — four questions, with STRIDE walked per element of the design',
+    why: 'Walking elements rather than listing attacks is what finds threats in the seam between two controls, and control categories that are empty. The procedure governing how and when it is run is a quality-system document.',
+  },
+  {
+    area: 'Security risk',
+    method: 'AAMI SW96 / TIR57 — one register, rated on exploitability, joined to the safety risk it creates',
+    why: 'An attacker chooses when to act, so probability does not apply; and a security finding with a patient consequence has to appear in both analyses.',
+  },
+  {
+    area: 'Security controls',
+    method: "FDA's eight control categories (Cybersecurity in Medical Devices, February 2026, §V.B.1)",
+    why: 'Coverage is argued from the categories. "We have security requirements" is not a claim; a sweep across the eight is.',
+  },
+  {
+    area: 'Third-party software',
+    method: 'IEC 62304 SOUP assessment alongside the FDA off-the-shelf guidance; end-of-life checked against the supplier and endoflife.date',
+    why: 'The two regimes ask overlapping but not identical questions, and answering only one leaves the other visible as a gap.',
+  },
+  {
+    area: 'Verification',
+    method: 'Automated tests linked framework-agnostically; results derived from a captured run, never typed',
+    why: 'A result nobody can type is a result nobody can assert. Levels are recorded so §5.5, §5.6 and §5.7 can each be shown to have happened.',
+  },
+  {
+    area: 'Change control',
+    method: 'Every change belongs to a job; every commit carries its job trailer; history is git',
+    why: 'Attribution and change sets are derived rather than stored, so they cannot disagree with what actually happened.',
+  },
+  {
+    area: 'Authoring guidance',
+    method: 'Diátaxis — guidance separated from reference, read just-in-time rather than inlined',
+    why: 'A prescriptive content checklist produces uniform, hollow prose; guidance that explains the judgement produces documents worth reading.',
+  },
+];
+
+/**
+ * Processes required of the project that SpecPad does not hold. Stated rather than
+ * registered: which document holds each, and its number, is the quality system's business
+ * and changes on its own schedule.
+ */
+export interface HeldElsewhere {
+  process: string;
+  cite: string;
+  where: string;
+}
+
+export const HELD_ELSEWHERE: HeldElsewhere[] = [
+  {
+    process: 'Software development planning',
+    cite: 'IEC 62304 §5.1',
+    where: 'The software development plan, and the procedure that governs planning — including the standards, methods and tools the project uses, and how integration, verification and configuration management are planned.',
+  },
+  {
+    process: 'Software maintenance',
+    cite: 'IEC 62304 clause 6',
+    where: 'The maintenance plan, and the process by which user feedback is received, evaluated and turned into change requests.',
+  },
+  {
+    process: 'Problem resolution',
+    cite: 'IEC 62304 clause 9',
+    where: 'The issue tracker holds problem reports; a procedure governs how they are classified, investigated, communicated and closed. Four other clauses discharge their obligation by referring to this one.',
+  },
+  {
+    process: 'Threat modelling procedure',
+    cite: 'FDA cybersecurity §V.A.1',
+    where: 'How and when threat modelling is performed, who takes part, and what evidence is kept. The method is named under Methodologies; the procedure governing it is a quality-system document.',
+  },
+  {
+    process: 'Vulnerability handling',
+    cite: 'FD&C Act §524B; IEC 81001-5-1',
+    where: 'Monitoring advisories, triaging them against the SBOM, disclosing to operators, and the timeline for issuing a patched release.',
+  },
+  {
+    process: 'Design review',
+    cite: 'ISO 13485 §7.3.5',
+    where: 'Review records at defined stages, with participants and outcomes. Governance checks and code review happen here; the formal record does not.',
+  },
+  {
+    process: 'Design validation',
+    cite: 'ISO 13485 §7.3.7',
+    where: 'Clinical evaluation, human factors and field data — a system-level activity, not a software record.',
+  },
+  {
+    process: 'Legacy software justification',
+    cite: 'IEC 62304 §4.4',
+    where: 'Where the software predates the standard: the gap analysis and the risk-based justification of how the gap is closed.',
+  },
+];
 
 /** Standards SpecPad does not implement, but which govern the project around it. */
 export interface ConnectedStandard {
@@ -293,9 +401,9 @@ export const INTENTIONAL_OMISSIONS: { title: string; reason: string }[] = [
       'It holds design and verification records, not procedures, training records, supplier controls, management review or CAPA. Those belong to ISO 13485 and the system that implements it.',
   },
   {
-    title: 'Process documents are named, not duplicated',
+    title: 'Process documents are pointed at, not held',
     reason:
-      'Development planning (§5.1), maintenance (clause 6) and problem resolution (clause 9) are required, and most organisations already run them in a quality system or an issue tracker. A second copy in a git repository would be the stale one, so the references register names and locates them instead.',
+      'Development planning (§5.1), maintenance (clause 6) and problem resolution (clause 9) are required, and most organisations already run them in a quality system or an issue tracker. SpecPad does not keep its own register of those documents either: a quality system already indexes what it holds, and a second index in a git repository would be the one that goes stale. Processes held elsewhere names the kind of system instead.',
   },
   {
     title: 'No SBOM is generated here',

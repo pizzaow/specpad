@@ -9,7 +9,7 @@
  * Sidecars (project index, releases, job marker, jobs register) are infrastructure,
  * not content documents, so they live outside this registry (see validate.ts).
  */
-import { srsSchema, vtpSchema, prdSchema, sddSchema, riskSchema, soupSchema, threatSchema, referenceSchema } from './schema';
+import { srsSchema, vtpSchema, prdSchema, sddSchema, riskSchema, soupSchema, threatSchema } from './schema';
 
 // register: id-keyed JSON with an `items[]` array (diffable by the shared diffItems).
 // prose: tracked markdown/text (line-diffed). asset: binary-ish file (coarse, changed/yes-no).
@@ -54,10 +54,6 @@ export const DOC_TYPES: DocTypeSpec[] = [
   // Security architecture: prose plus diagrams, like the arc42 document, holding the four
   // views a submission is expected to contain.
   { type: 'sec', label: 'Security', kind: 'prose', optional: true, inBaseline: true, generate: 'optional' },
-  // The controlled documents a project relies on but does not hold — planning, maintenance
-  // and problem resolution, which live in a quality system or a tracker. Never generated:
-  // where a company keeps its SOPs is not derivable from source.
-  { type: 'reference', label: 'References', kind: 'register', optional: true, inBaseline: true, generate: 'never', schema: referenceSchema as Record<string, unknown> },
 ];
 
 /** All id-keyed register types (srs, vtp, prd, …) — the diffable/redline-able docs. */

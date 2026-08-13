@@ -8,7 +8,7 @@
  * warnings" on a clean register is one nobody reads.
  */
 import React, { useMemo, useState } from 'react';
-import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SoupDoc, ThreatDoc, ReferenceDoc, JobsDoc, JobDoc } from '../shared';
+import type { ProjectDoc, SrsDoc, VtpDoc, PrdDoc, SddDoc, RiskDoc, SoupDoc, ThreatDoc, JobsDoc, JobDoc } from '../shared';
 import { validate, checkGovernance, checkAdvice } from '../shared';
 
 interface StatusBarProps {
@@ -21,26 +21,25 @@ interface StatusBarProps {
   riskDoc?: RiskDoc | null;
   soupDoc?: SoupDoc | null;
   threatDoc?: ThreatDoc | null;
-  referenceDoc?: ReferenceDoc | null;
   jobsDoc?: JobsDoc | null;
   job?: JobDoc | null;
   demo?: boolean;
 }
 
-const StatusBar: React.FC<StatusBarProps> = ({ path, srsDoc, vtpDoc, projectDoc, prdDoc, sddDoc, riskDoc, soupDoc, threatDoc, referenceDoc, jobsDoc, job, demo }) => {
+const StatusBar: React.FC<StatusBarProps> = ({ path, srsDoc, vtpDoc, projectDoc, prdDoc, sddDoc, riskDoc, soupDoc, threatDoc, jobsDoc, job, demo }) => {
   const [open, setOpen] = useState(false);
 
   const structural = useMemo(
-    () => [projectDoc, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, soupDoc, threatDoc, referenceDoc, jobsDoc].filter(Boolean).flatMap((d) => validate(d).map((e) => e.message)),
-    [projectDoc, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, soupDoc, threatDoc, referenceDoc, jobsDoc],
+    () => [projectDoc, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, soupDoc, threatDoc, jobsDoc].filter(Boolean).flatMap((d) => validate(d).map((e) => e.message)),
+    [projectDoc, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, soupDoc, threatDoc, jobsDoc],
   );
   const governance = useMemo(
-    () => checkGovernance({ project: projectDoc, srs: srsDoc, vtp: vtpDoc, prd: prdDoc, sdd: sddDoc, risk: riskDoc, soup: soupDoc, threat: threatDoc, reference: referenceDoc, jobs: jobsDoc, job }).map((v) => v.message),
-    [projectDoc, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, soupDoc, threatDoc, referenceDoc, jobsDoc, job],
+    () => checkGovernance({ project: projectDoc, srs: srsDoc, vtp: vtpDoc, prd: prdDoc, sdd: sddDoc, risk: riskDoc, soup: soupDoc, threat: threatDoc, jobs: jobsDoc, job }).map((v) => v.message),
+    [projectDoc, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, soupDoc, threatDoc, jobsDoc, job],
   );
   const advice = useMemo(
-    () => checkAdvice({ project: projectDoc, srs: srsDoc, vtp: vtpDoc, prd: prdDoc, sdd: sddDoc, risk: riskDoc, soup: soupDoc, threat: threatDoc, reference: referenceDoc }).map((v) => v.message),
-    [projectDoc, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, soupDoc, threatDoc, referenceDoc],
+    () => checkAdvice({ project: projectDoc, srs: srsDoc, vtp: vtpDoc, prd: prdDoc, sdd: sddDoc, risk: riskDoc, soup: soupDoc, threat: threatDoc }).map((v) => v.message),
+    [projectDoc, srsDoc, vtpDoc, prdDoc, sddDoc, riskDoc, soupDoc, threatDoc],
   );
 
   const errors = structural.length;

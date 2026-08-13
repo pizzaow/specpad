@@ -32,8 +32,8 @@ answering all four rather than only the second.
 
 **The method is not a per-project document.** How your organisation threat-models — the four
 questions, who attends, when it is re-run, what evidence is kept — belongs in a procedure: the
-software development plan, or a threat modelling SOP. Name it in the references register and
-it is accounted for once, for every project, instead of being restated in each one.
+software development plan, or a threat modelling SOP. Written once there it governs every
+project, instead of being restated in each one and going stale in all of them.
 
 What SpecPad holds is the *output*: the register of threats, and the architecture views of the
 system they act against. The reasoning that produced a particular threat belongs in that

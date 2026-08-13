@@ -1,9 +1,14 @@
 /**
- * AuditView — the Auditor tab. An orientation index for a reviewer, tabbed by standard.
+ * PlanningView — the Planning tab. What this project follows, how it works, and where the
+ * processes it does not hold are kept. Tabbed by standard.
  *
- * The cover states conformity to each standard at a glance, what is deliberately not held
- * here, and the standards that govern the project around SpecPad. Each remaining tab is
- * one standard, clause by clause.
+ * The cover states conformity to each standard at a glance, the design controls, the
+ * methods the project works by, the processes held in a quality system, and what is
+ * deliberately not held here at all. Each remaining tab is one standard, clause by clause.
+ *
+ * It is called Planning rather than Auditor because that is what it is: the plan-level
+ * answer to "what do you follow, how do you work, and where is the rest?" — which is the
+ * orientation a reviewer needs first and a new engineer needs most.
  *
  * No clause is ever labelled a gap. Where SpecPad does not hold something the status is
  * `elsewhere` and the row says which system does — a boundary drawn on purpose reads as a
@@ -11,16 +16,16 @@
  */
 import React, { useMemo, useState } from 'react';
 import type {
-  PrdDoc, SrsDoc, VtpDoc, SddDoc, RiskDoc, SoupDoc, ThreatDoc, ReferenceDoc, ReleasesDoc, JobRecord,
+  PrdDoc, SrsDoc, VtpDoc, SddDoc, RiskDoc, SoupDoc, ThreatDoc, ReleasesDoc, JobRecord,
 } from '../shared';
 import { buildAuditReport } from '../auditReport';
 import { buildDesignControls } from '../designControls';
 import type { ControlStatus } from '../designControls';
-import { buildStandards, CONNECTED_STANDARDS, INTENTIONAL_OMISSIONS } from '../standards';
+import { buildStandards, CONNECTED_STANDARDS, INTENTIONAL_OMISSIONS, METHODOLOGIES, HELD_ELSEWHERE } from '../standards';
 import type { ConformanceStatus } from '../standards';
 import type { ViewKey } from './ViewTabs';
 
-interface AuditViewProps {
+interface PlanningViewProps {
   prd: PrdDoc | null;
   srs: SrsDoc | null;
   vtp: VtpDoc | null;
@@ -30,7 +35,6 @@ interface AuditViewProps {
   risk?: RiskDoc | null;
   soup?: SoupDoc | null;
   threat?: ThreatDoc | null;
-  reference?: ReferenceDoc | null;
   hasArchitecture: boolean;
   hasSecurityArchitecture?: boolean;
   onNavigate: (key: ViewKey) => void;
@@ -48,8 +52,8 @@ const CONTROL_LABEL: Record<ControlStatus, string> = {
   elsewhere: 'held elsewhere',
 };
 
-const AuditView: React.FC<AuditViewProps> = ({
-  prd, srs, vtp, sdd, risk, soup, threat, reference, jobs, releases,
+const PlanningView: React.FC<PlanningViewProps> = ({
+  prd, srs, vtp, sdd, risk, soup, threat, jobs, releases,
   hasArchitecture, hasSecurityArchitecture, onNavigate,
 }) => {
   const [tab, setTab] = useState('overview');
@@ -59,13 +63,13 @@ const AuditView: React.FC<AuditViewProps> = ({
     [prd, srs, vtp, sdd, risk, jobs, releases, hasArchitecture],
   );
   const standards = useMemo(
-    () => buildStandards({ prd, srs, vtp, sdd, risk, soup, threat, reference, releases, jobs, hasArchitecture, hasSecurityArchitecture }),
-    [prd, srs, vtp, sdd, risk, soup, threat, reference, releases, jobs, hasArchitecture, hasSecurityArchitecture],
+    () => buildStandards({ prd, srs, vtp, sdd, risk, soup, threat, releases, jobs, hasArchitecture, hasSecurityArchitecture }),
+    [prd, srs, vtp, sdd, risk, soup, threat, releases, jobs, hasArchitecture, hasSecurityArchitecture],
   );
   const roadmap = useMemo(() => buildAuditReport({ prd, srs, vtp }).roadmap, [prd, srs, vtp]);
 
   if (!srs) {
-    return <div className="alert alert-info">Open a project with a requirements document to see the auditor view.</div>;
+    return <div className="alert alert-info">Open a project with a requirements document to see the planning view.</div>;
   }
 
   const tabs = [
@@ -84,12 +88,11 @@ const AuditView: React.FC<AuditViewProps> = ({
 
   return (
     <div className="audit-view">
-      <h3 style={{ marginTop: 0 }}>Auditor view</h3>
+      <h3 style={{ marginTop: 0 }}>Planning</h3>
       <p className="text-muted" style={{ marginTop: -6 }}>
-        Where this project's evidence sits against each standard it claims, and which system holds what
-        SpecPad does not. SpecPad produces evidence that <em>supports</em> design controls; it is not
-        itself a quality-management system and does not constitute a determination of regulatory
-        compliance.
+        What this project follows, how it works, and where the processes it does not hold are kept.
+        SpecPad produces evidence that <em>supports</em> design controls; it is not itself a
+        quality-management system and does not constitute a determination of regulatory compliance.
       </p>
 
       <ul className="nav nav-tabs" style={{ marginBottom: 14 }}>
@@ -163,6 +166,49 @@ const AuditView: React.FC<AuditViewProps> = ({
               <button className="btn btn-link btn-xs" style={{ padding: 0 }} onClick={() => onNavigate('trace')}>Traceability</button>{' '}
               tab.
             </p>
+          </section>
+
+          <section style={{ marginBottom: 20 }}>
+            <h4 style={{ borderBottom: '1px solid var(--border)', paddingBottom: 4 }}>Methodologies applied</h4>
+            <p className="text-muted" style={{ fontSize: '0.85em', marginTop: -2 }}>
+              Not standards this project conforms to — techniques it has chosen. A reviewer reads these
+              to know what kind of evidence to expect; an engineer joining reads them to know how to work.
+            </p>
+            <table className="table table-condensed dc-table">
+              <tbody>
+                {METHODOLOGIES.map((m) => (
+                  <tr key={m.area}>
+                    <td style={{ width: '18%' }}><div className="dc-name">{m.area}</div></td>
+                    <td>
+                      {m.method}
+                      <div className="text-muted" style={{ fontSize: '0.85em', marginTop: 2 }}>{m.why}</div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+
+          <section style={{ marginBottom: 20 }}>
+            <h4 style={{ borderBottom: '1px solid var(--border)', paddingBottom: 4 }}>Processes held elsewhere</h4>
+            <p className="text-muted" style={{ fontSize: '0.85em', marginTop: -2 }}>
+              Required of the project, and kept in the quality system or the issue tracker rather than
+              here. Named by the kind of system that holds each: which document, and its number, is the
+              quality system's business and changes on its own schedule.
+            </p>
+            <table className="table table-condensed dc-table">
+              <tbody>
+                {HELD_ELSEWHERE.map((h) => (
+                  <tr key={h.process}>
+                    <td style={{ width: '22%' }}>
+                      <div className="dc-name">{h.process}</div>
+                      <div className="dc-cite">{h.cite}</div>
+                    </td>
+                    <td>{h.where}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </section>
 
           <section style={{ marginBottom: 20 }}>
@@ -249,4 +295,4 @@ const AuditView: React.FC<AuditViewProps> = ({
   );
 };
 
-export default AuditView;
+export default PlanningView;

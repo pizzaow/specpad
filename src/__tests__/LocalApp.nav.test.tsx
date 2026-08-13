@@ -86,18 +86,18 @@ describe('LocalApp in-view navigation', () => {
     expect(await screen.findByText('Requirement A')).toBeInTheDocument();
   });
 
-  it('Auditor "View →" links switch the active view', async () => {
+  it('Planning "View →" links switch the active view', async () => {
     await openProject();
-    fireEvent.click(screen.getByText('Auditor')); // the tab
+    fireEvent.click(screen.getAllByText('Planning').find((n) => n.className.includes('view-tab'))!); // the tab, not the phase band
     // The Design Inputs row links to Requirements.
     const viewLinks = await screen.findAllByText('View →');
     fireEvent.click(viewLinks[0]);
     expect(await screen.findByText('Requirement A')).toBeInTheDocument();
   });
 
-  it('Auditor → Traceability pointer switches to the matrix', async () => {
+  it('Planning → Traceability pointer switches to the matrix', async () => {
     await openProject();
-    fireEvent.click(screen.getByText('Auditor'));
+    fireEvent.click(screen.getAllByText('Planning').find((n) => n.className.includes('view-tab'))!);
     fireEvent.click(await screen.findByRole('button', { name: 'Traceability' }));
     // Traceability view renders the Matrix heading.
     expect(await screen.findByText('Matrix')).toBeInTheDocument();

@@ -46,8 +46,8 @@ describe('OverviewView', () => {
     render(<OverviewView projectName="Acme" prd={null} srs={srs} vtp={vtp} releases={releases} jobs={jobs} onNavigate={onNavigate} />);
     fireEvent.click(screen.getByText('Open requirements'));
     expect(onNavigate).toHaveBeenCalledWith('srs');
-    fireEvent.click(screen.getByText('Auditor view'));
-    expect(onNavigate).toHaveBeenCalledWith('audit');
+    fireEvent.click(screen.getByText('Planning'));
+    expect(onNavigate).toHaveBeenCalledWith('planning');
   });
 
   it('derives the tests-passing headline from the run for automated tests (VER-8)', () => {

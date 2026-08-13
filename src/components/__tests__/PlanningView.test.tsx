@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, within } from '@testing-library/react';
-import AuditView from '../AuditView';
-import type { PrdDoc, SrsDoc, VtpDoc, ReferenceDoc, ReleasesDoc, JobRecord } from '../../shared';
+import PlanningView from '../PlanningView';
+import type { PrdDoc, SrsDoc, VtpDoc, ReleasesDoc, JobRecord } from '../../shared';
 
 const prd: PrdDoc = {
   schemaVersion: '1.0', type: 'prd', name: 'Acme', title: 'PRD',
@@ -22,14 +22,6 @@ const releases: ReleasesDoc = {
   schemaVersion: '1.0', type: 'releases', name: 'Acme', tagPattern: 'v*', baseline: 'v1',
   releases: [{ version: 'v1', ref: 'a', date: '2026-01-01', author: { name: 'G', email: 'g@x' }, snapshot: null }],
 };
-const reference: ReferenceDoc = {
-  schemaVersion: '1.0', type: 'reference', name: 'Acme', title: 'References',
-  items: [{
-    id: 'f_1', code: 'REF-1', title: 'Software Problem Resolution Procedure',
-    kind: 'sop', identifier: 'SOP-012 rev C', location: 'https://qms/SOP-012', owner: 'Quality',
-    covers: ['IEC 62304 clause 9'],
-  }],
-};
 const jobs: JobRecord[] = [{ id: 'j1', code: 'JOB-1', title: 'Work', status: 'open' }];
 
 /** The tab strip, so a label that also appears in the conformity table is unambiguous. */
@@ -38,14 +30,15 @@ const openTab = (label: string) =>
 
 const render_ = (onNavigate = vi.fn(), props = {}) =>
   render(
-    <AuditView prd={prd} srs={srs} vtp={vtp} jobs={jobs} releases={releases}
-      reference={reference} hasArchitecture onNavigate={onNavigate} {...props} />,
+    <PlanningView prd={prd} srs={srs} vtp={vtp} jobs={jobs} releases={releases}
+      hasArchitecture onNavigate={onNavigate} {...props} />,
   );
 
-describe('AuditView', () => {
+describe('PlanningView', () => {
   it('shows the scope disclaimer and the design-control map', () => {
     render_();
     expect(screen.getByText(/not itself a quality-management system/i)).toBeInTheDocument();
+    expect(screen.getByText('Planning')).toBeInTheDocument();
     expect(screen.getByText('Design Inputs')).toBeInTheDocument();
     expect(screen.getByText('Design Verification')).toBeInTheDocument();
   });
@@ -76,17 +69,20 @@ describe('AuditView', () => {
     expect(screen.getByText('Software problem resolution')).toBeInTheDocument();
   });
 
-  it('resolves a clause held elsewhere to the reference that accounts for it', () => {
+  it('names the kind of system that holds a clause it does not', () => {
     render_();
     openTab('IEC 62304');
-    // Clause 9 is covered by REF-1, so the row names the document rather than reporting a hole.
-    expect(screen.getByText(/Software Problem Resolution Procedure \(SOP-012 rev C\), owned by Quality/)).toBeInTheDocument();
+    // Not a named document: a quality system indexes its own, and a second index here
+    // would be the stale one. The row says which sort of system holds it.
+    expect(screen.getByText(/issue tracker.*procedure/i)).toBeInTheDocument();
   });
 
-  it('says so when nothing in the register accounts for a clause', () => {
-    render_(vi.fn(), { reference: null });
-    openTab('IEC 62304');
-    expect(screen.getAllByText(/not yet named in the references register/i).length).toBeGreaterThan(0);
+  it('lists the methods the project works by, and the processes it does not hold', () => {
+    render_();
+    expect(screen.getByText('Threat modelling')).toBeInTheDocument();
+    expect(screen.getByText(/MITRE\/MDIC Playbook/)).toBeInTheDocument();
+    expect(screen.getByText('Problem resolution')).toBeInTheDocument();
+    expect(screen.getByText(/Vulnerability handling/)).toBeInTheDocument();
   });
 
   it('states what is deliberately not held here, and the standards around it', () => {

@@ -3,11 +3,11 @@
 
 export const SCHEMA_VERSION = '1.0' as const;
 export type SchemaVersion = typeof SCHEMA_VERSION;
-export type DocType = 'project' | 'srs' | 'vtp' | 'prd' | 'sdd' | 'risk' | 'soup' | 'threat' | 'reference';
+export type DocType = 'project' | 'srs' | 'vtp' | 'prd' | 'sdd' | 'risk' | 'soup' | 'threat';
 export type TestResult = '' | 'not_tested' | 'passed' | 'failed';
 
 export interface ProjectDocRef {
-  type: 'srs' | 'vtp' | 'prd' | 'sdd' | 'risk' | 'soup' | 'threat' | 'reference';
+  type: 'srs' | 'vtp' | 'prd' | 'sdd' | 'risk' | 'soup' | 'threat';
   path: string;
   title: string;
 }
@@ -44,49 +44,6 @@ export interface ProjectDoc {
 export type SafetyClass = 'A' | 'B' | 'C';
 
 /**
- * A controlled document SpecPad does not hold (IEC 62304 §5.1 planning, clause 6
- * maintenance, clause 9 problem resolution, and the QMS procedures around them).
- *
- * These processes are required, but most organisations already run them in a quality system
- * or an issue tracker, and duplicating that would put SpecPad in the tracker business it has
- * deliberately avoided. So they are **named and located** rather than modelled — the same
- * move `hazardRef` makes for the system risk management file. Keep this register short: an
- * entry earns its place by discharging a clause, not by existing.
- */
-export interface ReferenceItem {
-  id: string;
-  code?: string;
-  heading?: boolean;
-  level?: number;
-  /** What the document is called, as its owner would name it. */
-  title: string;
-  kind?: ReferenceKind;
-  /** The controlled-document number and revision, where there is one — "SOP-012 rev C". */
-  identifier?: string;
-  /** Where it is kept: a URL, a system, or the shelf it lives on. */
-  location?: string;
-  /** Who owns it — the function, not a person, so the entry survives staff changes. */
-  owner?: string;
-  /**
-   * What this document discharges, as free text: "IEC 62304 clause 9", "5.1 planning".
-   * Free text because the register points outward, and the clause list of the standard a
-   * project follows is not SpecPad's to enumerate.
-   */
-  covers?: string[];
-  notes?: string;
-}
-
-export type ReferenceKind = 'sop' | 'plan' | 'procedure' | 'tracker' | 'record' | 'standard' | 'other';
-
-export interface ReferenceDoc {
-  schemaVersion: SchemaVersion;
-  type: 'reference';
-  name: string;
-  title: string;
-  items: ReferenceItem[];
-}
-
-/**
  * Every governance rule. Lives here rather than in `governance.ts` so the project index can
  * name the rules it enforces; `governance.ts` re-exports it and owns the rule descriptions.
  */
@@ -113,9 +70,6 @@ export type GovernanceRuleId =
   | 'srs-category'
   | 'srs-security-control'
   | 'vtp-verification-level'
-  // The external-reference register (opt-in, like every other pillar).
-  | 'reference-located'
-  | 'reference-covers'
   | 'sdd-segregation'
   // Advisory (JOB-56): asked of every unit and every risk, adopted when a project is ready.
   | 'sdd-acceptance'
@@ -536,7 +490,7 @@ export interface SddDoc {
 }
 
 export type SpecPadDoc = ProjectDoc | SrsDoc | VtpDoc | PrdDoc | SddDoc | RiskDoc | SoupDoc | ThreatDoc
-  | ReferenceDoc;
+ ;
 
 const stringArray = { type: 'array', items: { type: 'string' } } as const;
 
@@ -562,7 +516,7 @@ export const projectSchema = {
         type: 'object',
         required: ['type', 'path', 'title'],
         properties: {
-          type: { enum: ['srs', 'vtp', 'prd', 'sdd', 'risk', 'soup', 'threat', 'reference'], description: 'Which kind of document this entry points at: "srs", "vtp", "prd", "sdd", "risk", "soup", "threat", or "reference".' },
+          type: { enum: ['srs', 'vtp', 'prd', 'sdd', 'risk', 'soup', 'threat'], description: 'Which kind of document this entry points at: "srs", "vtp", "prd", "sdd", "risk", "soup", or "threat".' },
           path: { type: 'string', description: 'Path of the document file, relative to the project index.' },
           title: { type: 'string', description: 'Display title for the document.' },
         },
@@ -780,39 +734,6 @@ export const soupSchema = {
           tests: { ...stringArray, description: "Ids of the VTP items exercising this component, where its behaviour is verified directly (FDA testing)." },
           maintenance: { type: 'string', description: "The supplier's development and support practices, and the plan for when support ends — obsolescence contingency (FDA, Enhanced documentation level)." },
           notes: { type: 'string', description: 'Free-text assessment notes.' },
-        },
-      },
-    },
-  },
-} as const;
-
-export const referenceSchema = {
-  $id: 'specpad/v1/reference',
-  type: 'object',
-  required: ['schemaVersion', 'type', 'name', 'title', 'items'],
-  properties: {
-    schemaVersion: { const: '1.0', description: 'Contract version of this file; "1.0" documents open in the pinned editor build at /v01/.' },
-    type: { const: 'reference', description: 'Document discriminator; selects the schema this file is validated against.' },
-    name: { type: 'string', description: 'Short system name; also the filename stem ([name].reference.json).' },
-    title: { type: 'string', description: 'Human-readable document title.' },
-    items: {
-      type: 'array',
-      description: 'The controlled documents this project relies on but does not hold — planning, maintenance and problem-resolution procedures kept in a quality system or issue tracker.',
-      items: {
-        type: 'object',
-        required: ['id', 'title'],
-        properties: {
-          id: { type: 'string', minLength: 1, description: 'Stable machine identifier, generated once and never changed; all cross-references target it.' },
-          code: { type: 'string', description: 'Human-facing label (e.g. "REF-1"); freely renameable because references never use it.' },
-          title: { type: 'string', description: 'What the document is called, as its owner would name it.' },
-          heading: { type: 'boolean', description: 'True when this item is a section heading rather than a reference.' },
-          level: { type: 'integer', minimum: 0, description: 'Indent depth for hierarchy; absent means 0.' },
-          kind: { enum: ['sop', 'plan', 'procedure', 'tracker', 'record', 'standard', 'other'], description: 'What sort of document it is: a standard operating procedure, a plan, a procedure, an issue tracker, a record, an external standard, or something else.' },
-          identifier: { type: 'string', description: 'The controlled-document number and revision where there is one, e.g. "SOP-012 rev C". An entry a reviewer cannot request by number is hard to audit.' },
-          location: { type: 'string', description: 'Where the document is kept: a URL, a system, or the shelf it lives on.' },
-          owner: { type: 'string', description: 'Which function owns it — a role rather than a person, so the entry survives staff changes.' },
-          covers: { ...stringArray, description: 'What this document discharges, as free text: "IEC 62304 clause 9", "5.1 planning". Free text because the register points outward, and the clause list of whichever standard a project follows is not SpecPad\'s to enumerate.' },
-          notes: { type: 'string', description: 'Anything a reader needs in order to find or use the document.' },
         },
       },
     },

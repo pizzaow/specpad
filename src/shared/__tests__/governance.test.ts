@@ -136,7 +136,7 @@ describe('checkGovernance', () => {
   it('exposes a stable list of rule ids', () => {
     expect(GOVERNANCE_RULES.map((r) => r.id).sort()).toEqual([
       'active-job-known', 'active-job-open', 'missing-expected', 'prd-coverage',
-      'prd-referential-integrity', 'reference-covers', 'reference-located',
+      'prd-referential-integrity',
       'referential-integrity', 'risk-cause', 'risk-controlled',
       'risk-referential-integrity', 'risk-sequence', 'sdd-acceptance', 'sdd-coverage',
       'sdd-referential-integrity', 'sdd-segregation', 'soup-identity',

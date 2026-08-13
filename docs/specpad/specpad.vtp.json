@@ -5064,38 +5064,6 @@
       ]
     },
     {
-      "id": "t_ref1",
-      "verifies": [
-        "r_ref1"
-      ],
-      "verificationLevel": "unit",
-      "text": "Create a references document and item, validate a well-formed register, and read its registration.",
-      "expected": "The factories produce schema-valid output with f_ prefixed ids; a well-formed register validates and a kind outside the list is rejected; the type is registered as a register that is never generated.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/reference.test.ts",
-          "selector": "references — structure"
-        }
-      ]
-    },
-    {
-      "id": "t_ref2",
-      "verifies": [
-        "r_ref2"
-      ],
-      "verificationLevel": "unit",
-      "text": "Govern registers whose entries are missing a location, a kind, or anything they cover — and a project with no register at all.",
-      "expected": "Each omission is reported against the entry that carries it; a heading is held to neither rule; and a project without the register sees no reference findings.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/reference.test.ts",
-          "selector": "reference governance (opt-in)"
-        }
-      ]
-    },
-    {
       "id": "t_rig1",
       "verifies": [
         "r_rig1"
@@ -5156,22 +5124,6 @@
           "runner": "vitest",
           "file": "src/shared/__tests__/rigor.test.ts",
           "selector": "release records"
-        }
-      ]
-    },
-    {
-      "id": "t_ref3",
-      "verifies": [
-        "r_ref3"
-      ],
-      "verificationLevel": "integration",
-      "text": "Open a project holding a references register and one without, and edit an entry.",
-      "expected": "The tab is offered only when the register exists; each entry reads and edits in place; and edits mark the document dirty so they are saved.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/ReferenceTable.test.tsx",
-          "selector": "ReferenceTable"
         }
       ]
     },
@@ -5401,6 +5353,38 @@
           "runner": "vitest",
           "file": "src/__tests__/auditReport.test.ts",
           "selector": "the whole chain"
+        }
+      ]
+    },
+    {
+      "id": "t_pln1",
+      "verifies": [
+        "r_pln1"
+      ],
+      "verificationLevel": "unit",
+      "text": "Open the planning view and read the methodologies section.",
+      "expected": "Each area names the method applied and the reason for it, covering at least requirements, architecture, design, risk, threat modelling, security controls, third-party software, verification, change control and authoring guidance.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/PlanningView.test.tsx",
+          "selector": "PlanningView"
+        }
+      ]
+    },
+    {
+      "id": "t_pln2",
+      "verifies": [
+        "r_pln2"
+      ],
+      "verificationLevel": "unit",
+      "text": "Read the processes-held-elsewhere section, and a clause on a standard tab that the project does not hold.",
+      "expected": "Each process names its clause and the kind of system holding it; the clause row says the same rather than naming a specific document, because no register of those documents is kept.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/PlanningView.test.tsx",
+          "selector": "PlanningView"
         }
       ]
     }

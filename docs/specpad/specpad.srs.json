@@ -4090,29 +4090,6 @@
       "text": "A project shall be able to declare its software safety class and the rationale for it, and the declaration shall not change what the tooling requires to be authored."
     },
     {
-      "id": "r_ref1",
-      "code": "REF-1",
-      "design": [
-        "d_ctx001"
-      ],
-      "category": [
-        "regulatory",
-        "functional"
-      ],
-      "text": "The system shall support an optional references register naming the controlled documents a project relies on but does not hold, each recording what sort of document it is, where it is kept, who owns it, and what it covers."
-    },
-    {
-      "id": "r_ref2",
-      "code": "REF-2",
-      "design": [
-        "d_dep001"
-      ],
-      "category": [
-        "functional"
-      ],
-      "text": "When a references register is present, every non-heading entry shall record a kind and a location, and shall state what it covers."
-    },
-    {
       "id": "r_rig1",
       "code": "RIG-1",
       "design": [
@@ -4162,17 +4139,6 @@
         "functional"
       ],
       "text": "A release entry shall be able to record the defects known to be present when that version shipped, each with the evaluation that made shipping acceptable, and how the version was built."
-    },
-    {
-      "id": "r_ref3",
-      "code": "REF-3",
-      "design": [
-        "d_app001"
-      ],
-      "category": [
-        "functional"
-      ],
-      "text": "The editor shall present the references register as a table in which each entry can be read and edited, and shall offer it only when the project has one."
     },
     {
       "id": "r_gov23",
@@ -4334,6 +4300,29 @@
         "user-interface"
       ],
       "text": "Traceability shall report the depth of the record as well as its breadth: how many requirements reach a design, how many declare a content category, how many control a risk or threat, and how many tests were performed at each verification level."
+    },
+    {
+      "id": "r_pln1",
+      "code": "PLN-1",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "regulatory",
+        "user-interface"
+      ],
+      "text": "The planning view shall list the methodologies the project works by, each with the area it applies to and why it was chosen, so that the techniques in use are stated in one place rather than inferred from the documents."
+    },
+    {
+      "id": "r_pln2",
+      "code": "PLN-2",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "regulatory"
+      ],
+      "text": "The planning view shall name the processes the project is required to have but does not hold, together with the kind of system that holds each, and shall not maintain a register of those documents."
     }
   ]
 }
