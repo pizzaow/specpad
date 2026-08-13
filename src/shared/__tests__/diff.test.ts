@@ -7,7 +7,7 @@ function srs(items: SrsItem[]): SrsDoc {
 }
 
 const base: SrsItem[] = [
-  { id: 'r_001', code: 'FUNC-1', text: 'Authenticate users.', tags: ['auth'] },
+  { id: 'r_001', code: 'FUNC-1', text: 'Authenticate users.', category: ['security'] },
   { id: 'r_002', code: 'FUNC-2', text: 'Log out users.' },
 ];
 
@@ -63,15 +63,15 @@ describe('diffItems', () => {
   });
 
   it('compares array fields order-insensitively (whole-field)', () => {
-    const old: SrsItem[] = [{ id: 'r_1', text: 'x', tags: ['a', 'b'] }];
-    const next: SrsItem[] = [{ id: 'r_1', text: 'x', tags: ['b', 'a'] }];
+    const old: SrsItem[] = [{ id: 'r_1', text: 'x', category: ['functional', 'security'] }];
+    const next: SrsItem[] = [{ id: 'r_1', text: 'x', category: ['security', 'functional'] }];
     expect(diffItems(old, next).modified).toEqual([]);
   });
 
   it('flags an array field when its membership actually changes', () => {
-    const old: SrsItem[] = [{ id: 'r_1', text: 'x', tags: ['a', 'b'] }];
-    const next: SrsItem[] = [{ id: 'r_1', text: 'x', tags: ['a', 'c'] }];
-    expect(diffItems(old, next).modified[0].changedFields).toEqual(['tags']);
+    const old: SrsItem[] = [{ id: 'r_1', text: 'x', category: ['functional', 'security'] }];
+    const next: SrsItem[] = [{ id: 'r_1', text: 'x', category: ['functional', 'alarms'] }];
+    expect(diffItems(old, next).modified[0].changedFields).toEqual(['category']);
   });
 
   it('treats an empty baseline as everything added', () => {

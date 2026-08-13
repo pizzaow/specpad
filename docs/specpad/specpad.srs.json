@@ -16,23 +16,23 @@
       "satisfies": [
         "p_pr001"
       ],
-      "tags": [
-        "schema"
-      ],
       "design": [
         "d_inf001"
+      ],
+      "category": [
+        "data-definition"
       ]
     },
     {
       "id": "r_a102",
       "code": "DOC-2",
       "text": "Every document file shall carry a schemaVersion of \"1.0\" and a type of \"project\", \"srs\", or \"vtp\".",
-      "tags": [
-        "schema"
-      ],
       "design": [
         "d_inf001",
         "d_sch001"
+      ],
+      "category": [
+        "data-definition"
       ]
     },
     {
@@ -42,6 +42,9 @@
       "design": [
         "d_inf001",
         "d_sch001"
+      ],
+      "category": [
+        "data-definition"
       ]
     },
     {
@@ -51,6 +54,9 @@
       "design": [
         "d_inf001",
         "d_sch001"
+      ],
+      "category": [
+        "data-definition"
       ]
     },
     {
@@ -60,6 +66,10 @@
       "design": [
         "d_inf001",
         "d_sch001"
+      ],
+      "category": [
+        "data-definition",
+        "inputs-outputs"
       ]
     },
     {
@@ -71,12 +81,12 @@
       "id": "r_a201",
       "code": "ID-1",
       "text": "Every item shall have a stable identifier that is generated once and never changes.",
-      "tags": [
-        "id"
-      ],
       "design": [
         "d_pat001",
         "d_ids001"
+      ],
+      "category": [
+        "data-definition"
       ]
     },
     {
@@ -86,6 +96,10 @@
       "design": [
         "d_pat001",
         "d_ids001"
+      ],
+      "category": [
+        "data-definition",
+        "inputs-outputs"
       ]
     },
     {
@@ -95,6 +109,9 @@
       "design": [
         "d_ids001",
         "d_dif001"
+      ],
+      "category": [
+        "data-definition"
       ]
     },
     {
@@ -104,6 +121,9 @@
       "design": [
         "d_pat001",
         "d_ids001"
+      ],
+      "category": [
+        "data-definition"
       ]
     },
     {
@@ -115,11 +135,11 @@
       "id": "r_a301",
       "code": "DATA-1",
       "text": "Derived values such as per-requirement test counts shall be computed on read and never stored in the files.",
-      "tags": [
-        "governance"
-      ],
       "design": [
         "d_inf001"
+      ],
+      "category": [
+        "data-definition"
       ]
     },
     {
@@ -131,6 +151,9 @@
       ],
       "design": [
         "d_inf001"
+      ],
+      "category": [
+        "data-definition"
       ]
     },
     {
@@ -142,11 +165,12 @@
       "id": "r_a401",
       "code": "VAL-1",
       "text": "A shared validation module shall structurally validate each document against the v1 JSON Schema for its type.",
-      "tags": [
-        "validation"
-      ],
       "design": [
         "d_val001"
+      ],
+      "category": [
+        "functional",
+        "data-definition"
       ]
     },
     {
@@ -155,6 +179,11 @@
       "text": "Structural validation shall enforce required fields, value types, and the result enum, but not policy rules.",
       "design": [
         "d_val001"
+      ],
+      "category": [
+        "data-definition",
+        "inputs-outputs",
+        "functional"
       ]
     },
     {
@@ -164,11 +193,11 @@
       "satisfies": [
         "p_ds01"
       ],
-      "tags": [
-        "governance"
-      ],
       "design": [
         "d_gov001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -177,6 +206,9 @@
       "text": "Governance shall enforce referential integrity: every verifies entry resolves to an existing requirement id.",
       "design": [
         "d_gov001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -185,6 +217,9 @@
       "text": "Governance shall enforce expected-result presence: every non-heading test has a non-empty expected value.",
       "design": [
         "d_gov001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -193,6 +228,9 @@
       "text": "Heading items shall be exempt from the traceability and expected-result governance checks.",
       "design": [
         "d_gov001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -204,6 +242,9 @@
       ],
       "design": [
         "d_gov001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -215,11 +256,12 @@
       "id": "r_a501",
       "code": "ED-1",
       "text": "The editor shall read and write the JSON files locally via the File System Access API, with an upload/download fallback for unsupported browsers.",
-      "tags": [
-        "editor"
-      ],
       "design": [
         "d_tlc001"
+      ],
+      "category": [
+        "interfaces",
+        "functional"
       ]
     },
     {
@@ -229,6 +271,10 @@
       "design": [
         "d_app001",
         "d_api001"
+      ],
+      "category": [
+        "functional",
+        "user-interface"
       ]
     },
     {
@@ -238,6 +284,10 @@
       "design": [
         "d_app001",
         "d_api001"
+      ],
+      "category": [
+        "functional",
+        "user-interface"
       ]
     },
     {
@@ -247,6 +297,11 @@
       "design": [
         "d_app001",
         "d_api001"
+      ],
+      "category": [
+        "alarms",
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -256,6 +311,10 @@
       "design": [
         "d_app001",
         "d_api001"
+      ],
+      "category": [
+        "alarms",
+        "functional"
       ]
     },
     {
@@ -265,6 +324,10 @@
       "design": [
         "d_lch001",
         "d_lnc001"
+      ],
+      "category": [
+        "interfaces",
+        "functional"
       ]
     },
     {
@@ -279,11 +342,11 @@
       "satisfies": [
         "p_sk01"
       ],
-      "tags": [
-        "skill"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -292,6 +355,9 @@
       "text": "The skill shall validate structure and governance before reporting a task complete.",
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -303,6 +369,10 @@
       ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "interfaces",
+        "installation"
       ]
     },
     {
@@ -311,6 +381,9 @@
       "text": "The schema reference page shall be generated at build time from the shared schema and governance modules, and the build shall fail if any schema field lacks a description.",
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -322,6 +395,10 @@
       ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "installation",
+        "functional"
       ]
     },
     {
@@ -333,118 +410,118 @@
       "id": "r_ce101",
       "code": "CT-1",
       "text": "The editor shall show which requirements and tests have changed since the latest release by diffing the working documents against the cached baseline snapshot.",
-      "tags": [
-        "change-tracking"
-      ],
       "design": [
         "d_chg001",
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_ce102",
       "code": "CT-2",
       "text": "Differences shall be computed by stable id, so renaming a code label or reordering items is not reported as a change.",
-      "tags": [
-        "change-tracking"
-      ],
       "design": [
         "d_dif001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_ce103",
       "code": "CT-3",
       "text": "The editor shall compute all change views; the skill shall not compute diffs, so both halves share one diff implementation and cannot disagree.",
-      "tags": [
-        "change-tracking"
-      ],
       "design": [
         "d_chg001",
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_ce104",
       "code": "CT-4",
       "text": "The skill shall maintain a committed, regenerable cache of raw document snapshots plus a release manifest under docs/specpad/; no computed diffs shall be stored.",
-      "tags": [
-        "change-tracking"
-      ],
       "design": [
         "d_chg001",
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_ce105",
       "code": "CT-5",
       "text": "The release manifest shall record, for each release, its version, git ref, date, and the author of the tagged commit.",
-      "tags": [
-        "change-tracking"
-      ],
       "design": [
         "d_chg001",
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_ce106",
       "code": "CT-6",
       "text": "The editor shall derive per-item attribution (the version an item was added in and last changed in) from the cached snapshots and show the responsible release author.",
-      "tags": [
-        "change-tracking"
-      ],
       "design": [
         "d_chg001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_ce107",
       "code": "CT-7",
       "text": "The editor shall present the release history from the manifest, indicating the current baseline.",
-      "tags": [
-        "change-tracking"
-      ],
       "design": [
         "d_chg001",
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_ce108",
       "code": "CT-8",
       "text": "Spec changes shall be associated with a development job via a current-job marker and a commit trailer, never by a field stored on individual items.",
-      "tags": [
-        "change-tracking"
-      ],
       "design": [
         "d_chg001",
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_ce109",
       "code": "CT-9",
       "text": "When the change-tracking cache is absent, the editor shall remain fully editable and indicate that history is unavailable.",
-      "tags": [
-        "change-tracking"
-      ],
       "design": [
         "d_deg001",
         "d_chg001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_ce110",
       "code": "CT-10",
       "text": "The skill shall always cache the latest release snapshot and pull older release snapshots only on demand.",
-      "tags": [
-        "change-tracking"
-      ],
       "design": [
         "d_chg001",
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -458,11 +535,12 @@
       "code": "EDA-1",
       "text": "The requirements editor shall support a hierarchy via an optional per-item level (indent depth); adding a child inserts a new requirement one level deeper.",
       "level": 1,
-      "tags": [
-        "editor"
-      ],
       "design": [
         "d_tbl001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -470,11 +548,12 @@
       "code": "EDA-2",
       "text": "A heading row shall display a derived dotted code from its ancestor heading code segments (e.g. Shell.SaveState), not the literal word \"heading\".",
       "level": 1,
-      "tags": [
-        "editor"
-      ],
       "design": [
         "d_tbl001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -482,11 +561,12 @@
       "code": "EDA-3",
       "text": "Each requirement row shall expose a hamburger menu offering add requirement (above/below/child), add heading, indent/outdent, delete (with confirmation), and view information; outdent is disabled at level 0.",
       "level": 1,
-      "tags": [
-        "editor"
-      ],
       "design": [
         "d_tbl001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -494,11 +574,12 @@
       "code": "EDA-8",
       "text": "The open row-actions menu shall render above surrounding table content — never obscured by other rows or columns — by rendering in a portal outside the table (not nested inside a row's stacking context) at a popover-level stacking order; it stays anchored to its trigger and dismisses on scroll or resize.",
       "level": 1,
-      "tags": [
-        "editor"
-      ],
       "design": [
         "d_chr001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -506,11 +587,12 @@
       "code": "EDA-4",
       "text": "A requirement row shall offer a toggle that reveals its full trace: the product requirements it satisfies, the design sections implementing it, and the tests verifying it with their recorded results.",
       "level": 1,
-      "tags": [
-        "editor"
-      ],
       "design": [
         "d_tbl001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -518,11 +600,12 @@
       "code": "EDA-5",
       "text": "The requirements table shall not show a Hazards column; an item's hazards shall be shown read-only in the item-information modal.",
       "level": 1,
-      "tags": [
-        "editor"
-      ],
       "design": [
         "d_tbl001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -530,13 +613,13 @@
       "code": "EDA-6",
       "text": "The editor shall render changes since the latest release as a Word-style redline: added and modified rows highlighted, and removed rows shown inline, struck through, in place.",
       "level": 1,
-      "tags": [
-        "editor",
-        "change-tracking"
-      ],
       "design": [
         "d_chg001",
         "d_tbl001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -544,11 +627,12 @@
       "code": "EDA-7",
       "text": "Requirement rows shall be reorderable by drag-and-drop.",
       "level": 1,
-      "tags": [
-        "editor"
-      ],
       "design": [
         "d_tbl001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -565,12 +649,13 @@
       "satisfies": [
         "p_pr003"
       ],
-      "tags": [
-        "editor"
-      ],
       "design": [
         "d_chr001",
         "d_app001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -578,12 +663,13 @@
       "code": "EDS-2",
       "text": "The menu bar's File menu shall offer New document, Open project, and Change directory, or an upload/download fallback when the File System Access API is unavailable.",
       "level": 1,
-      "tags": [
-        "editor"
-      ],
       "design": [
         "d_chr001",
         "d_app001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -591,12 +677,13 @@
       "code": "EDS-3",
       "text": "When the open directory holds several projects, the menu bar brand shall switch between them via a dropdown.",
       "level": 1,
-      "tags": [
-        "editor"
-      ],
       "design": [
         "d_app001",
         "d_chr001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -604,12 +691,13 @@
       "code": "EDS-4",
       "text": "Document views shall be presented as tabs (Requirements, Verification Tests, Results), extensible to further document types, with a tab disabled when its document is absent.",
       "level": 1,
-      "tags": [
-        "editor"
-      ],
       "design": [
         "d_chr001",
         "d_app001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -617,13 +705,13 @@
       "code": "EDS-5",
       "text": "A footer status bar shall summarize validation — clean, or a clickable error/warning count that expands the detail messages.",
       "level": 1,
-      "tags": [
-        "editor",
-        "validation"
-      ],
       "design": [
         "d_chr001",
         "d_app001"
+      ],
+      "category": [
+        "alarms",
+        "user-interface"
       ]
     },
     {
@@ -631,13 +719,13 @@
       "code": "EDS-6",
       "text": "Release history shall be available on demand from a menu-bar version chip that opens a dialog (or an empty state prompting a refresh).",
       "level": 1,
-      "tags": [
-        "editor",
-        "change-tracking"
-      ],
       "design": [
         "d_chr001",
         "d_app001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -645,11 +733,12 @@
       "code": "EDS-12",
       "text": "The editor shall remember recently opened project folders via persisted directory handles, reopen them without re-picking the folder, and let the user forget a remembered folder.",
       "level": 1,
-      "tags": [
-        "editor"
-      ],
       "design": [
         "d_hst001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -664,12 +753,13 @@
       "code": "EDS-7",
       "text": "The document tables shall be controlled: the shell owns the working document and edits are reported via an onChange callback; tables render no internal Save button.",
       "level": 2,
-      "tags": [
-        "editor"
-      ],
       "design": [
         "d_chr001",
         "d_app001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -677,12 +767,13 @@
       "code": "EDS-8",
       "text": "The menu-bar Save control shall reflect unsaved changes (an indicator when dirty, disabled when clean), and Ctrl/Cmd-S shall save.",
       "level": 2,
-      "tags": [
-        "editor"
-      ],
       "design": [
         "d_chr001",
         "d_app001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -690,12 +781,13 @@
       "code": "EDS-9",
       "text": "Switching project or document with unsaved changes shall prompt before discarding, and a page-close (beforeunload) guard shall warn when changes are unsaved.",
       "level": 2,
-      "tags": [
-        "editor"
-      ],
       "design": [
         "d_chr001",
         "d_app001"
+      ],
+      "category": [
+        "alarms",
+        "user-interface"
       ]
     },
     {
@@ -710,11 +802,12 @@
       "code": "EDS-10",
       "text": "When launched with the demo query parameter, the editor shall load the project over HTTP from the hosted /demo/ directory, with the document tables, testing view, validation, version history, redlines, and the job indicator all available.",
       "level": 2,
-      "tags": [
-        "editor"
-      ],
       "design": [
         "d_tdm001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -722,12 +815,13 @@
       "code": "EDS-11",
       "text": "Demo mode shall be a sandbox: every document shall be editable, edits shall be held in the browser only and lost on reload, the editor shall display a visible indicator saying so, and the save control shall offer the document as a file download rather than writing it anywhere.",
       "level": 2,
-      "tags": [
-        "editor"
-      ],
       "design": [
         "d_tdm001",
         "d_app001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -742,26 +836,24 @@
       "satisfies": [
         "p_pr002"
       ],
-      "tags": [
-        "jobs",
-        "change-tracking"
-      ],
       "design": [
         "d_skl001",
         "d_jbv001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_jb002",
       "code": "JOBS-2",
       "text": "The jobs register shall store records only; a job's change-set (the requirements, tests, and source it touched) shall be derived from git commit trailers on demand and never stored.",
-      "tags": [
-        "jobs",
-        "change-tracking"
-      ],
       "design": [
         "d_skl001",
         "d_jbv001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -771,142 +863,135 @@
       "satisfies": [
         "p_wf01"
       ],
-      "tags": [
-        "jobs",
-        "change-tracking"
-      ],
       "design": [
         "d_skl001",
         "d_jbv001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_jb004",
       "code": "JOBS-4",
       "text": "When a jobs register exists, governance shall flag any active-job entry that does not resolve to a record in it, and any that points at a closed record.",
-      "tags": [
-        "jobs",
-        "governance"
-      ],
       "design": [
         "d_skl001",
         "d_jbv001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_jb005",
       "code": "JOBS-5",
       "text": "The editor shall provide a Jobs view to list, create, and edit job records and to choose the active job(s) by multi-select, never offering a closed job for activation and allowing a closed-but-active job to be removed.",
-      "tags": [
-        "jobs",
-        "editor"
-      ],
       "design": [
         "d_skl001",
         "d_jbv001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_jb006",
       "code": "JOBS-6",
       "text": "A closed job's scope shall be sealed: the skill shall not reactivate a closed job for new work but shall create a new job record instead.",
-      "tags": [
-        "jobs"
-      ],
       "design": [
         "d_skl001",
         "d_jbv001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_jb007",
       "code": "JOBS-7",
       "text": "Every commit that changes requirements or tests shall reference at least one open job; a git pre-push gate shall block any pushed commit that lacks a Job reference.",
-      "tags": [
-        "jobs",
-        "governance"
-      ],
       "design": [
         "d_skl001",
         "d_jbv001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
       "id": "r_jb008",
       "code": "JOBS-8",
       "text": "A source change that adds or alters a product behavior shall be accompanied by the corresponding SRS and VTP updates in the same job; a commit that changes code without a requirement shall be flagged so a requirement can be proposed (derived from the diff) and ratified or explicitly waived.",
-      "tags": [
-        "jobs",
-        "governance"
-      ],
       "design": [
         "d_skl001",
         "d_jbv001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
       "id": "r_jb009",
       "code": "JOBS-9",
       "text": "A pre-push git hook shall enforce these gates across the pushed commits — blocking any commit without a Job trailer and warning when code changed with no SRS/VTP — while skipping merge commits, tag pushes, and history before SpecPad was adopted, and offering a per-commit waiver (a Spec: none trailer) and an emergency bypass.",
-      "tags": [
-        "jobs",
-        "governance"
-      ],
       "design": [
         "d_skl001",
         "d_jbv001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
       "id": "r_jb010",
       "code": "JOBS-10",
       "text": "In a SpecPad-governed repo, the skill shall capture requirements and verification tests as a first-class output of development — distilling the user's expressed intent into the SRS/VTP spec-first (before or alongside implementation) and attributing it to the active job — rather than documenting after the fact.",
-      "tags": [
-        "jobs",
-        "skill"
-      ],
       "design": [
         "d_skl001",
         "d_jbv001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_jb011",
       "code": "JOBS-11",
       "text": "Requirement capture shall distill durable, testable statements of externally-observable behavior or governing constraints; incidental implementation detail and exploratory discussion that did not land shall not become requirements.",
-      "tags": [
-        "jobs",
-        "skill"
-      ],
       "design": [
         "d_skl001",
         "d_jbv001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_jb012",
       "code": "JOBS-12",
       "text": "Captured requirements and tests shall be written autonomously and then surfaced to the user for correction, and each captured requirement shall carry a verifying test (and an automated test where the behavior is automatable).",
-      "tags": [
-        "jobs",
-        "skill"
-      ],
       "design": [
         "d_skl001",
         "d_jbv001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_jb013",
       "code": "JOBS-13",
       "text": "A job record shall carry an optional release-note-voice description (short, user-facing summary) and an optional engineer-voice technical_notes field (root cause, mechanism, files touched); both remain prose and validation-optional, and the editor shall render technical_notes only in the job detail view (not the release-notes list).",
-      "tags": [
-        "jobs",
-        "editor"
-      ],
       "design": [
         "d_skl001",
         "d_jbv001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -921,39 +1006,42 @@
       "satisfies": [
         "p_in01"
       ],
-      "tags": [
-        "skill",
-        "onboarding"
-      ],
       "design": [
         "d_skl001",
         "d_tpl001"
+      ],
+      "category": [
+        "installation",
+        "functional"
       ]
     },
     {
       "id": "r_in002",
       "code": "INIT-2",
       "text": "init shall be safe to re-run: it shall not overwrite existing SpecPad documents, shall not duplicate the CLAUDE.md directive (guarded by a sentinel marker), and shall not clobber an existing core.hooksPath set to another directory.",
-      "tags": [
-        "skill",
-        "onboarding"
-      ],
       "design": [
         "d_skl001",
         "d_tpl001"
+      ],
+      "category": [
+        "installation",
+        "operation-maintenance",
+        "functional",
+        "user-maintenance"
       ]
     },
     {
       "id": "r_in003",
       "code": "INIT-3",
       "text": "init shall never overwrite an existing project CLAUDE.md; it shall append the SpecPad directive, creating CLAUDE.md only if absent.",
-      "tags": [
-        "skill",
-        "onboarding"
-      ],
       "design": [
         "d_skl001",
         "d_tpl001"
+      ],
+      "category": [
+        "installation",
+        "operation-maintenance",
+        "functional"
       ]
     },
     {
@@ -963,13 +1051,13 @@
       "satisfies": [
         "p_in01"
       ],
-      "tags": [
-        "skill",
-        "onboarding"
-      ],
       "design": [
         "d_skl001",
         "d_tpl001"
+      ],
+      "category": [
+        "installation",
+        "functional"
       ]
     },
     {
@@ -984,60 +1072,55 @@
       "satisfies": [
         "p_bl01"
       ],
-      "tags": [
-        "skill",
-        "onboarding"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_bg002",
       "code": "BASE-2",
       "text": "Generated requirements shall be drafts proposed for human ratification, not authoritative: each shall be tagged `draft` and surfaced for review, and deriving a requirement from code shall never bypass the user's confirmation of intent.",
-      "tags": [
-        "skill",
-        "onboarding"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_bg003",
       "code": "BASE-3",
       "text": "The generator shall distill testable behavioral requirements at the \"shall\" altitude — one per distinct externally-observable behavior or constraint, not implementation detail — and produce governance-clean output (every requirement carries a verifying VTP entry with an expected result).",
-      "tags": [
-        "skill",
-        "onboarding"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_bg004",
       "code": "BASE-4",
       "text": "The generator shall map requirements to existing automated tests where present (named in the VTP notes, with result reflecting the test) and shall record a behavior with no test as a not_tested gap rather than omitting it.",
-      "tags": [
-        "skill",
-        "onboarding"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_bg005",
       "code": "BASE-5",
       "text": "The generator shall report its coverage explicitly — what it covered and what it could not — rather than silently truncating.",
-      "tags": [
-        "skill",
-        "onboarding"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -1047,12 +1130,11 @@
       "satisfies": [
         "p_bl01"
       ],
-      "tags": [
-        "skill",
-        "onboarding"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -1067,60 +1149,60 @@
       "satisfies": [
         "p_au01"
       ],
-      "tags": [
-        "skill",
-        "governance"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "functional",
+        "user-maintenance"
       ]
     },
     {
       "id": "r_au002",
       "code": "AUDIT-2",
       "text": "The audit shall flag code behavior that has no requirement (missing) and propose a draft requirement, with a verifying test, derived from the code for the user to ratify.",
-      "tags": [
-        "skill",
-        "governance"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "functional",
+        "user-maintenance"
       ]
     },
     {
       "id": "r_au003",
       "code": "AUDIT-3",
       "text": "The audit shall flag a requirement whose described behavior is no longer present or has changed in the code (stale) for update or removal, and shall never silently delete a requirement.",
-      "tags": [
-        "skill",
-        "governance"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "functional",
+        "user-maintenance"
       ]
     },
     {
       "id": "r_au004",
       "code": "AUDIT-4",
       "text": "The audit shall flag coverage gaps — a requirement with no covering test, and a VTP notes reference to a test that no longer resolves.",
-      "tags": [
-        "skill",
-        "governance"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "functional",
+        "user-maintenance"
       ]
     },
     {
       "id": "r_au005",
       "code": "AUDIT-5",
       "text": "The audit shall present findings as categorized proposals for the user to ratify, apply nothing destructive automatically, and report its coverage and confidence rather than silently truncating.",
-      "tags": [
-        "skill",
-        "governance"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "functional",
+        "user-maintenance"
       ]
     },
     {
@@ -1132,48 +1214,48 @@
       "id": "r_jv001",
       "code": "JV-1",
       "text": "A job record shall carry an optional type (feature or bugfix) and an optional version, used to organize the Jobs view.",
-      "tags": [
-        "editor",
-        "jobs"
-      ],
       "design": [
         "d_jbv001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
       "id": "r_jv002",
       "code": "JV-2",
       "text": "The Jobs view shall present jobs as release notes — grouped by major version (unversioned jobs under \"Unreleased\"), then by type into Features and Bugfixes — with each job's description shown beneath its title.",
-      "tags": [
-        "editor",
-        "jobs"
-      ],
       "design": [
         "d_jbv001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
       "id": "r_jv003",
       "code": "JV-3",
       "text": "Selecting a job in the Jobs list shall open a separate detail view with a way back to the list; the list and the detail are distinct views.",
-      "tags": [
-        "editor",
-        "jobs"
-      ],
       "design": [
         "d_jbv001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
       "id": "r_jv004",
       "code": "JV-4",
       "text": "The Jobs tab shall sit in the oversight tab group (with Releases and the Auditor view), to the right of the Overview and the authoring views — superseding its former leftmost placement.",
-      "tags": [
-        "editor",
-        "jobs"
-      ],
       "design": [
         "d_jbv001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -1185,52 +1267,48 @@
       "id": "r_jc001",
       "code": "JC-1",
       "text": "The skill shall cache a job's before snapshot when the job is created and its after snapshot when the job is closed, under .specpad/jobs/<id>/ (committed and regenerable), so the editor can show an open job's in-progress changes (before vs working copy) and a closed job's final changes.",
-      "tags": [
-        "skill",
-        "change-tracking"
-      ],
       "design": [
         "d_jbv001",
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_jc002",
       "code": "JC-2",
       "text": "A job record shall carry an owner (name and email) set from git when the job is created; this is record-level attribution, not per-item edit history.",
-      "tags": [
-        "jobs",
-        "skill"
-      ],
       "design": [
         "d_jbv001",
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_jc003",
       "code": "JC-3",
       "text": "A job's version shall be derived from the release tag whose commits contain it (Unreleased until then), not hand-set.",
-      "tags": [
-        "jobs",
-        "change-tracking"
-      ],
       "design": [
         "d_jbv001",
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_jc004",
       "code": "JC-4",
       "text": "The Jobs view shall separate open jobs (In progress) from closed jobs (Released release notes); a closed job's detail shall render its SRS/VTP changes from the cached before/after snapshots, and the active open job's detail shall render its in-progress changes by diffing its before snapshot against the working copy.",
-      "tags": [
-        "editor",
-        "jobs"
-      ],
       "design": [
         "d_jbv001",
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -1240,13 +1318,12 @@
       "satisfies": [
         "p_pr002"
       ],
-      "tags": [
-        "skill",
-        "change-tracking"
-      ],
       "design": [
         "d_jbv001",
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -1256,13 +1333,12 @@
       "satisfies": [
         "p_pr002"
       ],
-      "tags": [
-        "editor",
-        "jobs"
-      ],
       "design": [
         "d_jbv001",
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -1272,13 +1348,12 @@
       "satisfies": [
         "p_pr002"
       ],
-      "tags": [
-        "editor",
-        "architecture"
-      ],
       "design": [
         "d_jbv001",
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -1293,36 +1368,33 @@
       "satisfies": [
         "p_tr01"
       ],
-      "tags": [
-        "skill",
-        "change-tracking"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_sc002",
       "code": "SRC-2",
       "text": "On close, the skill shall cache a job's commit list (.specpad/jobs/<id>/commits.json, derived from the Job: trailer) so the editor can show the commits behind a job's changes.",
-      "tags": [
-        "skill",
-        "change-tracking"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_sc003",
       "code": "SRC-3",
       "text": "A closed job's detail view shall list its commits (hash, subject, author, date) alongside its SRS/VTP changes.",
-      "tags": [
-        "editor",
-        "jobs"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -1337,74 +1409,73 @@
       "satisfies": [
         "p_pr004"
       ],
-      "tags": [
-        "architecture",
-        "skill"
-      ],
       "design": [
         "d_arv001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
       "id": "r_sa002",
       "code": "SAD-2",
       "text": "The editor shall provide an Architecture view that renders the arc42 document and presents the C4 Structurizr DSL (live C4 diagram rendering is a planned follow-up).",
-      "tags": [
-        "architecture",
-        "editor"
-      ],
       "design": [
         "d_arv001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
       "id": "r_sa003",
       "code": "SAD-3",
       "text": "Architecture shall be job/release-coupled, not requirement-coupled: no requirement-to-architecture trace matrix is maintained; a job's architecture impact comes from diffing snapshots.",
-      "tags": [
-        "architecture",
-        "change-tracking"
-      ],
       "design": [
         "d_arv001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
       "id": "r_sa004",
       "code": "SAD-4",
       "text": "On close/refresh, the architecture docs shall be snapshotted into the per-job and release caches alongside the spec docs, so a job's architecture changes can be shown.",
-      "tags": [
-        "architecture",
-        "change-tracking"
-      ],
       "design": [
         "d_arv001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
       "id": "r_sa005",
       "code": "SAD-5",
       "text": "The skill shall ship two architecture profiles as templates: a generic profile (clean arc42 + C4, no safety classification) and a medical profile (IEC 62304 / FDA: per-unit classification, segregation, and architecture verification).",
-      "tags": [
-        "architecture",
-        "skill"
-      ],
       "design": [
         "d_arv001",
         "d_arc001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
       "id": "r_sa006",
       "code": "SAD-6",
       "text": "The init quiz shall let the user choose the project path (generic or medical) and scaffold the matching SAD template, C4 workspace, and authoring guide; generic is the default.",
-      "tags": [
-        "architecture",
-        "skill",
-        "onboarding"
-      ],
       "design": [
         "d_arv001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
@@ -1414,73 +1485,72 @@
       "satisfies": [
         "p_cl01"
       ],
-      "tags": [
-        "architecture",
-        "skill"
-      ],
       "design": [
         "d_arv001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
       "id": "r_sa008",
       "code": "SAD-8",
       "text": "Each profile shall ship a soft authoring guide (<name>.sad.guide.md) that the skill reads before authoring the SAD and the editor surfaces as a context panel; the guide carries tone/terminology guidance, not enforced rules.",
-      "tags": [
-        "architecture",
-        "skill",
-        "editor"
-      ],
       "design": [
         "d_arv001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
       "id": "r_av001",
       "code": "AV-1",
       "text": "The Architecture view shall provide Edit and Display sub-tabs (Edit hidden when read-only).",
-      "tags": [
-        "architecture",
-        "editor"
-      ],
       "design": [
         "d_arv001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
       "id": "r_av002",
       "code": "AV-2",
       "text": "The Display tab shall render the arc42 markdown as HTML and render an embedded diagram (a draw.io SVG export) inline.",
-      "tags": [
-        "architecture",
-        "editor"
-      ],
       "design": [
         "d_arv001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
       "id": "r_av003",
       "code": "AV-3",
       "text": "The Edit tab shall provide a syntax-highlighting editor for the arc42 markdown and the C4 source, and its edits shall be saved like other documents.",
-      "tags": [
-        "architecture",
-        "editor"
-      ],
       "design": [
         "d_arv001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
       "id": "r_av004",
       "code": "AV-4",
       "text": "Per-job diagram change tracking shall be coarse — that the diagram file changed — not in-diagram deltas.",
-      "tags": [
-        "architecture",
-        "change-tracking"
-      ],
       "design": [
         "d_arv001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -1490,78 +1560,76 @@
       "satisfies": [
         "p_sa01"
       ],
-      "tags": [
-        "architecture",
-        "editor"
-      ],
       "design": [
         "d_arv001",
         "d_deg001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
       "id": "r_dg002",
       "code": "DGM-2",
       "text": "The Architecture Display shall render each markdown-referenced diagram SVG inline at its place in the document.",
-      "tags": [
-        "architecture",
-        "editor"
-      ],
       "design": [
         "d_arv001",
         "d_deg001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
       "id": "r_dg003",
       "code": "DGM-3",
       "text": "The Structurizr C4 DSL shall be optional — supported when present (loader kept; the editor shows it only when present) but not included in the default templates or scaffold.",
-      "tags": [
-        "architecture",
-        "editor"
-      ],
       "design": [
         "d_arv001",
         "d_deg001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
       "id": "r_dg004",
       "code": "DGM-4",
       "text": "Loading a markdown-referenced diagram (or any project asset) shall be fault-tolerant: a reference the editor cannot open — because the file is absent or the reference contains path segments the File System Access API rejects as an invalid name — shall degrade to a missing diagram and shall never abort opening the project; a reference into a subdirectory (path segments separated by '/') shall be resolved by walking the project folder.",
-      "tags": [
-        "architecture",
-        "editor"
-      ],
       "design": [
         "d_arv001",
         "d_deg001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
       "id": "r_ac001",
       "code": "AC-1",
       "text": "The closed-job cache shall snapshot the architecture files (sad.md, diagram SVGs, the guide, and the optional workspace.dsl) plus a per-state manifest, so a job's architecture changes are available to the editor.",
-      "tags": [
-        "architecture",
-        "change-tracking"
-      ],
       "design": [
         "d_jbv001",
         "d_arc001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_ac002",
       "code": "AC-2",
       "text": "A closed job's detail shall present an Architecture changes section listing which architecture files it added, modified, or removed (coarse, file-level); for each modified markdown file it shall show a section-aware diff (the changed headings and their added/removed lines), while non-text diagrams are reported coarsely as changed.",
-      "tags": [
-        "architecture",
-        "editor"
-      ],
       "design": [
         "d_jbv001",
         "d_arc001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -1576,36 +1644,36 @@
       "satisfies": [
         "p_gn01"
       ],
-      "tags": [
-        "skill",
-        "packaging"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "installation",
+        "functional"
       ]
     },
     {
       "id": "r_co002",
       "code": "CORE-2",
       "text": "The core skill shall not carry medical/regulatory content; the specpad-medical add-on shall provide the medical architecture profile (its template and authoring guide) and the regulatory governance.",
-      "tags": [
-        "skill",
-        "packaging"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "installation",
+        "functional"
       ]
     },
     {
       "id": "r_co003",
       "code": "CORE-3",
       "text": "The shared contract and the editor shall remain unified across both skills — the medical add-on adds prose, templates, and governance, never a code fork; the editor activates medical features only when a medical profile is present.",
-      "tags": [
-        "skill",
-        "packaging"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "installation",
+        "functional"
       ]
     },
     {
@@ -1621,38 +1689,36 @@
         "p_pr004",
         "p_rl01"
       ],
-      "tags": [
-        "change-tracking",
-        "skill"
-      ],
       "design": [
         "d_rel001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
       "id": "r_re002",
       "code": "REL-2",
       "text": "Refresh shall snapshot all key document types at a release (proj/srs/vtp JSON, the SAD markdown, its diagrams, and the guide), not just the spec JSON, so the release is a complete checkpoint.",
-      "tags": [
-        "change-tracking",
-        "skill"
-      ],
       "design": [
         "d_rel001",
         "d_skl001"
+      ],
+      "category": [
+        "functional",
+        "user-maintenance"
       ]
     },
     {
       "id": "r_re003",
       "code": "REL-3",
       "text": "The editor shall provide a Releases view presenting each release newest-first with its version, date, and author, and the jobs that shipped in it as release notes (grouped Features and Bugfixes); closed jobs not yet in a release appear under Unreleased.",
-      "tags": [
-        "editor",
-        "change-tracking"
-      ],
       "design": [
         "d_rel001",
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -1662,13 +1728,12 @@
       "satisfies": [
         "p_pr002"
       ],
-      "tags": [
-        "skill",
-        "releases"
-      ],
       "design": [
         "d_rel001",
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -1683,13 +1748,13 @@
       "satisfies": [
         "p_pr005"
       ],
-      "tags": [
-        "prd",
-        "schema"
-      ],
       "design": [
         "d_tbl001",
         "d_gov001"
+      ],
+      "category": [
+        "functional",
+        "data-definition"
       ]
     },
     {
@@ -1699,13 +1764,13 @@
       "satisfies": [
         "p_pr005"
       ],
-      "tags": [
-        "prd",
-        "schema"
-      ],
       "design": [
         "d_tbl001",
         "d_gov001"
+      ],
+      "category": [
+        "functional",
+        "data-definition"
       ]
     },
     {
@@ -1715,13 +1780,13 @@
       "satisfies": [
         "p_pr005"
       ],
-      "tags": [
-        "prd",
-        "governance"
-      ],
       "design": [
         "d_tbl001",
         "d_gov001"
+      ],
+      "category": [
+        "functional",
+        "data-definition"
       ]
     },
     {
@@ -1731,13 +1796,13 @@
       "satisfies": [
         "p_pr005"
       ],
-      "tags": [
-        "prd",
-        "governance"
-      ],
       "design": [
         "d_tbl001",
         "d_gov001"
+      ],
+      "category": [
+        "functional",
+        "data-definition"
       ]
     },
     {
@@ -1747,13 +1812,13 @@
       "satisfies": [
         "p_pr003"
       ],
-      "tags": [
-        "editor",
-        "prd"
-      ],
       "design": [
         "d_tbl001",
         "d_gov001"
+      ],
+      "category": [
+        "functional",
+        "data-definition"
       ]
     },
     {
@@ -1763,13 +1828,13 @@
       "satisfies": [
         "p_tr01"
       ],
-      "tags": [
-        "editor",
-        "prd"
-      ],
       "design": [
         "d_tbl001",
         "d_gov001"
+      ],
+      "category": [
+        "functional",
+        "data-definition"
       ]
     },
     {
@@ -1784,13 +1849,13 @@
       "satisfies": [
         "p_pr004"
       ],
-      "tags": [
-        "editor",
-        "audit"
-      ],
       "design": [
         "d_avw001",
         "d_aud001"
+      ],
+      "category": [
+        "user-interface",
+        "regulatory"
       ]
     },
     {
@@ -1800,13 +1865,13 @@
       "satisfies": [
         "p_pr004"
       ],
-      "tags": [
-        "editor",
-        "audit"
-      ],
       "design": [
         "d_avw001",
         "d_aud001"
+      ],
+      "category": [
+        "user-interface",
+        "regulatory"
       ]
     },
     {
@@ -1816,13 +1881,13 @@
       "satisfies": [
         "p_tr01"
       ],
-      "tags": [
-        "editor",
-        "audit"
-      ],
       "design": [
         "d_avw001",
         "d_aud001"
+      ],
+      "category": [
+        "user-interface",
+        "regulatory"
       ]
     },
     {
@@ -1832,13 +1897,13 @@
       "satisfies": [
         "p_pr004"
       ],
-      "tags": [
-        "editor",
-        "audit"
-      ],
       "design": [
         "d_avw001",
         "d_aud001"
+      ],
+      "category": [
+        "user-interface",
+        "regulatory"
       ]
     },
     {
@@ -1848,13 +1913,13 @@
       "satisfies": [
         "p_pr004"
       ],
-      "tags": [
-        "editor",
-        "audit"
-      ],
       "design": [
         "d_avw001",
         "d_aud001"
+      ],
+      "category": [
+        "user-interface",
+        "regulatory"
       ]
     },
     {
@@ -1864,13 +1929,13 @@
       "satisfies": [
         "p_pr005"
       ],
-      "tags": [
-        "editor",
-        "prd"
-      ],
       "design": [
         "d_avw001",
         "d_aud001"
+      ],
+      "category": [
+        "user-interface",
+        "regulatory"
       ]
     },
     {
@@ -1885,12 +1950,12 @@
       "satisfies": [
         "p_pr004"
       ],
-      "tags": [
-        "editor",
-        "audit"
-      ],
       "design": [
         "d_dsc001"
+      ],
+      "category": [
+        "user-interface",
+        "regulatory"
       ]
     },
     {
@@ -1900,12 +1965,12 @@
       "satisfies": [
         "p_pr004"
       ],
-      "tags": [
-        "editor",
-        "audit"
-      ],
       "design": [
         "d_dsc001"
+      ],
+      "category": [
+        "user-interface",
+        "regulatory"
       ]
     },
     {
@@ -1920,12 +1985,11 @@
       "satisfies": [
         "p_pr003"
       ],
-      "tags": [
-        "editor",
-        "visual"
-      ],
       "design": [
         "d_thm001"
+      ],
+      "category": [
+        "user-interface"
       ]
     },
     {
@@ -1935,12 +1999,11 @@
       "satisfies": [
         "p_pr003"
       ],
-      "tags": [
-        "editor",
-        "visual"
-      ],
       "design": [
         "d_thm001"
+      ],
+      "category": [
+        "user-interface"
       ]
     },
     {
@@ -1950,12 +2013,11 @@
       "satisfies": [
         "p_pr003"
       ],
-      "tags": [
-        "editor",
-        "visual"
-      ],
       "design": [
         "d_chr001"
+      ],
+      "category": [
+        "user-interface"
       ]
     },
     {
@@ -1965,12 +2027,11 @@
       "satisfies": [
         "p_pr003"
       ],
-      "tags": [
-        "editor",
-        "visual"
-      ],
       "design": [
         "d_ovw001"
+      ],
+      "category": [
+        "user-interface"
       ]
     },
     {
@@ -1980,12 +2041,11 @@
       "satisfies": [
         "p_pr003"
       ],
-      "tags": [
-        "editor",
-        "visual"
-      ],
       "design": [
         "d_ovw001"
+      ],
+      "category": [
+        "user-interface"
       ]
     },
     {
@@ -1995,13 +2055,11 @@
       "satisfies": [
         "p_pr004"
       ],
-      "tags": [
-        "editor",
-        "visual",
-        "audit"
-      ],
       "design": [
         "d_chr001"
+      ],
+      "category": [
+        "user-interface"
       ]
     },
     {
@@ -2010,10 +2068,10 @@
       "design": [
         "d_chr001"
       ],
-      "tags": [
-        "editor"
-      ],
-      "text": "Each document tab shall be labelled by its acronym (PRD, SRS, SAD, SDD, VTP), and shall carry the full document name as hover text so a reader unfamiliar with the acronym can still identify it."
+      "text": "Each document tab shall be labelled by its acronym (PRD, SRS, SAD, SDD, VTP), and shall carry the full document name as hover text so a reader unfamiliar with the acronym can still identify it.",
+      "category": [
+        "user-interface"
+      ]
     },
     {
       "id": "h_gd000",
@@ -2027,12 +2085,11 @@
       "satisfies": [
         "p_sk01"
       ],
-      "tags": [
-        "skill",
-        "authoring"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -2042,12 +2099,11 @@
       "satisfies": [
         "p_sk01"
       ],
-      "tags": [
-        "skill",
-        "authoring"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -2057,12 +2113,11 @@
       "satisfies": [
         "p_sk01"
       ],
-      "tags": [
-        "skill",
-        "authoring"
-      ],
       "design": [
         "d_skl001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -2077,12 +2132,12 @@
       "satisfies": [
         "p_pr001"
       ],
-      "tags": [
-        "schema",
-        "registry"
-      ],
       "design": [
         "d_dct001"
+      ],
+      "category": [
+        "data-definition",
+        "functional"
       ]
     },
     {
@@ -2092,12 +2147,12 @@
       "satisfies": [
         "p_pr001"
       ],
-      "tags": [
-        "validation",
-        "registry"
-      ],
       "design": [
         "d_dct001"
+      ],
+      "category": [
+        "data-definition",
+        "functional"
       ]
     },
     {
@@ -2107,13 +2162,12 @@
       "satisfies": [
         "p_pr001"
       ],
-      "tags": [
-        "skill",
-        "registry",
-        "change-tracking"
-      ],
       "design": [
         "d_dct001"
+      ],
+      "category": [
+        "data-definition",
+        "functional"
       ]
     },
     {
@@ -2123,13 +2177,12 @@
       "satisfies": [
         "p_pr001"
       ],
-      "tags": [
-        "editor",
-        "registry",
-        "change-tracking"
-      ],
       "design": [
         "d_dct001"
+      ],
+      "category": [
+        "data-definition",
+        "functional"
       ]
     },
     {
@@ -2139,13 +2192,12 @@
       "satisfies": [
         "p_pr001"
       ],
-      "tags": [
-        "skill",
-        "registry",
-        "process"
-      ],
       "design": [
         "d_dct001"
+      ],
+      "category": [
+        "data-definition",
+        "functional"
       ]
     },
     {
@@ -2155,13 +2207,12 @@
       "satisfies": [
         "p_pr001"
       ],
-      "tags": [
-        "schema",
-        "registry",
-        "architecture"
-      ],
       "design": [
         "d_dct001"
+      ],
+      "category": [
+        "data-definition",
+        "functional"
       ]
     },
     {
@@ -2176,12 +2227,11 @@
       "satisfies": [
         "p_pr003"
       ],
-      "tags": [
-        "editor",
-        "authoring"
-      ],
       "design": [
         "d_tbl001"
+      ],
+      "category": [
+        "user-interface"
       ]
     },
     {
@@ -2191,12 +2241,11 @@
       "satisfies": [
         "p_pr003"
       ],
-      "tags": [
-        "editor",
-        "authoring"
-      ],
       "design": [
         "d_tbl001"
+      ],
+      "category": [
+        "user-interface"
       ]
     },
     {
@@ -2206,12 +2255,11 @@
       "satisfies": [
         "p_ds01"
       ],
-      "tags": [
-        "editor",
-        "authoring"
-      ],
       "design": [
         "d_tbl001"
+      ],
+      "category": [
+        "user-interface"
       ]
     },
     {
@@ -2221,11 +2269,11 @@
       "satisfies": [
         "p_pr003"
       ],
-      "tags": [
-        "editor"
-      ],
       "design": [
         "d_tbl001"
+      ],
+      "category": [
+        "user-interface"
       ]
     },
     {
@@ -2240,12 +2288,12 @@
       "satisfies": [
         "p_tr01"
       ],
-      "tags": [
-        "schema",
-        "verification"
-      ],
       "design": [
         "d_ver001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
@@ -2255,12 +2303,12 @@
       "satisfies": [
         "p_ds01"
       ],
-      "tags": [
-        "schema",
-        "verification"
-      ],
       "design": [
         "d_vrf001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
@@ -2270,12 +2318,13 @@
       "satisfies": [
         "p_ds01"
       ],
-      "tags": [
-        "verification"
-      ],
       "design": [
         "d_ver001",
         "d_tst001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
@@ -2285,13 +2334,13 @@
       "satisfies": [
         "p_ds01"
       ],
-      "tags": [
-        "editor",
-        "verification"
-      ],
       "design": [
         "d_ver001",
         "d_tst001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
@@ -2301,13 +2350,13 @@
       "satisfies": [
         "p_pr002"
       ],
-      "tags": [
-        "skill",
-        "verification"
-      ],
       "design": [
         "d_vrf001",
         "d_skl001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
@@ -2317,13 +2366,13 @@
       "satisfies": [
         "p_ds01"
       ],
-      "tags": [
-        "editor",
-        "verification"
-      ],
       "design": [
         "d_ver001",
         "d_tst001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
@@ -2333,13 +2382,13 @@
       "satisfies": [
         "p_pr002"
       ],
-      "tags": [
-        "editor",
-        "verification"
-      ],
       "design": [
         "d_jbv001",
         "d_ver001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
@@ -2349,12 +2398,12 @@
       "satisfies": [
         "p_ds01"
       ],
-      "tags": [
-        "editor",
-        "verification"
-      ],
       "design": [
         "d_aud001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
@@ -2375,12 +2424,14 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server"
-      ],
       "design": [
         "d_sap001",
         "d_ent001"
+      ],
+      "category": [
+        "interfaces",
+        "it-network",
+        "functional"
       ]
     },
     {
@@ -2390,12 +2441,12 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server",
-        "security"
-      ],
       "design": [
         "d_pth001"
+      ],
+      "category": [
+        "security",
+        "functional"
       ]
     },
     {
@@ -2405,12 +2456,12 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server",
-        "security"
-      ],
       "design": [
         "d_rpo001"
+      ],
+      "category": [
+        "security",
+        "functional"
       ]
     },
     {
@@ -2420,12 +2471,14 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server"
-      ],
       "design": [
         "d_sap001",
         "d_ent001"
+      ],
+      "category": [
+        "interfaces",
+        "it-network",
+        "functional"
       ]
     },
     {
@@ -2435,13 +2488,13 @@
       "satisfies": [
         "p_pc01"
       ],
-      "tags": [
-        "server",
-        "contract"
-      ],
       "design": [
         "d_gov001",
         "d_cgt001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
@@ -2451,11 +2504,12 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server"
-      ],
       "design": [
         "d_scf001"
+      ],
+      "category": [
+        "installation",
+        "operation-maintenance"
       ]
     },
     {
@@ -2465,12 +2519,13 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server"
-      ],
       "design": [
         "d_scf001",
         "d_ent001"
+      ],
+      "category": [
+        "installation",
+        "operation-maintenance"
       ]
     },
     {
@@ -2480,12 +2535,12 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server",
-        "deployment"
-      ],
       "design": [
         "d_ent001"
+      ],
+      "category": [
+        "installation",
+        "functional"
       ]
     },
     {
@@ -2501,12 +2556,12 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server",
-        "auth"
-      ],
       "design": [
         "d_ath001"
+      ],
+      "category": [
+        "security",
+        "functional"
       ]
     },
     {
@@ -2516,13 +2571,12 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server",
-        "auth",
-        "security"
-      ],
       "design": [
         "d_ath001"
+      ],
+      "category": [
+        "security",
+        "functional"
       ]
     },
     {
@@ -2532,12 +2586,12 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server",
-        "auth"
-      ],
       "design": [
         "d_ath001"
+      ],
+      "category": [
+        "security",
+        "functional"
       ]
     },
     {
@@ -2547,13 +2601,12 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server",
-        "auth",
-        "security"
-      ],
       "design": [
         "d_ath001"
+      ],
+      "category": [
+        "security",
+        "functional"
       ]
     },
     {
@@ -2563,12 +2616,12 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server",
-        "auth"
-      ],
       "design": [
         "d_ath001"
+      ],
+      "category": [
+        "security",
+        "functional"
       ]
     },
     {
@@ -2578,13 +2631,13 @@
       "satisfies": [
         "p_gh01"
       ],
-      "tags": [
-        "server",
-        "auth"
-      ],
       "design": [
         "d_ath001",
         "d_wcp001"
+      ],
+      "category": [
+        "security",
+        "functional"
       ]
     },
     {
@@ -2600,12 +2653,11 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server",
-        "commit"
-      ],
       "design": [
         "d_rpo001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -2615,13 +2667,12 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server",
-        "commit"
-      ],
       "design": [
         "d_wcp001",
         "d_cgt001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -2631,14 +2682,12 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server",
-        "commit",
-        "editor"
-      ],
       "design": [
         "d_chr001",
         "d_wcp001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -2648,14 +2697,12 @@
       "satisfies": [
         "p_pc01"
       ],
-      "tags": [
-        "server",
-        "commit",
-        "governance"
-      ],
       "design": [
         "d_wcp001",
         "d_cgt001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -2665,14 +2712,13 @@
       "satisfies": [
         "p_pr002"
       ],
-      "tags": [
-        "server",
-        "commit",
-        "jobs"
-      ],
       "design": [
         "d_wcp001",
         "d_cgt001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
       ]
     },
     {
@@ -2682,13 +2728,13 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server",
-        "commit"
-      ],
       "design": [
         "d_wcp001",
         "d_git001"
+      ],
+      "category": [
+        "it-network",
+        "functional"
       ]
     },
     {
@@ -2698,14 +2744,14 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server",
-        "commit",
-        "editor"
-      ],
       "design": [
         "d_chr001",
         "d_wcp001"
+      ],
+      "category": [
+        "alarms",
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -2721,13 +2767,13 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server",
-        "concurrency"
-      ],
       "design": [
         "d_trm001",
         "d_sap001"
+      ],
+      "category": [
+        "it-network",
+        "functional"
       ]
     },
     {
@@ -2737,13 +2783,13 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server",
-        "concurrency"
-      ],
       "design": [
         "d_mrg001",
         "d_rpo001"
+      ],
+      "category": [
+        "it-network",
+        "functional"
       ]
     },
     {
@@ -2753,13 +2799,14 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server",
-        "concurrency"
-      ],
       "design": [
         "d_prs001",
         "d_trm001"
+      ],
+      "category": [
+        "alarms",
+        "it-network",
+        "functional"
       ]
     },
     {
@@ -2769,13 +2816,13 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server",
-        "concurrency"
-      ],
       "design": [
         "d_prs001",
         "d_trm001"
+      ],
+      "category": [
+        "it-network",
+        "functional"
       ]
     },
     {
@@ -2785,12 +2832,11 @@
       "satisfies": [
         "p_gh01"
       ],
-      "tags": [
-        "contract",
-        "merge"
-      ],
       "design": [
         "d_mrg001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -2800,12 +2846,11 @@
       "satisfies": [
         "p_gh01"
       ],
-      "tags": [
-        "contract",
-        "merge"
-      ],
       "design": [
         "d_mrg001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -2815,12 +2860,11 @@
       "satisfies": [
         "p_gh01"
       ],
-      "tags": [
-        "contract",
-        "merge"
-      ],
       "design": [
         "d_mrg001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -2830,12 +2874,11 @@
       "satisfies": [
         "p_gh01"
       ],
-      "tags": [
-        "contract",
-        "merge"
-      ],
       "design": [
         "d_mrg001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -2845,13 +2888,12 @@
       "satisfies": [
         "p_gh01"
       ],
-      "tags": [
-        "server",
-        "merge"
-      ],
       "design": [
         "d_mrg001",
         "d_wcp001"
+      ],
+      "category": [
+        "functional"
       ]
     },
     {
@@ -2861,14 +2903,13 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "server",
-        "merge",
-        "editor"
-      ],
       "design": [
         "d_wcp001",
         "d_chr001"
+      ],
+      "category": [
+        "alarms",
+        "functional"
       ]
     },
     {
@@ -2884,13 +2925,13 @@
       "satisfies": [
         "p_pr003"
       ],
-      "tags": [
-        "editor",
-        "server"
-      ],
       "design": [
         "d_ifc001",
         "d_api001"
+      ],
+      "category": [
+        "interfaces",
+        "functional"
       ]
     },
     {
@@ -2900,14 +2941,14 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "editor",
-        "server",
-        "auth"
-      ],
       "design": [
         "d_api001",
         "d_trm001"
+      ],
+      "category": [
+        "interfaces",
+        "security",
+        "functional"
       ]
     },
     {
@@ -2917,14 +2958,13 @@
       "satisfies": [
         "p_sv01"
       ],
-      "tags": [
-        "editor",
-        "server",
-        "auth"
-      ],
       "design": [
         "d_app001",
         "d_chr001"
+      ],
+      "category": [
+        "security",
+        "user-interface"
       ]
     },
     {
@@ -2934,13 +2974,13 @@
       "satisfies": [
         "p_ed01"
       ],
-      "tags": [
-        "skill",
-        "server"
-      ],
       "design": [
         "d_lnc001",
         "d_tpl001"
+      ],
+      "category": [
+        "installation",
+        "interfaces"
       ]
     },
     {
@@ -2956,11 +2996,13 @@
       "satisfies": [
         "p_sv02"
       ],
-      "tags": [
-        "server"
-      ],
       "design": [
         "d_scf001"
+      ],
+      "category": [
+        "installation",
+        "security",
+        "functional"
       ]
     },
     {
@@ -2970,11 +3012,12 @@
       "satisfies": [
         "p_sv02"
       ],
-      "tags": [
-        "server"
-      ],
       "design": [
         "d_scf001"
+      ],
+      "category": [
+        "installation",
+        "functional"
       ]
     },
     {
@@ -2984,11 +3027,13 @@
       "satisfies": [
         "p_sv02"
       ],
-      "tags": [
-        "server"
-      ],
       "design": [
         "d_rot001"
+      ],
+      "category": [
+        "security",
+        "it-network",
+        "functional"
       ]
     },
     {
@@ -2998,11 +3043,12 @@
       "satisfies": [
         "p_sv02"
       ],
-      "tags": [
-        "server"
-      ],
       "design": [
         "d_rpo001"
+      ],
+      "category": [
+        "security",
+        "functional"
       ]
     },
     {
@@ -3012,12 +3058,13 @@
       "satisfies": [
         "p_sv02"
       ],
-      "tags": [
-        "server"
-      ],
       "design": [
         "d_scf001",
         "d_ath001"
+      ],
+      "category": [
+        "security",
+        "functional"
       ]
     },
     {
@@ -3027,11 +3074,12 @@
       "satisfies": [
         "p_sv02"
       ],
-      "tags": [
-        "server"
-      ],
       "design": [
         "d_ath001"
+      ],
+      "category": [
+        "security",
+        "functional"
       ]
     },
     {
@@ -3041,12 +3089,13 @@
       "satisfies": [
         "p_sv02"
       ],
-      "tags": [
-        "server"
-      ],
       "design": [
         "d_sap001",
         "d_reg001"
+      ],
+      "category": [
+        "security",
+        "functional"
       ]
     },
     {
@@ -3056,12 +3105,13 @@
       "satisfies": [
         "p_sv02"
       ],
-      "tags": [
-        "server"
-      ],
       "design": [
         "d_reg001",
         "d_prs001"
+      ],
+      "category": [
+        "security",
+        "it-network"
       ]
     },
     {
@@ -3071,12 +3121,13 @@
       "satisfies": [
         "p_sv02"
       ],
-      "tags": [
-        "server"
-      ],
       "design": [
         "d_lch001",
         "d_trm001"
+      ],
+      "category": [
+        "interfaces",
+        "functional"
       ]
     },
     {
@@ -3086,12 +3137,13 @@
       "satisfies": [
         "p_sv02"
       ],
-      "tags": [
-        "server"
-      ],
       "design": [
         "d_tpl001",
         "d_lnc001"
+      ],
+      "category": [
+        "installation",
+        "interfaces"
       ]
     },
     {
@@ -3100,13 +3152,14 @@
       "satisfies": [
         "p_sv02"
       ],
-      "tags": [
-        "server"
-      ],
       "text": "The editor shall let a signed-in user open any project they may read from within the editor itself, without re-entering a URL.",
       "design": [
         "d_chr001",
         "d_trm001"
+      ],
+      "category": [
+        "security",
+        "functional"
       ]
     },
     {
@@ -3115,13 +3168,15 @@
       "satisfies": [
         "p_sv02"
       ],
-      "tags": [
-        "server"
-      ],
       "text": "Switching to another project shall reload the editor from that project, and shall leave the URL naming it so that reloading the page returns to the same project.",
       "design": [
         "d_app001",
         "d_trm001"
+      ],
+      "category": [
+        "it-network",
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -3130,12 +3185,13 @@
       "satisfies": [
         "p_sv02"
       ],
-      "tags": [
-        "server"
-      ],
       "text": "When a server hosts more than one project, the editor shall show which project is being edited.",
       "design": [
         "d_chr001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
       ]
     },
     {
@@ -3150,12 +3206,13 @@
       "satisfies": [
         "p_sv02"
       ],
-      "tags": [
-        "server"
-      ],
       "text": "The server shall remove a user's working copy for a project once it has been idle for a configured period, so a deployment does not retain a checkout per user per project indefinitely.",
       "design": [
         "d_rpo001"
+      ],
+      "category": [
+        "operation-maintenance",
+        "functional"
       ]
     },
     {
@@ -3164,12 +3221,13 @@
       "satisfies": [
         "p_sv02"
       ],
-      "tags": [
-        "server"
-      ],
       "text": "A working copy holding uncommitted changes shall never be removed by idle reaping, however long it has been idle.",
       "design": [
         "d_rpo001"
+      ],
+      "category": [
+        "operation-maintenance",
+        "functional"
       ]
     },
     {
@@ -3178,12 +3236,13 @@
       "satisfies": [
         "p_sv02"
       ],
-      "tags": [
-        "server"
-      ],
       "text": "A removed working copy shall be re-provisioned on next use, so reaping is not observable to a user who returns.",
       "design": [
         "d_rpo001"
+      ],
+      "category": [
+        "operation-maintenance",
+        "functional"
       ]
     },
     {
@@ -3192,13 +3251,14 @@
       "satisfies": [
         "p_sv02"
       ],
-      "tags": [
-        "server"
-      ],
       "text": "The idle period before reaping shall be configurable, and reaping shall be disableable.",
       "design": [
         "d_scf001",
         "d_rpo001"
+      ],
+      "category": [
+        "operation-maintenance",
+        "installation"
       ]
     },
     {
@@ -3215,8 +3275,9 @@
         "d_sch001"
       ],
       "text": "The system shall support an optional detailed-design document as a registered document type whose items are design sections.",
-      "tags": [
-        "design"
+      "category": [
+        "regulatory",
+        "functional"
       ]
     },
     {
@@ -3227,8 +3288,9 @@
         "d_sch001"
       ],
       "text": "Each design section shall carry a stable immutable id, so that retitling, recoding, reordering, or rewriting a section does not break any reference to it.",
-      "tags": [
-        "design"
+      "category": [
+        "regulatory",
+        "functional"
       ]
     },
     {
@@ -3239,8 +3301,9 @@
         "d_arv001"
       ],
       "text": "A design section's content shall be markdown able to embed images and diagrams, so the design can hold flowcharts and figures rather than fixed fields.",
-      "tags": [
-        "design"
+      "category": [
+        "regulatory",
+        "functional"
       ]
     },
     {
@@ -3251,8 +3314,9 @@
         "d_sch001"
       ],
       "text": "An SRS requirement shall record the design sections that implement it as a list of section ids, so the trace is authored on the requirement and read as requirement → design.",
-      "tags": [
-        "design"
+      "category": [
+        "regulatory",
+        "functional"
       ]
     },
     {
@@ -3262,8 +3326,9 @@
         "d_gov001"
       ],
       "text": "When a detailed design is present, every design reference on a requirement shall resolve to an existing design section.",
-      "tags": [
-        "design"
+      "category": [
+        "regulatory",
+        "functional"
       ]
     },
     {
@@ -3273,8 +3338,9 @@
         "d_gov001"
       ],
       "text": "When a detailed design is present, every non-heading requirement shall reference at least one design section, and this shall be checked at full rigor irrespective of any safety class or documentation level.",
-      "tags": [
-        "design"
+      "category": [
+        "regulatory",
+        "functional"
       ]
     },
     {
@@ -3285,8 +3351,9 @@
         "d_jbv001"
       ],
       "text": "The detailed design shall be captured in release baselines and in each job's before/after cache, and a job's detail shall present the design sections it changed.",
-      "tags": [
-        "design"
+      "category": [
+        "regulatory",
+        "functional"
       ]
     },
     {
@@ -3296,8 +3363,9 @@
         "d_skl001"
       ],
       "text": "When a job changes a design section, the skill shall re-review every requirement referencing that section in the same job, and report which ones it checked.",
-      "tags": [
-        "design"
+      "category": [
+        "regulatory",
+        "functional"
       ]
     },
     {
@@ -3307,8 +3375,9 @@
         "d_skl001"
       ],
       "text": "The baseline generator shall draft a detailed design from the existing code, proposing sections from module boundaries rather than from source files or the call flow, and tagging each generated section as a draft.",
-      "tags": [
-        "design"
+      "category": [
+        "regulatory",
+        "functional"
       ]
     },
     {
@@ -3319,8 +3388,9 @@
         "d_gov001"
       ],
       "text": "The editor shall load the detailed design when the project index lists one, and include it in the live governance it reports.",
-      "tags": [
-        "design"
+      "category": [
+        "regulatory",
+        "functional"
       ]
     },
     {
@@ -3329,10 +3399,11 @@
       "design": [
         "d_ddv001"
       ],
-      "tags": [
-        "design"
-      ],
-      "text": "The editor shall present the detailed design as one continuous document, with an outline that indicates the section currently in view and scrolls to a section on request, and with each section rendering its own body, source paths and referencing requirements."
+      "text": "The editor shall present the detailed design as one continuous document, with an outline that indicates the section currently in view and scrolls to a section on request, and with each section rendering its own body, source paths and referencing requirements.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_dd12",
@@ -3340,10 +3411,11 @@
       "design": [
         "d_ddv001"
       ],
-      "tags": [
-        "design"
-      ],
-      "text": "The editor shall allow a section's title, code, source paths and body to be edited in place within the document, and shall allow sections to be added, reordered — including by dragging — and deleted."
+      "text": "The editor shall allow a section's title, code, source paths and body to be edited in place within the document, and shall allow sections to be added, reordered — including by dragging — and deleted.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_dd13",
@@ -3352,10 +3424,11 @@
         "d_ddv001",
         "d_gov001"
       ],
-      "tags": [
-        "design"
-      ],
-      "text": "The editor shall show, for each design section, the requirements that reference it, and shall name those requirements when the section is edited or deleted."
+      "text": "The editor shall show, for each design section, the requirements that reference it, and shall name those requirements when the section is edited or deleted.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_dd14",
@@ -3364,10 +3437,11 @@
         "d_dsc001",
         "d_ddv001"
       ],
-      "tags": [
-        "design"
-      ],
-      "text": "The Auditor view shall count the detailed design as Design Outputs evidence alongside the architecture, reporting the element as complete only when both are present, and shall report how many requirements do not yet reach a design section."
+      "text": "The Auditor view shall count the detailed design as Design Outputs evidence alongside the architecture, reporting the element as complete only when both are present, and shall report how many requirements do not yet reach a design section.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_ro1",
@@ -3375,10 +3449,11 @@
       "design": [
         "d_app001"
       ],
-      "tags": [
-        "editor"
-      ],
-      "text": "Whether the session may edit shall be a single derived condition applied to every document view, so no view can present an editing affordance the session cannot honour."
+      "text": "Whether the session may edit shall be a single derived condition applied to every document view, so no view can present an editing affordance the session cannot honour.",
+      "category": [
+        "security",
+        "user-interface"
+      ]
     },
     {
       "id": "r_dd15",
@@ -3387,10 +3462,11 @@
         "d_ddv001",
         "d_sch001"
       ],
-      "tags": [
-        "design"
-      ],
-      "text": "A section boundary in the detailed design shall be a stored item with its own identity, not a heading inferred from the section body, so that a continuous rendering never changes what a requirement traces to."
+      "text": "A section boundary in the detailed design shall be a stored item with its own identity, not a heading inferred from the section body, so that a continuous rendering never changes what a requirement traces to.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_dd16",
@@ -3398,10 +3474,11 @@
       "design": [
         "d_ddv001"
       ],
-      "tags": [
-        "design"
-      ],
-      "text": "Editing a section in the detailed design shall leave the surrounding sections rendered, so the reader keeps their position in the document."
+      "text": "Editing a section in the detailed design shall leave the surrounding sections rendered, so the reader keeps their position in the document.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_tr1",
@@ -3410,10 +3487,11 @@
         "d_tbl001",
         "d_rfp001"
       ],
-      "tags": [
-        "editor"
-      ],
-      "text": "Each trace edge shall be editable in the editor on the item that stores it: a requirement shall be able to record which product requirements it satisfies and which design sections implement it, and a test which requirements it verifies."
+      "text": "Each trace edge shall be editable in the editor on the item that stores it: a requirement shall be able to record which product requirements it satisfies and which design sections implement it, and a test which requirements it verifies.",
+      "category": [
+        "user-interface",
+        "functional"
+      ]
     },
     {
       "id": "r_tr2",
@@ -3422,10 +3500,11 @@
         "d_ddv001",
         "d_tbl001"
       ],
-      "tags": [
-        "editor"
-      ],
-      "text": "A design section shall be able to record which requirements it implements, written back to those requirements, so an edge stored in one place can be authored from either end."
+      "text": "A design section shall be able to record which requirements it implements, written back to those requirements, so an edge stored in one place can be authored from either end.",
+      "category": [
+        "user-interface",
+        "functional"
+      ]
     },
     {
       "id": "r_tr3",
@@ -3433,10 +3512,11 @@
       "design": [
         "d_rfp001"
       ],
-      "tags": [
-        "editor"
-      ],
-      "text": "A reference shall be chosen from the candidate items, each shown by its code and text, rather than entered as an identifier; a reference that does not resolve shall be shown as unresolved rather than hidden or discarded."
+      "text": "A reference shall be chosen from the candidate items, each shown by its code and text, rather than entered as an identifier; a reference that does not resolve shall be shown as unresolved rather than hidden or discarded.",
+      "category": [
+        "user-interface",
+        "functional"
+      ]
     },
     {
       "id": "r_ver9",
@@ -3444,10 +3524,11 @@
       "design": [
         "d_ver001"
       ],
-      "tags": [
-        "verification"
-      ],
-      "text": "An automation link's selector shall be able to name a group of tests as well as a single test: a captured result answers a selector when its name equals it or begins with it at a word boundary."
+      "text": "An automation link's selector shall be able to name a group of tests as well as a single test: a captured result answers a selector when its name equals it or begins with it at a word boundary.",
+      "category": [
+        "functional",
+        "regulatory"
+      ]
     },
     {
       "id": "r_des1",
@@ -3455,10 +3536,11 @@
       "design": [
         "d_tpl001"
       ],
-      "tags": [
-        "governance"
-      ],
-      "text": "The pre-push check shall report, for each pushed commit, any file it changes that a design section names as its source while that section itself is unchanged, naming both the file and the section, and shall warn rather than block."
+      "text": "The pre-push check shall report, for each pushed commit, any file it changes that a design section names as its source while that section itself is unchanged, naming both the file and the section, and shall warn rather than block.",
+      "category": [
+        "functional",
+        "regulatory"
+      ]
     },
     {
       "id": "h_rsk00",
@@ -3473,10 +3555,11 @@
         "d_dct001",
         "d_sch001"
       ],
-      "tags": [
-        "risk"
-      ],
-      "text": "The system shall support an optional software risk register recording, for each hazardous situation software can contribute to, the software items that could cause it and the requirements that control it."
+      "text": "The system shall support an optional software risk register recording, for each hazardous situation software can contribute to, the software items that could cause it and the requirements that control it.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_rsk2",
@@ -3484,10 +3567,11 @@
       "design": [
         "d_sch001"
       ],
-      "tags": [
-        "risk"
-      ],
-      "text": "The risk register shall record no probability of occurrence: for software, severity and the presence of a control shall be the basis of the analysis."
+      "text": "The risk register shall record no probability of occurrence: for software, severity and the presence of a control shall be the basis of the analysis.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_rsk3",
@@ -3495,10 +3579,11 @@
       "design": [
         "d_sch001"
       ],
-      "tags": [
-        "risk"
-      ],
-      "text": "A risk shall be able to reference the corresponding hazard in an external system risk management file, so that hazards, harms, probability estimation and benefit-risk need not be restated."
+      "text": "A risk shall be able to reference the corresponding hazard in an external system risk management file, so that hazards, harms, probability estimation and benefit-risk need not be restated.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_rsk4",
@@ -3506,10 +3591,11 @@
       "design": [
         "d_gov001"
       ],
-      "tags": [
-        "risk"
-      ],
-      "text": "When a risk register is present, every cause shall resolve to a design section describing a software unit, and every control to an existing requirement; a design view shall not be accepted as a cause."
+      "text": "When a risk register is present, every cause shall resolve to a design section describing a software unit, and every control to an existing requirement; a design view shall not be accepted as a cause.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_rsk5",
@@ -3517,10 +3603,11 @@
       "design": [
         "d_gov001"
       ],
-      "tags": [
-        "risk"
-      ],
-      "text": "When a risk register is present, every non-heading risk shall name at least one software item that could cause it."
+      "text": "When a risk register is present, every non-heading risk shall name at least one software item that could cause it.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_rsk6",
@@ -3528,10 +3615,11 @@
       "design": [
         "d_gov001"
       ],
-      "tags": [
-        "risk"
-      ],
-      "text": "When a risk register is present, every non-heading risk shall reference at least one controlling requirement or record why no software control is needed."
+      "text": "When a risk register is present, every non-heading risk shall reference at least one controlling requirement or record why no software control is needed.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_rsk7",
@@ -3540,10 +3628,11 @@
         "d_gov001",
         "d_ver001"
       ],
-      "tags": [
-        "risk"
-      ],
-      "text": "Verification of a risk control measure shall be derived from the verifying tests of the requirement implementing it, rather than recorded separately on the risk."
+      "text": "Verification of a risk control measure shall be derived from the verifying tests of the requirement implementing it, rather than recorded separately on the risk.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_rsk8",
@@ -3551,10 +3640,11 @@
       "design": [
         "d_dct001"
       ],
-      "tags": [
-        "risk"
-      ],
-      "text": "The baseline generator shall not draft a risk analysis, because the judgement a risk record expresses cannot be derived from code."
+      "text": "The baseline generator shall not draft a risk analysis, because the judgement a risk record expresses cannot be derived from code.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_rsk9",
@@ -3563,10 +3653,11 @@
         "d_app001",
         "d_gov001"
       ],
-      "tags": [
-        "risk"
-      ],
-      "text": "The editor shall load the risk register when the project index lists one, and include it in the live governance it reports."
+      "text": "The editor shall load the risk register when the project index lists one, and include it in the live governance it reports.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_dd17",
@@ -3575,10 +3666,11 @@
         "d_sch001",
         "d_gov001"
       ],
-      "tags": [
-        "design"
-      ],
-      "text": "A design section shall declare whether it describes a software unit or a cross-cutting design view, defaulting to a unit, so that the set of software units is derivable."
+      "text": "A design section shall declare whether it describes a software unit or a cross-cutting design view, defaulting to a unit, so that the set of software units is derivable.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_rsk10",
@@ -3586,10 +3678,11 @@
       "design": [
         "d_tbl001"
       ],
-      "tags": [
-        "risk"
-      ],
-      "text": "The editor shall present the risk register as a table in which each risk’s hazardous situation, severity, causes, controls and residual risk can be read and edited."
+      "text": "The editor shall present the risk register as a table in which each risk’s hazardous situation, severity, causes, controls and residual risk can be read and edited.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_rsk11",
@@ -3598,10 +3691,11 @@
         "d_tbl001",
         "d_ver001"
       ],
-      "tags": [
-        "risk"
-      ],
-      "text": "For each risk the editor shall derive, from the tests verifying its controlling requirements and the captured run, whether the control is demonstrated to work, and shall distinguish a control with no test from one whose test failed and from one not yet executed."
+      "text": "For each risk the editor shall derive, from the tests verifying its controlling requirements and the captured run, whether the control is demonstrated to work, and shall distinguish a control with no test from one whose test failed and from one not yet executed.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_rsk12",
@@ -3609,10 +3703,11 @@
       "design": [
         "d_dsc001"
       ],
-      "tags": [
-        "risk"
-      ],
-      "text": "The Auditor view shall derive the status of the Risk Management design-control element from the risk register — complete only when every risk is controlled or justified and every residual risk assessed."
+      "text": "The Auditor view shall derive the status of the Risk Management design-control element from the risk register — complete only when every risk is controlled or justified and every residual risk assessed.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "h_sp000",
@@ -3627,10 +3722,11 @@
         "d_dct001",
         "d_sch001"
       ],
-      "tags": [
-        "soup"
-      ],
-      "text": "The system shall support an optional register of the third-party software a product depends on, recording for each component its identity, the requirements placed on it, what it needs to run, its known limitations, and its support and end-of-life position."
+      "text": "The system shall support an optional register of the third-party software a product depends on, recording for each component its identity, the requirements placed on it, what it needs to run, its known limitations, and its support and end-of-life position.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_sp2",
@@ -3638,10 +3734,11 @@
       "design": [
         "d_gov001"
       ],
-      "tags": [
-        "soup"
-      ],
-      "text": "When a component register is present, every component shall record a supplier and an exact version, so that an anomaly evaluation can be attributed to the version it was performed against."
+      "text": "When a component register is present, every component shall record a supplier and an exact version, so that an anomaly evaluation can be attributed to the version it was performed against.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_sp3",
@@ -3649,10 +3746,11 @@
       "design": [
         "d_gov001"
       ],
-      "tags": [
-        "soup"
-      ],
-      "text": "When a component register is present, every component shall state the functional and performance requirements placed on it, recorded on the component rather than as software requirements of the product."
+      "text": "When a component register is present, every component shall state the functional and performance requirements placed on it, recorded on the component rather than as software requirements of the product.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_sp5",
@@ -3660,10 +3758,11 @@
       "design": [
         "d_gov001"
       ],
-      "tags": [
-        "soup"
-      ],
-      "text": "A component shall be able to be named as the cause of a risk in the same way as a software unit, and a reference that is neither shall be reported."
+      "text": "A component shall be able to be named as the cause of a risk in the same way as a software unit, and a reference that is neither shall be reported.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_sp6",
@@ -3671,10 +3770,11 @@
       "design": [
         "d_tbl001"
       ],
-      "tags": [
-        "soup"
-      ],
-      "text": "The editor shall present each component as a record rather than a grid of inputs, and shall open the whole record for editing — every field at once — when the component is selected."
+      "text": "The editor shall present each component as a record rather than a grid of inputs, and shall open the whole record for editing — every field at once — when the component is selected.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_sp7",
@@ -3682,10 +3782,11 @@
       "design": [
         "d_tbl001"
       ],
-      "tags": [
-        "soup"
-      ],
-      "text": "A component shall record which software units use it and which tests exercise it, and shall show the risks that name it as a cause."
+      "text": "A component shall record which software units use it and which tests exercise it, and shall show the risks that name it as a cause.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_sp8",
@@ -3693,10 +3794,11 @@
       "design": [
         "d_sch001"
       ],
-      "tags": [
-        "soup"
-      ],
-      "text": "A component shall be able to record the date the supplier's support ends together with the source of that date."
+      "text": "A component shall be able to record the date the supplier's support ends together with the source of that date.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "r_sp9",
@@ -3704,10 +3806,12 @@
       "design": [
         "d_tbl001"
       ],
-      "tags": [
-        "soup"
-      ],
-      "text": "The editor shall distinguish a component whose end-of-life date has passed from one with a future date and from one with no date announced."
+      "text": "The editor shall distinguish a component whose end-of-life date has passed from one with a future date and from one with no date announced.",
+      "category": [
+        "alarms",
+        "user-interface",
+        "regulatory"
+      ]
     },
     {
       "id": "r_sp10",
@@ -3715,10 +3819,11 @@
       "design": [
         "d_skl001"
       ],
-      "tags": [
-        "soup"
-      ],
-      "text": "The authoring guidance for a component shall state, for each recorded field, what constitutes an adequate entry, requiring a measurable figure for a performance requirement, explicit versions and exclusions for the runtime, and a named re-assessment trigger."
+      "text": "The authoring guidance for a component shall state, for each recorded field, what constitutes an adequate entry, requiring a measurable figure for a performance requirement, explicit versions and exclusions for the runtime, and a named re-assessment trigger.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
     },
     {
       "id": "h_sec00",
@@ -3733,10 +3838,11 @@
         "d_dct001",
         "d_sch001"
       ],
-      "tags": [
-        "security"
-      ],
-      "text": "The system shall support an optional threat model recording, for each threat, what is attacked, where the attack enters, its category, how exploitable it is, its impact, and the requirements that control it."
+      "text": "The system shall support an optional threat model recording, for each threat, what is attacked, where the attack enters, its category, how exploitable it is, its impact, and the requirements that control it.",
+      "category": [
+        "security",
+        "regulatory"
+      ]
     },
     {
       "id": "r_sec2",
@@ -3744,10 +3850,11 @@
       "design": [
         "d_sch001"
       ],
-      "tags": [
-        "security"
-      ],
-      "text": "A threat shall be rated on exploitability rather than probability of occurrence."
+      "text": "A threat shall be rated on exploitability rather than probability of occurrence.",
+      "category": [
+        "security",
+        "regulatory"
+      ]
     },
     {
       "id": "r_sec3",
@@ -3755,10 +3862,11 @@
       "design": [
         "d_gov001"
       ],
-      "tags": [
-        "security"
-      ],
-      "text": "When a threat model is present, every non-heading threat shall record both an exploitability and an impact."
+      "text": "When a threat model is present, every non-heading threat shall record both an exploitability and an impact.",
+      "category": [
+        "security",
+        "regulatory"
+      ]
     },
     {
       "id": "r_sec4",
@@ -3766,10 +3874,11 @@
       "design": [
         "d_gov001"
       ],
-      "tags": [
-        "security"
-      ],
-      "text": "When a threat model is present, every non-heading threat shall reference at least one controlling requirement or record why none is needed."
+      "text": "When a threat model is present, every non-heading threat shall reference at least one controlling requirement or record why none is needed.",
+      "category": [
+        "security",
+        "regulatory"
+      ]
     },
     {
       "id": "r_sec5",
@@ -3777,10 +3886,11 @@
       "design": [
         "d_gov001"
       ],
-      "tags": [
-        "security"
-      ],
-      "text": "A threat shall be able to name the safety risk that exploiting it would create, and its attack surface shall be able to be a software unit or a third-party component."
+      "text": "A threat shall be able to name the safety risk that exploiting it would create, and its attack surface shall be able to be a software unit or a third-party component.",
+      "category": [
+        "security",
+        "regulatory"
+      ]
     },
     {
       "id": "r_sec6",
@@ -3788,10 +3898,11 @@
       "design": [
         "d_tbl001"
       ],
-      "tags": [
-        "security"
-      ],
-      "text": "The editor shall present the threat model as a table in which each threat can be read and edited, and shall distinguish a highly exploitable threat with a severe consequence."
+      "text": "The editor shall present the threat model as a table in which each threat can be read and edited, and shall distinguish a highly exploitable threat with a severe consequence.",
+      "category": [
+        "security",
+        "regulatory"
+      ]
     },
     {
       "id": "r_sec7",
@@ -3800,10 +3911,11 @@
         "d_tbl001",
         "d_ver001"
       ],
-      "tags": [
-        "security"
-      ],
-      "text": "For each threat the editor shall derive, from the tests verifying its controlling requirements and the captured run, whether the control is demonstrated to work."
+      "text": "For each threat the editor shall derive, from the tests verifying its controlling requirements and the captured run, whether the control is demonstrated to work.",
+      "category": [
+        "security",
+        "regulatory"
+      ]
     },
     {
       "id": "r_sec8",
@@ -3811,10 +3923,11 @@
       "design": [
         "d_arv001"
       ],
-      "tags": [
-        "security"
-      ],
-      "text": "The system shall support an optional security architecture document holding the global system, multi-patient harm, updateability and patchability, and security use case view types, with as many views as the attack surface requires, each carrying a diagram whose connections are labelled with what they carry and a legend, rendered with its diagrams and editable in the browser."
+      "text": "The system shall support an optional security architecture document holding the global system, multi-patient harm, updateability and patchability, and security use case view types, with as many views as the attack surface requires, each carrying a diagram whose connections are labelled with what they carry and a legend, rendered with its diagrams and editable in the browser.",
+      "category": [
+        "security",
+        "regulatory"
+      ]
     },
     {
       "id": "r_sec9",
@@ -3822,10 +3935,11 @@
       "design": [
         "d_arv001"
       ],
-      "tags": [
-        "security"
-      ],
-      "text": "Diagrams shall be resolved from every prose document that declares one, so that a figure referenced only by the security architecture renders inline as one referenced by the architecture document does."
+      "text": "Diagrams shall be resolved from every prose document that declares one, so that a figure referenced only by the security architecture renders inline as one referenced by the architecture document does.",
+      "category": [
+        "security",
+        "regulatory"
+      ]
     },
     {
       "id": "r_gov20",
@@ -3835,9 +3949,6 @@
       ],
       "category": [
         "functional"
-      ],
-      "tags": [
-        "governance"
       ],
       "text": "A governance rule shall carry a tier of either violation or advisory, and an advisory finding shall be reported separately from violations without causing the project to fail."
     },
@@ -3850,9 +3961,6 @@
       ],
       "category": [
         "functional"
-      ],
-      "tags": [
-        "governance"
       ],
       "text": "A project shall be able to name advisory rules it chooses to be held to, and each named rule shall then report as a violation rather than as advice."
     },
@@ -3867,10 +3975,6 @@
         "regulatory",
         "functional"
       ],
-      "tags": [
-        "governance",
-        "62304"
-      ],
       "text": "Every requirement shall be able to declare which of the IEC 62304 5.2.2 content categories it is, and every test which of unit, integration or system verification it belongs to; both shall be advised on rather than enforced until a project adopts them."
     },
     {
@@ -3882,9 +3986,6 @@
       "category": [
         "regulatory",
         "functional"
-      ],
-      "tags": [
-        "62304"
       ],
       "text": "A project shall be able to declare its software safety class and the rationale for it, and the declaration shall not change what the tooling requires to be authored."
     },
@@ -3898,9 +3999,6 @@
         "regulatory",
         "functional"
       ],
-      "tags": [
-        "62304"
-      ],
       "text": "The system shall support an optional references register naming the controlled documents a project relies on but does not hold, each recording what sort of document it is, where it is kept, who owns it, and what it covers."
     },
     {
@@ -3911,9 +4009,6 @@
       ],
       "category": [
         "functional"
-      ],
-      "tags": [
-        "governance"
       ],
       "text": "When a references register is present, every non-heading entry shall record a kind and a location, and shall state what it covers."
     },
@@ -3928,9 +4023,6 @@
         "regulatory",
         "functional"
       ],
-      "tags": [
-        "62304"
-      ],
       "text": "A design section describing a software unit shall be able to record its acceptance criteria as a field, and the criteria shall be advised on rather than enforced until a project adopts the rule."
     },
     {
@@ -3943,9 +4035,6 @@
       "category": [
         "regulatory",
         "functional"
-      ],
-      "tags": [
-        "62304"
       ],
       "text": "A design section shall be able to name other sections it is segregated from where the separation is essential to risk control, and a section claiming segregation shall state why the segregation is effective."
     },
@@ -3960,9 +4049,6 @@
         "regulatory",
         "functional"
       ],
-      "tags": [
-        "62304"
-      ],
       "text": "A risk shall be able to record the sequence of events between the software failure and the hazardous situation."
     },
     {
@@ -3975,9 +4061,6 @@
         "regulatory",
         "functional"
       ],
-      "tags": [
-        "62304"
-      ],
       "text": "A release entry shall be able to record the defects known to be present when that version shipped, each with the evaluation that made shipping acceptable, and how the version was built."
     },
     {
@@ -3989,9 +4072,6 @@
       "category": [
         "functional"
       ],
-      "tags": [
-        "editor"
-      ],
       "text": "The editor shall present the references register as a table in which each entry can be read and edited, and shall offer it only when the project has one."
     },
     {
@@ -4002,10 +4082,6 @@
       ],
       "category": [
         "user-interface"
-      ],
-      "tags": [
-        "editor",
-        "governance"
       ],
       "text": "The editor shall count and display advisory findings separately from problems, so that advice never reads as a failure."
     }

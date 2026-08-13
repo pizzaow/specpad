@@ -49,7 +49,7 @@ interface SRSTableProps {
   readOnly?: boolean;
 }
 
-type EditField = 'code' | 'text' | 'tags';
+type EditField = 'code' | 'text';
 type EditTarget = { index: number; field: EditField } | null;
 
 const INDENT_PX = 22;
@@ -120,12 +120,7 @@ const SRSTable: React.FC<SRSTableProps> = ({
   const commitEdit = () => {
     if (!editing) return;
     const items = data.items.slice();
-    const item: SrsItem = { ...items[editing.index] };
-    if (editing.field === 'tags') {
-      item.tags = editValue.split(',').map((s) => s.trim()).filter(Boolean);
-    } else {
-      item[editing.field] = editValue;
-    }
+    const item: SrsItem = { ...items[editing.index], [editing.field]: editValue };
     items[editing.index] = item;
     update(items);
     setEditing(null);
@@ -236,8 +231,7 @@ const SRSTable: React.FC<SRSTableProps> = ({
             <th style={{ width: 160 }}>Code</th>
             <th>Text</th>
             <th style={{ width: 110 }} title="IEC 62304 §5.2.2 a)–l) — one or more; A1:2015 NOTE 10 says the categories can overlap. A category with no requirement is a question, not an omission">Category</th>
-            <th style={{ width: 150 }}>Tags</th>
-            <th style={{ width: 70 }}>Tests</th>
+            <th style={{ width: 70 }} title="Verifying tests, and the design and product requirement this traces to">Traces</th>
             <th style={{ width: 44 }} />
           </tr>
         </thead>
@@ -300,9 +294,6 @@ const SRSTable: React.FC<SRSTableProps> = ({
                         }
                       />
                     )}
-                  </td>
-                  <td className={isCellChanged(entry, 'tags') ? 'ct-changed' : undefined}>
-                    {item.heading ? '' : renderCell(index, 'tags')}
                   </td>
                   <td>
                     {item.heading ? '' : (

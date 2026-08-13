@@ -37,7 +37,7 @@ const srs: SrsDoc = {
   name: 'acme',
   title: 'Requirements',
   items: [
-    { id: 'r_1', code: 'REQ-1', text: 'The system shall store records.', tags: ['data'] },
+    { id: 'r_1', code: 'REQ-1', text: 'The system shall store records.' },
     { id: 'r_2', code: 'REQ-2', text: 'The system shall retain records for 7 years.' },
   ],
 };

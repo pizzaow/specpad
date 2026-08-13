@@ -287,22 +287,22 @@ same over a single staged diff); both **propose, never auto-apply**.
 Shared envelope on every file: `schemaVersion` ("1.0"), `type`
 ("project" | "srs" | "vtp" | "prd" | "sdd"), `name`, `title`.
 
-SRS item — REQUIRED `id`, `text`. Optional `code`, `satisfies`, `design`, `tags`, `hazards`, `heading`.
+SRS item — REQUIRED `id`, `text`. Optional `code`, `satisfies`, `design`, `category`, `hazards`, `heading`.
 VTP item — REQUIRED `id`, `text`. Optional `code`, `verifies`, `expected`, `result`,
-`notes`, `tags`, `heading`. `result` is one of "" | "not_tested" | "passed" | "failed".
-PRD item — REQUIRED `id`, `text`. Optional `code`, `tags`, `heading`. (PRD is the optional
+`notes`, `verificationLevel`, `heading`. `result` is one of "" | "not_tested" | "passed" | "failed".
+PRD item — REQUIRED `id`, `text`. Optional `code`, `status`, `heading`. (PRD is the optional
 product-requirements register; same item shape as the SRS.)
 SDD section — REQUIRED `id`, `title`. Optional `code`, `body` (markdown), `source`, `kind`
-(`unit` | `view`, default `unit`), `tags`, `heading`, `level`. (The detailed design; sections are
+(`unit` | `view`, default `unit`), `acceptance`, `segregatedFrom`, `segregationRationale`, `heading`, `level`. (The detailed design; sections are
 prose, not fields — see below.)
 Threat item — REQUIRED `id`, `text`. Optional `code`, `asset`, `entryPoint`, `category` (STRIDE),
 `exploitability`, `impact`, `causes`, `controls`, `justification`, `safetyRisk`, `residual`, `notes`,
-`tags`, `heading`, `level`.
+`heading`, `level`.
 SOUP item — REQUIRED `id`, `name`. Optional `code`, `vendor`, `version`, `releaseDate`, `license`,
 `url`, `purpose`, `requirements`, `runtime`, `limitations`, `endOfLife`, `endOfLifeSource`,
-`usedBy`, `tests`, `maintenance`, `notes`, `tags`, `heading`, `level`.
+`usedBy`, `tests`, `maintenance`, `notes`, `heading`, `level`.
 Risk item — REQUIRED `id`, `text`. Optional `code`, `hazardRef`, `severity`, `causes`, `controls`,
-`justification`, `residual`, `notes`, `tags`, `heading`, `level`. (The software risk analysis.)
+`justification`, `residual`, `sequence`, `notes`, `heading`, `level`. (The software risk analysis.)
 
 ## Product requirements (PRD) — optional upward trace
 

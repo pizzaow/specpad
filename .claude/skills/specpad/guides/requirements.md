@@ -58,9 +58,10 @@ Two the amendment changed, worth knowing if you learned the 2006 list: f) is **u
 requirements implemented by software** (it was usability engineering), and j) is **IT-network
 aspects** — which, for anything connected, is a category most registers should not be empty on.
 
-`category` is the standard's vocabulary; `tags` stay yours. Keeping them apart is deliberate: a closed
-list is what makes the coverage question answerable, because against free text an absent category and
-a misspelt one look identical.
+`category` is a closed list, and deliberately the only label an item carries. A free-form tag beside it
+would compete for the same job and lose: against free text an absent category and a misspelt one look
+identical, which is exactly what the coverage question cannot tolerate. Grouping by subsystem is what
+**headings** are for.
 
 **Set it on every requirement you write.** The rule is advisory so that established registers are not
 lit up overnight; that is a concession to existing projects, not permission for a thin new draft.

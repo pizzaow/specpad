@@ -134,11 +134,10 @@ export interface SrsItem {
    *
    * An enumeration rather than a free tag, because the point is the coverage question
    * ("is there really nothing under alarms?"), and against free text an absent category
-   * and a misspelt one look identical. `tags` remain the project's own vocabulary; this is
-   * the standard's.
+   * and a misspelt one look identical. Headings carry the project's own grouping, so there
+   * is no second free-form label competing with this one.
    */
   category?: RequirementCategory[];
-  tags?: string[];
   hazards?: string[];
 }
 
@@ -216,7 +215,6 @@ export interface VtpItem {
    */
   verificationLevel?: TestLevel;
   notes?: string;
-  tags?: string[];
   automation?: AutomationLink[]; // the automated test(s) that execute this verification (empty = manual)
 }
 
@@ -247,7 +245,6 @@ export interface PrdItem {
   heading?: boolean;
   level?: number;
   status?: PrdStatus;
-  tags?: string[];
 }
 
 export interface PrdDoc {
@@ -299,7 +296,6 @@ export interface SddSection {
   segregatedFrom?: string[];
   /** Why the segregation holds — A1:2015 asks how effectiveness is ensured, not only that it exists. */
   segregationRationale?: string;
-  tags?: string[];
 }
 
 export type SddSectionKind = 'unit' | 'view';
@@ -354,7 +350,6 @@ export interface RiskItem {
   justification?: string;
   residual?: ResidualRisk;
   notes?: string;
-  tags?: string[];
 }
 
 /**
@@ -423,7 +418,6 @@ export interface SoupItem {
   /** Supplier's development and support practices, and the end-of-life contingency. */
   maintenance?: string;
   notes?: string;
-  tags?: string[];
 }
 
 /**
@@ -466,7 +460,6 @@ export interface ThreatItem {
   safetyRisk?: string[];
   residual?: ResidualRisk;
   notes?: string;
-  tags?: string[];
 }
 
 /** STRIDE, the categorisation threat modelling has settled on. */
@@ -565,7 +558,6 @@ export const srsSchema = {
           satisfies: { ...stringArray, description: 'Ids of the PRD product requirements this requirement satisfies — ids, never codes, so renames cannot break the upward trace. Empty/absent unless a PRD register is in use.' },
           design: { ...stringArray, description: 'Ids of the SDD sections that implement this requirement — the downward trace (IEC 62304 5.4; FDA SDS). Ids, never codes, so a section can be retitled or rewritten without breaking the link. Empty/absent unless an SDD is in use.' },
           category: { type: 'array', items: { enum: ['functional', 'inputs-outputs', 'interfaces', 'alarms', 'security', 'user-interface', 'data-definition', 'installation', 'operation-maintenance', 'it-network', 'user-maintenance', 'regulatory'] }, description: 'Which of IEC 62304 5.2.2 a)-l) this requirement is. A list, because A1:2015 NOTE 10 states that the requirements in a) through l) can overlap. Its worth is coverage: a category with no requirement is a question to answer once, not an omission to discover at review.' },
-          tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
           hazards: { ...stringArray, description: 'Reserved hazard labels (legacy v1 field; the editor no longer surfaces it).' },
         },
       },
@@ -599,7 +591,6 @@ export const vtpSchema = {
           result: { enum: ['', 'not_tested', 'passed', 'failed'], description: 'Latest recorded outcome for a MANUAL test: "", "not_tested", "passed", or "failed". For automated tests the outcome is derived from a captured run, not stored here. Roll-ups are computed on read.' },
           verificationLevel: { enum: ['unit', 'integration', 'system'], description: 'Which verification activity this test belongs to: unit verification (IEC 62304 5.5), integration testing (5.6) or system testing (5.7). Without it a register can show requirements are covered by something, but not that each of the three activities was performed.' },
           notes: { type: 'string', description: 'Evidence and context for the recorded result (free text; the machine link lives in automation).' },
-          tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
           automation: {
             type: 'array',
             description: 'Framework-agnostic links to the automated test(s) that execute this verification. Absent/empty means the test is manual. The result for an automated test is derived from a captured run, never hand-set.',
@@ -641,7 +632,6 @@ export const prdSchema = {
           heading: { type: 'boolean', description: 'True when this item is a section heading rather than a product requirement.' },
           level: { type: 'integer', minimum: 0, description: 'Indent depth for hierarchy; absent means 0. Headings form dotted section codes.' },
           status: { enum: ['proposed', 'implemented'], description: 'Lifecycle: "implemented" (realized — must trace down to >=1 SRS requirement, enforced by prd-coverage) or "proposed" (approved intent not yet allocated; roadmap/vision, exempt from coverage). Absent is treated as not-yet-implemented (exempt).' },
-          tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
         },
       },
     },
@@ -675,7 +665,6 @@ export const sddSchema = {
           acceptance: { type: 'string', description: 'What "verified" means for this unit (IEC 62304 5.5.3; at Class C also 5.5.4 — event sequencing, resource use, fault handling, boundary values). A field rather than a line of prose, because 5.5.3 is asked per unit and buried in the body it cannot be rolled up or shown.' },
           segregatedFrom: { ...stringArray, description: 'Ids of other design sections this unit is segregated from, where the separation is essential to risk control (IEC 62304 5.3.5). Ids, never codes.' },
           segregationRationale: { type: 'string', description: 'Why the segregation holds. A1:2015 asks how effectiveness is ensured, not merely that separation was intended.' },
-          tags: { ...stringArray, description: 'Free-form labels; "draft" marks a generated section awaiting author review.' },
         },
       },
     },
@@ -711,7 +700,6 @@ export const riskSchema = {
           justification: { type: 'string', description: 'Why no software control is needed, when there is none — for example a risk controlled in hardware, by labelling, or accepted at system level.' },
           residual: { enum: ['acceptable', 'unacceptable', 'not_assessed'], description: 'The judgement recorded once the controls are in place. Absent is treated as not assessed.' },
           notes: { type: 'string', description: 'Free-text analysis notes.' },
-          tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
         },
       },
     },
@@ -754,7 +742,6 @@ export const soupSchema = {
           tests: { ...stringArray, description: "Ids of the VTP items exercising this component, where its behaviour is verified directly (FDA testing)." },
           maintenance: { type: 'string', description: "The supplier's development and support practices, and the plan for when support ends — obsolescence contingency (FDA, Enhanced documentation level)." },
           notes: { type: 'string', description: 'Free-text assessment notes.' },
-          tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
         },
       },
     },
@@ -826,7 +813,6 @@ export const threatSchema = {
           safetyRisk: { ...stringArray, description: 'Ids of the risk items for the safety risk that exploiting this threat would create. This join is the point of AAMI SW96: a security finding with a patient consequence belongs in the safety risk file as well as here.' },
           residual: { enum: ['acceptable', 'unacceptable', 'not_assessed'], description: 'The judgement recorded once the controls are in place. Absent is treated as not assessed.' },
           notes: { type: 'string', description: 'Free-text analysis notes.' },
-          tags: { ...stringArray, description: 'Free-form labels for filtering and grouping.' },
         },
       },
     },

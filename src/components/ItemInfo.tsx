@@ -13,7 +13,7 @@ interface InfoItem {
   id: string;
   heading?: boolean;
   level?: number;
-  tags?: string[];
+  category?: string[];
   hazards?: string[];
 }
 
@@ -55,7 +55,7 @@ const ItemInfo: React.FC<ItemInfoProps> = ({ item, code, noun, testCount, rows, 
               {!item.heading && rows?.map((r) => (
                 <React.Fragment key={r.label}><dt>{r.label}</dt><dd>{r.value}</dd></React.Fragment>
               ))}
-              <dt>Tags</dt><dd>{item.tags?.length ? item.tags.join(', ') : none}</dd>
+              <dt>Category</dt><dd>{item.category?.length ? item.category.join(', ') : none}</dd>
               <dt>Hazards</dt><dd>{item.hazards?.length ? item.hazards.join(', ') : none}</dd>
               <dt>Added</dt>
               <dd>{attribution ? `${attribution.addedBoundary ? '≤' : ''}${attribution.addedIn}` : <span className="text-muted">(uncommitted)</span>}</dd>

@@ -12,7 +12,7 @@ const doc: PrdDoc = {
   schemaVersion: '1.0', type: 'prd', name: 'Acme', title: 'Product Requirements',
   items: [
     { id: 'h_0', heading: true, text: 'Vision' },
-    { id: 'p_a', code: 'PROD-1', text: 'Built need.', status: 'implemented', tags: ['product'] },
+    { id: 'p_a', code: 'PROD-1', text: 'Built need.', status: 'implemented' },
     { id: 'p_b', code: 'PROD-2', text: 'Roadmap need.', status: 'proposed' },
   ],
 };

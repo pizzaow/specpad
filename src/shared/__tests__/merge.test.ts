@@ -42,15 +42,15 @@ describe('mergeItems — clean merges', () => {
   });
 
   it('merges changes to different fields of the same item without conflict (MRG-2)', () => {
-    const base = [req('r_1', 'the system shall store', { tags: ['schema'] })];
-    const ours = [req('r_1', 'the system shall store', { tags: ['schema', 'core'] })];
-    const theirs = [req('r_1', 'the system shall persist', { tags: ['schema'] })];
+    const base = [req('r_1', 'the system shall store', { category: ['data-definition'] })];
+    const ours = [req('r_1', 'the system shall store', { category: ['data-definition', 'functional'] })];
+    const theirs = [req('r_1', 'the system shall persist', { category: ['data-definition'] })];
 
     const result = mergeItems(base, ours, theirs);
 
     expect(result.conflicts).toEqual([]);
     expect(result.items).toEqual([
-      req('r_1', 'the system shall persist', { tags: ['schema', 'core'] }),
+      req('r_1', 'the system shall persist', { category: ['data-definition', 'functional'] }),
     ]);
   });
 
@@ -97,7 +97,7 @@ describe('mergeItems — clean merges', () => {
   });
 
   it('applies a field removed on one side', () => {
-    const base = [req('r_1', 'text', { tags: ['old'] })];
+    const base = [req('r_1', 'text', { category: ['functional'] })];
     const ours = [req('r_1', 'text')];
     const theirs = base;
 
@@ -105,7 +105,7 @@ describe('mergeItems — clean merges', () => {
 
     expect(result.conflicts).toEqual([]);
     expect(result.items).toEqual([req('r_1', 'text')]);
-    expect('tags' in result.items[0]).toBe(false);
+    expect('category' in result.items[0]).toBe(false);
   });
 
   it('does not treat a difference in item order as a conflict (MRG-4)', () => {
@@ -140,9 +140,9 @@ describe('mergeItems — clean merges', () => {
   });
 
   it('compares array fields order-insensitively, as the diff does', () => {
-    const base = [req('r_1', 'text', { tags: ['a', 'b'] })];
-    const ours = [req('r_1', 'text', { tags: ['b', 'a'] })];
-    const theirs = [req('r_1', 'changed', { tags: ['a', 'b'] })];
+    const base = [req('r_1', 'text', { category: ['functional', 'security'] })];
+    const ours = [req('r_1', 'text', { category: ['security', 'functional'] })];
+    const theirs = [req('r_1', 'changed', { category: ['functional', 'security'] })];
 
     const result = mergeItems(base, ours, theirs);
 
@@ -255,9 +255,9 @@ describe('mergeItems — conflicts', () => {
 
 describe('mergeItems — purity (MRG-1)', () => {
   it('never mutates its inputs', () => {
-    const base = [req('r_1', 'base', { tags: ['x'] })];
-    const ours = [req('r_1', 'ours', { tags: ['x', 'y'] })];
-    const theirs = [req('r_1', 'base', { tags: ['z'] })];
+    const base = [req('r_1', 'base', { category: ['functional'] })];
+    const ours = [req('r_1', 'ours', { category: ['functional', 'security'] })];
+    const theirs = [req('r_1', 'base', { category: ['alarms'] })];
     const snapshot = JSON.stringify({ base, ours, theirs });
 
     mergeItems(base, ours, theirs);

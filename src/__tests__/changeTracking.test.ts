@@ -33,10 +33,10 @@ describe('buildRedline', () => {
   });
 
   it('flags an array-field membership change in changedFields', () => {
-    const baseline = srs([{ id: 'r_1', text: 'A', tags: ['x', 'y'] }]);
-    const working = srs([{ id: 'r_1', text: 'A', tags: ['x', 'z'] }]);
+    const baseline = srs([{ id: 'r_1', text: 'A', category: ['functional', 'security'] }]);
+    const working = srs([{ id: 'r_1', text: 'A', category: ['functional', 'alarms'] }]);
     const r = buildRedline(baseline, working);
-    expect(r.byId.get('r_1')).toEqual({ status: 'modified', changedFields: ['tags'] });
+    expect(r.byId.get('r_1')).toEqual({ status: 'modified', changedFields: ['category'] });
   });
 });
 
