@@ -17,11 +17,16 @@ describe('specpad init', () => {
     expect(existsSync(fileURLToPath(new URL('../specpad/templates/CLAUDE.specpad.md', import.meta.url)))).toBe(true);
   });
 
-  it('ships a CLAUDE directive carrying the idempotency sentinel and the loop', () => {
+  it('ships a CLAUDE directive that points at the skill rather than restating it', () => {
     const tpl = read('templates/CLAUDE.specpad.md');
     expect(tpl).toContain('<!-- specpad:working-loop -->');
     expect(tpl).toMatch(/spec-first/i);
-    expect(tpl).toMatch(/active open job/i);
+    // The directive's job is to send the reader to SKILL.md and its guides, and to carry
+    // only the rules that hold whether or not they have got there yet.
+    expect(tpl).toMatch(/Read `SKILL\.md`/);
+    expect(tpl).toMatch(/guides/i);
+    expect(tpl).toMatch(/`Job:` trailer/);
+    expect(tpl).toMatch(/[Gg]overnance must be clean/);
   });
 
   it('scaffolds the full default document set, including the PRD register (INIT-4)', () => {

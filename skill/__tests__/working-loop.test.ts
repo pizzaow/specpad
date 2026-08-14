@@ -30,9 +30,12 @@ describe('skill documents the SpecPad working loop (primary capture)', () => {
     // not just SRS/VTP — the user-facing intent (PRD) and structural (architecture/SAD) types are called out
     expect(skill).toMatch(/PRD/);
     expect(skill).toMatch(/architecture|SAD/i);
-    // the CLAUDE.specpad.md project-memory template mirrors the same instruction
+    // The project-memory template deliberately does NOT mirror the instruction: a second
+    // copy of a procedure that changes is the one that goes stale, and a summary that is
+    // convenient to follow is how the loop gets followed without the guides being opened.
     const template = readFileSync(new URL('../specpad/templates/CLAUDE.specpad.md', import.meta.url), 'utf8');
-    expect(template).toMatch(/every registered document type/i);
-    expect(template).toMatch(/architecture/i);
+    expect(template).not.toMatch(/every registered document type/i);
+    expect(template).toMatch(/Read `SKILL\.md`/);
+    expect(template).toMatch(/deliberately does \*not\* restate/i);
   });
 });

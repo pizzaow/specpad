@@ -855,6 +855,11 @@ without being called wrong.
 - `vtp-verification-level`: Every non-heading VTP test should declare whether it is `unit`,
   `integration` or `system` verification — 62304 5.5, 5.6 and 5.7 are three activities with distinct
   records (`verificationLevel`). Advisory.
+- `sdd-unit-trace`: A requirement whose `design` references resolve **only** to sections of kind
+  `view` should also reach a software unit. A view describes structure across units and implements
+  nothing on its own — the same reason `risk-cause` requires a unit. Catches the reference that
+  resolves but resolves to the wrong kind of thing, which plain referential integrity cannot. Advisory,
+  because a genuine model-level invariant can legitimately live only in a view. Advisory.
 - `sdd-acceptance`: Every SDD section of kind `unit` should state its `acceptance` criteria — what
   "verified" means for it (5.5.3; at Class C also 5.5.4). Not asked of a design view. Advisory.
 - `risk-sequence`: Every non-heading risk should record the `sequence` of events from the software

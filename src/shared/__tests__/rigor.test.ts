@@ -161,3 +161,35 @@ describe('verification depth — one requirement is not one test', () => {
     expect(validate({ ...srsOne, items: [{ id: 'r_1', text: 'x', draft: true }] })).toEqual([]);
   });
 });
+
+describe('a reference can resolve and still be wrong (§5.4)', () => {
+  const design: SddDoc = {
+    schemaVersion: '1.0', type: 'sdd', name: 'A', title: 'Design',
+    items: [
+      { id: 'd_u', code: 'SDD-1', title: 'Rate check', kind: 'unit' },
+      { id: 'd_v', code: 'SDD-9', title: 'Information model', kind: 'view' },
+    ],
+  };
+
+  it('advises on a requirement that reaches only design views', () => {
+    // The failure this exists for: `sdd-referential-integrity` checks that a reference
+    // resolves, so a plausible wrong target passes it in silence.
+    const srsDoc: SrsDoc = {
+      schemaVersion: '1.0', type: 'srs', name: 'A', title: 'SRS',
+      items: [
+        { id: 'r_1', code: 'A-1', text: 'Range-check the rate.', design: ['d_v'] },
+        { id: 'r_2', code: 'A-2', text: 'Also range-check it.', design: ['d_v', 'd_u'] },
+      ],
+    };
+    const advice = checkAdvice({ srs: srsDoc, sdd: design });
+    expect(advice.filter((a) => a.rule === 'sdd-unit-trace').map((a) => a.itemId)).toEqual(['r_1']);
+  });
+
+  it('says nothing about a requirement that traces nowhere, which another rule owns', () => {
+    const srsDoc: SrsDoc = {
+      schemaVersion: '1.0', type: 'srs', name: 'A', title: 'SRS',
+      items: [{ id: 'r_1', code: 'A-1', text: 'Untraced.' }],
+    };
+    expect(checkAdvice({ srs: srsDoc, sdd: design }).some((a) => a.rule === 'sdd-unit-trace')).toBe(false);
+  });
+});

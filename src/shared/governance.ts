@@ -153,6 +153,13 @@ const RULES: GovernanceRule[] = [
       'A non-heading requirement whose tests are all `nominal` should also be tested on a boundary, a refusal, or under load. Advisory: a requirement proven only on the happy path has been shown to work when nothing goes wrong, which is the weaker half of the claim — and a near 1:1 register of requirements to tests is the shape that produces it.',
   },
   {
+    id: 'sdd-unit-trace',
+    tier: 'advisory',
+    title: 'Requirements reach a unit, not only a view',
+    description:
+      'A requirement whose `design` references resolve only to sections of kind "view" should also reach a software unit. A design view describes structure across units and implements nothing on its own — the same reason `risk-cause` requires a unit rather than a view. Advisory rather than blocking, because a genuine model-level invariant can legitimately live only in a view; the point is that it be a decision rather than an accident.',
+  },
+  {
     id: 'sdd-acceptance',
     tier: 'advisory',
     title: 'Units say what verified means',
@@ -256,6 +263,19 @@ function advisoryFindings(bundle: ProjectBundle): GovernanceFinding[] {
       const ts = testsFor.get(req.id) ?? [];
       if (!ts.length || ts.some((t) => t.kind && t.kind !== 'nominal')) continue;
       advise('vtp-negative-path', req.id, `Requirement ${req.code ?? req.id} is verified only by nominal tests — nothing exercises a boundary, a refusal, or load.`);
+    }
+  }
+
+  // A requirement pointing only at views. This catches the reference that resolves but
+  // resolves to the wrong kind of thing — governance checks resolution, and a plausible
+  // wrong target passes it silently.
+  if (bundle.sdd) {
+    const kindOf = new Map(bundle.sdd.items.map((s) => [s.id, s.kind ?? 'unit']));
+    for (const req of bundle.srs?.items ?? []) {
+      if (req.heading) continue;
+      const refs = (req.design ?? []).filter((d) => kindOf.has(d));
+      if (!refs.length || refs.some((d) => kindOf.get(d) === 'unit')) continue;
+      advise('sdd-unit-trace', req.id, `Requirement ${req.code ?? req.id} reaches only design views, and no software unit implements it.`);
     }
   }
 

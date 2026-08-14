@@ -1,20 +1,23 @@
 <!-- specpad:working-loop -->
 ## SpecPad — capture requirements as you build
 
-This project uses **SpecPad**. Treat requirements and verification tests as a first-class output of
-development, captured **spec-first** and attributed to a job — not written up afterward. Follow the
-SpecPad working loop (see the specpad skill's `SKILL.md`):
+This project uses **SpecPad**: requirements and verification tests are a first-class output of
+development, captured **spec-first** and attributed to a job — never written up afterward.
 
-1. Ensure an **active open job** (`docs/specpad/<name>.job.json` → `docs/specpad/<name>.jobs.json`).
-2. **Evaluate the job's impact on every registered document type** — requirements (SRS) + a verifying
-   VTP test, and also the **product requirements (PRD)** if user-facing intent changed and the
-   **architecture (SAD + diagrams)** if a component/module/interface/contract changed (and any other
-   pillar). Update each affected one spec-first; capture intent, not transcript. Most jobs touch
-   SRS/VTP; structural changes also touch the SAD — don't let it drift.
-3. Author the automated test where the behavior is automatable; keep governance clean.
-4. Write the updates autonomously, then tell me the codes you captured and which document types you
-   touched, so I can correct them.
+**Read `SKILL.md` from the specpad skill before doing spec work, and read the matching guide in its
+`guides/` folder before writing each kind of entry.** This section deliberately does *not* restate the
+working loop. A summary here would be a second copy of a procedure that changes, and the copy that is
+convenient to follow is the one that goes stale — which is exactly how a loop gets followed from memory
+and its guides never opened.
 
-Every commit must reference a job (a `Job:` trailer); the pre-push hook enforces it. A genuine
-refactor or comment-only change with no requirement uses a `Spec: none <reason>` trailer.
+Three things that hold whether or not you have read it yet:
+
+- **Every commit references a job** (a `Job:` trailer); the pre-push hook enforces it. A genuine
+  refactor or comment-only change with no requirement uses a `Spec: none <reason>` trailer.
+- **A change to product behaviour is not done until its requirement and verifying test exist**, in the
+  same commit as the code.
+- **Governance must be clean before you call anything finished** — run it, do not assume it.
+
+If you find yourself about to write a requirement, a test, a design section, a risk, a component or a
+threat without having opened the guide for it, that is the moment to open it.
 <!-- /specpad:working-loop -->

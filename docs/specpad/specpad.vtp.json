@@ -5489,6 +5489,91 @@
           "selector": "verification depth"
         }
       ]
+    },
+    {
+      "id": "t_utr1a",
+      "verifies": [
+        "r_utr1"
+      ],
+      "verificationLevel": "unit",
+      "kind": "nominal",
+      "text": "Read the advisory result for a requirement reaching only a view, and one reaching a view and a unit.",
+      "expected": "Only the requirement reaching no unit is advised on, named by its code.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/shared/__tests__/rigor.test.ts",
+          "selector": "a reference can resolve and still be wrong"
+        }
+      ]
+    },
+    {
+      "id": "t_utr1b",
+      "verifies": [
+        "r_utr1"
+      ],
+      "verificationLevel": "unit",
+      "kind": "boundary",
+      "text": "Read the advisory result for a requirement that references no design section at all.",
+      "expected": "Nothing is advised by this rule; an untraced requirement belongs to sdd-coverage rather than here.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/shared/__tests__/rigor.test.ts",
+          "selector": "a reference can resolve and still be wrong"
+        }
+      ]
+    },
+    {
+      "id": "t_par1a",
+      "verifies": [
+        "r_par1"
+      ],
+      "verificationLevel": "integration",
+      "kind": "nominal",
+      "text": "Compare every field name the skill documents per document type against that type schema, and every required field against the skill.",
+      "expected": "Each documented field exists in the schema and each required field is documented; enum values named inside a field list are not mistaken for fields.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "skill/__tests__/parity.test.ts",
+          "selector": "skill ↔ schema field parity"
+        }
+      ]
+    },
+    {
+      "id": "t_par1b",
+      "verifies": [
+        "r_par1"
+      ],
+      "verificationLevel": "integration",
+      "kind": "negative",
+      "text": "Document a field on an item type that the schema does not define, and run the check.",
+      "expected": "The check fails, naming the field and the item type it was documented on.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "skill/__tests__/parity.test.ts",
+          "selector": "skill ↔ schema field parity"
+        }
+      ]
+    },
+    {
+      "id": "t_tpl1a",
+      "verifies": [
+        "r_tpl1"
+      ],
+      "verificationLevel": "unit",
+      "kind": "nominal",
+      "text": "Read the installed directive template.",
+      "expected": "It instructs reading SKILL.md and the matching guide, states why it does not restate the loop, and carries only the standing rules that hold regardless.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "skill/__tests__/init.test.ts",
+          "selector": "init"
+        }
+      ]
     }
   ]
 }

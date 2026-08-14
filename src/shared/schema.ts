@@ -73,6 +73,7 @@ export type GovernanceRuleId =
   | 'vtp-negative-path'
   | 'sdd-segregation'
   // Advisory (JOB-56): asked of every unit and every risk, adopted when a project is ready.
+  | 'sdd-unit-trace'
   | 'sdd-acceptance'
   | 'risk-sequence';
 

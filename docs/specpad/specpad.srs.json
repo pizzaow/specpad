@@ -17,7 +17,8 @@
         "p_pr001"
       ],
       "design": [
-        "d_inf001"
+        "d_inf001",
+        "d_sch001"
       ],
       "category": [
         "data-definition"
@@ -136,7 +137,8 @@
       "code": "DATA-1",
       "text": "Derived values such as per-requirement test counts shall be computed on read and never stored in the files.",
       "design": [
-        "d_inf001"
+        "d_inf001",
+        "d_sch001"
       ],
       "category": [
         "data-definition"
@@ -150,7 +152,8 @@
         "p_gh01"
       ],
       "design": [
-        "d_inf001"
+        "d_inf001",
+        "d_sch001"
       ],
       "category": [
         "data-definition"
@@ -4378,6 +4381,39 @@
         "data-definition"
       ],
       "text": "A requirement, test or design section drafted by a tool shall be able to be marked as a draft awaiting ratification."
+    },
+    {
+      "id": "r_utr1",
+      "code": "UTR-1",
+      "design": [
+        "d_gov001"
+      ],
+      "category": [
+        "regulatory"
+      ],
+      "text": "A requirement whose design references resolve only to cross-cutting views shall be advised on, so that a reference which resolves to the wrong kind of section is surfaced rather than passing silently."
+    },
+    {
+      "id": "r_par1",
+      "code": "PAR-1",
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ],
+      "text": "The field names the skill documents for each document type shall be checked against the schema, and every required field shall be documented."
+    },
+    {
+      "id": "r_tpl1",
+      "code": "TPL-1",
+      "design": [
+        "d_tpl001"
+      ],
+      "category": [
+        "functional"
+      ],
+      "text": "The directive the skill installs into a project shall point at the skill rather than restate its working loop, so no second copy of the procedure can go stale."
     }
   ]
 }
