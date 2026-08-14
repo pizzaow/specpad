@@ -1,0 +1,4328 @@
+{
+  "schemaVersion": "1.0",
+  "type": "srs",
+  "name": "specpad",
+  "title": "Software Requirements",
+  "items": [
+    {
+      "id": "h_d0c0",
+      "heading": true,
+      "text": "Documents and schema"
+    },
+    {
+      "id": "r_a101",
+      "code": "DOC-1",
+      "text": "The system shall store project documentation as JSON files under docs/specpad/: one project index, one SRS (requirements), and one VTP (verification tests).",
+      "satisfies": [
+        "p_pr001"
+      ],
+      "design": [
+        "d_inf001"
+      ],
+      "category": [
+        "data-definition"
+      ]
+    },
+    {
+      "id": "r_a102",
+      "code": "DOC-2",
+      "text": "Every document file shall carry a schemaVersion of \"1.0\" and a type of \"project\", \"srs\", or \"vtp\".",
+      "design": [
+        "d_inf001",
+        "d_sch001"
+      ],
+      "category": [
+        "data-definition"
+      ]
+    },
+    {
+      "id": "r_a103",
+      "code": "DOC-3",
+      "text": "Every document shall include a short system name and a human-readable title.",
+      "design": [
+        "d_inf001",
+        "d_sch001"
+      ],
+      "category": [
+        "data-definition"
+      ]
+    },
+    {
+      "id": "r_a104",
+      "code": "DOC-4",
+      "text": "Every SRS and VTP item shall have a required, stable id and required text; all other fields are optional.",
+      "design": [
+        "d_inf001",
+        "d_sch001"
+      ],
+      "category": [
+        "data-definition"
+      ]
+    },
+    {
+      "id": "r_a105",
+      "code": "DOC-5",
+      "text": "A VTP item's result, when present, shall be one of \"\", \"not_tested\", \"passed\", or \"failed\".",
+      "design": [
+        "d_inf001",
+        "d_sch001"
+      ],
+      "category": [
+        "data-definition",
+        "inputs-outputs"
+      ]
+    },
+    {
+      "id": "h_d0c1",
+      "heading": true,
+      "text": "Stable identity and references"
+    },
+    {
+      "id": "r_a201",
+      "code": "ID-1",
+      "text": "Every item shall have a stable identifier that is generated once and never changes.",
+      "design": [
+        "d_pat001",
+        "d_ids001"
+      ],
+      "category": [
+        "data-definition"
+      ]
+    },
+    {
+      "id": "r_a202",
+      "code": "ID-2",
+      "text": "Item identifiers shall use a typed prefix (\"r_\" for requirements, \"t_\" for tests, \"h_\" for headings) followed by a random suffix.",
+      "design": [
+        "d_pat001",
+        "d_ids001"
+      ],
+      "category": [
+        "data-definition",
+        "inputs-outputs"
+      ]
+    },
+    {
+      "id": "r_a203",
+      "code": "ID-3",
+      "text": "All cross-references (a test's verifies list) shall target item ids, never human-readable code labels.",
+      "design": [
+        "d_ids001",
+        "d_dif001"
+      ],
+      "category": [
+        "data-definition"
+      ]
+    },
+    {
+      "id": "r_a204",
+      "code": "ID-4",
+      "text": "Renaming an item's human label (code) shall never alter its id or break an existing reference.",
+      "design": [
+        "d_pat001",
+        "d_ids001"
+      ],
+      "category": [
+        "data-definition"
+      ]
+    },
+    {
+      "id": "h_d0c2",
+      "heading": true,
+      "text": "No derived or historical data"
+    },
+    {
+      "id": "r_a301",
+      "code": "DATA-1",
+      "text": "Derived values such as per-requirement test counts shall be computed on read and never stored in the files.",
+      "design": [
+        "d_inf001"
+      ],
+      "category": [
+        "data-definition"
+      ]
+    },
+    {
+      "id": "r_a302",
+      "code": "DATA-2",
+      "text": "The files shall not store edit history (author, timestamps, change lists); git is the history layer.",
+      "satisfies": [
+        "p_gh01"
+      ],
+      "design": [
+        "d_inf001"
+      ],
+      "category": [
+        "data-definition"
+      ]
+    },
+    {
+      "id": "h_d0c3",
+      "heading": true,
+      "text": "Validation and governance"
+    },
+    {
+      "id": "r_a401",
+      "code": "VAL-1",
+      "text": "A shared validation module shall structurally validate each document against the v1 JSON Schema for its type.",
+      "design": [
+        "d_val001"
+      ],
+      "category": [
+        "functional",
+        "data-definition"
+      ]
+    },
+    {
+      "id": "r_a402",
+      "code": "VAL-2",
+      "text": "Structural validation shall enforce required fields, value types, and the result enum, but not policy rules.",
+      "design": [
+        "d_val001"
+      ],
+      "category": [
+        "data-definition",
+        "inputs-outputs",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_a403",
+      "code": "GOV-1",
+      "text": "Governance shall enforce traceability: every non-heading requirement is verified by at least one test.",
+      "satisfies": [
+        "p_ds01"
+      ],
+      "design": [
+        "d_gov001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_a404",
+      "code": "GOV-2",
+      "text": "Governance shall enforce referential integrity: every verifies entry resolves to an existing requirement id.",
+      "design": [
+        "d_gov001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_a405",
+      "code": "GOV-3",
+      "text": "Governance shall enforce expected-result presence: every non-heading test has a non-empty expected value.",
+      "design": [
+        "d_gov001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_a406",
+      "code": "GOV-4",
+      "text": "Heading items shall be exempt from the traceability and expected-result governance checks.",
+      "design": [
+        "d_gov001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_a407",
+      "code": "GOV-5",
+      "text": "The editor and the skill shall enforce the same governance rules from a single source of truth.",
+      "satisfies": [
+        "p_pc01"
+      ],
+      "design": [
+        "d_gov001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "h_d0c4",
+      "heading": true,
+      "text": "Editor"
+    },
+    {
+      "id": "r_a501",
+      "code": "ED-1",
+      "text": "The editor shall read and write the JSON files locally via the File System Access API, with an upload/download fallback for unsupported browsers.",
+      "design": [
+        "d_tlc001"
+      ],
+      "category": [
+        "interfaces",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_a502",
+      "code": "ED-2",
+      "text": "The editor shall display each requirement's verifying-test count, computed on read from the VTP verifies references.",
+      "design": [
+        "d_app001",
+        "d_api001"
+      ],
+      "category": [
+        "functional",
+        "user-interface"
+      ]
+    },
+    {
+      "id": "r_a503",
+      "code": "ED-3",
+      "text": "The editor shall record test results and notes on VTP items.",
+      "design": [
+        "d_app001",
+        "d_api001"
+      ],
+      "category": [
+        "functional",
+        "user-interface"
+      ]
+    },
+    {
+      "id": "r_a504",
+      "code": "ED-4",
+      "text": "The editor shall surface structural errors and governance warnings to the user live.",
+      "design": [
+        "d_app001",
+        "d_api001"
+      ],
+      "category": [
+        "alarms",
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_a505",
+      "code": "ED-5",
+      "text": "The editor shall flag a test whose verifies reference does not resolve to a requirement.",
+      "design": [
+        "d_app001",
+        "d_api001"
+      ],
+      "category": [
+        "alarms",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_a506",
+      "code": "ED-6",
+      "text": "The editor shall open the document indicated by the launcher's deep-link parameters and preserve item ids across a load/edit/save round-trip.",
+      "design": [
+        "d_lch001",
+        "d_lnc001"
+      ],
+      "category": [
+        "interfaces",
+        "functional"
+      ]
+    },
+    {
+      "id": "h_d0c5",
+      "heading": true,
+      "text": "Skill and launcher"
+    },
+    {
+      "id": "r_a601",
+      "code": "SKILL-1",
+      "text": "The skill shall scaffold docs/specpad/ and create or edit documents programmatically, generating stable ids.",
+      "satisfies": [
+        "p_sk01"
+      ],
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_a602",
+      "code": "SKILL-2",
+      "text": "The skill shall validate structure and governance before reporting a task complete.",
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_a603",
+      "code": "SKILL-3",
+      "text": "The skill shall generate a launcher (index.html) that redirects to the version-pinned hosted editor at specpad.com/v01/.",
+      "satisfies": [
+        "p_ed01"
+      ],
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "interfaces",
+        "installation"
+      ],
+      "securityControl": [
+        "updatability"
+      ]
+    },
+    {
+      "id": "r_ms001",
+      "code": "SKILL-4",
+      "text": "The schema reference page shall be generated at build time from the shared schema and governance modules, and the build shall fail if any schema field lacks a description.",
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ms002",
+      "code": "SKILL-5",
+      "text": "The distributable skill shall be downloadable from the site as a zip archive rebuilt from the repository at every deploy.",
+      "satisfies": [
+        "p_oss01"
+      ],
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "installation",
+        "functional"
+      ]
+    },
+    {
+      "id": "h_ce100",
+      "heading": true,
+      "text": "Change tracking"
+    },
+    {
+      "id": "r_ce101",
+      "code": "CT-1",
+      "text": "The editor shall show which requirements and tests have changed since the latest release by diffing the working documents against the cached baseline snapshot.",
+      "design": [
+        "d_chg001",
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ce102",
+      "code": "CT-2",
+      "text": "Differences shall be computed by stable id, so renaming a code label or reordering items is not reported as a change.",
+      "design": [
+        "d_dif001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ce103",
+      "code": "CT-3",
+      "text": "The editor shall compute all change views; the skill shall not compute diffs, so both halves share one diff implementation and cannot disagree.",
+      "design": [
+        "d_chg001",
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ce104",
+      "code": "CT-4",
+      "text": "The skill shall maintain a committed, regenerable cache of raw document snapshots plus a release manifest under docs/specpad/; no computed diffs shall be stored.",
+      "design": [
+        "d_chg001",
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ce105",
+      "code": "CT-5",
+      "text": "The release manifest shall record, for each release, its version, git ref, date, and the author of the tagged commit.",
+      "design": [
+        "d_chg001",
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ce106",
+      "code": "CT-6",
+      "text": "The editor shall derive per-item attribution (the version an item was added in and last changed in) from the cached snapshots and show the responsible release author.",
+      "design": [
+        "d_chg001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ce107",
+      "code": "CT-7",
+      "text": "The editor shall present the release history from the manifest, indicating the current baseline.",
+      "design": [
+        "d_chg001",
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ce108",
+      "code": "CT-8",
+      "text": "Spec changes shall be associated with a development job via a current-job marker and a commit trailer, never by a field stored on individual items.",
+      "design": [
+        "d_chg001",
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ce109",
+      "code": "CT-9",
+      "text": "When the change-tracking cache is absent, the editor shall remain fully editable and indicate that history is unavailable.",
+      "design": [
+        "d_deg001",
+        "d_chg001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ce110",
+      "code": "CT-10",
+      "text": "The skill shall always cache the latest release snapshot and pull older release snapshots only on demand.",
+      "design": [
+        "d_chg001",
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "h_ed0a00",
+      "heading": true,
+      "code": "Authoring",
+      "text": "Editor — authoring"
+    },
+    {
+      "id": "r_ed0a01",
+      "code": "EDA-1",
+      "text": "The requirements editor shall support a hierarchy via an optional per-item level (indent depth); adding a child inserts a new requirement one level deeper.",
+      "level": 1,
+      "design": [
+        "d_tbl001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ed0a02",
+      "code": "EDA-2",
+      "text": "A heading row shall display a derived dotted code from its ancestor heading code segments (e.g. Shell.SaveState), not the literal word \"heading\".",
+      "level": 1,
+      "design": [
+        "d_tbl001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ed0a03",
+      "code": "EDA-3",
+      "text": "Each requirement row shall expose a hamburger menu offering add requirement (above/below/child), add heading, indent/outdent, delete (with confirmation), and view information; outdent is disabled at level 0.",
+      "level": 1,
+      "design": [
+        "d_tbl001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ed0a08",
+      "code": "EDA-8",
+      "text": "The open row-actions menu shall render above surrounding table content — never obscured by other rows or columns — by rendering in a portal outside the table (not nested inside a row's stacking context) at a popover-level stacking order; it stays anchored to its trigger and dismisses on scroll or resize.",
+      "level": 1,
+      "design": [
+        "d_chr001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ed0a04",
+      "code": "EDA-4",
+      "text": "A requirement row shall offer a toggle that reveals its full trace: the product requirements it satisfies, the design sections implementing it, and the tests verifying it with their recorded results.",
+      "level": 1,
+      "design": [
+        "d_tbl001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ed0a05",
+      "code": "EDA-5",
+      "text": "The requirements table shall not show a Hazards column; an item's hazards shall be shown read-only in the item-information modal.",
+      "level": 1,
+      "design": [
+        "d_tbl001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ed0a06",
+      "code": "EDA-6",
+      "text": "The editor shall render changes since the latest release as a Word-style redline: added and modified rows highlighted, and removed rows shown inline, struck through, in place.",
+      "level": 1,
+      "design": [
+        "d_chg001",
+        "d_tbl001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ed0a07",
+      "code": "EDA-7",
+      "text": "Requirement rows shall be reorderable by drag-and-drop.",
+      "level": 1,
+      "design": [
+        "d_tbl001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "h_ed0b00",
+      "heading": true,
+      "code": "Shell",
+      "text": "Editor — application shell"
+    },
+    {
+      "id": "r_ed0b01",
+      "code": "EDS-1",
+      "text": "The editor shall present an application menu bar that consolidates the app brand and primary actions, replacing the former page header and toolbar.",
+      "level": 1,
+      "satisfies": [
+        "p_pr003"
+      ],
+      "design": [
+        "d_chr001",
+        "d_app001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ed0b02",
+      "code": "EDS-2",
+      "text": "The menu bar's File menu shall offer New document, Open project, and Change directory, or an upload/download fallback when the File System Access API is unavailable.",
+      "level": 1,
+      "design": [
+        "d_chr001",
+        "d_app001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ed0b03",
+      "code": "EDS-3",
+      "text": "When the open directory holds several projects, the menu bar brand shall switch between them via a dropdown.",
+      "level": 1,
+      "design": [
+        "d_app001",
+        "d_chr001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ed0b04",
+      "code": "EDS-4",
+      "text": "Document views shall be presented as tabs (Requirements, Verification Tests, Results), extensible to further document types, with a tab disabled when its document is absent.",
+      "level": 1,
+      "design": [
+        "d_chr001",
+        "d_app001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ed0b05",
+      "code": "EDS-5",
+      "text": "A footer status bar shall summarize validation — clean, or a clickable error/warning count that expands the detail messages.",
+      "level": 1,
+      "design": [
+        "d_chr001",
+        "d_app001"
+      ],
+      "category": [
+        "alarms",
+        "user-interface"
+      ]
+    },
+    {
+      "id": "r_ed0b06",
+      "code": "EDS-6",
+      "text": "Release history shall be available on demand from a menu-bar version chip that opens a dialog (or an empty state prompting a refresh).",
+      "level": 1,
+      "design": [
+        "d_chr001",
+        "d_app001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ed0b12",
+      "code": "EDS-12",
+      "text": "The editor shall remember recently opened project folders via persisted directory handles, reopen them without re-picking the folder, and let the user forget a remembered folder.",
+      "level": 1,
+      "design": [
+        "d_hst001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "h_ed0b50",
+      "heading": true,
+      "code": "SaveState",
+      "text": "Save and document state",
+      "level": 1
+    },
+    {
+      "id": "r_ed0b07",
+      "code": "EDS-7",
+      "text": "The document tables shall be controlled: the shell owns the working document and edits are reported via an onChange callback; tables render no internal Save button.",
+      "level": 2,
+      "design": [
+        "d_chr001",
+        "d_app001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ed0b08",
+      "code": "EDS-8",
+      "text": "The menu-bar Save control shall reflect unsaved changes (an indicator when dirty, disabled when clean), and Ctrl/Cmd-S shall save.",
+      "level": 2,
+      "design": [
+        "d_chr001",
+        "d_app001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ed0b09",
+      "code": "EDS-9",
+      "text": "Switching project or document with unsaved changes shall prompt before discarding, and a page-close (beforeunload) guard shall warn when changes are unsaved.",
+      "level": 2,
+      "design": [
+        "d_chr001",
+        "d_app001"
+      ],
+      "category": [
+        "alarms",
+        "user-interface"
+      ]
+    },
+    {
+      "id": "h_ed0b60",
+      "heading": true,
+      "code": "Demo",
+      "text": "Demo mode",
+      "level": 1
+    },
+    {
+      "id": "r_ed0b10",
+      "code": "EDS-10",
+      "text": "When launched with the demo query parameter, the editor shall load the project over HTTP from the hosted /demo/ directory, with the document tables, testing view, validation, version history, redlines, and the job indicator all available.",
+      "level": 2,
+      "design": [
+        "d_tdm001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ed0b11",
+      "code": "EDS-11",
+      "text": "Demo mode shall be a sandbox: every document shall be editable, edits shall be held in the browser only and lost on reload, the editor shall display a visible indicator saying so, and the save control shall offer the document as a file download rather than writing it anywhere.",
+      "level": 2,
+      "design": [
+        "d_tdm001",
+        "d_app001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "h_jb000",
+      "heading": true,
+      "text": "Jobs and change attribution"
+    },
+    {
+      "id": "r_jb001",
+      "code": "JOBS-1",
+      "text": "The skill shall maintain an owned jobs register (<name>.jobs.json) of job records — each with a stable id, an optional code label, a title, an optional description, and an open/closed status — used when there is no external tracker.",
+      "satisfies": [
+        "p_pr002"
+      ],
+      "design": [
+        "d_skl001",
+        "d_jbv001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_jb002",
+      "code": "JOBS-2",
+      "text": "The jobs register shall store records only; a job's change-set (the requirements, tests, and source it touched) shall be derived from git commit trailers on demand and never stored.",
+      "design": [
+        "d_skl001",
+        "d_jbv001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_jb003",
+      "code": "JOBS-3",
+      "text": "The active-job marker (<name>.job.json) shall name one or more active jobs as a list (with a legacy single job still read), and the skill shall write one Job: commit trailer per active job, carrying each job record's stable id.",
+      "satisfies": [
+        "p_wf01"
+      ],
+      "design": [
+        "d_skl001",
+        "d_jbv001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_jb004",
+      "code": "JOBS-4",
+      "text": "When a jobs register exists, governance shall flag any active-job entry that does not resolve to a record in it, and any that points at a closed record.",
+      "design": [
+        "d_skl001",
+        "d_jbv001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_jb005",
+      "code": "JOBS-5",
+      "text": "The editor shall provide a Jobs view to list, create, and edit job records and to choose the active job(s) by multi-select, never offering a closed job for activation and allowing a closed-but-active job to be removed.",
+      "design": [
+        "d_skl001",
+        "d_jbv001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_jb006",
+      "code": "JOBS-6",
+      "text": "A closed job's scope shall be sealed: the skill shall not reactivate a closed job for new work but shall create a new job record instead.",
+      "design": [
+        "d_skl001",
+        "d_jbv001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_jb007",
+      "code": "JOBS-7",
+      "text": "Every commit that changes requirements or tests shall reference at least one open job; a git pre-push gate shall block any pushed commit that lacks a Job reference.",
+      "design": [
+        "d_skl001",
+        "d_jbv001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_jb008",
+      "code": "JOBS-8",
+      "text": "A source change that adds or alters a product behavior shall be accompanied by the corresponding SRS and VTP updates in the same job; a commit that changes code without a requirement shall be flagged so a requirement can be proposed (derived from the diff) and ratified or explicitly waived.",
+      "design": [
+        "d_skl001",
+        "d_jbv001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_jb009",
+      "code": "JOBS-9",
+      "text": "A pre-push git hook shall enforce these gates across the pushed commits — blocking any commit without a Job trailer and warning when code changed with no SRS/VTP — while skipping merge commits, tag pushes, and history before SpecPad was adopted, and offering a per-commit waiver (a Spec: none trailer) and an emergency bypass.",
+      "design": [
+        "d_skl001",
+        "d_jbv001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_jb010",
+      "code": "JOBS-10",
+      "text": "In a SpecPad-governed repo, the skill shall capture requirements and verification tests as a first-class output of development — distilling the user's expressed intent into the SRS/VTP spec-first (before or alongside implementation) and attributing it to the active job — rather than documenting after the fact.",
+      "design": [
+        "d_skl001",
+        "d_jbv001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_jb011",
+      "code": "JOBS-11",
+      "text": "Requirement capture shall distill durable, testable statements of externally-observable behavior or governing constraints; incidental implementation detail and exploratory discussion that did not land shall not become requirements.",
+      "design": [
+        "d_skl001",
+        "d_jbv001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_jb012",
+      "code": "JOBS-12",
+      "text": "Captured requirements and tests shall be written autonomously and then surfaced to the user for correction, and each captured requirement shall carry a verifying test (and an automated test where the behavior is automatable).",
+      "design": [
+        "d_skl001",
+        "d_jbv001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_jb013",
+      "code": "JOBS-13",
+      "text": "A job record shall carry an optional release-note-voice description (short, user-facing summary) and an optional engineer-voice technical_notes field (root cause, mechanism, files touched); both remain prose and validation-optional, and the editor shall render technical_notes only in the job detail view (not the release-notes list).",
+      "design": [
+        "d_skl001",
+        "d_jbv001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "h_in000",
+      "heading": true,
+      "text": "Onboarding (specpad init)"
+    },
+    {
+      "id": "r_in001",
+      "code": "INIT-1",
+      "text": "The skill shall provide an idempotent init setup that, in one step, scaffolds docs/specpad/, generates the launcher, installs the pre-push hook (via core.hooksPath), and wires the SpecPad working-loop directive into the project CLAUDE.md — so a freshly-installed skill is fully configured with no manual steps.",
+      "satisfies": [
+        "p_in01"
+      ],
+      "design": [
+        "d_skl001",
+        "d_tpl001"
+      ],
+      "category": [
+        "installation",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_in002",
+      "code": "INIT-2",
+      "text": "init shall be safe to re-run: it shall not overwrite existing SpecPad documents, shall not duplicate the CLAUDE.md directive (guarded by a sentinel marker), and shall not clobber an existing core.hooksPath set to another directory.",
+      "design": [
+        "d_skl001",
+        "d_tpl001"
+      ],
+      "category": [
+        "installation",
+        "operation-maintenance",
+        "functional",
+        "user-maintenance"
+      ]
+    },
+    {
+      "id": "r_in003",
+      "code": "INIT-3",
+      "text": "init shall never overwrite an existing project CLAUDE.md; it shall append the SpecPad directive, creating CLAUDE.md only if absent.",
+      "design": [
+        "d_skl001",
+        "d_tpl001"
+      ],
+      "category": [
+        "installation",
+        "operation-maintenance",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_in004",
+      "code": "INIT-4",
+      "text": "init shall scaffold the full default document set — including the PRD register — listing each document in the project index, so user-need traceability is available from the start (a project may delete the PRD).",
+      "satisfies": [
+        "p_in01"
+      ],
+      "design": [
+        "d_skl001",
+        "d_tpl001"
+      ],
+      "category": [
+        "installation",
+        "functional"
+      ]
+    },
+    {
+      "id": "h_bg000",
+      "heading": true,
+      "text": "Baseline generation (existing projects)"
+    },
+    {
+      "id": "r_bg001",
+      "code": "BASE-1",
+      "text": "The skill shall provide a baseline generator that drafts an initial SRS and VTP from an existing codebase — surveying entry points, public surfaces, modules, docs, and existing tests — so SpecPad can be adopted on a project that did not start with it.",
+      "satisfies": [
+        "p_bl01"
+      ],
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_bg002",
+      "code": "BASE-2",
+      "text": "Generated requirements shall be drafts proposed for human ratification, not authoritative: each shall be tagged `draft` and surfaced for review, and deriving a requirement from code shall never bypass the user's confirmation of intent.",
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_bg003",
+      "code": "BASE-3",
+      "text": "The generator shall distill testable behavioral requirements at the \"shall\" altitude — one per distinct externally-observable behavior or constraint, not implementation detail — and produce governance-clean output (every requirement carries a verifying VTP entry with an expected result).",
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_bg004",
+      "code": "BASE-4",
+      "text": "The generator shall map requirements to existing automated tests where present (named in the VTP notes, with result reflecting the test) and shall record a behavior with no test as a not_tested gap rather than omitting it.",
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_bg005",
+      "code": "BASE-5",
+      "text": "The generator shall report its coverage explicitly — what it covered and what it could not — rather than silently truncating.",
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_bg006",
+      "code": "BASE-6",
+      "text": "When adopting an existing project the baseline generator shall by default draft the full configured document set — a PRD (user needs / product intent, proposed for ratification, with SRS items linked up via satisfies) and a starter arc42 architecture (context + building-block diagram) in addition to the SRS and VTP — each declinable per project; it shall be registry-aware (drafting the project's configured document types) so future pillars are constructed the same way.",
+      "satisfies": [
+        "p_bl01"
+      ],
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "h_au000",
+      "heading": true,
+      "text": "Requirement audit (drift detection)"
+    },
+    {
+      "id": "r_au001",
+      "code": "AUDIT-1",
+      "text": "The skill shall provide a requirement audit that reconciles the existing SRS/VTP against the whole codebase and reports drift in both directions; the commit-time audit is the same check scoped to a staged diff.",
+      "satisfies": [
+        "p_au01"
+      ],
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional",
+        "user-maintenance"
+      ]
+    },
+    {
+      "id": "r_au002",
+      "code": "AUDIT-2",
+      "text": "The audit shall flag code behavior that has no requirement (missing) and propose a draft requirement, with a verifying test, derived from the code for the user to ratify.",
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional",
+        "user-maintenance"
+      ]
+    },
+    {
+      "id": "r_au003",
+      "code": "AUDIT-3",
+      "text": "The audit shall flag a requirement whose described behavior is no longer present or has changed in the code (stale) for update or removal, and shall never silently delete a requirement.",
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional",
+        "user-maintenance"
+      ]
+    },
+    {
+      "id": "r_au004",
+      "code": "AUDIT-4",
+      "text": "The audit shall flag coverage gaps — a requirement with no covering test, and a VTP notes reference to a test that no longer resolves.",
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional",
+        "user-maintenance"
+      ]
+    },
+    {
+      "id": "r_au005",
+      "code": "AUDIT-5",
+      "text": "The audit shall present findings as categorized proposals for the user to ratify, apply nothing destructive automatically, and report its coverage and confidence rather than silently truncating.",
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional",
+        "user-maintenance"
+      ]
+    },
+    {
+      "id": "h_jv000",
+      "heading": true,
+      "text": "Jobs view (release notes)"
+    },
+    {
+      "id": "r_jv001",
+      "code": "JV-1",
+      "text": "A job record shall carry an optional type (feature or bugfix) and an optional version, used to organize the Jobs view.",
+      "design": [
+        "d_jbv001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_jv002",
+      "code": "JV-2",
+      "text": "The Jobs view shall present jobs as release notes — grouped by major version (unversioned jobs under \"Unreleased\"), then by type into Features and Bugfixes — with each job's description shown beneath its title.",
+      "design": [
+        "d_jbv001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_jv003",
+      "code": "JV-3",
+      "text": "Selecting a job in the Jobs list shall open a separate detail view with a way back to the list; the list and the detail are distinct views.",
+      "design": [
+        "d_jbv001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_jv004",
+      "code": "JV-4",
+      "text": "The Jobs tab shall sit in the oversight tab group (with Releases and the Auditor view), to the right of the Overview and the authoring views — superseding its former leftmost placement.",
+      "design": [
+        "d_jbv001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "h_jc000",
+      "heading": true,
+      "text": "Job changes & ownership"
+    },
+    {
+      "id": "r_jc001",
+      "code": "JC-1",
+      "text": "The skill shall cache a job's before snapshot when the job is created and its after snapshot when the job is closed, under .specpad/jobs/<id>/ (committed and regenerable), so the editor can show an open job's in-progress changes (before vs working copy) and a closed job's final changes.",
+      "design": [
+        "d_jbv001",
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_jc002",
+      "code": "JC-2",
+      "text": "A job record shall carry an owner (name and email) set from git when the job is created; this is record-level attribution, not per-item edit history.",
+      "design": [
+        "d_jbv001",
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_jc003",
+      "code": "JC-3",
+      "text": "A job's version shall be derived from the release tag whose commits contain it (Unreleased until then), not hand-set.",
+      "design": [
+        "d_jbv001",
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_jc004",
+      "code": "JC-4",
+      "text": "The Jobs view shall separate open jobs (In progress) from closed jobs (Released release notes); a closed job's detail shall render its SRS/VTP changes from the cached before/after snapshots, and the active open job's detail shall render its in-progress changes by diffing its before snapshot against the working copy.",
+      "design": [
+        "d_jbv001",
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_jc005",
+      "code": "JC-5",
+      "text": "The skill shall snapshot a job's before state — the full key doc set (proj/srs/vtp plus the SAD markdown, diagrams, guide, and an arch-files manifest) — into .specpad/jobs/<id>/before/ when the job is created (not only on close), pinning the job's starting point so in-progress changes can be diffed against the working copy.",
+      "satisfies": [
+        "p_pr002"
+      ],
+      "design": [
+        "d_jbv001",
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_jc006",
+      "code": "JC-6",
+      "text": "The Jobs view shall render the active open job's in-progress changes by diffing its cached before snapshot against the working SRS/VTP, so uncommitted and unreleased work is visible before the job is closed.",
+      "satisfies": [
+        "p_pr002"
+      ],
+      "design": [
+        "d_jbv001",
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_jc007",
+      "code": "JC-7",
+      "text": "The Jobs view shall render the active open job's in-progress architecture changes — which SAD/diagram files it added, modified, or removed (coarse, file-level), plus a section-aware diff (changed headings with added/removed lines) for each modified markdown file — by diffing its cached before snapshot against the working SAD and diagrams.",
+      "satisfies": [
+        "p_pr002"
+      ],
+      "design": [
+        "d_jbv001",
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "h_sc000",
+      "heading": true,
+      "text": "Source-code traceability"
+    },
+    {
+      "id": "r_sc001",
+      "code": "SRC-1",
+      "text": "Because every commit carries a Job: trailer, the skill shall derive a job's commits and code changes from git (job → commits → code) on demand, with no maintained requirement-to-code matrix.",
+      "satisfies": [
+        "p_tr01"
+      ],
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_sc002",
+      "code": "SRC-2",
+      "text": "On close, the skill shall cache a job's commit list (.specpad/jobs/<id>/commits.json, derived from the Job: trailer) so the editor can show the commits behind a job's changes.",
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_sc003",
+      "code": "SRC-3",
+      "text": "A closed job's detail view shall list its commits (hash, subject, author, date) alongside its SRS/VTP changes.",
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "h_sa000",
+      "heading": true,
+      "text": "Architecture documentation"
+    },
+    {
+      "id": "r_sa001",
+      "code": "SAD-1",
+      "text": "The system shall support an optional architecture spec — an arc42 software architecture document (<name>.sad.md) plus a C4 model in Structurizr DSL (<name>.workspace.dsl) — tracked under docs/specpad/, separate from the id-keyed JSON requirements contract.",
+      "satisfies": [
+        "p_pr004"
+      ],
+      "design": [
+        "d_arv001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_sa002",
+      "code": "SAD-2",
+      "text": "The editor shall provide an Architecture view that renders the arc42 document and presents the C4 Structurizr DSL (live C4 diagram rendering is a planned follow-up).",
+      "design": [
+        "d_arv001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_sa003",
+      "code": "SAD-3",
+      "text": "Architecture shall be job/release-coupled, not requirement-coupled: no requirement-to-architecture trace matrix is maintained; a job's architecture impact comes from diffing snapshots.",
+      "design": [
+        "d_arv001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ],
+      "securityControl": [
+        "integrity"
+      ]
+    },
+    {
+      "id": "r_sa004",
+      "code": "SAD-4",
+      "text": "On close/refresh, the architecture docs shall be snapshotted into the per-job and release caches alongside the spec docs, so a job's architecture changes can be shown.",
+      "design": [
+        "d_arv001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_sa005",
+      "code": "SAD-5",
+      "text": "The skill shall ship two architecture profiles as templates: a generic profile (clean arc42 + C4, no safety classification) and a medical profile (IEC 62304 / FDA: per-unit classification, segregation, and architecture verification).",
+      "design": [
+        "d_arv001",
+        "d_arc001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_sa006",
+      "code": "SAD-6",
+      "text": "The init quiz shall let the user choose the project path (generic or medical) and scaffold the matching SAD template, C4 workspace, and authoring guide; generic is the default.",
+      "design": [
+        "d_arv001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_sa007",
+      "code": "SAD-7",
+      "text": "The generic architecture template shall provide a fuller arc42 with several C4 views and no safety classification; the medical template shall add per-unit classification, a segregation section, and an architecture-verification section.",
+      "satisfies": [
+        "p_cl01"
+      ],
+      "design": [
+        "d_arv001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_sa008",
+      "code": "SAD-8",
+      "text": "Each profile shall ship a soft authoring guide (<name>.sad.guide.md) that the skill reads before authoring the SAD and the editor surfaces as a context panel; the guide carries tone/terminology guidance, not enforced rules.",
+      "design": [
+        "d_arv001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_av001",
+      "code": "AV-1",
+      "text": "The Architecture view shall provide Edit and Display sub-tabs (Edit hidden when read-only).",
+      "design": [
+        "d_arv001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_av002",
+      "code": "AV-2",
+      "text": "The Display tab shall render the arc42 markdown as HTML and render an embedded diagram (a draw.io SVG export) inline.",
+      "design": [
+        "d_arv001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_av003",
+      "code": "AV-3",
+      "text": "The Edit tab shall provide a syntax-highlighting editor for the arc42 markdown and the C4 source, and its edits shall be saved like other documents.",
+      "design": [
+        "d_arv001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_av004",
+      "code": "AV-4",
+      "text": "Per-job diagram change tracking shall be coarse — that the diagram file changed — not in-diagram deltas.",
+      "design": [
+        "d_arv001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_dg001",
+      "code": "DGM-1",
+      "text": "Diagrams shall be placed by the arc42 markdown via image references (![caption](name.svg)), so the document defines where each diagram appears — a context overview near the top, plus building block (interfaces), runtime (process), and deployment.",
+      "satisfies": [
+        "p_sa01"
+      ],
+      "design": [
+        "d_arv001",
+        "d_deg001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_dg002",
+      "code": "DGM-2",
+      "text": "The Architecture Display shall render each markdown-referenced diagram SVG inline at its place in the document.",
+      "design": [
+        "d_arv001",
+        "d_deg001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_dg003",
+      "code": "DGM-3",
+      "text": "The Structurizr C4 DSL shall be optional — supported when present (loader kept; the editor shows it only when present) but not included in the default templates or scaffold.",
+      "design": [
+        "d_arv001",
+        "d_deg001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_dg004",
+      "code": "DGM-4",
+      "text": "Loading a markdown-referenced diagram (or any project asset) shall be fault-tolerant: a reference the editor cannot open — because the file is absent or the reference contains path segments the File System Access API rejects as an invalid name — shall degrade to a missing diagram and shall never abort opening the project; a reference into a subdirectory (path segments separated by '/') shall be resolved by walking the project folder.",
+      "design": [
+        "d_arv001",
+        "d_deg001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ac001",
+      "code": "AC-1",
+      "text": "The closed-job cache shall snapshot the architecture files (sad.md, diagram SVGs, the guide, and the optional workspace.dsl) plus a per-state manifest, so a job's architecture changes are available to the editor.",
+      "design": [
+        "d_jbv001",
+        "d_arc001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ac002",
+      "code": "AC-2",
+      "text": "A closed job's detail shall present an Architecture changes section listing which architecture files it added, modified, or removed (coarse, file-level); for each modified markdown file it shall show a section-aware diff (the changed headings and their added/removed lines), while non-text diagrams are reported coarsely as changed.",
+      "design": [
+        "d_jbv001",
+        "d_arc001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "h_co000",
+      "heading": true,
+      "text": "Packaging: core vs medical add-on"
+    },
+    {
+      "id": "r_co001",
+      "code": "CORE-1",
+      "text": "SpecPad shall ship as a lean core skill (contract, requirements/tests, jobs, working loop, generic architecture profile, generic evidence export) plus an optional specpad-medical add-on skill; the regulated layer's cost is paid only when opted in.",
+      "satisfies": [
+        "p_gn01"
+      ],
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "installation",
+        "functional"
+      ],
+      "securityControl": [
+        "updatability"
+      ]
+    },
+    {
+      "id": "r_co002",
+      "code": "CORE-2",
+      "text": "The core skill shall not carry medical/regulatory content; the specpad-medical add-on shall provide the medical architecture profile (its template and authoring guide) and the regulatory governance.",
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "installation",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_co003",
+      "code": "CORE-3",
+      "text": "The shared contract and the editor shall remain unified across both skills — the medical add-on adds prose, templates, and governance, never a code fork; the editor activates medical features only when a medical profile is present.",
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "installation",
+        "functional"
+      ]
+    },
+    {
+      "id": "h_re000",
+      "heading": true,
+      "text": "Releases"
+    },
+    {
+      "id": "r_re001",
+      "code": "REL-1",
+      "text": "A release shall be a first-class checkpoint — a version with its set of jobs (the closed jobs whose version equals the release) and a full snapshot of all key documentation; the release→jobs mapping is derived from job.version, never stored separately.",
+      "satisfies": [
+        "p_pr004",
+        "p_rl01"
+      ],
+      "design": [
+        "d_rel001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_re002",
+      "code": "REL-2",
+      "text": "Refresh shall snapshot all key document types at a release (proj/srs/vtp JSON, the SAD markdown, its diagrams, and the guide), not just the spec JSON, so the release is a complete checkpoint.",
+      "design": [
+        "d_rel001",
+        "d_skl001"
+      ],
+      "category": [
+        "functional",
+        "user-maintenance"
+      ]
+    },
+    {
+      "id": "r_re003",
+      "code": "REL-3",
+      "text": "The editor shall provide a Releases view presenting each release newest-first with its version, date, and author, and the jobs that shipped in it as release notes (grouped Features and Bugfixes); closed jobs not yet in a release appear under Unreleased.",
+      "design": [
+        "d_rel001",
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_re004",
+      "code": "REL-4",
+      "text": "A release shall be cut under a job whose final act is to close itself: the release-cut job shall be set to closed as the last step before the release tag (so its derived version is that release), and a release-cut job shall never remain open after its release ships.",
+      "satisfies": [
+        "p_pr002"
+      ],
+      "design": [
+        "d_rel001",
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "h_pd000",
+      "heading": true,
+      "text": "Product requirements (PRD)"
+    },
+    {
+      "id": "r_pd001",
+      "code": "PRD-1",
+      "text": "The system shall support an optional product-requirements (PRD) register as a peer document (<name>.prd.json) with the same item shape as the SRS — a stable id, an optional renameable code, and text — for capturing product intent / user needs above the software requirements.",
+      "satisfies": [
+        "p_pr005"
+      ],
+      "design": [
+        "d_tbl001",
+        "d_gov001"
+      ],
+      "category": [
+        "functional",
+        "data-definition"
+      ]
+    },
+    {
+      "id": "r_pd002",
+      "code": "PRD-2",
+      "text": "An SRS requirement shall be able to trace upward to one or more PRD items via an optional satisfies reference that targets PRD item ids, never code labels, so renames cannot break the upward trace.",
+      "satisfies": [
+        "p_pr005"
+      ],
+      "design": [
+        "d_tbl001",
+        "d_gov001"
+      ],
+      "category": [
+        "functional",
+        "data-definition"
+      ]
+    },
+    {
+      "id": "r_pd003",
+      "code": "PRD-3",
+      "text": "When a PRD register is present, governance shall enforce that every satisfies reference resolves to a PRD item (prd-referential-integrity) and that every non-heading PRD item marked implemented is satisfied by at least one requirement (prd-coverage); a project with no PRD register shall incur no PRD governance.",
+      "satisfies": [
+        "p_pr005"
+      ],
+      "design": [
+        "d_tbl001",
+        "d_gov001"
+      ],
+      "category": [
+        "functional",
+        "data-definition"
+      ]
+    },
+    {
+      "id": "r_pd004",
+      "code": "PRD-4",
+      "text": "A PRD item may carry a lifecycle status (proposed or implemented); prd-coverage shall enforce downward coverage only for items marked implemented, so a product-vision baseline can record approved-but-unallocated intent (proposed, or no status) as roadmap without raising a false coverage gap. New PRD items default to proposed.",
+      "satisfies": [
+        "p_pr005"
+      ],
+      "design": [
+        "d_tbl001",
+        "d_gov001"
+      ],
+      "category": [
+        "functional",
+        "data-definition"
+      ]
+    },
+    {
+      "id": "r_pd005",
+      "code": "PRD-5",
+      "text": "The editor shall provide a Product Requirements tab to view and edit the PRD register — each item's code and text, with hierarchy and section headings — using the same interaction model as the Software Requirements table (a per-row hamburger menu for add/move/indent/delete/view-information), and shall show the since-baseline redline; edits save to <name>.prd.json. The tab is available only when the project has a PRD register.",
+      "satisfies": [
+        "p_pr003"
+      ],
+      "design": [
+        "d_tbl001",
+        "d_gov001"
+      ],
+      "category": [
+        "functional",
+        "data-definition"
+      ]
+    },
+    {
+      "id": "r_pd006",
+      "code": "PRD-6",
+      "text": "The Product Requirements tab shall show each item's downward trace — the software requirements that satisfy it — as an expandable Satisfied-by count toggle (mirroring the Software Requirements Tests toggle), and shall flag an implemented product requirement that no requirement satisfies (a coverage gap).",
+      "satisfies": [
+        "p_tr01"
+      ],
+      "design": [
+        "d_tbl001",
+        "d_gov001"
+      ],
+      "category": [
+        "functional",
+        "data-definition"
+      ]
+    },
+    {
+      "id": "h_ad000",
+      "heading": true,
+      "text": "Auditor view (design-control evidence)"
+    },
+    {
+      "id": "r_ad001",
+      "code": "AUD-1",
+      "text": "The editor shall provide an Auditor view that orients a reviewer to the project's design-control evidence — a scope statement, a design-control map, and the roadmap — with links into the relevant tabs; it is computed live and points to (rather than contains) the traceability matrix.",
+      "satisfies": [
+        "p_pr004"
+      ],
+      "design": [
+        "d_avw001",
+        "d_aud001"
+      ],
+      "category": [
+        "user-interface",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_ad002",
+      "code": "AUD-2",
+      "text": "The Traceability view shall present a coverage summary: requirements verified versus total, verification-test results (passed / failed / not tested), and product-requirement coverage (implemented PRD items satisfied, with the proposed/roadmap count shown separately).",
+      "satisfies": [
+        "p_pr004"
+      ],
+      "design": [
+        "d_avw001",
+        "d_aud001"
+      ],
+      "category": [
+        "user-interface",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_ad003",
+      "code": "AUD-3",
+      "text": "The Traceability view (its own tab) shall present a per-requirement matrix linking each non-heading requirement to the product requirements it satisfies and the tests that verify it (with each test's recorded result), and shall visibly flag a requirement that has no verifying test; the Auditor view links to it.",
+      "satisfies": [
+        "p_tr01"
+      ],
+      "design": [
+        "d_avw001",
+        "d_aud001"
+      ],
+      "category": [
+        "user-interface",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_ad004",
+      "code": "AUD-4",
+      "text": "The Traceability view shall present a gap list derived from the shared governance check (unverified requirements, unresolved references, tests without an expected result, implemented PRD items lacking coverage); with no gaps it shall state the evidence is governance-clean. The Auditor view shall list the roadmap (proposed PRD items) so unbuilt intent is explicit.",
+      "satisfies": [
+        "p_pr004"
+      ],
+      "design": [
+        "d_avw001",
+        "d_aud001"
+      ],
+      "category": [
+        "user-interface",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_ad005",
+      "code": "AUD-5",
+      "text": "The Auditor view shall state that SpecPad produces evidence that supports design controls and is not itself a quality-management system or a compliance determination (a scope disclaimer).",
+      "satisfies": [
+        "p_pr004"
+      ],
+      "design": [
+        "d_avw001",
+        "d_aud001"
+      ],
+      "category": [
+        "user-interface",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_ad006",
+      "code": "AUD-6",
+      "text": "The editor shall load the optional PRD register (<name>.prd.json) when the project contains one, so product requirements and the upward (satisfies) traces are available to the views.",
+      "satisfies": [
+        "p_pr005"
+      ],
+      "design": [
+        "d_avw001",
+        "d_aud001"
+      ],
+      "category": [
+        "user-interface",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "h_dc000",
+      "heading": true,
+      "text": "Design-control map (auditor orientation)"
+    },
+    {
+      "id": "r_dc001",
+      "code": "DC-1",
+      "text": "The Auditor view shall present a design-control map: each formal element — Design Inputs, Design Outputs, Design Verification, Design Validation, Traceability, Design Changes, Design History File, Design Reviews, Risk Management, and Configuration Management — shown with its standard citation (IEC 62304 and 21 CFR 820.30), a plain-language statement, a status, and a link to the section/tab that holds the evidence, so an engineer can answer 'where are your design inputs?' (and the equivalent for each phase) directly from this view.",
+      "satisfies": [
+        "p_pr004"
+      ],
+      "design": [
+        "d_dsc001"
+      ],
+      "category": [
+        "user-interface",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_dc002",
+      "code": "DC-2",
+      "text": "Each design-control element's status shall be derived from the loaded project where determinable — Design Inputs present when requirements exist, Design Outputs reflecting the presence of both the architecture and the detailed design, Design Verification reflecting test coverage, Design Changes present when jobs exist, Design History present when releases exist — and elements not yet built (Design Validation, Risk Management) shall be marked as gaps.",
+      "satisfies": [
+        "p_pr004"
+      ],
+      "design": [
+        "d_dsc001"
+      ],
+      "category": [
+        "user-interface",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "h_vs000",
+      "heading": true,
+      "text": "Editor visual system and overview"
+    },
+    {
+      "id": "r_vs001",
+      "code": "VIS-1",
+      "text": "The editor's appearance shall be defined by a CSS design-token system (color, surface, typography, spacing, radius) so that a theme is a swap of token values rather than per-component restyling.",
+      "satisfies": [
+        "p_pr003"
+      ],
+      "design": [
+        "d_thm001"
+      ],
+      "category": [
+        "user-interface"
+      ]
+    },
+    {
+      "id": "r_vs002",
+      "code": "VIS-2",
+      "text": "The editor shall offer selectable visual themes (developer-tool, editorial, and blueprint) chosen from a menubar control; the choice shall persist across sessions (localStorage) and be applied before first paint so there is no flash of the wrong theme.",
+      "satisfies": [
+        "p_pr003"
+      ],
+      "design": [
+        "d_thm001"
+      ],
+      "category": [
+        "user-interface"
+      ]
+    },
+    {
+      "id": "r_vs003",
+      "code": "TAB-1",
+      "text": "The document tabs shall be ordered chronologically through the design-control phases: Overview, then Design Inputs (PRD, SRS), Design Outputs (SAD, SDD), Design Verification (VTP, Results), Design Controls (Auditor), Traceability, Design History (Releases), and Design Changes (Jobs).",
+      "satisfies": [
+        "p_pr003"
+      ],
+      "design": [
+        "d_chr001"
+      ],
+      "category": [
+        "user-interface"
+      ]
+    },
+    {
+      "id": "r_vs004",
+      "code": "OVR-1",
+      "text": "The editor shall provide an Overview (Home) view — an engineer's status home for the open project — showing the in-progress (open) jobs, the latest release, and a coverage/health headline (requirements verified and open governance findings), with quick navigation into the authoring views.",
+      "satisfies": [
+        "p_pr003"
+      ],
+      "design": [
+        "d_ovw001"
+      ],
+      "category": [
+        "user-interface"
+      ]
+    },
+    {
+      "id": "r_vs005",
+      "code": "OVR-2",
+      "text": "The Overview shall be the default view when a project is opened.",
+      "satisfies": [
+        "p_pr003"
+      ],
+      "design": [
+        "d_ovw001"
+      ],
+      "category": [
+        "user-interface"
+      ]
+    },
+    {
+      "id": "r_vs006",
+      "code": "TAB-2",
+      "text": "Below the document tabs the editor shall render a thin band labelling each design-control phase, spanning the tabs that contribute to it — Design Inputs across the Product Requirements and Requirements tabs, Design Verification across Verification Tests and Results, Design Outputs (Architecture), Design Controls (Auditor), Traceability, Design History (Releases), and Design Changes (Jobs).",
+      "satisfies": [
+        "p_pr004"
+      ],
+      "design": [
+        "d_chr001"
+      ],
+      "category": [
+        "user-interface"
+      ]
+    },
+    {
+      "id": "r_tab3",
+      "code": "TAB-3",
+      "design": [
+        "d_chr001"
+      ],
+      "text": "Each document tab shall be labelled by its acronym (PRD, SRS, SAD, SDD, VTP), and shall carry the full document name as hover text so a reader unfamiliar with the acronym can still identify it.",
+      "category": [
+        "user-interface"
+      ]
+    },
+    {
+      "id": "h_gd000",
+      "heading": true,
+      "text": "Authoring guidance (on-demand)"
+    },
+    {
+      "id": "r_gd001",
+      "code": "GUIDE-1",
+      "text": "The skill shall provide per-document-type authoring guides (requirements, tests, product requirements, architecture) as separate files under the skill, loaded just-in-time when the relevant task begins rather than inlined into the always-on prompt, so the base prompt stays lean.",
+      "satisfies": [
+        "p_sk01"
+      ],
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_gd002",
+      "code": "GUIDE-2",
+      "text": "Each authoring guide shall cover what to capture, how to phrase or structure the entry, and both good and bad examples with the reason each is good or bad.",
+      "satisfies": [
+        "p_sk01"
+      ],
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_gd003",
+      "code": "GUIDE-3",
+      "text": "SKILL.md shall route to each guide at its working-loop touchpoint by pointer (not by inlining the guide body), and the routing shall stay in sync with the files — every guide SKILL.md references shall exist, and every shipped guide shall be referenced (no orphaned or dangling guides).",
+      "satisfies": [
+        "p_sk01"
+      ],
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "h_rg000",
+      "heading": true,
+      "text": "Document-type registry"
+    },
+    {
+      "id": "r_rg001",
+      "code": "REG-1",
+      "text": "The contract shall define a single document-type registry describing each content document type (srs, vtp, prd, and future pillars such as SOUP/SBOM, cybersecurity, SDD) — its kind (id-keyed register, prose, or asset), file naming, schema, whether it is part of the baseline snapshot, and whether the baseline generator drafts it.",
+      "satisfies": [
+        "p_pr001"
+      ],
+      "design": [
+        "d_dct001"
+      ],
+      "category": [
+        "data-definition",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_rg002",
+      "code": "REG-2",
+      "text": "Structural validation and the build-time schema reference shall be built from the registry (plus the fixed infrastructure sidecars), so a registered document type is validated and documented without a separately-maintained type list.",
+      "satisfies": [
+        "p_pr001"
+      ],
+      "design": [
+        "d_dct001"
+      ],
+      "category": [
+        "data-definition",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_rg003",
+      "code": "REG-3",
+      "text": "The release/baseline snapshot and the per-job before/after cache shall cover every document in the project index plus the architecture files — iterating the index, not a fixed list — so a newly-registered document type is captured in snapshots and caches without further changes.",
+      "satisfies": [
+        "p_pr001"
+      ],
+      "design": [
+        "d_dct001"
+      ],
+      "category": [
+        "data-definition",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_rg004",
+      "code": "REG-4",
+      "text": "The snapshot/diff loaders and the editor's per-job change view shall be document-type-generic — iterating the registry's register types and diffing by stable id — so a newly-registered register type flows into per-job diffs and the redline with no code change.",
+      "satisfies": [
+        "p_pr001"
+      ],
+      "design": [
+        "d_dct001"
+      ],
+      "category": [
+        "data-definition",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_rg005",
+      "code": "REG-5",
+      "text": "The working loop shall require a job to evaluate its impact across every registered document type — software requirements, verification tests, product requirements, architecture, and any future pillar — and capture/update each affected one spec-first in the same job, driven by the registry rather than a fixed SRS/VTP list, so a newly-registered document type is evaluated for impact on every job without changing the loop.",
+      "satisfies": [
+        "p_pr001"
+      ],
+      "design": [
+        "d_dct001"
+      ],
+      "category": [
+        "data-definition",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_rg006",
+      "code": "REG-6",
+      "text": "Architecture (the SAD) shall be a registered document type so that it participates in per-job impact evaluation and baseline snapshots; it is registered as prose (no id-keyed schema, diffed coarsely) rather than an id-keyed register.",
+      "satisfies": [
+        "p_pr001"
+      ],
+      "design": [
+        "d_dct001"
+      ],
+      "category": [
+        "data-definition",
+        "functional"
+      ]
+    },
+    {
+      "id": "h_avc0",
+      "heading": true,
+      "text": "Editor — authoring-view consistency"
+    },
+    {
+      "id": "r_avc1",
+      "code": "AVC-1",
+      "text": "The Product Requirements and Verification Tests tables shall use the same interaction model as the Software Requirements table: a per-row hamburger menu (add above/below/child, add heading, indent/outdent, view information, delete); a derived relationship column rendered as an expandable count toggle (Satisfied-by for PRD, Verifies for VTP) mirroring the SRS Tests toggle; and item metadata plus git-derived history shown in the information dialog rather than as columns.",
+      "satisfies": [
+        "p_pr003"
+      ],
+      "design": [
+        "d_tbl001"
+      ],
+      "category": [
+        "user-interface"
+      ]
+    },
+    {
+      "id": "r_avc2",
+      "code": "AVC-2",
+      "text": "The Product Requirements table shall treat product requirements as implemented by default — hiding the status and tags columns — and shall flag a still-proposed item with a bold red “PROPOSED” note under its code and italicised text, so the table reads as the ratified product baseline.",
+      "satisfies": [
+        "p_pr003"
+      ],
+      "design": [
+        "d_tbl001"
+      ],
+      "category": [
+        "user-interface"
+      ]
+    },
+    {
+      "id": "r_avc3",
+      "code": "AVC-3",
+      "text": "The Verification Tests view shall present the test plan only and shall not display execution results (results are recorded on the Results view), keeping the plan distinct from its evidence.",
+      "satisfies": [
+        "p_ds01"
+      ],
+      "design": [
+        "d_tbl001"
+      ],
+      "category": [
+        "user-interface"
+      ]
+    },
+    {
+      "id": "r_avc4",
+      "code": "AVC-4",
+      "text": "The software-requirements view shall be labelled “Software Requirements” (in the tab, the table heading, and the generated schema reference) to distinguish it from the Product Requirements view.",
+      "satisfies": [
+        "p_pr003"
+      ],
+      "design": [
+        "d_tbl001"
+      ],
+      "category": [
+        "user-interface"
+      ]
+    },
+    {
+      "id": "h_ver0",
+      "heading": true,
+      "text": "Verification evidence (test results)"
+    },
+    {
+      "id": "r_ver1",
+      "code": "VER-1",
+      "text": "A verification test shall carry a framework-agnostic link to the automated test(s) that execute it — an automation list of {runner, file, selector?} where runner and selector are opaque to the core — so the evidence chain VTP test -> automated test is stored on the item; a test with no automation is manual and keeps a recorded result.",
+      "satisfies": [
+        "p_tr01"
+      ],
+      "design": [
+        "d_ver001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_ver2",
+      "code": "VER-2",
+      "text": "A captured run shall be recorded as a normalized run sidecar — {runner, ref (commit), ranAt, summary, results:[{file, selector?, status}]} — produced by parsing a runner's machine report (a vitest adapter ships; other runners are sibling adapters or CI emitting the same shape). The core shall not parse any test framework.",
+      "satisfies": [
+        "p_ds01"
+      ],
+      "design": [
+        "d_vrf001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_ver3",
+      "code": "VER-3",
+      "text": "An automated test's result shall be derived by matching its automation links to a run record (by file, then selector) — passed, failed, skipped, or not-run when a link has no matching result — and shall not be hand-stored; a manual test falls back to its recorded result.",
+      "satisfies": [
+        "p_ds01"
+      ],
+      "design": [
+        "d_ver001",
+        "d_tst001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_ver4",
+      "code": "VER-4",
+      "text": "The Results view shall group tests into Manual and Automated sections (manual first); each automated test shall show its automation link(s) read-only with click-to-edit, and a run-derived status, under a run-provenance banner (runner, commit, date); each manual test shall show a recorded result and notes. The requirement-verifies trace is not repeated here.",
+      "satisfies": [
+        "p_ds01"
+      ],
+      "design": [
+        "d_ver001",
+        "d_tst001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_ver5",
+      "code": "VER-5",
+      "text": "Run records shall be frozen for key deliverables — copied into the release baseline at refresh (and snapshots/<version>/) and into each closed job's after cache — so every release and job carries its own verification evidence.",
+      "satisfies": [
+        "p_pr002"
+      ],
+      "design": [
+        "d_vrf001",
+        "d_skl001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_ver6",
+      "code": "VER-6",
+      "text": "The Results view shall provide a run-detail dialog listing the captured run's per-test outcomes (file, selector, status, duration) and summary, filterable to failures, so the run evidence is inspectable; raw console output is not stored (link the run's commit/CI for the full log).",
+      "satisfies": [
+        "p_ds01"
+      ],
+      "design": [
+        "d_ver001",
+        "d_tst001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_ver7",
+      "code": "VER-7",
+      "text": "A job's detail shall present a Verification section: the run-derived status of the verification tests the job added or modified, with a pass / not-run / fail summary, using the job's frozen run (closed jobs) or the latest run (the active job).",
+      "satisfies": [
+        "p_pr002"
+      ],
+      "design": [
+        "d_jbv001",
+        "d_ver001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_ver8",
+      "code": "VER-8",
+      "text": "Test-result roll-ups (the Overview headline and the Auditor/Traceability coverage) shall derive each automated test's outcome from the captured run, and each manual test's from its recorded result — never from a stored result on an automated test.",
+      "satisfies": [
+        "p_ds01"
+      ],
+      "design": [
+        "d_aud001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "h_sv000",
+      "heading": true,
+      "text": "Multi-user server (self-hosted)"
+    },
+    {
+      "id": "h_sv010",
+      "heading": true,
+      "level": 1,
+      "text": "Server core and API"
+    },
+    {
+      "id": "r_sv1",
+      "code": "SRV-1",
+      "text": "The system shall provide a self-hosted server that serves the version-pinned editor build and its HTTP API from a single origin, so a user with no local clone of the repository can edit the project's documents in a browser.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_sap001",
+        "d_ent001"
+      ],
+      "category": [
+        "interfaces",
+        "it-network",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_sv2",
+      "code": "SRV-2",
+      "text": "The server shall confine every read and write to the configured path allowlist (by default docs/specpad/) and shall reject any request that resolves outside it.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_pth001"
+      ],
+      "category": [
+        "security",
+        "functional"
+      ],
+      "securityControl": [
+        "authorization",
+        "integrity"
+      ]
+    },
+    {
+      "id": "r_sv3",
+      "code": "SRV-3",
+      "text": "The server's git working tree shall be sparse-checked-out to the allowlisted paths, so files outside them are physically absent from the tree the server can write to.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_rpo001"
+      ],
+      "category": [
+        "security",
+        "functional"
+      ],
+      "securityControl": [
+        "authorization",
+        "integrity"
+      ]
+    },
+    {
+      "id": "r_sv4",
+      "code": "SRV-4",
+      "text": "The server shall expose API operations mirroring the editor's file transport: session, document listing, document read with a version tag, item-operation write, working-copy status, commit, discard, and read-only history passthrough.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_sap001",
+        "d_ent001"
+      ],
+      "category": [
+        "interfaces",
+        "it-network",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_sv5",
+      "code": "SRV-5",
+      "text": "The server shall enforce the shared contract by importing the validation and governance modules from src/shared, never by re-implementing either, so the server, the editor, and the skill cannot disagree.",
+      "satisfies": [
+        "p_pc01"
+      ],
+      "design": [
+        "d_gov001",
+        "d_cgt001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ],
+      "securityControl": [
+        "integrity"
+      ]
+    },
+    {
+      "id": "r_sv6",
+      "code": "SRV-6",
+      "text": "The server shall take its repository, branch, credential, authentication provider, role map, and commit policy from a single declarative configuration file, and shall refuse to start when that configuration is invalid or incomplete.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_scf001"
+      ],
+      "category": [
+        "installation",
+        "operation-maintenance"
+      ]
+    },
+    {
+      "id": "r_sv7",
+      "code": "SRV-7",
+      "text": "The server shall start from a configuration file path given on the command line, and shall exit with a non-zero status when it cannot start.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_scf001",
+        "d_ent001"
+      ],
+      "category": [
+        "installation",
+        "operation-maintenance"
+      ],
+      "securityControl": [
+        "resiliency"
+      ]
+    },
+    {
+      "id": "r_sv8",
+      "code": "SRV-8",
+      "text": "The server shall be distributable as a single self-hosted container image that serves both the editor build and the API, holding its git clone and per-user working copies in a volume that outlives the container.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_ent001"
+      ],
+      "category": [
+        "installation",
+        "functional"
+      ],
+      "securityControl": [
+        "updatability"
+      ]
+    },
+    {
+      "id": "h_sv020",
+      "heading": true,
+      "level": 1,
+      "text": "Identity and authorization"
+    },
+    {
+      "id": "r_ax1",
+      "code": "AUTH-1",
+      "text": "The server shall identify users through a pluggable authentication provider that yields a single principal (stable id, display name, email, group claims); no other part of the server shall depend on how the user was authenticated.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_ath001"
+      ],
+      "category": [
+        "security",
+        "functional"
+      ],
+      "securityControl": [
+        "authentication"
+      ]
+    },
+    {
+      "id": "r_ax2",
+      "code": "AUTH-2",
+      "text": "The server shall provide a proxy authentication provider that derives the principal from trusted upstream headers, and shall reject identity headers presented by any peer other than the configured trusted upstream.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_ath001"
+      ],
+      "category": [
+        "security",
+        "functional"
+      ],
+      "securityControl": [
+        "authentication"
+      ]
+    },
+    {
+      "id": "r_ax3",
+      "code": "AUTH-3",
+      "text": "The server shall provide an OIDC authentication provider so a company can use corporate single sign-on directly, without an authenticating proxy in front of the server.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_ath001"
+      ],
+      "category": [
+        "security",
+        "functional"
+      ],
+      "securityControl": [
+        "authentication"
+      ]
+    },
+    {
+      "id": "r_ax4",
+      "code": "AUTH-4",
+      "text": "The server shall provide a development authentication provider with a fixed identity, which shall refuse to start when the server is bound to a non-loopback address.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_ath001"
+      ],
+      "category": [
+        "security",
+        "functional"
+      ],
+      "securityControl": [
+        "authentication"
+      ]
+    },
+    {
+      "id": "r_ax5",
+      "code": "AUTH-5",
+      "text": "The server shall map a principal's group claims onto reader, editor, and committer roles, and shall deny access to a principal matching no role mapping.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_ath001"
+      ],
+      "category": [
+        "security",
+        "functional"
+      ],
+      "securityControl": [
+        "authorization"
+      ]
+    },
+    {
+      "id": "r_ax6",
+      "code": "AUTH-6",
+      "text": "The authenticated user's identity shall be independent of the git push credential: the server shall push with its configured machine credential while the human identity travels in the commit's author field.",
+      "satisfies": [
+        "p_gh01"
+      ],
+      "design": [
+        "d_ath001",
+        "d_wcp001"
+      ],
+      "category": [
+        "security",
+        "functional"
+      ],
+      "securityControl": [
+        "authentication",
+        "integrity"
+      ]
+    },
+    {
+      "id": "h_sv030",
+      "heading": true,
+      "level": 1,
+      "text": "Working copy and commit"
+    },
+    {
+      "id": "r_cm1",
+      "code": "CMT-1",
+      "text": "Each user shall have a private server-side working copy of the allowlisted paths, so one user's uncommitted edits are invisible to, and unaffected by, another's.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_rpo001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_cm2",
+      "code": "CMT-2",
+      "text": "Edits shall be autosaved to the user's working copy without being committed, and shall survive the user leaving and returning to the editor.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_wcp001",
+        "d_cgt001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_cm3",
+      "code": "CMT-3",
+      "text": "The editor shall provide an explicit Commit action that publishes the user's working-copy changes as one git commit on the configured branch; no edit shall ever be committed automatically.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_chr001",
+        "d_wcp001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_cm4",
+      "code": "CMT-4",
+      "text": "Before committing, the server shall structurally validate every changed document and run the governance check, blocking or warning according to the configured commit policy.",
+      "satisfies": [
+        "p_pc01"
+      ],
+      "design": [
+        "d_wcp001",
+        "d_cgt001"
+      ],
+      "category": [
+        "functional"
+      ],
+      "securityControl": [
+        "integrity"
+      ]
+    },
+    {
+      "id": "r_cm5",
+      "code": "CMT-5",
+      "text": "A commit made through the server shall be authored by the authenticated user's name and email and shall carry a Job: trailer for each active job; where policy requires an active job, the server shall refuse to commit without one.",
+      "satisfies": [
+        "p_pr002"
+      ],
+      "design": [
+        "d_wcp001",
+        "d_cgt001"
+      ],
+      "category": [
+        "functional",
+        "regulatory"
+      ],
+      "securityControl": [
+        "authentication",
+        "integrity"
+      ]
+    },
+    {
+      "id": "r_cm6",
+      "code": "CMT-6",
+      "text": "A commit shall be rebased onto the latest state of the target branch and retried a bounded number of times when the push is rejected as non-fast-forward; the server shall never force-push.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_wcp001",
+        "d_git001"
+      ],
+      "category": [
+        "it-network",
+        "functional"
+      ],
+      "securityControl": [
+        "resiliency",
+        "integrity"
+      ]
+    },
+    {
+      "id": "r_cm7",
+      "code": "CMT-7",
+      "text": "The Commit action shall present the pending item-level change summary and the governance result for confirmation before the commit is made, and a Discard action shall revert the user's working copy without affecting other users.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_chr001",
+        "d_wcp001"
+      ],
+      "category": [
+        "alarms",
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "h_sv040",
+      "heading": true,
+      "level": 1,
+      "text": "Concurrent editing and merge"
+    },
+    {
+      "id": "r_ce1",
+      "code": "CE-1",
+      "text": "Every document read shall carry a version tag which a write shall present back, and the server shall reject a write whose tag no longer matches the working copy's state, so no update is ever silently lost.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_trm001",
+        "d_sap001"
+      ],
+      "category": [
+        "it-network",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ce2",
+      "code": "CE-2",
+      "text": "Concurrent editing shall not depend on document-level locking: because each user edits a private working copy, two people editing different items of one document shall both succeed, their edits reconciled item-by-item when they publish.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_mrg001",
+        "d_rpo001"
+      ],
+      "category": [
+        "it-network",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ce3",
+      "code": "CE-3",
+      "text": "The server shall publish an event stream carrying advisory editing presence and a signal that the target branch has moved.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_prs001",
+        "d_trm001"
+      ],
+      "category": [
+        "alarms",
+        "it-network",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ce4",
+      "code": "CE-4",
+      "text": "Editing presence shall be advisory only: it shall expire automatically and shall never be required for the correctness of a concurrent edit.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_prs001",
+        "d_trm001"
+      ],
+      "category": [
+        "it-network",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_mg1",
+      "code": "MRG-1",
+      "text": "The system shall provide a pure three-way merge of SpecPad documents keyed on stable item ids, with no git or I/O dependency, usable by the editor, the server, and the skill alike.",
+      "satisfies": [
+        "p_gh01"
+      ],
+      "design": [
+        "d_mrg001"
+      ],
+      "category": [
+        "functional"
+      ],
+      "securityControl": [
+        "integrity"
+      ]
+    },
+    {
+      "id": "r_mg2",
+      "code": "MRG-2",
+      "text": "The merge shall combine changes to different fields of the same item without conflict, and shall report a conflict only where both sides set the same field of the same item to different values.",
+      "satisfies": [
+        "p_gh01"
+      ],
+      "design": [
+        "d_mrg001"
+      ],
+      "category": [
+        "functional"
+      ],
+      "securityControl": [
+        "integrity"
+      ]
+    },
+    {
+      "id": "r_mg3",
+      "code": "MRG-3",
+      "text": "The merge shall report a conflict where an item is deleted on one side and modified on the other, rather than letting the deletion silently win.",
+      "satisfies": [
+        "p_gh01"
+      ],
+      "design": [
+        "d_mrg001"
+      ],
+      "category": [
+        "functional"
+      ],
+      "securityControl": [
+        "integrity"
+      ]
+    },
+    {
+      "id": "r_mg4",
+      "code": "MRG-4",
+      "text": "The merge shall not treat a difference in item order as a conflict.",
+      "satisfies": [
+        "p_gh01"
+      ],
+      "design": [
+        "d_mrg001"
+      ],
+      "category": [
+        "functional"
+      ]
+    },
+    {
+      "id": "r_mg5",
+      "code": "MRG-5",
+      "text": "SpecPad JSON documents shall never be merged textually; every merge conflict arising during a server commit shall be resolved through the structural merge.",
+      "satisfies": [
+        "p_gh01"
+      ],
+      "design": [
+        "d_mrg001",
+        "d_wcp001"
+      ],
+      "category": [
+        "functional"
+      ],
+      "securityControl": [
+        "integrity"
+      ]
+    },
+    {
+      "id": "r_mg6",
+      "code": "MRG-6",
+      "text": "Where the merge cannot resolve a conflict automatically, the server shall return a per-field conflict report and the editor shall offer the user a choice between the conflicting values.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_wcp001",
+        "d_chr001"
+      ],
+      "category": [
+        "alarms",
+        "functional"
+      ]
+    },
+    {
+      "id": "h_sv050",
+      "heading": true,
+      "level": 1,
+      "text": "Editor transport and remote mode"
+    },
+    {
+      "id": "r_rx1",
+      "code": "EDR-1",
+      "text": "The editor shall reach documents only through a transport interface with interchangeable implementations (local filesystem, read-only demo, remote server); no view shall depend on which transport is in use.",
+      "satisfies": [
+        "p_pr003"
+      ],
+      "design": [
+        "d_ifc001",
+        "d_api001"
+      ],
+      "category": [
+        "interfaces",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_rx2",
+      "code": "EDR-2",
+      "text": "When running against a server, the editor shall obtain the signed-in principal and role from the server and display the signed-in identity.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_api001",
+        "d_trm001"
+      ],
+      "category": [
+        "interfaces",
+        "security",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_rx3",
+      "code": "EDR-3",
+      "text": "When the signed-in role does not permit editing, the editor shall render every document view without an editing affordance — no row-actions menu, and no cell that opens for editing — and shall not offer the Commit action when the role does not permit committing.",
+      "satisfies": [
+        "p_sv01"
+      ],
+      "design": [
+        "d_app001",
+        "d_chr001"
+      ],
+      "category": [
+        "security",
+        "user-interface"
+      ],
+      "securityControl": [
+        "authorization"
+      ]
+    },
+    {
+      "id": "r_rx4",
+      "code": "EDR-4",
+      "text": "The launcher generated in the project folder shall target an editor base URL configured in the project index, so a self-hosted deployment opens its own server; with none configured it shall open the public hosted editor.",
+      "satisfies": [
+        "p_ed01"
+      ],
+      "design": [
+        "d_lnc001",
+        "d_tpl001"
+      ],
+      "category": [
+        "installation",
+        "interfaces"
+      ]
+    },
+    {
+      "id": "h_sv060",
+      "heading": true,
+      "level": 1,
+      "text": "Multi-project tenancy"
+    },
+    {
+      "id": "r_mp1",
+      "code": "MPT-1",
+      "text": "The server shall take a list of projects from its configuration file, each with its own repository, branch, allowlisted paths, and git credential, and shall refuse to start when two projects declare the same identifier.",
+      "satisfies": [
+        "p_sv02"
+      ],
+      "design": [
+        "d_scf001"
+      ],
+      "category": [
+        "installation",
+        "security",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_mp2",
+      "code": "MPT-2",
+      "text": "A configuration naming a single repository shall remain valid and shall be read as a one-project deployment, so an existing single-repository server keeps running unchanged.",
+      "satisfies": [
+        "p_sv02"
+      ],
+      "design": [
+        "d_scf001"
+      ],
+      "category": [
+        "installation",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_mp3",
+      "code": "MPT-3",
+      "text": "Every API request shall be resolved to exactly one configured project, identified by a project segment in the request path; where exactly one project is configured, a request without that segment shall resolve to it.",
+      "satisfies": [
+        "p_sv02"
+      ],
+      "design": [
+        "d_rot001"
+      ],
+      "category": [
+        "security",
+        "it-network",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_mp4",
+      "code": "MPT-4",
+      "text": "Each project shall hold a separate per-user working copy, and a request naming one project shall never read or write another project's working copy.",
+      "satisfies": [
+        "p_sv02"
+      ],
+      "design": [
+        "d_rpo001"
+      ],
+      "category": [
+        "security",
+        "functional"
+      ],
+      "securityControl": [
+        "authorization",
+        "confidentiality"
+      ]
+    },
+    {
+      "id": "r_mp5",
+      "code": "MPT-5",
+      "text": "Roles shall be resolvable for each project independently, so one principal may hold different roles in different projects; a project that declares no role map shall use the server-wide one.",
+      "satisfies": [
+        "p_sv02"
+      ],
+      "design": [
+        "d_scf001",
+        "d_ath001"
+      ],
+      "category": [
+        "security",
+        "functional"
+      ],
+      "securityControl": [
+        "authorization"
+      ]
+    },
+    {
+      "id": "r_mp6",
+      "code": "MPT-6",
+      "text": "A principal holding no role in a project shall be refused access to that project, without affecting their access to the projects where they do hold one.",
+      "satisfies": [
+        "p_sv02"
+      ],
+      "design": [
+        "d_ath001"
+      ],
+      "category": [
+        "security",
+        "functional"
+      ],
+      "securityControl": [
+        "authorization"
+      ]
+    },
+    {
+      "id": "r_mp7",
+      "code": "MPT-7",
+      "text": "The server shall expose a discovery operation listing the projects the calling principal may read, omitting every project in which they hold no role.",
+      "satisfies": [
+        "p_sv02"
+      ],
+      "design": [
+        "d_sap001",
+        "d_reg001"
+      ],
+      "category": [
+        "security",
+        "functional"
+      ],
+      "securityControl": [
+        "authorization",
+        "confidentiality"
+      ]
+    },
+    {
+      "id": "r_mp8",
+      "code": "MPT-8",
+      "text": "Advisory editing presence and the upstream-moved signal shall be scoped to a single project, so a subscriber receives events only for the project they are editing.",
+      "satisfies": [
+        "p_sv02"
+      ],
+      "design": [
+        "d_reg001",
+        "d_prs001"
+      ],
+      "category": [
+        "security",
+        "it-network"
+      ],
+      "securityControl": [
+        "confidentiality"
+      ]
+    },
+    {
+      "id": "r_mp9",
+      "code": "MPT-9",
+      "text": "The editor shall determine which project it is editing from the URL it was launched with, and shall fall back to the only configured project when the URL names none.",
+      "satisfies": [
+        "p_sv02"
+      ],
+      "design": [
+        "d_lch001",
+        "d_trm001"
+      ],
+      "category": [
+        "interfaces",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_mp10",
+      "code": "MPT-10",
+      "text": "The launcher generated in a project folder shall name the server project that repository belongs to, when the project index configures one, so a repository's launcher opens its own project on a server hosting several.",
+      "satisfies": [
+        "p_sv02"
+      ],
+      "design": [
+        "d_tpl001",
+        "d_lnc001"
+      ],
+      "category": [
+        "installation",
+        "interfaces"
+      ]
+    },
+    {
+      "id": "r_mp11",
+      "code": "MPT-11",
+      "satisfies": [
+        "p_sv02"
+      ],
+      "text": "The editor shall let a signed-in user open any project they may read from within the editor itself, without re-entering a URL.",
+      "design": [
+        "d_chr001",
+        "d_trm001"
+      ],
+      "category": [
+        "security",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_mp12",
+      "code": "MPT-12",
+      "satisfies": [
+        "p_sv02"
+      ],
+      "text": "Switching to another project shall reload the editor from that project, and shall leave the URL naming it so that reloading the page returns to the same project.",
+      "design": [
+        "d_app001",
+        "d_trm001"
+      ],
+      "category": [
+        "it-network",
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_mp13",
+      "code": "MPT-13",
+      "satisfies": [
+        "p_sv02"
+      ],
+      "text": "When a server hosts more than one project, the editor shall show which project is being edited.",
+      "design": [
+        "d_chr001"
+      ],
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "h_sv070",
+      "heading": true,
+      "level": 1,
+      "text": "Working-copy lifecycle"
+    },
+    {
+      "id": "r_wc1",
+      "code": "WCL-1",
+      "satisfies": [
+        "p_sv02"
+      ],
+      "text": "The server shall remove a user's working copy for a project once it has been idle for a configured period, so a deployment does not retain a checkout per user per project indefinitely.",
+      "design": [
+        "d_rpo001"
+      ],
+      "category": [
+        "operation-maintenance",
+        "functional"
+      ],
+      "securityControl": [
+        "resiliency"
+      ]
+    },
+    {
+      "id": "r_wc2",
+      "code": "WCL-2",
+      "satisfies": [
+        "p_sv02"
+      ],
+      "text": "A working copy holding uncommitted changes shall never be removed by idle reaping, however long it has been idle.",
+      "design": [
+        "d_rpo001"
+      ],
+      "category": [
+        "operation-maintenance",
+        "functional"
+      ],
+      "securityControl": [
+        "resiliency"
+      ]
+    },
+    {
+      "id": "r_wc3",
+      "code": "WCL-3",
+      "satisfies": [
+        "p_sv02"
+      ],
+      "text": "A removed working copy shall be re-provisioned on next use, so reaping is not observable to a user who returns.",
+      "design": [
+        "d_rpo001"
+      ],
+      "category": [
+        "operation-maintenance",
+        "functional"
+      ],
+      "securityControl": [
+        "resiliency"
+      ]
+    },
+    {
+      "id": "r_wc4",
+      "code": "WCL-4",
+      "satisfies": [
+        "p_sv02"
+      ],
+      "text": "The idle period before reaping shall be configurable, and reaping shall be disableable.",
+      "design": [
+        "d_scf001",
+        "d_rpo001"
+      ],
+      "category": [
+        "operation-maintenance",
+        "installation"
+      ]
+    },
+    {
+      "id": "h_dd000",
+      "heading": true,
+      "level": 1,
+      "text": "Detailed design (SDD)"
+    },
+    {
+      "id": "r_dd1",
+      "code": "DD-1",
+      "design": [
+        "d_dct001",
+        "d_sch001"
+      ],
+      "text": "The system shall support an optional detailed-design document as a registered document type whose items are design sections.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_dd2",
+      "code": "DD-2",
+      "design": [
+        "d_pat001",
+        "d_sch001"
+      ],
+      "text": "Each design section shall carry a stable immutable id, so that retitling, recoding, reordering, or rewriting a section does not break any reference to it.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_dd3",
+      "code": "DD-3",
+      "design": [
+        "d_sch001",
+        "d_arv001"
+      ],
+      "text": "A design section's content shall be markdown able to embed images and diagrams, so the design can hold flowcharts and figures rather than fixed fields.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_dd4",
+      "code": "DD-4",
+      "design": [
+        "d_inf001",
+        "d_sch001"
+      ],
+      "text": "An SRS requirement shall record the design sections that implement it as a list of section ids, so the trace is authored on the requirement and read as requirement → design.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_dd5",
+      "code": "DD-5",
+      "design": [
+        "d_gov001"
+      ],
+      "text": "When a detailed design is present, every design reference on a requirement shall resolve to an existing design section.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_dd6",
+      "code": "DD-6",
+      "design": [
+        "d_gov001"
+      ],
+      "text": "When a detailed design is present, every non-heading requirement shall reference at least one design section, and this shall be checked at full rigor irrespective of any safety class or documentation level.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_dd7",
+      "code": "DD-7",
+      "design": [
+        "d_dct001",
+        "d_jbv001"
+      ],
+      "text": "The detailed design shall be captured in release baselines and in each job's before/after cache, and a job's detail shall present the design sections it changed.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_dd8",
+      "code": "DD-8",
+      "design": [
+        "d_skl001"
+      ],
+      "text": "When a job changes a design section, the skill shall re-review every requirement referencing that section in the same job, and report which ones it checked.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_dd9",
+      "code": "DD-9",
+      "design": [
+        "d_skl001"
+      ],
+      "text": "The baseline generator shall draft a detailed design from the existing code, proposing sections from module boundaries rather than from source files or the call flow, and tagging each generated section as a draft.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_dd10",
+      "code": "DD-10",
+      "design": [
+        "d_app001",
+        "d_gov001"
+      ],
+      "text": "The editor shall load the detailed design when the project index lists one, and include it in the live governance it reports.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_dd11",
+      "code": "DD-11",
+      "design": [
+        "d_ddv001"
+      ],
+      "text": "The editor shall present the detailed design as one continuous document, with an outline that indicates the section currently in view and scrolls to a section on request, and with each section rendering its own body, source paths and referencing requirements.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_dd12",
+      "code": "DD-12",
+      "design": [
+        "d_ddv001"
+      ],
+      "text": "The editor shall allow a section's title, code, source paths and body to be edited in place within the document, and shall allow sections to be added, reordered — including by dragging — and deleted.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_dd13",
+      "code": "DD-13",
+      "design": [
+        "d_ddv001",
+        "d_gov001"
+      ],
+      "text": "The editor shall show, for each design section, the requirements that reference it, and shall name those requirements when the section is edited or deleted.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_dd14",
+      "code": "DD-14",
+      "design": [
+        "d_dsc001",
+        "d_ddv001"
+      ],
+      "text": "The Auditor view shall count the detailed design as Design Outputs evidence alongside the architecture, reporting the element as complete only when both are present, and shall report how many requirements do not yet reach a design section.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ro1",
+      "code": "RO-1",
+      "design": [
+        "d_app001"
+      ],
+      "text": "Whether the session may edit shall be a single derived condition applied to every document view, so no view can present an editing affordance the session cannot honour.",
+      "category": [
+        "security",
+        "user-interface"
+      ],
+      "securityControl": [
+        "authorization"
+      ]
+    },
+    {
+      "id": "r_dd15",
+      "code": "DD-15",
+      "design": [
+        "d_ddv001",
+        "d_sch001"
+      ],
+      "text": "A section boundary in the detailed design shall be a stored item with its own identity, not a heading inferred from the section body, so that a continuous rendering never changes what a requirement traces to.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_dd16",
+      "code": "DD-16",
+      "design": [
+        "d_ddv001"
+      ],
+      "text": "Editing a section in the detailed design shall leave the surrounding sections rendered, so the reader keeps their position in the document.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_tr1",
+      "code": "TR-1",
+      "design": [
+        "d_tbl001",
+        "d_rfp001"
+      ],
+      "text": "Each trace edge shall be editable in the editor on the item that stores it: a requirement shall be able to record which product requirements it satisfies and which design sections implement it, and a test which requirements it verifies.",
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_tr2",
+      "code": "TR-2",
+      "design": [
+        "d_ddv001",
+        "d_tbl001"
+      ],
+      "text": "A design section shall be able to record which requirements it implements, written back to those requirements, so an edge stored in one place can be authored from either end.",
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_tr3",
+      "code": "TR-3",
+      "design": [
+        "d_rfp001"
+      ],
+      "text": "A reference shall be chosen from the candidate items, each shown by its code and text, rather than entered as an identifier; a reference that does not resolve shall be shown as unresolved rather than hidden or discarded.",
+      "category": [
+        "user-interface",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_ver9",
+      "code": "VER-9",
+      "design": [
+        "d_ver001"
+      ],
+      "text": "An automation link's selector shall be able to name a group of tests as well as a single test: a captured result answers a selector when its name equals it or begins with it at a word boundary.",
+      "category": [
+        "functional",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_des1",
+      "code": "DES-1",
+      "design": [
+        "d_tpl001"
+      ],
+      "text": "The pre-push check shall report, for each pushed commit, any file it changes that a design section names as its source while that section itself is unchanged, naming both the file and the section, and shall warn rather than block.",
+      "category": [
+        "functional",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "h_rsk00",
+      "heading": true,
+      "level": 1,
+      "text": "Software risk (IEC 62304 clause 7)"
+    },
+    {
+      "id": "r_rsk1",
+      "code": "RSK-1",
+      "design": [
+        "d_dct001",
+        "d_sch001"
+      ],
+      "text": "The system shall support an optional software risk register recording, for each hazardous situation software can contribute to, the software items that could cause it and the requirements that control it.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_rsk2",
+      "code": "RSK-2",
+      "design": [
+        "d_sch001"
+      ],
+      "text": "The risk register shall record no probability of occurrence: for software, severity and the presence of a control shall be the basis of the analysis.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_rsk3",
+      "code": "RSK-3",
+      "design": [
+        "d_sch001"
+      ],
+      "text": "A risk shall be able to reference the corresponding hazard in an external system risk management file, so that hazards, harms, probability estimation and benefit-risk need not be restated.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_rsk4",
+      "code": "RSK-4",
+      "design": [
+        "d_gov001"
+      ],
+      "text": "When a risk register is present, every cause shall resolve to a design section describing a software unit, and every control to an existing requirement; a design view shall not be accepted as a cause.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_rsk5",
+      "code": "RSK-5",
+      "design": [
+        "d_gov001"
+      ],
+      "text": "When a risk register is present, every non-heading risk shall name at least one software item that could cause it.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_rsk6",
+      "code": "RSK-6",
+      "design": [
+        "d_gov001"
+      ],
+      "text": "When a risk register is present, every non-heading risk shall reference at least one controlling requirement or record why no software control is needed.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_rsk7",
+      "code": "RSK-7",
+      "design": [
+        "d_gov001",
+        "d_ver001"
+      ],
+      "text": "Verification of a risk control measure shall be derived from the verifying tests of the requirement implementing it, rather than recorded separately on the risk.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_rsk8",
+      "code": "RSK-8",
+      "design": [
+        "d_dct001"
+      ],
+      "text": "The baseline generator shall not draft a risk analysis, because the judgement a risk record expresses cannot be derived from code.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_rsk9",
+      "code": "RSK-9",
+      "design": [
+        "d_app001",
+        "d_gov001"
+      ],
+      "text": "The editor shall load the risk register when the project index lists one, and include it in the live governance it reports.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_dd17",
+      "code": "DD-17",
+      "design": [
+        "d_sch001",
+        "d_gov001"
+      ],
+      "text": "A design section shall declare whether it describes a software unit or a cross-cutting design view, defaulting to a unit, so that the set of software units is derivable.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_rsk10",
+      "code": "RSK-10",
+      "design": [
+        "d_tbl001"
+      ],
+      "text": "The editor shall present the risk register as a table in which each risk’s hazardous situation, severity, causes, controls and residual risk can be read and edited.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_rsk11",
+      "code": "RSK-11",
+      "design": [
+        "d_tbl001",
+        "d_ver001"
+      ],
+      "text": "For each risk the editor shall derive, from the tests verifying its controlling requirements and the captured run, whether the control is demonstrated to work, and shall distinguish a control with no test from one whose test failed and from one not yet executed.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_rsk12",
+      "code": "RSK-12",
+      "design": [
+        "d_dsc001"
+      ],
+      "text": "The Auditor view shall derive the status of the Risk Management design-control element from the risk register — complete only when every risk is controlled or justified and every residual risk assessed.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "h_sp000",
+      "heading": true,
+      "level": 1,
+      "text": "SOUP / off-the-shelf software"
+    },
+    {
+      "id": "r_sp1",
+      "code": "SOUP-1",
+      "design": [
+        "d_dct001",
+        "d_sch001"
+      ],
+      "text": "The system shall support an optional register of the third-party software a product depends on, recording for each component its identity, the requirements placed on it, what it needs to run, its known limitations, and its support and end-of-life position.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_sp2",
+      "code": "SOUP-2",
+      "design": [
+        "d_gov001"
+      ],
+      "text": "When a component register is present, every component shall record a supplier and an exact version, so that an anomaly evaluation can be attributed to the version it was performed against.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_sp3",
+      "code": "SOUP-3",
+      "design": [
+        "d_gov001"
+      ],
+      "text": "When a component register is present, every component shall state the functional and performance requirements placed on it, recorded on the component rather than as software requirements of the product.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_sp5",
+      "code": "SOUP-5",
+      "design": [
+        "d_gov001"
+      ],
+      "text": "A component shall be able to be named as the cause of a risk in the same way as a software unit, and a reference that is neither shall be reported.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_sp6",
+      "code": "SOUP-6",
+      "design": [
+        "d_tbl001"
+      ],
+      "text": "The editor shall present each component as a record rather than a grid of inputs, and shall open the whole record for editing — every field at once — when the component is selected.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_sp7",
+      "code": "SOUP-7",
+      "design": [
+        "d_tbl001"
+      ],
+      "text": "A component shall record which software units use it and which tests exercise it, and shall show the risks that name it as a cause.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_sp8",
+      "code": "SOUP-8",
+      "design": [
+        "d_sch001"
+      ],
+      "text": "A component shall be able to record the date the supplier's support ends together with the source of that date.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "r_sp9",
+      "code": "SOUP-9",
+      "design": [
+        "d_tbl001"
+      ],
+      "text": "The editor shall distinguish a component whose end-of-life date has passed from one with a future date and from one with no date announced.",
+      "category": [
+        "alarms",
+        "user-interface",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_sp10",
+      "code": "SOUP-10",
+      "design": [
+        "d_skl001"
+      ],
+      "text": "The authoring guidance for a component shall state, for each recorded field, what constitutes an adequate entry, requiring a measurable figure for a performance requirement, explicit versions and exclusions for the runtime, and a named re-assessment trigger.",
+      "category": [
+        "regulatory",
+        "functional"
+      ]
+    },
+    {
+      "id": "h_sec00",
+      "heading": true,
+      "level": 1,
+      "text": "Cybersecurity"
+    },
+    {
+      "id": "r_sec1",
+      "code": "SEC-1",
+      "design": [
+        "d_dct001",
+        "d_sch001"
+      ],
+      "text": "The system shall support an optional threat model recording, for each threat, what is attacked, where the attack enters, its category, how exploitable it is, its impact, and the requirements that control it.",
+      "category": [
+        "security",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_sec2",
+      "code": "SEC-2",
+      "design": [
+        "d_sch001"
+      ],
+      "text": "A threat shall be rated on exploitability rather than probability of occurrence.",
+      "category": [
+        "security",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_sec3",
+      "code": "SEC-3",
+      "design": [
+        "d_gov001"
+      ],
+      "text": "When a threat model is present, every non-heading threat shall record both an exploitability and an impact.",
+      "category": [
+        "security",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_sec4",
+      "code": "SEC-4",
+      "design": [
+        "d_gov001"
+      ],
+      "text": "When a threat model is present, every non-heading threat shall reference at least one controlling requirement or record why none is needed.",
+      "category": [
+        "security",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_sec5",
+      "code": "SEC-5",
+      "design": [
+        "d_gov001"
+      ],
+      "text": "A threat shall be able to name the safety risk that exploiting it would create, and its attack surface shall be able to be a software unit or a third-party component.",
+      "category": [
+        "security",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_sec6",
+      "code": "SEC-6",
+      "design": [
+        "d_tbl001"
+      ],
+      "text": "The editor shall present the threat model as a table in which each threat can be read and edited, and shall distinguish a highly exploitable threat with a severe consequence.",
+      "category": [
+        "security",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_sec7",
+      "code": "SEC-7",
+      "design": [
+        "d_tbl001",
+        "d_ver001"
+      ],
+      "text": "For each threat the editor shall derive, from the tests verifying its controlling requirements and the captured run, whether the control is demonstrated to work.",
+      "category": [
+        "security",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_sec8",
+      "code": "SEC-8",
+      "design": [
+        "d_arv001"
+      ],
+      "text": "The system shall support an optional security architecture document holding the global system, multi-patient harm, updateability and patchability, and security use case view types, with as many views as the attack surface requires, each carrying a diagram whose connections are labelled with what they carry and a legend, rendered with its diagrams and editable in the browser.",
+      "category": [
+        "security",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_sec9",
+      "code": "SEC-9",
+      "design": [
+        "d_arv001"
+      ],
+      "text": "Diagrams shall be resolved from every prose document that declares one, so that a figure referenced only by the security architecture renders inline as one referenced by the architecture document does.",
+      "category": [
+        "security",
+        "regulatory"
+      ]
+    },
+    {
+      "id": "r_gov20",
+      "code": "GOV-20",
+      "design": [
+        "d_dep001"
+      ],
+      "category": [
+        "functional"
+      ],
+      "text": "A governance rule shall carry a tier of either violation or advisory, and an advisory finding shall be reported separately from violations without causing the project to fail."
+    },
+    {
+      "id": "r_gov21",
+      "code": "GOV-21",
+      "design": [
+        "d_dep001",
+        "d_ctx001"
+      ],
+      "category": [
+        "functional"
+      ],
+      "text": "A project shall be able to name advisory rules it chooses to be held to, and each named rule shall then report as a violation rather than as advice."
+    },
+    {
+      "id": "r_gov22",
+      "code": "GOV-22",
+      "design": [
+        "d_dep001",
+        "d_ctx001"
+      ],
+      "category": [
+        "regulatory",
+        "functional"
+      ],
+      "text": "Every requirement shall be able to declare which of the IEC 62304 5.2.2 content categories it is, and every test which of unit, integration or system verification it belongs to; both shall be advised on rather than enforced until a project adopts them."
+    },
+    {
+      "id": "r_cls1",
+      "code": "CLS-1",
+      "design": [
+        "d_ctx001"
+      ],
+      "category": [
+        "regulatory",
+        "functional"
+      ],
+      "text": "A project shall be able to declare its software safety class and the rationale for it, and the declaration shall not change what the tooling requires to be authored."
+    },
+    {
+      "id": "r_rig1",
+      "code": "RIG-1",
+      "design": [
+        "d_ctx001",
+        "d_dep001"
+      ],
+      "category": [
+        "regulatory",
+        "functional"
+      ],
+      "text": "A design section describing a software unit shall be able to record its acceptance criteria as a field, and the criteria shall be advised on rather than enforced until a project adopts the rule."
+    },
+    {
+      "id": "r_rig2",
+      "code": "RIG-2",
+      "design": [
+        "d_ctx001",
+        "d_dep001"
+      ],
+      "category": [
+        "regulatory",
+        "functional"
+      ],
+      "text": "A design section shall be able to name other sections it is segregated from where the separation is essential to risk control, and a section claiming segregation shall state why the segregation is effective."
+    },
+    {
+      "id": "r_rig3",
+      "code": "RIG-3",
+      "design": [
+        "d_ctx001",
+        "d_dep001"
+      ],
+      "category": [
+        "regulatory",
+        "functional"
+      ],
+      "text": "A risk shall be able to record the sequence of events between the software failure and the hazardous situation."
+    },
+    {
+      "id": "r_rig4",
+      "code": "RIG-4",
+      "design": [
+        "d_ctx001"
+      ],
+      "category": [
+        "regulatory",
+        "functional"
+      ],
+      "text": "A release entry shall be able to record the defects known to be present when that version shipped, each with the evaluation that made shipping acceptable, and how the version was built."
+    },
+    {
+      "id": "r_gov23",
+      "code": "GOV-23",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "user-interface"
+      ],
+      "text": "The editor shall count and display advisory findings separately from problems, so that advice never reads as a failure."
+    },
+    {
+      "id": "r_aud10",
+      "code": "AUD-10",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "regulatory",
+        "user-interface"
+      ],
+      "text": "The Auditor view shall present conformity one standard at a time, with a cover stating where the project stands against each and what is deliberately not held here."
+    },
+    {
+      "id": "r_aud11",
+      "code": "AUD-11",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "regulatory",
+        "user-interface"
+      ],
+      "text": "For each standard the Auditor view shall report, clause by clause, what the project holds and where it is, deriving the status from the loaded documents wherever it can be derived."
+    },
+    {
+      "id": "r_aud12",
+      "code": "AUD-12",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "regulatory"
+      ],
+      "text": "A clause the project does not hold shall be reported as held elsewhere, naming the system or document that holds it, and shall never be reported as a gap."
+    },
+    {
+      "id": "r_aud13",
+      "code": "AUD-13",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "regulatory"
+      ],
+      "text": "The Auditor view shall name the standards that govern the project around SpecPad without being implemented by it, and state which side of each boundary a record sits on."
+    },
+    {
+      "id": "r_aud14",
+      "code": "AUD-14",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "regulatory"
+      ],
+      "text": "Design controls shall be cited at their ISO 13485 clause, which the FDA Quality Management System Regulation incorporates by reference, rather than at the superseded 21 CFR 820.30 subparts."
+    },
+    {
+      "id": "r_tab4",
+      "code": "TAB-4",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "user-interface"
+      ],
+      "text": "The Auditor tab shall sit immediately to the right of the Overview, so a reviewer opens the orientation before the documents it indexes."
+    },
+    {
+      "id": "r_ctl1",
+      "code": "CTL-1",
+      "design": [
+        "d_ctx001"
+      ],
+      "category": [
+        "regulatory",
+        "security"
+      ],
+      "text": "A requirement shall be able to declare which FDA security control categories it implements, as a list, since one requirement often serves several."
+    },
+    {
+      "id": "r_ctl2",
+      "code": "CTL-2",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "regulatory",
+        "user-interface"
+      ],
+      "text": "The editor shall present the security controls grouped by FDA control category, showing every category including those with no control, so that coverage is argued from the categories rather than from the word security."
+    },
+    {
+      "id": "r_ctl3",
+      "code": "CTL-3",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "regulatory",
+        "user-interface"
+      ],
+      "text": "For each security control the editor shall show the threats it answers and whether a test verifies it, and shall surface any requirement the threat model names as a control that declares no category."
+    },
+    {
+      "id": "r_ctl4",
+      "code": "CTL-4",
+      "design": [
+        "d_dep001"
+      ],
+      "category": [
+        "regulatory"
+      ],
+      "text": "A requirement named as a control by a threat shall be advised on when it declares no FDA security control category."
+    },
+    {
+      "id": "r_tr10",
+      "code": "TR-10",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "user-interface",
+        "regulatory"
+      ],
+      "text": "The traceability matrix shall present the whole chain the project holds — need, requirement, design, verification — together with the risks and threats each requirement controls, resolved from those registers onto the requirement."
+    },
+    {
+      "id": "r_tr11",
+      "code": "TR-11",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "user-interface"
+      ],
+      "text": "The traceability matrix shall show a column only for a register the project holds, so a project without a design or a threat model is not shown empty columns."
+    },
+    {
+      "id": "r_tr12",
+      "code": "TR-12",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "regulatory",
+        "user-interface"
+      ],
+      "text": "Traceability shall report the depth of the record as well as its breadth: how many requirements reach a design, how many declare a content category, how many control a risk or threat, and how many tests were performed at each verification level."
+    },
+    {
+      "id": "r_pln1",
+      "code": "PLN-1",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "regulatory",
+        "user-interface"
+      ],
+      "text": "The planning view shall list the methodologies the project works by, each with the area it applies to and why it was chosen, so that the techniques in use are stated in one place rather than inferred from the documents."
+    },
+    {
+      "id": "r_pln2",
+      "code": "PLN-2",
+      "design": [
+        "d_app001"
+      ],
+      "category": [
+        "regulatory"
+      ],
+      "text": "The planning view shall name the processes the project is required to have but does not hold, together with the kind of system that holds each, and shall not maintain a register of those documents."
+    }
+  ]
+}

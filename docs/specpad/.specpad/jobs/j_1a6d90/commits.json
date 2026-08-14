@@ -1,0 +1,62 @@
+[
+  {
+    "hash": "e9d34327fec26d71d4c461c872661fb1bf0fcc15",
+    "subject": "Auditor becomes Planning; the references register is gone",
+    "author": "Geoff Pollard",
+    "date": "2026-08-13"
+  },
+  {
+    "hash": "ae038eea2144d037a4aede661241c2a824c5594f",
+    "subject": "Drop the TM tab, and trace the whole chain",
+    "author": "Geoff Pollard",
+    "date": "2026-08-13"
+  },
+  {
+    "hash": "ee5a00b247f20a6d104a94540725d465a0bf6e14",
+    "subject": "Security controls by FDA category, and a second threat modelling pass",
+    "author": "Geoff Pollard",
+    "date": "2026-08-13"
+  },
+  {
+    "hash": "9f042f5d89e34fe51ad5142e52da89c447bdc7c4",
+    "subject": "Auditor: one tab per standard, and no clause called a gap",
+    "author": "Geoff Pollard",
+    "date": "2026-08-13"
+  },
+  {
+    "hash": "d88f8e9e9b9f68d44e9b6fd3869b98d52f04a3a2",
+    "subject": "Backfill the registers, drop tags, and rename the SRS trace column",
+    "author": "Geoff Pollard",
+    "date": "2026-08-13"
+  },
+  {
+    "hash": "4074cb9d2321377586cd0ed4cdb5821f8b07ab91",
+    "subject": "Categories: a list, and all twelve of them",
+    "author": "Geoff Pollard",
+    "date": "2026-08-13"
+  },
+  {
+    "hash": "277c17995c63de861d55581c973269454d78eeac",
+    "subject": "62304 gaps, slices 2-4: the remaining fields, the guides, and the editor",
+    "author": "Geoff Pollard",
+    "date": "2026-08-12"
+  },
+  {
+    "hash": "f5d77106eb18961d4f49e891e2f9824c47cefe46",
+    "subject": "62304 gaps, slice 1: advisory tier, references register, safety class",
+    "author": "Geoff Pollard",
+    "date": "2026-08-12"
+  },
+  {
+    "hash": "1a1c5d87d2749847f44b7f130c262c19dd8cbe22",
+    "subject": "IEC 62304: trace the standard clause by clause, and record what is missing",
+    "author": "Geoff Pollard",
+    "date": "2026-08-12"
+  },
+  {
+    "hash": "fcf24fedb72d11df7e64acdf1a2d51bd177d379c",
+    "subject": "Open JOB-51 to hold IEC 62304 compliance gaps",
+    "author": "Geoff Pollard",
+    "date": "2026-08-11"
+  }
+]
