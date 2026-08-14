@@ -216,43 +216,89 @@ design-control set** from the code so there is a baseline to maintain. The outpu
 **draft for human ratification, never authoritative** — deriving requirements from code *proposes*
 intent; the user confirms it.
 
-**By default the generator drafts the project's configured document types** — today **PRD + SRS + VTP + a
-starter SAD** — so adoption produces the full set, not just requirements and tests. It is **registry-aware**:
-a pillar added later (SOUP, cybersecurity, SDD) is drafted the same way once configured. Any type can be
-**declined** for a given project (say so when you surface the draft).
+**By default the generator drafts the project's configured document types** — PRD + SRS + VTP + SDD + a
+starter SAD. It is **registry-aware**: a pillar added later is drafted the same way once configured.
+Any type can be **declined** for a given project (say so when you surface the draft).
+
+**Mark everything `draft: true`** — every requirement, test and design section you write. A scaffold
+that cannot be told from a specification is the one failure mode this generator has, and a reviewer
+clears the flag as they ratify. Never write a draft item without it.
+
+### One pass is not enough
+
+A single sweep produces the *observable API surface* and stops: it finds what each module does and
+misses what it refuses, what it decided against, and every corner the code handles without announcing
+it. Work in passes, each asking a different question of the same code. **Report after each pass** what
+it added, so the user can stop you early or redirect.
 
 1. **Job first.** Open an adoption job (e.g. "Baseline draft").
-2. **Survey** the codebase: entry points, public API / CLI / UI surfaces, modules and their
-   responsibilities, the README/docs, and the **existing tests** (the richest source of intended
-   behavior).
-3. **Distill behavioral requirements** (SRS), grouped into sections (headings) by feature area, at the
-   "shall" altitude — one per distinct externally-observable behavior or constraint, **not**
-   implementation detail. Tag every generated item `draft`. (Read `guides/requirements.md`.)
-4. **Map to tests** (VTP). For each requirement write a VTP entry. If an existing automated test covers
-   it, name it in `notes` and set `result` to reflect it (`passed` if it passes); for a behavior with
-   **no** test, write the VTP procedure with `result: "not_tested"` — record the gap, never omit it.
-5. **Draft a PRD (default).** From the surveyed purpose — the README/docs, product intent, any tracker
-   context — propose **product requirements** at the user-need altitude (`status: "proposed"`,
-   ratifiable), and link the SRS requirements up to them via `satisfies`. Derive the *why* from intent,
-   **not** code (code can't tell you it); mark everything proposed — it needs more human confirmation
-   than the SRS. (Read `guides/product-requirements.md`.)
-6. **Draft a starter architecture (default).** Scaffold an arc42 `<name>.sad.md` with a **context
-   overview** and a **building-block** diagram (draw.io SVG) reflecting the modules and interfaces
-   surveyed in step 2 — load-bearing decisions and contracts, not every class. (Read
-   `guides/architecture.md`; use the architecture profile from `init`.)
-7. **Draft a detailed design (default).** Propose SDD sections from the module boundaries surveyed in
-   step 2 — one per software unit, plus the cross-cutting design views — and point each requirement at
-   the sections implementing it via `design`. Never one section per file across a large tree, and never
-   decompose from the call flow. Tag every generated section `draft`: the structure is derivable, the
-   *decision each unit hides* is a guess only the author can confirm. (Read `guides/detailed-design.md`.)
-8. **Keep it governance-clean**: every requirement has a verifying VTP entry, every test an `expected`,
-   (when a PRD exists) every implemented PRD item is satisfied by a requirement, and (when an SDD
-   exists) every requirement reaches a design section.
-9. **Report coverage** explicitly — what you covered and what you could not (areas too unclear to spec),
-   and which document types you drafted vs deferred — rather than silently truncating.
-10. **Surface for ratification.** Say it is a draft, summarize the sections and the `draft` / `not_tested`
-   counts (and the proposed PRD items and the SAD), and invite edits. This is the cold-start form of the
-   requirement audit; the commit-time audit then keeps it in sync as the code evolves.
+
+2. **Pass 1 — survey and structure.** Entry points, public API / CLI / UI surfaces, modules and their
+   responsibilities, the README and docs. Produce the **SDD sections** (one per software unit, plus the
+   cross-cutting views) and the SRS **headings** that group by feature area. Nothing else yet: getting
+   the skeleton wrong is cheap now and expensive later. (Read `guides/detailed-design.md`.)
+
+3. **Pass 2 — the behaviour each surface promises.** For every public surface, the requirements a
+   caller could rely on. This is the pass a single-sweep generator does, and on its own it is thin.
+   (Read `guides/requirements.md`.)
+
+4. **Pass 3 — what the code refuses.** Re-read the same modules looking only for guard clauses,
+   validation, `throw`, early returns, `catch`, clamps, retries, timeouts and defaults. Each is a
+   decision somebody made about a case that can occur, and each is a requirement — usually one nobody
+   would think to write from the outside. **This pass typically finds as many requirements as pass 2.**
+
+5. **Pass 4 — the tests as a source of intent.** Existing tests encode behaviour the code cannot state:
+   which cases were thought worth pinning, what the author expected to go wrong, and the odd specific
+   value that is there because it once broke. Mine them for requirements the first three passes missed,
+   and for the negative cases pass 6 will need.
+
+6. **Pass 5 — the invariants.** What is true across the whole system rather than in one module:
+   identity and reference rules, what is deliberately not stored, ordering and idempotency guarantees,
+   compatibility promises. These rarely live in one file and are almost always missed by a per-module
+   sweep.
+
+7. **Pass 6 — the verification protocol.** Now write the VTP, **not one test per requirement** — see
+   *Verification protocol depth* below. Map each to an existing automated test where one covers it, and
+   record a gap as `not_tested` rather than omitting it. (Read `guides/tests.md`.)
+
+8. **Pass 7 — security testing**, where the project has a threat model or any security requirement.
+   Add the FDA §V.C types the codebase admits of, tagged so they can be produced on request — see
+   *Security testing* in `guides/tests.md`.
+
+9. **Pass 8 — the upward trace.** Draft the **PRD** from surveyed purpose — the README, product intent,
+   any tracker context — at the user-need altitude (`status: "proposed"`), and link requirements up via
+   `satisfies`. Derive the *why* from intent, **not** code; code cannot tell you it. (Read
+   `guides/product-requirements.md`.)
+
+10. **Pass 9 — the starter architecture.** Scaffold an arc42 `<name>.sad.md` with a context overview
+    and a building-block diagram reflecting the modules and interfaces from pass 1 — load-bearing
+    decisions and contracts, not every class. **Do not skip this**: without it, IEC 62304 §5.3 and the
+    FDA architecture expectations are unanswerable. (Read `guides/architecture.md`.)
+
+11. **Ask what the code cannot tell you.** For a medical project, the same questions `init` asks:
+    the **safety class and its rationale** (§4.3), and whether the software predates the standard
+    (§4.4). A baseline-adopted project that is never asked has no answer to 4.3 at all.
+
+12. **Fill the advisory fields as you write** — `category` on every requirement, `verificationLevel`
+    and `kind` on every test, `acceptance` on every unit, `securityControl` on every security
+    requirement. Advisory means governance will not fail an established register for omitting them; it
+    is not permission for a new draft to.
+
+13. **Keep it governance-clean**, then **report coverage explicitly** — which areas you covered, which
+    you could not, which document types you drafted versus declined, and the `draft` / `not_tested`
+    counts. Never truncate silently.
+
+14. **Surface for ratification.** Say plainly that it is a scaffold: it holds what the code does, and
+    not the decisions, rejected alternatives or corner cases discovered through failure that only the
+    working loop captures. Invite edits.
+
+### What a baseline cannot produce
+
+Say this to the user rather than letting them discover it. A generated baseline holds observable
+behaviour. It does not hold **why** a design was chosen, what was tried and rejected, the corner case
+found by a bug three months ago, or intent. Those arrive through the working loop, captured as the work
+happens — which is what the loop is *for*. A baseline is the starting point that makes the loop
+possible, not a substitute for having run it.
 
 ## Requirement audit (reconcile the spec with the code)
 
@@ -271,8 +317,8 @@ same over a single staged diff); both **propose, never auto-apply**.
      longer resolves → flag the gap.
 4. **Report, don't mutate:** present the findings as categorized proposals; apply nothing destructive
    automatically. Ratified new requirements land as `draft` for review.
-5. **Report coverage/confidence** — which areas you audited and how confident — rather than silently
-   truncating.
+5. **Report coverage/confidence** — which areas you audited and how confident you are — rather
+   than silently truncating the answer.
 
 ## Scaffolding a new project
 
@@ -288,9 +334,11 @@ same over a single staged diff); both **propose, never auto-apply**.
 Shared envelope on every file: `schemaVersion` ("1.0"), `type`
 ("project" | "srs" | "vtp" | "prd" | "sdd"), `name`, `title`.
 
-SRS item — REQUIRED `id`, `text`. Optional `code`, `satisfies`, `design`, `category`, `hazards`, `heading`.
+SRS item — REQUIRED `id`, `text`. Optional `code`, `satisfies`, `design`, `category`,
+`securityControl`, `draft`, `hazards`, `heading`.
 VTP item — REQUIRED `id`, `text`. Optional `code`, `verifies`, `expected`, `result`,
-`notes`, `verificationLevel`, `heading`. `result` is one of "" | "not_tested" | "passed" | "failed".
+`notes`, `verificationLevel`, `kind` (`nominal` | `boundary` | `negative` | `stress` | `security`),
+`securityTest`, `draft`, `heading`. `result` is one of "" | "not_tested" | "passed" | "failed".
 PRD item — REQUIRED `id`, `text`. Optional `code`, `status`, `heading`. (PRD is the optional
 product-requirements register; same item shape as the SRS.)
 SDD section — REQUIRED `id`, `title`. Optional `code`, `body` (markdown), `source`, `kind`
@@ -801,6 +849,9 @@ without being called wrong.
 - `srs-security-control`: A requirement a threat names as a control should declare which FDA security
   control categories it implements (`securityControl`). Asked only of requirements the threat model
   already leans on. Advisory.
+- `vtp-negative-path`: A requirement whose tests are all `nominal` should also be tested on a
+  boundary, a refusal, or under load. Asked once the register has begun classifying tests by `kind` at
+  all. A near 1:1 register of requirements to tests is the shape that produces this. Advisory.
 - `vtp-verification-level`: Every non-heading VTP test should declare whether it is `unit`,
   `integration` or `system` verification — 62304 5.5, 5.6 and 5.7 are three activities with distinct
   records (`verificationLevel`). Advisory.

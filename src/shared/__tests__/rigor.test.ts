@@ -113,3 +113,51 @@ describe('release records (§5.8.2, §5.8.3, §5.8.5, §5.8.8)', () => {
     expect(validate(releases({ anomalies: undefined, build: undefined }))).toEqual([]);
   });
 });
+
+describe('verification depth — one requirement is not one test', () => {
+  const srsOne: SrsDoc = {
+    schemaVersion: '1.0', type: 'srs', name: 'A', title: 'SRS',
+    items: [
+      { id: 'r_1', code: 'A-1', text: 'The rate shall be range-checked.' },
+      { id: 'r_2', code: 'A-2', text: 'The log shall be append-only.' },
+    ],
+  };
+
+  it('advises on a requirement proven only on the happy path', () => {
+    const vtpDoc: VtpDoc = {
+      schemaVersion: '1.0', type: 'vtp', name: 'A', title: 'VTP',
+      items: [
+        { id: 't_1', text: 'Enter 20.', verifies: ['r_1'], expected: 'Accepted.', kind: 'nominal' },
+        { id: 't_2', text: 'Append.', verifies: ['r_2'], expected: 'Appended.', kind: 'nominal' },
+        { id: 't_3', text: 'Rewrite an entry.', verifies: ['r_2'], expected: 'Refused.', kind: 'negative' },
+      ],
+    };
+    const advice = checkAdvice({ srs: srsOne, vtp: vtpDoc });
+    // r_2 is attacked as well as demonstrated; r_1 is not.
+    expect(advice.filter((a) => a.rule === 'vtp-negative-path').map((a) => a.itemId)).toEqual(['r_1']);
+  });
+
+  it('says nothing to a register that has not begun classifying its tests', () => {
+    // A project not yet drawing the distinction is not nagged about it.
+    const unclassified: VtpDoc = {
+      schemaVersion: '1.0', type: 'vtp', name: 'A', title: 'VTP',
+      items: [{ id: 't_1', text: 'Enter 20.', verifies: ['r_1'], expected: 'Accepted.' }],
+    };
+    expect(checkAdvice({ srs: srsOne, vtp: unclassified }).some((a) => a.rule === 'vtp-negative-path')).toBe(false);
+  });
+
+  it('records which FDA security testing type a test is, so the set can be produced on request', () => {
+    const doc: VtpDoc = {
+      schemaVersion: '1.0', type: 'vtp', name: 'A', title: 'VTP',
+      items: [
+        { id: 't_1', text: 'Submit malformed JSON bodies.', verifies: ['r_1'], expected: 'Each is refused without a stack trace.', kind: 'security', securityTest: ['malformed-input', 'fuzz'] },
+      ],
+    };
+    expect(validate(doc)).toEqual([]);
+    expect(validate({ ...doc, items: [{ ...doc.items[0], securityTest: ['pen-test'] }] }).length).toBeGreaterThan(0);
+  });
+
+  it('marks a drafted item as a draft, so a scaffold is never mistaken for a specification', () => {
+    expect(validate({ ...srsOne, items: [{ id: 'r_1', text: 'x', draft: true }] })).toEqual([]);
+  });
+});

@@ -5387,6 +5387,108 @@
           "selector": "PlanningView"
         }
       ]
+    },
+    {
+      "id": "t_vtd1a",
+      "verifies": [
+        "r_vtd1"
+      ],
+      "verificationLevel": "unit",
+      "kind": "nominal",
+      "text": "Validate tests declaring each of the five kinds alongside a verification level.",
+      "expected": "Each kind validates and is independent of the level, so a system-level negative test is expressible.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/shared/__tests__/rigor.test.ts",
+          "selector": "verification depth"
+        }
+      ]
+    },
+    {
+      "id": "t_vtd1b",
+      "verifies": [
+        "r_vtd1"
+      ],
+      "verificationLevel": "unit",
+      "kind": "negative",
+      "text": "Validate a test declaring a kind outside the five.",
+      "expected": "The document is rejected, naming the offending value.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/shared/__tests__/rigor.test.ts",
+          "selector": "verification depth"
+        }
+      ]
+    },
+    {
+      "id": "t_vtd2a",
+      "verifies": [
+        "r_vtd2"
+      ],
+      "verificationLevel": "unit",
+      "kind": "nominal",
+      "text": "Read the advisory result for a register where one requirement has only a nominal test and another also has a negative one.",
+      "expected": "Only the requirement proven on the happy path alone is advised on, named by its code.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/shared/__tests__/rigor.test.ts",
+          "selector": "verification depth"
+        }
+      ]
+    },
+    {
+      "id": "t_vtd2b",
+      "verifies": [
+        "r_vtd2"
+      ],
+      "verificationLevel": "unit",
+      "kind": "negative",
+      "text": "Read the advisory result for a register whose tests declare no kind at all.",
+      "expected": "Nothing is advised, so a project not yet drawing the distinction is not nagged about it.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/shared/__tests__/rigor.test.ts",
+          "selector": "verification depth"
+        }
+      ]
+    },
+    {
+      "id": "t_vtd3a",
+      "verifies": [
+        "r_vtd3"
+      ],
+      "verificationLevel": "unit",
+      "kind": "nominal",
+      "text": "Validate a security test declaring several FDA testing types, and one declaring a type outside the list.",
+      "expected": "Several types on one test validate; a value outside the thirteen is rejected.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/shared/__tests__/rigor.test.ts",
+          "selector": "verification depth"
+        }
+      ]
+    },
+    {
+      "id": "t_vtd4a",
+      "verifies": [
+        "r_vtd4"
+      ],
+      "verificationLevel": "unit",
+      "kind": "nominal",
+      "text": "Validate a requirement, a test and a design section each marked as a draft.",
+      "expected": "Each validates, so a generated scaffold is distinguishable from ratified content.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/shared/__tests__/rigor.test.ts",
+          "selector": "verification depth"
+        }
+      ]
     }
   ]
 }

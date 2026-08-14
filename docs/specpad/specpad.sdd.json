@@ -116,7 +116,8 @@
       "source": [
         "src/shared/governance.ts"
       ],
-      "body": "The rules that make a document set trustworthy, as opposed to well-formed.\n\n`GOVERNANCE_RULES` is the canonical list. `checkGovernance(bundle)` returns violations, and is pure\nover data — which is why the editor, the skill and the server can all run it without disagreeing.\n\n| Rule | Applies |\n|---|---|\n| `traceability` | Always |\n| `referential-integrity` | Always |\n| `missing-expected` | Always |\n| `active-job-open`, `active-job-known` | When a jobs register exists |\n| `prd-referential-integrity`, `prd-coverage` | When a PRD register is present |\n| `sdd-referential-integrity`, `sdd-coverage` | When a detailed design is present |\n\nRules requiring `HEAD` — \"spec changes require an active job\" — live in the skill's pre-commit gate,\nbecause a browser has no git.\n\n`sdd-coverage` is checked at full rigour with no configuration to relax it. IEC 62304 makes the\nper-unit design Class C only and FDA submits the SDS only at Enhanced; omission is an export decision,\nso no safety class or documentation level appears in the contract."
+      "body": "The rules that make a document set trustworthy, as opposed to well-formed.\n\n`GOVERNANCE_RULES` is the canonical list. `checkGovernance(bundle)` returns violations, and is pure\nover data — which is why the editor, the skill and the server can all run it without disagreeing.\n\n| Rule | Applies |\n|---|---|\n| `traceability` | Always |\n| `referential-integrity` | Always |\n| `missing-expected` | Always |\n| `active-job-open`, `active-job-known` | When a jobs register exists |\n| `prd-referential-integrity`, `prd-coverage` | When a PRD register is present |\n| `sdd-referential-integrity`, `sdd-coverage`, `sdd-segregation` | When a detailed design is present |\n| `risk-*` | When a risk register is present |\n| `soup-*` | When a SOUP register is present |\n| `threat-*` | When a threat model is present |\n\nRules requiring `HEAD` — \"spec changes require an active job\" — live in the skill's pre-commit gate,\nbecause a browser has no git.\n\nA rule carries a **tier**. `checkGovernance` returns blocking violations; `checkAdvice` returns\nadvisory findings, which report without failing. The tier exists because two things needed saying\nthat are not defects: material beyond a declared safety class, and a field a project has not adopted\nyet. A blocking rule that fires on every document in an established register teaches people to\nignore governance, so `srs-category`, `srs-security-control`, `vtp-verification-level`,\n`sdd-acceptance` and `risk-sequence` ship as advice. A project opts into being held to one by naming\nit in the index's `enforce` list, at which point it moves into the blocking result and is not\nreported twice.\n\n`sdd-coverage` is checked at full rigour with no configuration to relax it. IEC 62304 makes the\nper-unit design Class C only and FDA submits the SDS only at Enhanced; omission is an export decision,\nso no safety class or documentation level appears in the contract.",
+      "acceptance": "Every rule id in `GOVERNANCE_RULES` is documented in SKILL.md and vice versa; an advisory finding never appears in `checkGovernance`; naming an advisory rule in `enforce` moves it there and removes it from `checkAdvice`; an unknown `enforce` entry is ignored rather than failing the project."
     },
     {
       "id": "d_ids001",
@@ -281,7 +282,8 @@
       "source": [
         "src/auditReport.ts"
       ],
-      "body": "`buildAuditReport(docs, run)` computes coverage, the trace matrix and test roll-ups.\n\nAutomated results are derived from the run rather than from a stored field, which is why the run is a\nparameter. Roll-ups broke when stored results were cleared in favour of captured ones; threading the\nrun through fixed it."
+      "body": "`buildAuditReport(docs, run)` computes coverage, the trace matrix and test roll-ups.\n\nThe chain it builds is the whole one the registers describe: need → requirement → design →\nverification, plus the risks and threats each requirement controls. Those last two edges are stored\non the risk and the threat, never on the requirement, so they are indexed **backwards** here. A\nrequirement does not know it is load-bearing, and that is exactly what a reviewer needs told.\n\nIt reports which registers are present, so a view can show only the columns that mean something,\nand reports depth — requirements reaching a design, requirements declaring a category, tests by\nverification activity — apart from breadth. Breadth is the number that flatters: a register can be\nwholly verified with nothing recorded as integration testing.\n\nAutomated results are derived from the run rather than from a stored field, which is why the run is a\nparameter. Roll-ups broke when stored results were cleared in favour of captured ones; threading the\nrun through fixed it.",
+      "acceptance": "Resolves each requirement's designs, and the risks and threats naming it as a control; an unresolvable reference is reported separately rather than dropped; depth and breadth are reported independently, so full verification with partial design coverage reads as both."
     },
     {
       "id": "d_dsc001",
@@ -290,7 +292,8 @@
       "source": [
         "src/designControls.ts"
       ],
-      "body": "`buildDesignControls(input)` returns the formal design-control elements, each with IEC 62304 and\n21 CFR 820.30 citations, a plain statement, a status of present, partial or gap, and the tab holding\nits evidence.\n\nRisk Management derives from the risk register: complete only when every risk is controlled or\njustified and every residual risk assessed. Design Outputs covers 62304 §5.3 and §5.4 together: partial with the architecture or the detailed\ndesign alone, present only with both. A detailed design with no sections does not count. Status is\nderived on read, so it cannot claim evidence that is no longer present.\n\nThe citations are in core rather than the medical add-on: \"where are your design inputs?\" must be\nanswerable in any project."
+      "body": "`buildDesignControls(input)` returns the formal design-control elements, each with IEC 62304 and\nISO 13485 §7.3 citations, a plain statement, a status of present, partial or held\nelsewhere, and the tab holding its evidence.\n\nCitations moved off 21 CFR 820.30 when the FDA's Quality Management System Regulation took effect on\n2 February 2026: Part 820 now incorporates ISO 13485:2016 by reference, so §7.3 is where a reviewer\nlooks a design control up. Part 820 still exists — it no longer carries the text.\n\nThere is no `gap` status. An element the project does not hold is held by another system, and the\ndetail says which.\n\nRisk Management derives from the risk register: complete only when every risk is controlled or\njustified and every residual risk assessed. Design Outputs covers 62304 §5.3 and §5.4 together: partial with the architecture or the detailed\ndesign alone, present only with both. A detailed design with no sections does not count. Status is\nderived on read, so it cannot claim evidence that is no longer present.\n\nThe citations are in core rather than the medical add-on: \"where are your design inputs?\" must be\nanswerable in any project. The per-standard clause tables live beside this in `standards.ts`.",
+      "acceptance": "Every element cites its ISO 13485 clause and none cites a 21 CFR 820.30 subpart; status derives from the loaded documents on read, so it cannot claim evidence that is no longer present."
     },
     {
       "id": "d_out001",
@@ -368,14 +371,37 @@
       "body": "Release notes per release, newest first. A release's job list is derived from each job's `version`."
     },
     {
+      "id": "d_std001",
+      "code": "SDD-74",
+      "title": "standards — conformity by clause",
+      "kind": "unit",
+      "source": [
+        "src/standards.ts"
+      ],
+      "body": "`buildStandards(input)` returns one section per standard the project claims — IEC 62304 and the\nFDA software, cybersecurity and off-the-shelf guidances — each a list of clauses with a status\nderived from the loaded documents where it can be derived and stated plainly where it cannot.\n\nBeside it sit three constants the Planning view renders and nothing computes: `METHODOLOGIES` (the\ntechniques the project works by, with the reason for each), `HELD_ELSEWHERE` (the processes it must\nhave and does not hold, named by the kind of system that holds them), and `CONNECTED_STANDARDS`\n(what governs the project around SpecPad). `INTENTIONAL_OMISSIONS` states the boundaries drawn on\npurpose, so a reviewer is not left inferring whether an absence was a decision.\n\nThese are prose rather than a register on purpose. A register of quality-system documents would be\na second index of what a quality system already indexes, and the second copy is the one that goes\nstale. One was built and removed to learn that.",
+      "acceptance": "A clause status derived from a register changes when that register does; a clause the project does not hold names the kind of system holding it and is never reported as a gap."
+    },
+    {
+      "id": "d_ctl001",
+      "code": "SDD-75",
+      "title": "SecurityControlsView — controls by FDA category",
+      "kind": "unit",
+      "source": [
+        "src/components/SecurityControlsView.tsx"
+      ],
+      "body": "Groups the requirements that defend the product by the eight categories FDA expects an adequate set\nto draw from (*Cybersecurity in Medical Devices*, February 2026, §V.B.1).\n\nThe grouping **is** the argument. \"We have security requirements\" is not a coverage claim; a sweep\nacross the eight is. So a category with nothing in it is rendered rather than hidden, with the\nquestion attached: either a control is missing, or there is a reason this product needs none. Both\nanswers are legitimate and only the sweep tells them apart.\n\nEach control shows the threats it answers and whether a test verifies it, because FDA asks for\nrequirements *and* acceptance criteria per category. A requirement a threat names as a control but\nwhich declares no category is surfaced above the groups — otherwise it would drop out of the\ncoverage argument silently, which is the one failure this view exists to prevent.",
+      "acceptance": "All eight categories render whether or not they hold a control; a requirement serving several appears under each; an uncategorised threat control is named rather than omitted; a requirement no threat relies on does not appear."
+    },
+    {
       "id": "d_avw001",
       "code": "SDD-45",
-      "title": "Auditor and Traceability views",
+      "title": "Planning and Traceability views",
       "source": [
-        "src/components/AuditView.tsx",
+        "src/components/PlanningView.tsx",
         "src/components/TraceabilityView.tsx"
       ],
-      "body": "Two views. The Auditor is orientation: the design-control map, which formal element lives where. The\nTraceability view is evidence: the matrix, coverage and gaps.\n\nThey were one view. A reviewer arriving cold needs the map before the matrix.\n\nBoth render a scope disclaimer: this is evidence supporting design controls, not a quality system."
+      "body": "Two views. **Planning** is orientation: what the project follows, how it works, and where the\nprocesses it does not hold are kept. **Traceability** is evidence: the chain, the coverage and the\ngaps.\n\nPlanning is tabbed by standard — a conformity cover, then IEC 62304 and the three FDA guidances\nclause by clause, then the standards that govern the project without being implemented by it. The\ncover also carries the design-control map, the methodologies the project works by, and the processes\nheld elsewhere.\n\nIt was called Auditor. Planning is what it is: a reviewer needs the orientation first, and so does\nan engineer arriving on the project. The tab sits immediately right of the Overview for that reason.\n\nNo clause is ever reported as a gap. Something the project does not hold is evidence another system\nholds, and naming the kind of system is more use than raising an alarm about a boundary drawn on\npurpose.\n\nTraceability shows the whole chain the project holds — need → requirement → design → verification —\nwith the risks and threats each requirement controls resolved backwards onto it, and reports depth\n(design coverage, categorisation, verification levels) separately from breadth, because a register\ncan be fully verified and still shallow.\n\nBoth render a scope disclaimer: this is evidence supporting design controls, not a quality system.",
+      "acceptance": "Renders one row per requirement with a column only for each register the project holds; cites design controls at ISO 13485 §7.3 and never at 21 CFR 820.30; reports no clause as a gap; a standard tab opens without losing the cover."
     },
     {
       "id": "d_ovw001",

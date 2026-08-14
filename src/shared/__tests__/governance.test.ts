@@ -143,7 +143,7 @@ describe('checkGovernance', () => {
       'soup-referential-integrity', 'soup-requirements', 'srs-category',
       'srs-security-control',
       'threat-assessed', 'threat-controlled', 'threat-referential-integrity',
-      'traceability', 'vtp-verification-level',
+      'traceability', 'vtp-negative-path', 'vtp-verification-level',
     ]);
   });
 });

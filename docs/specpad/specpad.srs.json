@@ -4045,7 +4045,7 @@
       "id": "r_gov20",
       "code": "GOV-20",
       "design": [
-        "d_dep001"
+        "d_gov001"
       ],
       "category": [
         "functional"
@@ -4056,8 +4056,8 @@
       "id": "r_gov21",
       "code": "GOV-21",
       "design": [
-        "d_dep001",
-        "d_ctx001"
+        "d_gov001",
+        "d_sch001"
       ],
       "category": [
         "functional"
@@ -4068,8 +4068,8 @@
       "id": "r_gov22",
       "code": "GOV-22",
       "design": [
-        "d_dep001",
-        "d_ctx001"
+        "d_gov001",
+        "d_sch001"
       ],
       "category": [
         "regulatory",
@@ -4081,7 +4081,7 @@
       "id": "r_cls1",
       "code": "CLS-1",
       "design": [
-        "d_ctx001"
+        "d_sch001"
       ],
       "category": [
         "regulatory",
@@ -4093,8 +4093,8 @@
       "id": "r_rig1",
       "code": "RIG-1",
       "design": [
-        "d_ctx001",
-        "d_dep001"
+        "d_sch001",
+        "d_gov001"
       ],
       "category": [
         "regulatory",
@@ -4106,8 +4106,8 @@
       "id": "r_rig2",
       "code": "RIG-2",
       "design": [
-        "d_ctx001",
-        "d_dep001"
+        "d_sch001",
+        "d_gov001"
       ],
       "category": [
         "regulatory",
@@ -4119,8 +4119,8 @@
       "id": "r_rig3",
       "code": "RIG-3",
       "design": [
-        "d_ctx001",
-        "d_dep001"
+        "d_sch001",
+        "d_gov001"
       ],
       "category": [
         "regulatory",
@@ -4132,7 +4132,7 @@
       "id": "r_rig4",
       "code": "RIG-4",
       "design": [
-        "d_ctx001"
+        "d_sch001"
       ],
       "category": [
         "regulatory",
@@ -4144,7 +4144,7 @@
       "id": "r_gov23",
       "code": "GOV-23",
       "design": [
-        "d_app001"
+        "d_chr001"
       ],
       "category": [
         "user-interface"
@@ -4155,7 +4155,8 @@
       "id": "r_aud10",
       "code": "AUD-10",
       "design": [
-        "d_app001"
+        "d_avw001",
+        "d_std001"
       ],
       "category": [
         "regulatory",
@@ -4167,7 +4168,8 @@
       "id": "r_aud11",
       "code": "AUD-11",
       "design": [
-        "d_app001"
+        "d_avw001",
+        "d_std001"
       ],
       "category": [
         "regulatory",
@@ -4179,7 +4181,8 @@
       "id": "r_aud12",
       "code": "AUD-12",
       "design": [
-        "d_app001"
+        "d_avw001",
+        "d_std001"
       ],
       "category": [
         "regulatory"
@@ -4190,7 +4193,8 @@
       "id": "r_aud13",
       "code": "AUD-13",
       "design": [
-        "d_app001"
+        "d_avw001",
+        "d_std001"
       ],
       "category": [
         "regulatory"
@@ -4201,7 +4205,7 @@
       "id": "r_aud14",
       "code": "AUD-14",
       "design": [
-        "d_app001"
+        "d_dsc001"
       ],
       "category": [
         "regulatory"
@@ -4212,7 +4216,7 @@
       "id": "r_tab4",
       "code": "TAB-4",
       "design": [
-        "d_app001"
+        "d_chr001"
       ],
       "category": [
         "user-interface"
@@ -4223,7 +4227,7 @@
       "id": "r_ctl1",
       "code": "CTL-1",
       "design": [
-        "d_ctx001"
+        "d_sch001"
       ],
       "category": [
         "regulatory",
@@ -4235,7 +4239,7 @@
       "id": "r_ctl2",
       "code": "CTL-2",
       "design": [
-        "d_app001"
+        "d_ctl001"
       ],
       "category": [
         "regulatory",
@@ -4247,7 +4251,7 @@
       "id": "r_ctl3",
       "code": "CTL-3",
       "design": [
-        "d_app001"
+        "d_ctl001"
       ],
       "category": [
         "regulatory",
@@ -4259,7 +4263,7 @@
       "id": "r_ctl4",
       "code": "CTL-4",
       "design": [
-        "d_dep001"
+        "d_gov001"
       ],
       "category": [
         "regulatory"
@@ -4270,7 +4274,8 @@
       "id": "r_tr10",
       "code": "TR-10",
       "design": [
-        "d_app001"
+        "d_avw001",
+        "d_aud001"
       ],
       "category": [
         "user-interface",
@@ -4282,7 +4287,8 @@
       "id": "r_tr11",
       "code": "TR-11",
       "design": [
-        "d_app001"
+        "d_avw001",
+        "d_aud001"
       ],
       "category": [
         "user-interface"
@@ -4293,7 +4299,8 @@
       "id": "r_tr12",
       "code": "TR-12",
       "design": [
-        "d_app001"
+        "d_avw001",
+        "d_aud001"
       ],
       "category": [
         "regulatory",
@@ -4305,7 +4312,8 @@
       "id": "r_pln1",
       "code": "PLN-1",
       "design": [
-        "d_app001"
+        "d_avw001",
+        "d_std001"
       ],
       "category": [
         "regulatory",
@@ -4317,12 +4325,59 @@
       "id": "r_pln2",
       "code": "PLN-2",
       "design": [
-        "d_app001"
+        "d_avw001",
+        "d_std001"
       ],
       "category": [
         "regulatory"
       ],
       "text": "The planning view shall name the processes the project is required to have but does not hold, together with the kind of system that holds each, and shall not maintain a register of those documents."
+    },
+    {
+      "id": "r_vtd1",
+      "code": "VTD-1",
+      "design": [
+        "d_sch001"
+      ],
+      "category": [
+        "regulatory",
+        "data-definition"
+      ],
+      "text": "A verification test shall be able to declare what it does to the system — the nominal case, a boundary, a refusal, sustained load, or a security context — distinctly from the level at which it verifies."
+    },
+    {
+      "id": "r_vtd2",
+      "code": "VTD-2",
+      "design": [
+        "d_gov001"
+      ],
+      "category": [
+        "regulatory"
+      ],
+      "text": "A requirement whose tests are all nominal shall be advised on, once the project has begun classifying its tests."
+    },
+    {
+      "id": "r_vtd3",
+      "code": "VTD-3",
+      "design": [
+        "d_sch001"
+      ],
+      "category": [
+        "security",
+        "regulatory"
+      ],
+      "text": "A verification test shall be able to record which of the FDA recommended security testing types it is, so that the set performed can be produced on request."
+    },
+    {
+      "id": "r_vtd4",
+      "code": "VTD-4",
+      "design": [
+        "d_sch001"
+      ],
+      "category": [
+        "data-definition"
+      ],
+      "text": "A requirement, test or design section drafted by a tool shall be able to be marked as a draft awaiting ratification."
     }
   ]
 }

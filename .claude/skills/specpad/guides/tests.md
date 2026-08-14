@@ -21,6 +21,62 @@ the trace chain requirement → verification.
   `result` to reflect it (`passed`/`failed`). Where there is no automated test yet, record it as
   `not_tested` rather than omitting the gap.
 
+## One requirement is not one test
+
+**A near 1:1 register of requirements to tests is the commonest failure in a verification protocol,
+and it is invisible** — every requirement is verified, governance is clean, coverage reads 100%. What
+it means is that every requirement has been shown to work *when nothing goes wrong*, which is the
+weaker half of the claim.
+
+Verify a requirement the way you would try to break it:
+
+| | |
+|---|---|
+| `nominal` | The behaviour the requirement describes, under the conditions it assumes. Usually **one or two** — the ordinary case and the one interesting variant. |
+| `boundary` | The edges of the accepted range, and **which side of each edge is accepted**. Where a requirement names a limit, this is not optional. |
+| `negative` | Invalid input, refused operations, error paths. What the system **will not** do, and what it says when it will not. |
+| `stress` | Volume, concurrency, exhaustion, sustained load — where the requirement implies a capacity or a shared resource. |
+| `security` | Testing in a security context, beyond ordinary verification — see below. |
+
+Not every requirement earns all five. A requirement with no range has no boundary; a pure function has
+no stress case. But **a requirement with only nominal tests is a question**: what happens when the
+input is wrong? Answer it, or say why the question does not arise.
+
+The rule of thumb that produces a real protocol: *one nominal test proves the feature exists; the
+others prove it is safe.*
+
+> ✅ A requirement that a rate is range-checked: nominal (a valid rate is accepted), boundary (0.1 and
+> 99 accepted, 0.09 and 99.1 refused), negative (a non-numeric input is refused and the prior value
+> kept), stress (a thousand submissions in a second does not admit one through).
+> ❌ The same requirement with one test: "enter a valid rate, it is accepted."
+
+`vtp-negative-path` advises on a requirement whose tests are all nominal, once the register has begun
+classifying its tests at all.
+
+## Security testing (FDA §V.C)
+
+FDA is explicit that **cybersecurity controls need testing beyond standard verification and
+validation** (*Cybersecurity in Medical Devices*, February 2026, §V.C). Where a project has a threat
+model or any security requirement, record which type each security test is in `securityTest`, so that
+a reviewer asking "show me your fuzz testing" is answered by a filter rather than a search.
+
+| Group | Types |
+|---|---|
+| **Security requirements** | `security-requirements` — each security requirement implemented, **with the boundary analysis and the rationale for the boundary assumptions** |
+| **Threat mitigation** | `threat-mitigation` — each risk control effective against the threat model's views, and adequate under maximum load |
+| **Vulnerability testing** (ANSI/ISA 62443-4-1) | `abuse-case`, `malformed-input`, `robustness`, `fuzz`, `attack-surface`, `vulnerability-chaining`, `known-vulnerability-scan`, `composition-analysis`, `static-analysis`, `dynamic-analysis` |
+| **Penetration testing** | `penetration` |
+
+Two things the guidance asks for that are easy to omit:
+
+- **Who tested, and how independent they were** from the people who designed it. Record it in `notes`;
+  for a third-party report, keep the original.
+- **An assessment of every finding**, including a rationale for anything not implemented or deferred to
+  a later release. A finding with no disposition reads as a finding nobody looked at.
+
+`static-analysis` explicitly includes testing for credentials that are hardcoded, default, easily
+guessed or easily compromised — worth naming as its own test rather than assuming a linter covers it.
+
 ## Verification level — three activities, not one register
 
 IEC 62304 treats unit verification (§5.5), integration testing (§5.6) and system testing (§5.7) as

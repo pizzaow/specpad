@@ -146,6 +146,13 @@ const RULES: GovernanceRule[] = [
       'When an SDD is present, a section naming other sections it is segregated from must say why the segregation is effective, and each named section must resolve (IEC 62304 5.3.5, strengthened by A1:2015 — separation intended is not separation ensured).',
   },
   {
+    id: 'vtp-negative-path',
+    tier: 'advisory',
+    title: 'Requirements are attacked, not only demonstrated',
+    description:
+      'A non-heading requirement whose tests are all `nominal` should also be tested on a boundary, a refusal, or under load. Advisory: a requirement proven only on the happy path has been shown to work when nothing goes wrong, which is the weaker half of the claim — and a near 1:1 register of requirements to tests is the shape that produces it.',
+  },
+  {
     id: 'sdd-acceptance',
     tier: 'advisory',
     title: 'Units say what verified means',
@@ -234,6 +241,24 @@ function advisoryFindings(bundle: ProjectBundle): GovernanceFinding[] {
     if (test.heading || test.verificationLevel) continue;
     advise('vtp-verification-level', test.id, `Test ${test.code ?? test.id} does not say whether it is unit, integration or system verification.`);
   }
+  // A requirement proven only on the happy path. Asked once the register has begun
+  // classifying its tests: a project that has not adopted `kind` at all is not nagged about
+  // a distinction it is not yet drawing.
+  const classified = (bundle.vtp?.items ?? []).some((t) => t.kind);
+  if (classified) {
+    const testsFor = new Map<string, NonNullable<typeof bundle.vtp>['items']>();
+    for (const t of bundle.vtp?.items ?? []) {
+      if (t.heading) continue;
+      for (const id of t.verifies ?? []) testsFor.set(id, [...(testsFor.get(id) ?? []), t]);
+    }
+    for (const req of bundle.srs?.items ?? []) {
+      if (req.heading) continue;
+      const ts = testsFor.get(req.id) ?? [];
+      if (!ts.length || ts.some((t) => t.kind && t.kind !== 'nominal')) continue;
+      advise('vtp-negative-path', req.id, `Requirement ${req.code ?? req.id} is verified only by nominal tests — nothing exercises a boundary, a refusal, or load.`);
+    }
+  }
+
   // Only units: a design view is not something "verified" is asked of.
   for (const section of bundle.sdd?.items ?? []) {
     if (section.heading || (section.kind ?? 'unit') !== 'unit') continue;

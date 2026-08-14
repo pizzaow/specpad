@@ -27,21 +27,41 @@ describe('skill documents the baseline generator', () => {
   });
 
   it('maps to existing tests and records gaps as not_tested rather than omitting', () => {
-    expect(skill).toMatch(/map to tests/i);
+    expect(skill).toMatch(/existing automated test/i);
     expect(skill).toMatch(/not_tested/);
-    expect(skill).toMatch(/never omit|record the gap/i);
+    expect(skill).toMatch(/never omit|record(ing)? a gap|rather than omitting/i);
   });
 
   it('reports coverage rather than silently truncating', () => {
     expect(skill).toMatch(/report coverage/i);
-    expect(skill).toMatch(/silently truncating/i);
+    expect(skill).toMatch(/truncate silently|silently truncating/i);
   });
 
-  it('drafts the full default set — PRD and a starter architecture — by default, registry-aware (BASE-6)', () => {
+  it('drafts the full default set by default, registry-aware (BASE-6)', () => {
     expect(skill).toMatch(/full default (design-control )?set/i);
-    expect(skill).toMatch(/Draft a PRD \(default\)/i);
-    expect(skill).toMatch(/Draft a starter architecture \(default\)/i);
+    expect(skill).toMatch(/PRD \+ SRS \+ VTP \+ SDD \+ a\s*\n?\s*starter SAD/i);
     expect(skill).toMatch(/registry-aware/i);
     expect(skill).toMatch(/declined|decline/i); // a type may be declined per project
+  });
+
+  it('works in passes, because one sweep finds only the observable surface', () => {
+    // The cold-run comparison (JOB-57) showed a single sweep produces the API surface and
+    // misses what the code refuses, the invariants, and intent.
+    expect(skill).toMatch(/One pass is not enough/i);
+    expect(skill).toMatch(/what the code refuses/i);
+    expect(skill).toMatch(/tests as a source of intent/i);
+    expect(skill).toMatch(/the invariants/i);
+  });
+
+  it('asks for the starter architecture and the safety class, which code cannot supply', () => {
+    expect(skill).toMatch(/starter architecture/i);
+    expect(skill).toMatch(/Do not skip this/i);   // §5.3 is unanswerable without it
+    expect(skill).toMatch(/safety class and its rationale/i);
+  });
+
+  it('says plainly what a baseline cannot produce', () => {
+    expect(skill).toMatch(/What a baseline cannot produce/i);
+    expect(skill).toMatch(/rejected/i);
+    expect(skill).toMatch(/not a substitute/i);
   });
 });

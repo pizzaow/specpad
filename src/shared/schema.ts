@@ -70,6 +70,7 @@ export type GovernanceRuleId =
   | 'srs-category'
   | 'srs-security-control'
   | 'vtp-verification-level'
+  | 'vtp-negative-path'
   | 'sdd-segregation'
   // Advisory (JOB-56): asked of every unit and every risk, adopted when a project is ready.
   | 'sdd-acceptance'
@@ -103,6 +104,12 @@ export interface SrsItem {
    * it is, which is what an adequate-coverage argument is built from.
    */
   securityControl?: SecurityControl[];
+  /**
+   * Drafted by a tool and not yet ratified by a person. The baseline generator sets it on
+   * everything it writes; a reviewer clears it. Without it a scaffold is indistinguishable
+   * from a specification, which is the one thing a draft must never be.
+   */
+  draft?: boolean;
   hazards?: string[];
 }
 
@@ -205,6 +212,20 @@ export interface VtpItem {
    * hierarchy indent depth on every item.
    */
   verificationLevel?: TestLevel;
+  /**
+   * What this test does to the system, as distinct from `verificationLevel` (which says at
+   * what scope). A requirement proven only by `nominal` tests has been shown to work when
+   * nothing goes wrong, which is the weaker half of the claim.
+   */
+  kind?: TestKind;
+  /**
+   * Which of FDA's recommended security testing types this is (*Cybersecurity in Medical
+   * Devices*, February 2026, §V.C). Present so a reviewer asking "show me your fuzz
+   * testing" is answered by a filter rather than by a search.
+   */
+  securityTest?: SecurityTestType[];
+  /** Drafted by a tool and not yet ratified — see `SrsItem.draft`. */
+  draft?: boolean;
   notes?: string;
   automation?: AutomationLink[]; // the automated test(s) that execute this verification (empty = manual)
 }
@@ -287,12 +308,63 @@ export interface SddSection {
   segregatedFrom?: string[];
   /** Why the segregation holds — A1:2015 asks how effectiveness is ensured, not only that it exists. */
   segregationRationale?: string;
+  /** Drafted by a tool and not yet ratified — see `SrsItem.draft`. */
+  draft?: boolean;
 }
 
 export type SddSectionKind = 'unit' | 'view';
 
 /** The verification activity a test belongs to (IEC 62304 §5.5, §5.6, §5.7). */
 export type TestLevel = 'unit' | 'integration' | 'system';
+
+/**
+ * What a test does to the system. A well-formed protocol proves a requirement with a
+ * nominal case and then attacks it: the boundaries, the refusals, and the load.
+ */
+export type TestKind = 'nominal' | 'boundary' | 'negative' | 'stress' | 'security';
+
+export const TEST_KINDS: { value: TestKind; label: string; text: string }[] = [
+  { value: 'nominal', label: 'Nominal', text: 'The happy path — the behaviour the requirement describes, under the conditions it assumes' },
+  { value: 'boundary', label: 'Boundary', text: 'The edges of the accepted range, and which side of each edge is accepted' },
+  { value: 'negative', label: 'Negative', text: 'Invalid input, refused operations, and error paths — what the system will not do' },
+  { value: 'stress', label: 'Stress', text: 'Volume, concurrency, exhaustion and sustained load' },
+  { value: 'security', label: 'Security', text: 'Testing beyond ordinary verification, in a security context (FDA §V.C)' },
+];
+
+/**
+ * FDA's recommended security testing types (§V.C), which draw on ANSI/ISA 62443-4-1 for the
+ * vulnerability-testing group. Recorded per test so the set can be produced on request.
+ */
+export type SecurityTestType =
+  | 'security-requirements'
+  | 'threat-mitigation'
+  | 'abuse-case'
+  | 'malformed-input'
+  | 'robustness'
+  | 'fuzz'
+  | 'attack-surface'
+  | 'vulnerability-chaining'
+  | 'known-vulnerability-scan'
+  | 'composition-analysis'
+  | 'static-analysis'
+  | 'dynamic-analysis'
+  | 'penetration';
+
+export const SECURITY_TEST_TYPES: { value: SecurityTestType; group: string; label: string }[] = [
+  { value: 'security-requirements', group: 'Security requirements', label: 'Each security requirement implemented, with boundary analysis and its rationale' },
+  { value: 'threat-mitigation', group: 'Threat mitigation', label: 'Each risk control effective against the threat model, and adequate under load' },
+  { value: 'abuse-case', group: 'Vulnerability testing', label: 'Abuse and misuse cases' },
+  { value: 'malformed-input', group: 'Vulnerability testing', label: 'Malformed and unexpected input' },
+  { value: 'robustness', group: 'Vulnerability testing', label: 'Robustness' },
+  { value: 'fuzz', group: 'Vulnerability testing', label: 'Fuzz testing' },
+  { value: 'attack-surface', group: 'Vulnerability testing', label: 'Attack surface analysis' },
+  { value: 'vulnerability-chaining', group: 'Vulnerability testing', label: 'Vulnerability chaining' },
+  { value: 'known-vulnerability-scan', group: 'Vulnerability testing', label: 'Closed-box scanning for known vulnerabilities' },
+  { value: 'composition-analysis', group: 'Vulnerability testing', label: 'Software composition analysis of binaries' },
+  { value: 'static-analysis', group: 'Vulnerability testing', label: 'Static analysis, including hardcoded and default credentials' },
+  { value: 'dynamic-analysis', group: 'Vulnerability testing', label: 'Dynamic analysis' },
+  { value: 'penetration', group: 'Penetration testing', label: 'Penetration testing, with tester independence, scope, duration and method recorded' },
+];
 
 export const TEST_LEVELS: { value: TestLevel; label: string }[] = [
   { value: 'unit', label: 'Unit' },
@@ -549,6 +621,7 @@ export const srsSchema = {
           satisfies: { ...stringArray, description: 'Ids of the PRD product requirements this requirement satisfies — ids, never codes, so renames cannot break the upward trace. Empty/absent unless a PRD register is in use.' },
           design: { ...stringArray, description: 'Ids of the SDD sections that implement this requirement — the downward trace (IEC 62304 5.4; FDA SDS). Ids, never codes, so a section can be retitled or rewritten without breaking the link. Empty/absent unless an SDD is in use.' },
           securityControl: { type: 'array', items: { enum: ['authentication', 'authorization', 'cryptography', 'integrity', 'confidentiality', 'event-detection', 'resiliency', 'updatability'] }, description: 'Which FDA security control categories this requirement implements (Cybersecurity in Medical Devices, February 2026, V.B.1 and Appendix 1). A list, because one requirement often serves several. Distinct from category: 5.2.2 e) says a requirement is a security requirement, this says which control it is.' },
+          draft: { type: 'boolean', description: 'Drafted by a tool and not yet ratified by a person. The baseline generator sets it on everything it writes; a reviewer clears it. Without it a scaffold is indistinguishable from a specification.' },
           category: { type: 'array', items: { enum: ['functional', 'inputs-outputs', 'interfaces', 'alarms', 'security', 'user-interface', 'data-definition', 'installation', 'operation-maintenance', 'it-network', 'user-maintenance', 'regulatory'] }, description: 'Which of IEC 62304 5.2.2 a)-l) this requirement is. A list, because A1:2015 NOTE 10 states that the requirements in a) through l) can overlap. Its worth is coverage: a category with no requirement is a question to answer once, not an omission to discover at review.' },
           hazards: { ...stringArray, description: 'Reserved hazard labels (legacy v1 field; the editor no longer surfaces it).' },
         },
@@ -581,6 +654,9 @@ export const vtpSchema = {
           verifies: { ...stringArray, description: 'Ids of the SRS requirements this test verifies — ids, never codes, so renames cannot break traceability.' },
           expected: { type: 'string', description: 'The expected result that defines a pass.' },
           result: { enum: ['', 'not_tested', 'passed', 'failed'], description: 'Latest recorded outcome for a MANUAL test: "", "not_tested", "passed", or "failed". For automated tests the outcome is derived from a captured run, not stored here. Roll-ups are computed on read.' },
+          kind: { enum: ['nominal', 'boundary', 'negative', 'stress', 'security'], description: 'What this test does to the system, as distinct from its level: the happy path, the boundaries, the refusals, sustained load, or testing in a security context. A requirement proven only by nominal tests has been shown to work when nothing goes wrong.' },
+          securityTest: { type: 'array', items: { enum: ['security-requirements', 'threat-mitigation', 'abuse-case', 'malformed-input', 'robustness', 'fuzz', 'attack-surface', 'vulnerability-chaining', 'known-vulnerability-scan', 'composition-analysis', 'static-analysis', 'dynamic-analysis', 'penetration'] }, description: "Which of FDA's recommended security testing types this is (Cybersecurity in Medical Devices, February 2026, V.C; vulnerability testing per ANSI/ISA 62443-4-1). Recorded so the set can be produced on request rather than searched for." },
+          draft: { type: 'boolean', description: 'Drafted by a tool and not yet ratified by a person. The baseline generator sets it; a reviewer clears it.' },
           verificationLevel: { enum: ['unit', 'integration', 'system'], description: 'Which verification activity this test belongs to: unit verification (IEC 62304 5.5), integration testing (5.6) or system testing (5.7). Without it a register can show requirements are covered by something, but not that each of the three activities was performed.' },
           notes: { type: 'string', description: 'Evidence and context for the recorded result (free text; the machine link lives in automation).' },
           automation: {
@@ -654,6 +730,7 @@ export const sddSchema = {
           kind: { enum: ['unit', 'view'], description: 'Whether this section describes a software unit (IEC 62304 5.4.2) or a cross-cutting design view (IEEE 1016 viewpoint). Absent means "unit". Only units may be named as the cause of a risk, and the unit list required by 5.4.1 is derived from this.' },
           body: { type: 'string', description: 'The design, as markdown: what the unit hides, its algorithm and data, interface behaviour for valid and invalid input (5.4.3), and unit acceptance criteria (5.5.3). May embed images and diagrams like the architecture document.' },
           source: { ...stringArray, description: 'Repository paths this section describes, so the design can be checked against the code it claims to describe.' },
+          draft: { type: 'boolean', description: 'Drafted by a tool and not yet ratified by a person.' },
           acceptance: { type: 'string', description: 'What "verified" means for this unit (IEC 62304 5.5.3; at Class C also 5.5.4 — event sequencing, resource use, fault handling, boundary values). A field rather than a line of prose, because 5.5.3 is asked per unit and buried in the body it cannot be rolled up or shown.' },
           segregatedFrom: { ...stringArray, description: 'Ids of other design sections this unit is segregated from, where the separation is essential to risk control (IEC 62304 5.3.5). Ids, never codes.' },
           segregationRationale: { type: 'string', description: 'Why the segregation holds. A1:2015 asks how effectiveness is ensured, not merely that separation was intended.' },
