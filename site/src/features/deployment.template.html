@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Deployment — SpecPad</title>
+    <meta name="description" content="How SpecPad is deployed: a hosted browser editor with no server and no stored credential, or a single self-hosted container image, with the update and patch path for each." />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://specpad.com/features/deployment/" />
+    <meta property="og:title" content="Deployment — SpecPad" />
+    <meta property="og:description" content="How SpecPad is deployed: a hosted browser editor with no server and no stored credential, or a single self-hosted container image, with the update and patch path for each." />
+    <meta property="og:image" content="https://specpad.com/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Deployment — SpecPad" />
+    <meta name="twitter:description" content="How SpecPad is deployed: a hosted browser editor with no server and no stored credential, or a single self-hosted container image, with the update and patch path for each." />
+    <meta name="twitter:image" content="https://specpad.com/og-image.png" />
+    <link rel="canonical" href="https://specpad.com/features/deployment/" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body class="lp lp-doc">
+    <header class="lp-header">
+      <div class="lp-header-inner">
+        <a class="lp-logo" href="/" aria-label="SpecPad home">specpad<span class="lp-cursor">_</span></a>
+        <nav class="lp-nav" aria-label="Site">
+          <a href="/#features">Features</a>
+          <a href="/features/traceability/">Traceability</a>
+          <a href="/features/compliance/">Compliance</a>
+          <a href="/reference/">Schema reference</a>
+          <a class="lp-nav-gh" href="https://github.com/pizzaow/specpad">GitHub</a>
+        </nav>
+        <a class="lp-btn lp-btn-primary lp-header-cta" href="/v01/?demo">Live demo <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </header>
+
+    <main class="lp-doc-main">
+      <p class="lp-crumb"><a href="/">Home</a> <span aria-hidden="true">/</span> <a href="/#features">Features</a> <span aria-hidden="true">/</span> Deployment</p>
+      <h1 class="lp-doc-h1">Two deployments, and an update path for each</h1>
+      <p class="lp-doc-lede">The hosted editor needs no installation and holds nothing. The self-hosted server is a single container image you run. Both open the same documents from the same contract.</p>
+
+      <section class="lp-doc-sec">
+        <h2>Hosted editor — nothing to install</h2>
+        <p>A static page served from a versioned path, running entirely in your browser against your own
+        filesystem through the File System Access API. No server, no session, no stored credential, and
+        no data at rest beyond your own repository.</p>
+        <p>Its only network traffic is fetching its own build. Your specification never leaves your
+        machine.</p>
+        <p>Try it on sample data at <a href="/v01/?demo">specpad.com/v01/?demo</a> — every document
+        editable, edits held in the browser and lost on reload.</p>
+      </section>
+
+      <section class="lp-doc-sec">
+        <h2>Self-hosted — one container</h2>
+        <p>The server is distributable as a single container image serving both the editor build and the
+        API. It takes its repository, branch, credential, authentication provider, role map and commit
+        policy from one configuration file given on the command line, and exits with a non-zero status
+        when that file is invalid rather than starting in a half-configured state.</p>
+        <p>State on disk is a bare clone and per-user worktrees, all regenerable from git. An update
+        never migrates data and a rollback loses nothing.</p>
+      </section>
+
+      <section class="lp-doc-sec">
+        <h2>The launcher</h2>
+        <p><code>docs/specpad/index.html</code> is generated in your repository and redirects to
+        whichever editor you use — the public one, or your own server. A team running its own server
+        sets the base URL in the project index, and everyone on the repository lands there instead.
+        Where one server hosts several repositories, the launcher names which project this one is.</p>
+      </section>
+
+      <section class="lp-doc-sec">
+        <h2>Updates, and what an operator controls</h2>
+        <table class="lp-table">
+          <thead><tr><th>Deployment</th><th>Update path</th><th>Automatic?</th></tr></thead>
+          <tbody>
+          <tr><td>Hosted editor</td><td>New build published to the version path; the next page load has it</td><td>Yes</td></tr>
+          <tr><td>Self-hosted server</td><td>New image; the operating company redeploys</td><td>No</td></tr>
+          <tr><td>The skill</td><td>Distributed with Claude Code</td><td>With the CLI</td></tr>
+          </tbody>
+        </table>
+        <p>The version path is derived from the contract version, and old paths stay live indefinitely —
+        so an update never breaks a document authored against an earlier contract.</p>
+        <p><strong>SpecPad cannot push an update to a self-hosted instance.</strong> An operator who does
+        nothing stays on the version they installed. That is a deliberate property of self-hosting
+        rather than a gap: a documentation tool that could silently replace its own code inside your
+        network would be a worse security position, not a better one.</p>
+      </section>
+
+      <section class="lp-doc-sec">
+        <h2>Everything is in your git</h2>
+        <p>Documents, snapshots, job caches and release baselines are all committed files under
+        <code>docs/specpad/</code>. There is no database and nothing to back up separately. If SpecPad
+        disappeared tomorrow your specification would still be there, still readable, still diffable.</p>
+      </section>
+
+      <nav class="lp-doc-next" aria-label="More features">
+        <h2>More</h2>
+        <ul>
+          <li><a href="/features/traceability/">Traceability &amp; standards</a></li>
+          <li><a href="/features/compliance/">Standards conformity</a></li>
+          <li><a href="/features/server/">Self-hosted server</a></li>
+          <li><a href="/features/cybersecurity/">Cybersecurity</a></li>
+          <li><a href="/features/risk/">Risk, SOUP &amp; design</a></li>
+        </ul>
+      </nav>
+    </main>
+
+    <footer class="lp-footer">
+      <div class="lp-footer-inner">
+        <a class="lp-logo lp-logo-sm" href="/">specpad<span class="lp-cursor">_</span></a>
+        <nav class="lp-footer-nav" aria-label="Footer">
+          <a href="/reference/">Schema reference</a>
+          <a href="/v01/">Open the editor</a>
+          <a href="/v01/?demo">Live demo</a>
+          <a href="https://github.com/pizzaow/specpad">GitHub</a>
+        </nav>
+        <p class="lp-footer-meta">open source &middot; MIT &middot; schema v1.0 &middot; editor /v01/</p>
+      </div>
+    </footer>
+  </body>
+</html>

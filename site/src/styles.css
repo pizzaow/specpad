@@ -795,3 +795,42 @@ body {
   margin-left: 6px;
   vertical-align: middle;
 }
+
+/* ── Feature pages ───────────────────────────────────────────────────────────
+   Long-form reading, not a landing page: one column, generous measure, and
+   tables that stay legible on a phone. */
+.lp-doc-main { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+.lp-crumb { font-size: 0.85rem; color: var(--lp-muted, #64748b); margin: 0 0 1.25rem; }
+.lp-crumb a { color: inherit; }
+.lp-doc-h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); line-height: 1.15; margin: 0 0 0.75rem; }
+.lp-doc-lede { font-size: 1.15rem; line-height: 1.6; color: var(--lp-muted, #64748b); margin: 0 0 2.5rem; }
+.lp-doc-sec { margin: 0 0 2.75rem; }
+.lp-doc-sec h2 { font-size: 1.35rem; margin: 0 0 0.75rem; }
+.lp-doc-sec p { line-height: 1.7; margin: 0 0 0.9rem; }
+.lp-list { line-height: 1.7; padding-left: 1.2rem; }
+.lp-list li { margin-bottom: 0.5rem; }
+.lp-chain {
+  background: var(--lp-surface-2, #f1f5f9); border-radius: 8px; padding: 1rem 1.1rem;
+  font-size: 0.85rem; line-height: 1.7; overflow-x: auto; margin: 0 0 1.1rem;
+}
+.lp-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin: 0.5rem 0 1rem; display: block; overflow-x: auto; }
+.lp-table th, .lp-table td { text-align: left; padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--lp-border, #e2e8f0); vertical-align: top; }
+.lp-table th { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--lp-muted, #64748b); }
+.lp-table code { font-size: 0.85em; }
+.lp-tag { display: inline-block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; padding: 2px 7px; border-radius: 999px; background: #e0e7ff; color: #3730a3; }
+.lp-tag-soft { background: #f1f5f9; color: #64748b; }
+.lp-doc-next { border-top: 1px solid var(--lp-border, #e2e8f0); padding-top: 1.5rem; }
+.lp-doc-next h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--lp-muted, #64748b); margin: 0 0 0.6rem; }
+.lp-doc-next ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+
+/* Deep-dive cards on the landing page. */
+.lp-deep { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); margin-top: 1.5rem; }
+.lp-deep-card {
+  display: block; padding: 1.1rem 1.2rem; border: 1px solid var(--lp-border, #e2e8f0);
+  border-radius: 10px; text-decoration: none; color: inherit; background: var(--lp-surface, #fff);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.lp-deep-card:hover { border-color: var(--lp-accent, #6366f1); transform: translateY(-2px); }
+.lp-deep-card h3 { margin: 0 0 0.4rem; font-size: 1.05rem; }
+.lp-deep-card p { margin: 0 0 0.6rem; font-size: 0.9rem; line-height: 1.55; color: var(--lp-muted, #64748b); }
+.lp-deep-more { font-size: 0.82rem; font-weight: 600; color: var(--lp-accent, #6366f1); }

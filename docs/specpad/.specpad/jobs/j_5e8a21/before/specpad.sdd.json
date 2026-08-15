@@ -589,11 +589,9 @@
       "title": "Marketing site and generated reference",
       "source": [
         "site/src/generate-reference.ts",
-        "site/src/generate-features.ts",
         "site/index.html"
       ],
-      "body": "The marketing site is a second Vite build deployed to the apex; the editor is deployed under its\nversion path.\n\nThe schema reference is generated from the live contract at build time, so it cannot describe a version\nof the schema that does not exist.\n\nFeature pages are generated the same way the reference is: a template per page in `site/src/features/`, with named blocks substituted from the live contract at build time — the governance rules and their tiers, the document types, the §5.2.2 categories, the FDA control categories and the testing taxonomies. An unknown block raises rather than rendering empty, so the build stops instead of shipping a visible placeholder.\n\nThe rendering function is exported and the generated pages are gitignored, so the tests render in memory rather than reading built output — a test that read the output would pass only on a machine that had already built.\n\nProse stays hand-written. Only what the product already defines is injected, because a marketing page that restates a rule set is a second copy of it, and the second copy is the one that goes stale.",
-      "acceptance": "Every page renders with the shared chrome and a canonical URL; every governance rule, document type and category appears from the module rather than the page source; an unknown block fails the build; every page is reachable from the landing page and links to the others."
+      "body": "The marketing site is a second Vite build deployed to the apex; the editor is deployed under its\nversion path.\n\nThe schema reference is generated from the live contract at build time, so it cannot describe a version\nof the schema that does not exist."
     }
   ]
 }

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Traceability &amp; standards — SpecPad</title>
+    <meta name="description" content="SpecPad traceability: product need to requirement to design to verification, with risk and threat controls resolved onto the requirement, as schema-validated JSON in git." />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://specpad.com/features/traceability/" />
+    <meta property="og:title" content="Traceability &amp; standards — SpecPad" />
+    <meta property="og:description" content="SpecPad traceability: product need to requirement to design to verification, with risk and threat controls resolved onto the requirement, as schema-validated JSON in git." />
+    <meta property="og:image" content="https://specpad.com/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Traceability &amp; standards — SpecPad" />
+    <meta name="twitter:description" content="SpecPad traceability: product need to requirement to design to verification, with risk and threat controls resolved onto the requirement, as schema-validated JSON in git." />
+    <meta name="twitter:image" content="https://specpad.com/og-image.png" />
+    <link rel="canonical" href="https://specpad.com/features/traceability/" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body class="lp lp-doc">
+    <header class="lp-header">
+      <div class="lp-header-inner">
+        <a class="lp-logo" href="/" aria-label="SpecPad home">specpad<span class="lp-cursor">_</span></a>
+        <nav class="lp-nav" aria-label="Site">
+          <a href="/#features">Features</a>
+          <a href="/features/traceability/">Traceability</a>
+          <a href="/features/compliance/">Compliance</a>
+          <a href="/reference/">Schema reference</a>
+          <a class="lp-nav-gh" href="https://github.com/pizzaow/specpad">GitHub</a>
+        </nav>
+        <a class="lp-btn lp-btn-primary lp-header-cta" href="/v01/?demo">Live demo <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </header>
+
+    <main class="lp-doc-main">
+      <p class="lp-crumb"><a href="/">Home</a> <span aria-hidden="true">/</span> <a href="/#features">Features</a> <span aria-hidden="true">/</span> Traceability &amp; standards</p>
+      <h1 class="lp-doc-h1">One chain, from the user need to the executed test</h1>
+      <p class="lp-doc-lede">Every link is stored once, by a stable identifier, and every roll-up is computed on read. Nothing in the chain is maintained twice, so nothing in it can disagree with itself.</p>
+
+      <section class="lp-doc-sec">
+        <h2>The chain</h2>
+        <pre class="lp-chain">product need  →  requirement  →  design section  →  verification test  →  captured run
+                       ↑
+        risk control · threat control</pre>
+        <p>A requirement is the hub. It <em>satisfies</em> a product need, is implemented by one or more
+        design sections, and is verified by tests. It may also exist <em>because</em> a risk or a threat
+        needed controlling — and that edge is stored on the risk and the threat, never on the
+        requirement.</p>
+        <p>Which means it is resolved <strong>backwards</strong> when the matrix is built. A requirement
+        does not know it is load-bearing. A reviewer needs to be told, and the person editing the
+        requirement needs to be told before they weaken it.</p>
+      </section>
+
+      <section class="lp-doc-sec">
+        <h2>Why identifiers, not names</h2>
+        <p>Every item carries an immutable identifier — <code>r_7f3a9c</code>, <code>d_a12b4c</code> —
+        generated once. Every reference targets that identifier. The human-readable code beside it
+        (<code>AUTH-5</code>, <code>SDD-12</code>) is a label you can rename at will, because nothing
+        points at it.</p>
+        <p>This is the difference between a trace matrix that survives a reorganisation and one that
+        quietly breaks during it.</p>
+      </section>
+
+      <section class="lp-doc-sec">
+        <h2>Depth, reported apart from breadth</h2>
+        <p>Coverage is the number that flatters. A register can report every requirement verified and
+        still be shallow: nothing recorded as integration testing, no requirement saying which kind of
+        requirement it is, half the units with no acceptance criteria.</p>
+        <p>So the Traceability view reports the two separately — how many requirements are verified,
+        and then how many reach a design, declare a content category, control a risk or threat, and how
+        many tests exist at each verification level.</p>
+      </section>
+
+      <section class="lp-doc-sec">
+        <h2>Governance is the contract</h2>
+        <p>{{governance-count}} rules, run identically by the editor, the skill and the server, from one
+        implementation — so the three cannot disagree about whether a project is clean.
+        {{governance-blocking-count}} block; {{governance-advisory-count}} report without failing.</p>
+        <p>The advisory tier exists because a rule that fires on every document in an established
+        register the day it ships teaches people to ignore governance. A project adopts one by naming
+        it in its index, at which point it blocks.</p>
+        <table class="lp-table">
+          <thead><tr><th>Rule</th><th>What it holds</th><th>Tier</th></tr></thead>
+          <tbody>
+{{governance-rules}}
+          </tbody>
+        </table>
+      </section>
+
+      <section class="lp-doc-sec">
+        <h2>{{document-type-count}} document types, one registry</h2>
+        <p>Each is described once. Validation, the schema reference, release snapshots, per-job diffs
+        and the change views all derive from that description, so adding a pillar is a registration
+        rather than a migration.</p>
+        <table class="lp-table">
+          <thead><tr><th>Type</th><th>Document</th><th>Shape</th><th></th></tr></thead>
+          <tbody>
+{{document-types}}
+          </tbody>
+        </table>
+      </section>
+
+      <nav class="lp-doc-next" aria-label="More features">
+        <h2>More</h2>
+        <ul>
+          <li><a href="/features/compliance/">Standards conformity</a></li>
+          <li><a href="/features/server/">Self-hosted server</a></li>
+          <li><a href="/features/cybersecurity/">Cybersecurity</a></li>
+          <li><a href="/features/risk/">Risk, SOUP &amp; design</a></li>
+          <li><a href="/features/deployment/">Deployment</a></li>
+        </ul>
+      </nav>
+    </main>
+
+    <footer class="lp-footer">
+      <div class="lp-footer-inner">
+        <a class="lp-logo lp-logo-sm" href="/">specpad<span class="lp-cursor">_</span></a>
+        <nav class="lp-footer-nav" aria-label="Footer">
+          <a href="/reference/">Schema reference</a>
+          <a href="/v01/">Open the editor</a>
+          <a href="/v01/?demo">Live demo</a>
+          <a href="https://github.com/pizzaow/specpad">GitHub</a>
+        </nav>
+        <p class="lp-footer-meta">open source &middot; MIT &middot; schema v1.0 &middot; editor /v01/</p>
+      </div>
+    </footer>
+  </body>
+</html>

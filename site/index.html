@@ -3,30 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SpecPad — specs that live in your repo, and double as design-control evidence</title>
+    <title>SpecPad — IEC 62304 and FDA design-control evidence, in your git repo</title>
     <meta
       name="description"
-      content="Specs that live in your repo and double as design-control evidence: a traceable chain — product requirements, software requirements, verification, architecture, releases — as schema-validated JSON in git, maintained by a Claude skill and a visual editor. Regulatory-grade for IEC 62304 / FDA; lightweight for everyone else."
+      content="Design-control evidence for medical device software, kept as schema-validated JSON in your git repo. Requirements, detailed design, risk, SOUP, cybersecurity and verification — traced end to end, with clause-by-clause conformity against IEC 62304 and the FDA software, cybersecurity and off-the-shelf guidances."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://specpad.com/" />
-    <meta property="og:title" content="SpecPad — specs that live in your repo, and double as design-control evidence" />
+    <meta property="og:title" content="SpecPad — IEC 62304 and FDA design-control evidence, in your git repo" />
     <meta
       property="og:description"
-      content="Specs that live in your repo and double as design-control evidence: a traceable chain — product requirements, software requirements, verification, architecture, releases — as schema-validated JSON in git, maintained by a Claude skill and a visual editor. Regulatory-grade for IEC 62304 / FDA; lightweight for everyone else."
+      content="Design-control evidence for medical device software, kept as schema-validated JSON in your git repo. Requirements, detailed design, risk, SOUP, cybersecurity and verification — traced end to end, with clause-by-clause conformity against IEC 62304 and the FDA software, cybersecurity and off-the-shelf guidances."
     />
     <meta property="og:image" content="https://specpad.com/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="SpecPad — specs that live in your repo, and double as design-control evidence" />
+    <meta property="og:image:alt" content="SpecPad — IEC 62304 and FDA design-control evidence, in your git repo" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="SpecPad — specs that live in your repo, and double as design-control evidence" />
+    <meta name="twitter:title" content="SpecPad — IEC 62304 and FDA design-control evidence, in your git repo" />
     <meta
       name="twitter:description"
-      content="Specs that live in your repo and double as design-control evidence: a traceable chain — product requirements, software requirements, verification, architecture, releases — as schema-validated JSON in git, maintained by a Claude skill and a visual editor. Regulatory-grade for IEC 62304 / FDA; lightweight for everyone else."
+      content="Design-control evidence for medical device software, kept as schema-validated JSON in your git repo. Requirements, detailed design, risk, SOUP, cybersecurity and verification — traced end to end, with clause-by-clause conformity against IEC 62304 and the FDA software, cybersecurity and off-the-shelf guidances."
     />
     <meta name="twitter:image" content="https://specpad.com/og-image.png" />
-    <meta name="twitter:image:alt" content="SpecPad — specs that live in your repo, and double as design-control evidence" />
+    <meta name="twitter:image:alt" content="SpecPad — IEC 62304 and FDA design-control evidence, in your git repo" />
     <link rel="canonical" href="https://specpad.com/" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/src/styles.css" />
@@ -39,6 +39,7 @@
         <nav class="lp-nav" aria-label="Site">
           <a href="#how-it-works">How it works</a>
           <a href="#features">Features</a>
+          <a href="/features/compliance/">Compliance</a>
           <a href="#get-started">Get started</a>
           <a href="/reference/">Schema reference</a>
           <a class="lp-nav-gh" href="https://github.com/pizzaow/specpad">
@@ -56,12 +57,14 @@
         <div class="lp-hero-inner">
           <div class="lp-hero-copy">
             <p class="lp-eyebrow lp-reveal" style="--d: 0s"><span class="lp-prompt">$</span> git log docs/specpad/srs.json</p>
-            <h1 class="lp-h1 lp-reveal" style="--d: 0.08s">Specs that live in your repo &mdash; <span class="lp-h1-accent">and double as design-control evidence</span>.</h1>
+            <h1 class="lp-h1 lp-reveal" style="--d: 0.08s">Design-control evidence for medical device software &mdash; <span class="lp-h1-accent">kept in your git repo</span>.</h1>
             <p class="lp-lede lp-reveal" style="--d: 0.16s">
-              A traceable chain &mdash; product requirements &rarr; software requirements &rarr;
-              verification &rarr; architecture &rarr; releases &mdash; kept as schema-validated JSON in
-              your git repo, maintained by a Claude skill and reviewed by humans in a visual editor.
-              Regulatory-grade for IEC&nbsp;62304 / FDA teams; lightweight for everyone else.
+              Requirements, detailed design, software risk, third-party software, cybersecurity and
+              verification &mdash; one traced chain, as schema-validated JSON in your repo, captured by a
+              Claude skill as you build and reviewed by humans in a visual editor. Conformity reported
+              clause by clause against IEC&nbsp;62304 and the FDA software, cybersecurity and
+              off-the-shelf guidances. The core is domain-neutral, so it works anywhere; the regulated
+              depth is what it was built for.
             </p>
             <div class="lp-cta-row lp-reveal" style="--d: 0.24s">
               <a class="lp-btn lp-btn-primary lp-btn-lg" href="/specpad-skill.zip" download>Download the Claude skill</a>
@@ -111,7 +114,7 @@
                 role="img"
                 aria-label="The sync loop: your code changes, the Claude skill updates the SRS and VTP JSON in docs/specpad in git, a human reviews and approves in the editor, the change is committed via git commit or PR, and the loop repeats."
               >
-                <title>The sync loop: code changes flow through the Claude skill into git, are reviewed and approved by a human in the editor, committed, and the loop repeats.</title>
+                <title>SpecPad — IEC 62304 and FDA design-control evidence, in your git repo</title>
                 <defs>
                   <marker id="arrA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
                     <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
@@ -167,7 +170,7 @@
                 role="img"
                 aria-label="One contract, two editors: a shared schema and governance module governs both the Claude skill, which edits programmatically, and the visual editor, where humans review and approve. Both read and write the same docs/specpad JSON files. Git is the history and merge layer."
               >
-                <title>One contract, two editors: the shared schema and governance module governs both the Claude skill and the visual editor; both read and write the same JSON files, with git as the history and merge layer.</title>
+                <title>SpecPad — IEC 62304 and FDA design-control evidence, in your git repo</title>
                 <defs>
                   <marker id="arrB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
                     <path d="M0,0 L10,5 L0,10 z" fill="#1f6feb" />
@@ -229,10 +232,60 @@
       </section>
 
       <!-- ── Features ─────────────────────────────────────────────── -->
+      <!-- ── Deep dives ─────────────────────────────────────────────── -->
+      <section class="lp-section" id="deep-dives">
+        <div class="lp-section-inner">
+          <p class="lp-kicker"><span class="lp-prompt">##</span> In depth</p>
+          <h2 class="lp-h2">The parts worth a longer look.</h2>
+          <p class="lp-section-lede">
+            Each of these is a page rather than a paragraph, because each is a decision with a reason
+            behind it &mdash; and the reasons are what a reviewer asks about.
+          </p>
+          <div class="lp-deep">
+            <a class="lp-deep-card" href="/features/traceability/">
+              <h3>Traceability</h3>
+              <p>Product need &rarr; requirement &rarr; design &rarr; verification, with risk and threat
+              controls resolved backwards onto the requirement. Stored once, by stable identifier.</p>
+              <span class="lp-deep-more">Read more <span aria-hidden="true">&rarr;</span></span>
+            </a>
+            <a class="lp-deep-card" href="/features/compliance/">
+              <h3>Standards conformity</h3>
+              <p>IEC&nbsp;62304 and three FDA guidances, clause by clause, with each status derived from
+              the project rather than asserted. Nothing is ever reported as a gap.</p>
+              <span class="lp-deep-more">Read more <span aria-hidden="true">&rarr;</span></span>
+            </a>
+            <a class="lp-deep-card" href="/features/cybersecurity/">
+              <h3>Cybersecurity</h3>
+              <p>A threat model rated on exploitability, controls grouped by FDA category, architecture
+              views with labelled diagrams, and the &sect;V.C security testing taxonomy.</p>
+              <span class="lp-deep-more">Read more <span aria-hidden="true">&rarr;</span></span>
+            </a>
+            <a class="lp-deep-card" href="/features/risk/">
+              <h3>Risk, SOUP &amp; design</h3>
+              <p>The clause&nbsp;7 slice with no probability on it, third-party software with real
+              end-of-life dates, and units that carry acceptance criteria.</p>
+              <span class="lp-deep-more">Read more <span aria-hidden="true">&rarr;</span></span>
+            </a>
+            <a class="lp-deep-card" href="/features/server/">
+              <h3>Self-hosted server</h3>
+              <p>Your repository, your identity provider, per-user working copies, a server-side commit
+              gate, and merging that never touches text.</p>
+              <span class="lp-deep-more">Read more <span aria-hidden="true">&rarr;</span></span>
+            </a>
+            <a class="lp-deep-card" href="/features/deployment/">
+              <h3>Deployment</h3>
+              <p>A browser editor with nothing to install and nothing stored, or one container image you
+              run yourself. Both open the same documents.</p>
+              <span class="lp-deep-more">Read more <span aria-hidden="true">&rarr;</span></span>
+            </a>
+          </div>
+        </div>
+      </section>
+
       <section class="lp-section" id="features">
         <div class="lp-section-inner">
           <p class="lp-kicker"><span class="lp-prompt">##</span> Features</p>
-          <h2 class="lp-h2">Spreadsheet-fast on the surface. Audit-grade underneath.</h2>
+          <h2 class="lp-h2">Seven registers. One contract. Every link checked.</h2>
           <p class="lp-section-lede">
             Each capability twice over &mdash; what you see in the editor, and the mechanism behind it.
           </p>
@@ -270,7 +323,7 @@
                       role="img"
                       aria-label="Your spec files in the repo connect directly to the browser editor over the File System Access API — no backend."
                     >
-                      <title>The browser editor reads and writes docs/specpad JSON files directly via the File System Access API, with no backend.</title>
+                      <title>SpecPad — IEC 62304 and FDA design-control evidence, in your git repo</title>
                       <defs>
                         <marker id="arr-f1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
                           <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
@@ -333,7 +386,7 @@
                       role="img"
                       aria-label="The Claude skill and the visual editor both point at the same docs/specpad JSON file — one shared contract."
                     >
-                      <title>The Claude skill and the visual editor both read and write the same docs/specpad JSON files, governed by one shared contract.</title>
+                      <title>SpecPad — IEC 62304 and FDA design-control evidence, in your git repo</title>
                       <defs>
                         <marker id="arr-f2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
                           <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
@@ -392,7 +445,7 @@
                       role="img"
                       aria-label="A requirement with id r_4f2a links to a test that verifies r_4f2a, which links to a passed result — linked by id, never by name."
                     >
-                      <title>Requirements link to tests link to results by stable id, never by human-readable name.</title>
+                      <title>SpecPad — IEC 62304 and FDA design-control evidence, in your git repo</title>
                       <defs>
                         <marker id="arr-f3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
                           <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
@@ -453,7 +506,7 @@
                       role="img"
                       aria-label="The baseline snapshot from the v1.0 tag and the working copy feed a diff, which produces the redline view. Git owns the history."
                     >
-                      <title>The baseline snapshot from the v1.0 git tag and the working copy are diffed to produce the redline view; git owns the history.</title>
+                      <title>SpecPad — IEC 62304 and FDA design-control evidence, in your git repo</title>
                       <defs>
                         <marker id="arr-f4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
                           <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
@@ -517,7 +570,7 @@
                       role="img"
                       aria-label="A timeline of git tags v0.1 and v1.0 plus the working copy; each tag has a snapshot, and the snapshots feed the history dialog."
                     >
-                      <title>Each git tag on the timeline gets a snapshot, and the snapshots populate the editor's history dialog.</title>
+                      <title>SpecPad — IEC 62304 and FDA design-control evidence, in your git repo</title>
                       <defs>
                         <marker id="arr-f5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
                           <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
@@ -585,7 +638,7 @@
                       role="img"
                       aria-label="A job marker file links the current edits to a ticket such as JIRA-123."
                     >
-                      <title>A job marker file in the repo links the current working edits to the ticket that motivated them.</title>
+                      <title>SpecPad — IEC 62304 and FDA design-control evidence, in your git repo</title>
                       <defs>
                         <marker id="arr-f6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
                           <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
@@ -646,7 +699,7 @@
                       role="img"
                       aria-label="A spec file passes through two gates in order: structure, enforced by JSON Schema, then policy, enforced by governance rules. The file's schemaVersion 1.0 pins the editor build at /v01/."
                     >
-                      <title>Every file passes a structure gate (JSON Schema) and then a policy gate (governance rules); its schemaVersion pins the matching editor build.</title>
+                      <title>SpecPad — IEC 62304 and FDA design-control evidence, in your git repo</title>
                       <defs>
                         <marker id="arr-f7" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
                           <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
@@ -713,10 +766,11 @@
           <h2 class="lp-h2">Built for regulated work. Useful everywhere.</h2>
           <div class="lp-audience">
             <div class="lp-audience-card lp-audience-reg">
-              <h3>Regulated industries</h3>
+              <h3>Medical device software</h3>
               <p>
-                Audit-ready traceability, structured evidence, and human approval gates &mdash;
-                without standing up heavyweight tooling.
+                IEC&nbsp;62304 clause by clause, ISO&nbsp;13485 &sect;7.3 design controls, the FDA software,
+                cybersecurity and off-the-shelf guidances &mdash; with the evidence traced end to end,
+                and without standing up heavyweight tooling.
               </p>
             </div>
             <div class="lp-audience-card lp-audience-rest">

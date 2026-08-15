@@ -5,6 +5,7 @@ node_modules/
 dist/
 dist-site/
 site/reference/
+site/features/
 
 # Environment
 .env

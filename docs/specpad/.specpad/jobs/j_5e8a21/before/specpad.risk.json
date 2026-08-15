@@ -1,0 +1,217 @@
+{
+  "schemaVersion": "1.0",
+  "type": "risk",
+  "name": "specpad",
+  "title": "Risk",
+  "items": [
+    {
+      "id": "h_rk00",
+      "text": "Loss or corruption of specification content",
+      "heading": true
+    },
+    {
+      "id": "k_a1b2c3",
+      "code": "RISK-1",
+      "severity": "serious",
+      "residual": "acceptable",
+      "text": "Two people edit one document and the reconciliation silently drops an item, duplicates an id, or leaves a reference pointing at something that no longer exists.",
+      "causes": [
+        "d_mrg001",
+        "d_wcp001"
+      ],
+      "controls": [
+        "r_mg1",
+        "r_mg2",
+        "r_mg3",
+        "r_mg4",
+        "r_mg5"
+      ],
+      "notes": "A line-based merge of a formatted JSON array produces exactly this and the result looks plausible in review, which is why the merge is item-id-keyed and textual merging of a register is refused outright."
+    },
+    {
+      "id": "k_b2c3d4",
+      "code": "RISK-2",
+      "severity": "serious",
+      "residual": "acceptable",
+      "text": "An edit written against a version of a document that has since moved overwrites another person's change without either of them being told.",
+      "causes": [
+        "d_trm001",
+        "d_sap001"
+      ],
+      "controls": [
+        "r_ce1"
+      ],
+      "notes": "Version tags seen on read are replayed on write; the server refuses the stale write rather than the client detecting it."
+    },
+    {
+      "id": "k_c3d4e5",
+      "code": "RISK-3",
+      "severity": "serious",
+      "residual": "acceptable",
+      "text": "A working copy holding unpublished edits is removed while reclaiming idle disk, and the work exists in no git object.",
+      "causes": [
+        "d_rpo001"
+      ],
+      "controls": [
+        "r_wc2",
+        "r_wc3"
+      ]
+    },
+    {
+      "id": "k_d4e5f6",
+      "code": "RISK-4",
+      "severity": "minor",
+      "residual": "acceptable",
+      "text": "A user edits the hosted demo, believes the result was saved, and loses the work on reload.",
+      "causes": [
+        "d_tdm001",
+        "d_app001"
+      ],
+      "controls": [
+        "r_ed0b11"
+      ],
+      "notes": "The sandbox states that nothing is saved and offers the document as a download; the transport refuses writes as a backstop."
+    },
+    {
+      "id": "h_rk10",
+      "text": "Evidence that is not what it appears to be",
+      "heading": true
+    },
+    {
+      "id": "k_e5f6a7",
+      "code": "RISK-5",
+      "severity": "critical",
+      "residual": "acceptable",
+      "text": "A test that never executed is reported as passing, so a requirement appears verified when nothing verified it.",
+      "causes": [
+        "d_ver001",
+        "d_aud001"
+      ],
+      "controls": [
+        "r_ver1",
+        "r_ver3",
+        "r_ver9"
+      ],
+      "notes": "A link resolving to no result is \"not run\", which is a distinct state from failed and from passed. This register exists largely to make that distinction load-bearing: it is the claim the whole export rests on."
+    },
+    {
+      "id": "k_f6a7b8",
+      "code": "RISK-6",
+      "severity": "serious",
+      "residual": "acceptable",
+      "text": "A change enters the repository without validation or governance, so the published evidence is internally inconsistent.",
+      "causes": [
+        "d_cgt001",
+        "d_wcp001"
+      ],
+      "controls": [
+        "r_cm4",
+        "r_sv5"
+      ],
+      "notes": "Governance runs server-side because the client is not trusted. For someone who never runs the test suite, this gate is the only thing enforcing the rule."
+    },
+    {
+      "id": "k_a7b8c9",
+      "code": "RISK-7",
+      "severity": "serious",
+      "residual": "acceptable",
+      "text": "Renaming a human label breaks a trace link, and the requirement, test or design silently stops being connected to what it was connected to.",
+      "causes": [
+        "d_ids001",
+        "d_dif001"
+      ],
+      "controls": [
+        "r_a201",
+        "r_a202",
+        "r_a203",
+        "r_dd2"
+      ],
+      "notes": "Every reference targets a generated immutable id; codes are labels nothing resolves by. An unresolved reference is reported rather than hidden."
+    },
+    {
+      "id": "k_b8c9d0",
+      "code": "RISK-8",
+      "severity": "minor",
+      "residual": "acceptable",
+      "text": "The design or architecture drifts from the code it claims to describe, so a reviewer reads a description of software that no longer exists.",
+      "causes": [
+        "d_skl001",
+        "d_tpl001"
+      ],
+      "controls": [
+        "r_dd8",
+        "r_des1"
+      ],
+      "notes": "Detected rather than prevented: the pre-push check names each changed file with the design section claiming it. It warns, because only the author can say whether the design moved."
+    },
+    {
+      "id": "h_rk20",
+      "text": "Unauthorised or unsafe access",
+      "heading": true
+    },
+    {
+      "id": "k_c9d0e1",
+      "code": "RISK-9",
+      "severity": "critical",
+      "residual": "acceptable",
+      "text": "A crafted path escapes the allowlisted project directory, letting a request read or write application source in the repository the server can push to.",
+      "causes": [
+        "d_pth001",
+        "d_rpo001"
+      ],
+      "controls": [
+        "r_sv2",
+        "r_sv3"
+      ],
+      "notes": "Two independent defences: the path grammar refuses traversal outright, and sparse-checkout means the working tree cannot contain application source for a path bug to reach."
+    },
+    {
+      "id": "k_d0e1f2",
+      "code": "RISK-10",
+      "severity": "serious",
+      "residual": "acceptable",
+      "text": "A user whose role does not permit editing changes the specification anyway.",
+      "causes": [
+        "d_sap001",
+        "d_ath001"
+      ],
+      "controls": [
+        "r_ax5",
+        "r_rx3",
+        "r_ro1"
+      ],
+      "notes": "The editor's read-only rendering is a courtesy; the refusal is server-side and does not depend on what the client displayed."
+    },
+    {
+      "id": "k_e1f2a3",
+      "code": "RISK-11",
+      "severity": "minor",
+      "residual": "acceptable",
+      "text": "A commit published through the server is attributed to the machine credential rather than to the person who made it, so the change history misstates who changed the specification.",
+      "causes": [
+        "d_wcp001",
+        "d_ath001"
+      ],
+      "controls": [
+        "r_ax6",
+        "r_cm5"
+      ]
+    },
+    {
+      "id": "h_rk30",
+      "text": "Risks not controlled in software",
+      "heading": true
+    },
+    {
+      "id": "k_f2a3b4",
+      "code": "RISK-12",
+      "severity": "serious",
+      "residual": "acceptable",
+      "text": "The git repository holding the specification is lost, or its history is rewritten, and the evidence chain goes with it.",
+      "causes": [
+        "d_rpo001"
+      ],
+      "justification": "Controlled outside SpecPad: the repository is the customer's, and its durability, backup and branch protection belong to their hosting and quality system. SpecPad never force-pushes and never rewrites history, which is the whole of its contribution."
+    }
+  ]
+}

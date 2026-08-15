@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cybersecurity — SpecPad</title>
+    <meta name="description" content="SpecPad cybersecurity: a threat model rated on exploitability, controls grouped by FDA category, four architecture view types with labelled diagrams, and the section V.C security testing taxonomy." />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://specpad.com/features/cybersecurity/" />
+    <meta property="og:title" content="Cybersecurity — SpecPad" />
+    <meta property="og:description" content="SpecPad cybersecurity: a threat model rated on exploitability, controls grouped by FDA category, four architecture view types with labelled diagrams, and the section V.C security testing taxonomy." />
+    <meta property="og:image" content="https://specpad.com/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Cybersecurity — SpecPad" />
+    <meta name="twitter:description" content="SpecPad cybersecurity: a threat model rated on exploitability, controls grouped by FDA category, four architecture view types with labelled diagrams, and the section V.C security testing taxonomy." />
+    <meta name="twitter:image" content="https://specpad.com/og-image.png" />
+    <link rel="canonical" href="https://specpad.com/features/cybersecurity/" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body class="lp lp-doc">
+    <header class="lp-header">
+      <div class="lp-header-inner">
+        <a class="lp-logo" href="/" aria-label="SpecPad home">specpad<span class="lp-cursor">_</span></a>
+        <nav class="lp-nav" aria-label="Site">
+          <a href="/#features">Features</a>
+          <a href="/features/traceability/">Traceability</a>
+          <a href="/features/compliance/">Compliance</a>
+          <a href="/reference/">Schema reference</a>
+          <a class="lp-nav-gh" href="https://github.com/pizzaow/specpad">GitHub</a>
+        </nav>
+        <a class="lp-btn lp-btn-primary lp-header-cta" href="/v01/?demo">Live demo <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </header>
+
+    <main class="lp-doc-main">
+      <p class="lp-crumb"><a href="/">Home</a> <span aria-hidden="true">/</span> <a href="/#features">Features</a> <span aria-hidden="true">/</span> Cybersecurity</p>
+      <h1 class="lp-doc-h1">Threats, controls, architecture views and the testing FDA asks for</h1>
+      <p class="lp-doc-lede">Security risk runs beside safety risk rather than inside it — one register, rated on exploitability, joined to the harm exploiting it would cause.</p>
+
+      <section class="lp-doc-sec">
+        <h2>Exploitability, not probability</h2>
+        <p>A safety risk drops probability because software fails deterministically. A security risk
+        drops it for the opposite reason: an attacker chooses when to act. There is no frequency to
+        estimate, and a defence is worth what it costs to defeat.</p>
+        <p>One register, not two. Identifying a threat and assessing it are the same act, and splitting
+        them produces two documents that must be kept in step. Where exploiting a threat could harm
+        someone, it names the safety risk it creates — the join AAMI SW96 exists to make.</p>
+      </section>
+
+      <section class="lp-doc-sec">
+        <h2>A control is a requirement</h2>
+        <p>IEC 62304 §5.2.2 requires a control implemented in software to be a software requirement. So
+        <code>controls</code> points at requirement identifiers rather than restating the defence — and
+        §7.3 verification of risk control measures falls out of the trace that already exists. Nothing
+        is recorded twice.</p>
+        <p>A control that cannot be phrased as a requirement is not a software control. Say where it
+        lives instead.</p>
+      </section>
+
+      <section class="lp-doc-sec">
+        <h2>Controls grouped by FDA category</h2>
+        <p>&ldquo;We have security requirements&rdquo; is not a coverage claim. A sweep across the eight
+        categories FDA expects an adequate set to draw from is. A category with nothing under it is
+        shown rather than hidden — either a control is missing, or there is a reason this product needs
+        none, and only the sweep tells those apart.</p>
+        <table class="lp-table">
+          <thead><tr><th>Category</th><th>What it covers</th></tr></thead>
+          <tbody>
+{{security-controls}}
+          </tbody>
+        </table>
+      </section>
+
+      <section class="lp-doc-sec">
+        <h2>Architecture views that are actually drawn</h2>
+        <p>FDA names four view types — global system, multi-patient harm, updateability and
+        patchability, security use cases — and asks for <strong>diagrams and explanatory text</strong>.
+        A view that is prose alone is incomplete; so is an unlabelled arrow.</p>
+        <p>Every connector says what traverses it and over what protocol. Every figure carries a legend.
+        Each view carries a communication-path table with the roughly nineteen details Appendix 2 asks
+        for per path: what it carries, protocol and port, what authenticates and authorizes it, and the
+        threats and controls on it.</p>
+        <p>The count is a floor, not a target. The guidance says plainly that a single global view need
+        not carry every data flow — so one system-level overview, then a view per deployment.</p>
+      </section>
+
+      <section class="lp-doc-sec">
+        <h2>Threat modelling, by the playbook</h2>
+        <p>The MITRE/MDIC <em>Playbook for Threat Modeling Medical Devices</em> — FDA-commissioned, and
+        still the current edition — is organised around four questions rather than one technique.
+        SpecPad holds the output; the procedure governing how and when you model belongs in your
+        quality system.</p>
+        <p>Walk STRIDE across each <strong>element</strong> of the design rather than listing attacks.
+        That is what finds the threat in the seam between two controls, the one that needs no attacker
+        at all, and the control category that is empty.</p>
+      </section>
+
+      <section class="lp-doc-sec">
+        <h2>Security testing, tagged so it can be produced</h2>
+        <p>FDA §V.C is explicit that cybersecurity controls need testing beyond ordinary verification.
+        Each security test records which type it is, so &ldquo;show me your fuzz testing&rdquo; is
+        answered by a filter rather than a search.</p>
+        <table class="lp-table">
+          <thead><tr><th>Group</th><th>Types</th></tr></thead>
+          <tbody>
+{{security-test-types}}
+          </tbody>
+        </table>
+      </section>
+
+      <nav class="lp-doc-next" aria-label="More features">
+        <h2>More</h2>
+        <ul>
+          <li><a href="/features/traceability/">Traceability &amp; standards</a></li>
+          <li><a href="/features/compliance/">Standards conformity</a></li>
+          <li><a href="/features/server/">Self-hosted server</a></li>
+          <li><a href="/features/risk/">Risk, SOUP &amp; design</a></li>
+          <li><a href="/features/deployment/">Deployment</a></li>
+        </ul>
+      </nav>
+    </main>
+
+    <footer class="lp-footer">
+      <div class="lp-footer-inner">
+        <a class="lp-logo lp-logo-sm" href="/">specpad<span class="lp-cursor">_</span></a>
+        <nav class="lp-footer-nav" aria-label="Footer">
+          <a href="/reference/">Schema reference</a>
+          <a href="/v01/">Open the editor</a>
+          <a href="/v01/?demo">Live demo</a>
+          <a href="https://github.com/pizzaow/specpad">GitHub</a>
+        </nav>
+        <p class="lp-footer-meta">open source &middot; MIT &middot; schema v1.0 &middot; editor /v01/</p>
+      </div>
+    </footer>
+  </body>
+</html>

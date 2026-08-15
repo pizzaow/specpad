@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Standards conformity — SpecPad</title>
+    <meta name="description" content="SpecPad reports conformity clause by clause against IEC 62304 and the FDA software, cybersecurity and off-the-shelf guidances, deriving each status from the loaded project." />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://specpad.com/features/compliance/" />
+    <meta property="og:title" content="Standards conformity — SpecPad" />
+    <meta property="og:description" content="SpecPad reports conformity clause by clause against IEC 62304 and the FDA software, cybersecurity and off-the-shelf guidances, deriving each status from the loaded project." />
+    <meta property="og:image" content="https://specpad.com/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Standards conformity — SpecPad" />
+    <meta name="twitter:description" content="SpecPad reports conformity clause by clause against IEC 62304 and the FDA software, cybersecurity and off-the-shelf guidances, deriving each status from the loaded project." />
+    <meta name="twitter:image" content="https://specpad.com/og-image.png" />
+    <link rel="canonical" href="https://specpad.com/features/compliance/" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body class="lp lp-doc">
+    <header class="lp-header">
+      <div class="lp-header-inner">
+        <a class="lp-logo" href="/" aria-label="SpecPad home">specpad<span class="lp-cursor">_</span></a>
+        <nav class="lp-nav" aria-label="Site">
+          <a href="/#features">Features</a>
+          <a href="/features/traceability/">Traceability</a>
+          <a href="/features/compliance/">Compliance</a>
+          <a href="/reference/">Schema reference</a>
+          <a class="lp-nav-gh" href="https://github.com/pizzaow/specpad">GitHub</a>
+        </nav>
+        <a class="lp-btn lp-btn-primary lp-header-cta" href="/v01/?demo">Live demo <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </header>
+
+    <main class="lp-doc-main">
+      <p class="lp-crumb"><a href="/">Home</a> <span aria-hidden="true">/</span> <a href="/#features">Features</a> <span aria-hidden="true">/</span> Standards conformity</p>
+      <h1 class="lp-doc-h1">Clause by clause, against the standards you actually claim</h1>
+      <p class="lp-doc-lede">The Planning view answers a reviewer directly: for this clause, what do you hold and where is it? Nothing is ever reported as a gap.</p>
+
+      <section class="lp-doc-sec">
+        <h2>Four standards, one view</h2>
+        <ul class="lp-list">
+          <li><strong>IEC 62304:2006+A1:2015</strong> — software life cycle processes, clause 4 through
+          clause 9. Still the edition in force; Edition 2 is in ballot.</li>
+          <li><strong>FDA — Content of Premarket Submissions for Device Software Functions</strong>
+          (June 2023).</li>
+          <li><strong>FDA — Cybersecurity in Medical Devices: Quality Management System Considerations</strong>
+          (3 February 2026), which supersedes the June 2025 edition and aligns with the QMSR.</li>
+          <li><strong>FDA — Off-The-Shelf Software Use in Medical Devices</strong> (August 2023).</li>
+        </ul>
+        <p>Design controls are cited at <strong>ISO 13485 §7.3</strong>, which the FDA&rsquo;s Quality
+        Management System Regulation has incorporated by reference into 21 CFR Part 820 since
+        2 February 2026.</p>
+      </section>
+
+      <section class="lp-doc-sec">
+        <h2>Status is derived, not asserted</h2>
+        <p>Each clause reads its status from the loaded documents. &ldquo;12 software units, 9 stating
+        acceptance criteria&rdquo; is counted at the moment you look, so it cannot describe evidence
+        that has since been deleted.</p>
+      </section>
+
+      <section class="lp-doc-sec">
+        <h2>Nothing is a gap</h2>
+        <p>A clause SpecPad does not hold is not a hole in your evidence — it is evidence another system
+        holds. Development planning, maintenance and problem resolution live in a quality system and an
+        issue tracker, and the view says so, naming the kind of system rather than a document number
+        that would go stale.</p>
+        <p>The same page states what is <em>deliberately</em> not held here — no SBOM, no probability on
+        a software risk, no requirement-to-architecture matrix, no design validation — each with its
+        reason, so a reviewer is never left inferring whether an absence was a decision.</p>
+      </section>
+
+      <section class="lp-doc-sec">
+        <h2>Requirements say what kind they are</h2>
+        <p>IEC 62304 §5.2.2 lists twelve content categories, and A1:2015 adds a note saying plainly that
+        they can overlap — so a requirement carries as many as apply. The value is the sweep: a category
+        with nothing under it is a question worth answering once, not an omission found at review.</p>
+        <table class="lp-table">
+          <thead><tr><th></th><th>Category</th><th>What it covers</th></tr></thead>
+          <tbody>
+{{requirement-categories}}
+          </tbody>
+        </table>
+      </section>
+
+      <section class="lp-doc-sec">
+        <h2>Methodologies, stated once</h2>
+        <p>Not standards conformed to — techniques chosen: arc42 and C4, IEEE 1016 design views,
+        ISO 14971 through clause 7, the MITRE/MDIC threat modelling playbook, AAMI SW96 exploitability,
+        Di&aacute;taxis for the authoring guides. Each with the reason it was picked. A reviewer reads it to
+        know what evidence to expect; an engineer joining reads it to know how to work.</p>
+      </section>
+
+      <nav class="lp-doc-next" aria-label="More features">
+        <h2>More</h2>
+        <ul>
+          <li><a href="/features/traceability/">Traceability &amp; standards</a></li>
+          <li><a href="/features/server/">Self-hosted server</a></li>
+          <li><a href="/features/cybersecurity/">Cybersecurity</a></li>
+          <li><a href="/features/risk/">Risk, SOUP &amp; design</a></li>
+          <li><a href="/features/deployment/">Deployment</a></li>
+        </ul>
+      </nav>
+    </main>
+
+    <footer class="lp-footer">
+      <div class="lp-footer-inner">
+        <a class="lp-logo lp-logo-sm" href="/">specpad<span class="lp-cursor">_</span></a>
+        <nav class="lp-footer-nav" aria-label="Footer">
+          <a href="/reference/">Schema reference</a>
+          <a href="/v01/">Open the editor</a>
+          <a href="/v01/?demo">Live demo</a>
+          <a href="https://github.com/pizzaow/specpad">GitHub</a>
+        </nav>
+        <p class="lp-footer-meta">open source &middot; MIT &middot; schema v1.0 &middot; editor /v01/</p>
+      </div>
+    </footer>
+  </body>
+</html>

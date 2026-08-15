@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Risk, SOUP &amp; design — SpecPad</title>
+    <meta name="description" content="SpecPad software risk (IEC 62304 clause 7), the SOUP/OTS register with end-of-life tracking, and a detailed design whose units carry acceptance criteria." />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://specpad.com/features/risk/" />
+    <meta property="og:title" content="Risk, SOUP &amp; design — SpecPad" />
+    <meta property="og:description" content="SpecPad software risk (IEC 62304 clause 7), the SOUP/OTS register with end-of-life tracking, and a detailed design whose units carry acceptance criteria." />
+    <meta property="og:image" content="https://specpad.com/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Risk, SOUP &amp; design — SpecPad" />
+    <meta name="twitter:description" content="SpecPad software risk (IEC 62304 clause 7), the SOUP/OTS register with end-of-life tracking, and a detailed design whose units carry acceptance criteria." />
+    <meta name="twitter:image" content="https://specpad.com/og-image.png" />
+    <link rel="canonical" href="https://specpad.com/features/risk/" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body class="lp lp-doc">
+    <header class="lp-header">
+      <div class="lp-header-inner">
+        <a class="lp-logo" href="/" aria-label="SpecPad home">specpad<span class="lp-cursor">_</span></a>
+        <nav class="lp-nav" aria-label="Site">
+          <a href="/#features">Features</a>
+          <a href="/features/traceability/">Traceability</a>
+          <a href="/features/compliance/">Compliance</a>
+          <a href="/reference/">Schema reference</a>
+          <a class="lp-nav-gh" href="https://github.com/pizzaow/specpad">GitHub</a>
+        </nav>
+        <a class="lp-btn lp-btn-primary lp-header-cta" href="/v01/?demo">Live demo <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </header>
+
+    <main class="lp-doc-main">
+      <p class="lp-crumb"><a href="/">Home</a> <span aria-hidden="true">/</span> <a href="/#features">Features</a> <span aria-hidden="true">/</span> Risk, SOUP &amp; design</p>
+      <h1 class="lp-doc-h1">The clause 7 slice, the software you did not write, and the units underneath</h1>
+      <p class="lp-doc-lede">Three registers that share one discipline: record the judgement, link it to the thing it is about, and let verification come from the trace rather than a second argument.</p>
+
+      <section class="lp-doc-sec">
+        <h2>Software risk — the §7 slice, and only that</h2>
+        <p>Hazards, harms, probability estimation, benefit-risk and post-market surveillance belong to
+        the system risk management file your quality system owns. A risk record points at it by
+        reference. SpecPad holds what software contributes: the hazardous situation, the units or
+        components that could cause it, and the requirements controlling it.</p>
+        <p><strong>No probability, deliberately.</strong> For software you cannot argue probability
+        down; severity and the presence of a control carry the analysis. A row made acceptable by
+        rating its probability &ldquo;remote&rdquo; is the error this register refuses.</p>
+        <p>A cause must be a software <em>unit</em>, not a cross-cutting design view — a view describes
+        structure across units and cannot fail on its own.</p>
+      </section>
+
+      <section class="lp-doc-sec">
+        <h2>SOUP and off-the-shelf software</h2>
+        <p>Both regimes in one record. IEC 62304 wants the functional and performance requirements you
+        place on the component (§5.3.3) and what it needs to run (§5.3.4). The FDA off-the-shelf
+        guidance wants provenance, purpose, design limitations, and — at Enhanced level — support and
+        end-of-life contingency.</p>
+        <ul class="lp-list">
+          <li><strong>The version is exact</strong>, never a range: an anomaly evaluation is only valid
+          for the version it was performed against.</li>
+          <li><strong>End of life is a date</strong>, with its source, not a sentence — a date can be
+          compared to today, and a component already out of support is what the register exists to
+          surface.</li>
+          <li><strong>Every performance requirement carries a number.</strong> &ldquo;Renders 250 rows
+          in under 200&nbsp;ms&rdquo;, not &ldquo;no perceptible delay&rdquo;.</li>
+          <li><strong>Development tools are not SOUP.</strong> Compilers, bundlers and test runners fall
+          under §5.1.4 — none of it ships.</li>
+          <li><strong>This is not an SBOM.</strong> An SBOM is a recursive inventory generated from the
+          manifests; this is the assessed subset. Letting one stand in for the other misrepresents
+          both.</li>
+        </ul>
+      </section>
+
+      <section class="lp-doc-sec">
+        <h2>Detailed design that stays linkable</h2>
+        <p>Sections are prose with a stable identity — markdown that can hold flowcharts and diagrams,
+        and an immutable identifier that requirements point down at. The design is free to be rewritten
+        without breaking a single trace.</p>
+        <p>A section declares whether it is a <strong>software unit</strong> (§5.4.2) or a cross-cutting
+        <strong>design view</strong> (IEEE 1016). The distinction is load-bearing: §5.4.1 asks for a unit
+        list, §5.5.3 asks for acceptance criteria per unit, and risk causes must resolve to units.</p>
+        <p>Change a section and every requirement referencing it becomes suspect — the design moved, so
+        whether the requirement still holds as written is an open question. The skill makes that
+        re-review part of the same job rather than a thing to remember.</p>
+      </section>
+
+      <section class="lp-doc-sec">
+        <h2>Verification that attacks, not just demonstrates</h2>
+        <p>A near 1:1 register of requirements to tests is the commonest failure in a verification
+        protocol, and it is invisible — everything verified, governance clean, coverage 100%, and every
+        requirement shown to work only when nothing goes wrong.</p>
+        <table class="lp-table">
+          <thead><tr><th>Kind</th><th>What it exercises</th></tr></thead>
+          <tbody>
+{{test-kinds}}
+          </tbody>
+        </table>
+        <p>And separately, at what scope — because IEC 62304 treats §5.5, §5.6 and §5.7 as three
+        activities with distinct records:</p>
+        <table class="lp-table">
+          <thead><tr><th>Level</th><th>Activity</th></tr></thead>
+          <tbody>
+{{test-levels}}
+          </tbody>
+        </table>
+      </section>
+
+      <nav class="lp-doc-next" aria-label="More features">
+        <h2>More</h2>
+        <ul>
+          <li><a href="/features/traceability/">Traceability &amp; standards</a></li>
+          <li><a href="/features/compliance/">Standards conformity</a></li>
+          <li><a href="/features/server/">Self-hosted server</a></li>
+          <li><a href="/features/cybersecurity/">Cybersecurity</a></li>
+          <li><a href="/features/deployment/">Deployment</a></li>
+        </ul>
+      </nav>
+    </main>
+
+    <footer class="lp-footer">
+      <div class="lp-footer-inner">
+        <a class="lp-logo lp-logo-sm" href="/">specpad<span class="lp-cursor">_</span></a>
+        <nav class="lp-footer-nav" aria-label="Footer">
+          <a href="/reference/">Schema reference</a>
+          <a href="/v01/">Open the editor</a>
+          <a href="/v01/?demo">Live demo</a>
+          <a href="https://github.com/pizzaow/specpad">GitHub</a>
+        </nav>
+        <p class="lp-footer-meta">open source &middot; MIT &middot; schema v1.0 &middot; editor /v01/</p>
+      </div>
+    </footer>
+  </body>
+</html>

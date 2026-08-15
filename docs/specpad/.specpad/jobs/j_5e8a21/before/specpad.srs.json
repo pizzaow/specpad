@@ -4464,39 +4464,6 @@
         "functional"
       ],
       "text": "The directive the skill installs into a project shall point at the skill rather than restate its working loop, so no second copy of the procedure can go stale."
-    },
-    {
-      "id": "r_site5",
-      "code": "SITE-5",
-      "design": [
-        "d_sit001"
-      ],
-      "category": [
-        "functional"
-      ],
-      "text": "The marketing site shall present a page for each capability with enough depth to warrant one, reachable from the landing page."
-    },
-    {
-      "id": "r_site6",
-      "code": "SITE-6",
-      "design": [
-        "d_sit001"
-      ],
-      "category": [
-        "functional"
-      ],
-      "text": "Content the product already defines — the governance rules and their tiers, the document types, the requirement categories, the security control categories and the testing taxonomies — shall be generated into the site from the contract at build time rather than written into the pages."
-    },
-    {
-      "id": "r_site7",
-      "code": "SITE-7",
-      "design": [
-        "d_sit001"
-      ],
-      "category": [
-        "functional"
-      ],
-      "text": "A generated page shall fail the build when it references a generated block that does not exist."
     }
   ]
 }
