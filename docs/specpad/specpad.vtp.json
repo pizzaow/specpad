@@ -5715,6 +5715,40 @@
           "selector": "feature page generation"
         }
       ]
+    },
+    {
+      "id": "t_site8a",
+      "verifies": [
+        "r_site8"
+      ],
+      "verificationLevel": "unit",
+      "kind": "nominal",
+      "text": "Read every custom property the stylesheet references and compare it against those the theme declares.",
+      "expected": "Every referenced token is declared, allowing for the few set inline on an element.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "site/src/__tests__/site-links.test.ts",
+          "selector": "stylesheet theme binding"
+        }
+      ]
+    },
+    {
+      "id": "t_site8b",
+      "verifies": [
+        "r_site8"
+      ],
+      "verificationLevel": "unit",
+      "kind": "negative",
+      "text": "Reference a token the theme does not define, and hard-code a light-theme colour in the feature-page styles.",
+      "expected": "Both are reported, naming the token and the literal, so a silent fallback cannot ship.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "site/src/__tests__/site-links.test.ts",
+          "selector": "stylesheet theme binding"
+        }
+      ]
     }
   ]
 }

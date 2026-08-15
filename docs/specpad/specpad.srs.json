@@ -4497,6 +4497,17 @@
         "functional"
       ],
       "text": "A generated page shall fail the build when it references a generated block that does not exist."
+    },
+    {
+      "id": "r_site8",
+      "code": "SITE-8",
+      "design": [
+        "d_sit001"
+      ],
+      "category": [
+        "user-interface"
+      ],
+      "text": "Site styles shall reference only design tokens the theme defines, so a component cannot fall through to a fallback colour that contradicts the theme."
     }
   ]
 }

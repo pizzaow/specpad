@@ -46,3 +46,40 @@ describe('landing page link integrity', () => {
     expect(fs.existsSync(path.join(siteDir, 'public', 'og-image.png'))).toBe(true);
   });
 });
+
+/**
+ * Theme binding (JOB-58).
+ *
+ * The feature pages first shipped with invented custom-property names — `--lp-surface`,
+ * `--lp-muted` — so every declaration fell through to its light-theme fallback and rendered
+ * white panels under the site's light text. The tokens are the contract between a new
+ * component and the theme; using a name the theme does not define fails silently.
+ */
+describe('stylesheet theme binding', () => {
+  const css = fs.readFileSync(path.resolve(__dirname, '../styles.css'), 'utf8');
+  // Anything declared anywhere in the stylesheet, plus the ones set inline on an element.
+  const defined = new Set([...css.matchAll(/(--[a-z0-9-]+)\s*:/g)].map((m) => m[1]));
+  const INLINE = new Set(['--d']); // reveal delay, set per element in the markup
+
+  it('defines the tokens it claims to', () => {
+    for (const t of ['--bg', '--surface', '--border', '--text', '--muted', '--accent']) {
+      expect(defined.has(t), `${t} is not defined in :root`).toBe(true);
+    }
+  });
+
+  it('references only tokens the theme defines', () => {
+    const used = new Set([...css.matchAll(/var\((--[a-z0-9-]+)/g)].map((m) => m[1]));
+    for (const t of used) {
+      if (INLINE.has(t)) continue;
+      expect(defined.has(t), `styles.css uses ${t}, which the theme does not define`).toBe(true);
+    }
+  });
+
+  it('uses tokens rather than hard-coded light-theme colours in the feature-page styles', () => {
+    // The site is dark; a literal light grey or slate here is the bug this test exists for.
+    const docStyles = css.slice(css.indexOf('/* ── Feature pages'));
+    for (const literal of ['#f1f5f9', '#e2e8f0', '#64748b', '#fff', '#ffffff']) {
+      expect(docStyles, `feature-page styles hard-code ${literal}`).not.toContain(literal);
+    }
+  });
+});
