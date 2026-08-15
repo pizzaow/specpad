@@ -85,6 +85,7 @@ them here; read the one you need when you reach that step:
 - Software risk → `guides/risk.md`
 - SOUP / off-the-shelf software → `guides/soup.md`
 - Threat model and security architecture → `guides/security.md`
+- Reviewing what you just wrote → `guides/review-passes.md`
 
 ## Files and naming
 
@@ -299,6 +300,30 @@ behaviour. It does not hold **why** a design was chosen, what was tried and reje
 found by a bug three months ago, or intent. Those arrive through the working loop, captured as the work
 happens — which is what the loop is *for*. A baseline is the starting point that makes the loop
 possible, not a substitute for having run it.
+
+## Review passes — a fresh look at what was just written
+
+Governance checks that a document is well-formed and linked. It cannot tell you it is **true**: a
+citation can be to a superseded edition, a trace can resolve to a plausible wrong target, and a
+requirement can describe behaviour the code does not have. Those need a reader.
+
+Read `guides/review-passes.md` before running one. Four roles — **Author** (produce, and cite),
+**Auditor** (is the citation true?), **Adversary** (is the approach wrong?), **Examiner** (what does
+the code handle that the document does not mention?).
+
+- **Run each as a sub-process with a fresh context**, given the artefact and the sources and **not the
+  reasoning behind it**. A reviewer told why you did something will agree that you did it. Where
+  sub-processes are unavailable, re-read the sources rather than your notes, and say the review was
+  weaker.
+- **Every finding names its evidence** — a line, a construct, a test name, a clause. A finding with no
+  source cannot be acted on or argued with.
+- **The Examiner stops when a round produces no finding that names a source.** "Are there more corner
+  cases?" has no natural end; bounding on evidence rather than satisfaction is what stops a review
+  manufacturing requirements nobody can verify.
+- **Act on findings in the same job.** A finding recorded and left reads later as one somebody already
+  considered and accepted.
+- **Scale to the moment**: all four at baseline and before a submission; Author + Examiner on an
+  ordinary job, where a human is already reviewing and the cost repeats forever.
 
 ## Requirement audit (reconcile the spec with the code)
 

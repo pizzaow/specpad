@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import SRSTable from '../SRSTable';
-import type { SrsDoc, VtpDoc, PrdDoc, SddDoc } from '../../shared';
+import type { SrsDoc, VtpDoc, PrdDoc, SddDoc , ThreatDoc } from '../../shared';
 const srs: SrsDoc = {
   schemaVersion: '1.0', type: 'srs', name: 'AcmeApp', title: 'Requirements',
   items: [
@@ -252,5 +252,31 @@ describe('SRSTable — authoring the trace (TR-1)', () => {
     expand();
 
     expect(screen.queryByText(/add/)).toBeNull();
+  });
+});
+
+describe('security control authoring (JOB-59, found by an adversary pass)', () => {
+  // The field, the governance rule and the whole Controls view shipped with nothing that
+  // could set the value — it was only ever read. The view could only show every category
+  // empty. Found by a review pass that had not seen the reasoning.
+  const threat: ThreatDoc = {
+    schemaVersion: '1.0', type: 'threat', name: 'A', title: 'Threats',
+    items: [{ id: 'x_1', code: 'THR-1', text: 'Spoofed header.', controls: ['r_001'] }],
+  };
+
+  it('offers the FDA control picker on a requirement a threat names as a control', () => {
+    render(<SRSTable doc={srs} vtpDoc={null} threatDoc={threat} onChange={vi.fn()} />);
+    expect(screen.getByLabelText(/FDA security control categories for/)).toBeInTheDocument();
+  });
+
+  it('does not ask it of a requirement no threat relies on', () => {
+    // Asking every requirement would be noise on a register mostly not about security.
+    render(<SRSTable doc={srs} vtpDoc={null} threatDoc={{ ...threat, items: [] }} onChange={vi.fn()} />);
+    expect(screen.queryByLabelText(/FDA security control categories for/)).toBeNull();
+  });
+
+  it('does not ask it at all when the project has no threat model', () => {
+    render(<SRSTable doc={srs} vtpDoc={null} onChange={vi.fn()} />);
+    expect(screen.queryByLabelText(/FDA security control categories for/)).toBeNull();
   });
 });

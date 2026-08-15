@@ -4267,13 +4267,14 @@
       "id": "r_ctl1",
       "code": "CTL-1",
       "design": [
-        "d_sch001"
+        "d_sch001",
+        "d_val001"
       ],
       "category": [
-        "regulatory",
-        "security"
+        "data-definition",
+        "regulatory"
       ],
-      "text": "A requirement shall be able to declare which FDA security control categories it implements, as a list, since one requirement often serves several."
+      "text": "A requirement shall carry zero or more FDA security control categories, and a value outside the eight FDA names shall be rejected."
     },
     {
       "id": "r_ctl2",
@@ -4282,10 +4283,22 @@
         "d_ctl001"
       ],
       "category": [
-        "regulatory",
-        "user-interface"
+        "user-interface",
+        "regulatory"
       ],
-      "text": "The editor shall present the security controls grouped by FDA control category, showing every category including those with no control, so that coverage is argued from the categories rather than from the word security."
+      "text": "The editor shall group security controls by FDA security control category, listing each requirement under every category it declares."
+    },
+    {
+      "id": "r_ctl5",
+      "code": "CTL-5",
+      "design": [
+        "d_ctl001"
+      ],
+      "category": [
+        "user-interface",
+        "regulatory"
+      ],
+      "text": "The editor shall render every FDA security control category, including those holding no control, marking such a category as having none."
     },
     {
       "id": "r_ctl3",
@@ -4297,7 +4310,31 @@
         "regulatory",
         "user-interface"
       ],
-      "text": "For each security control the editor shall show the threats it answers and whether a test verifies it, and shall surface any requirement the threat model names as a control that declares no category."
+      "text": "For each security control the editor shall list the threats that name it as a control."
+    },
+    {
+      "id": "r_ctl6",
+      "code": "CTL-6",
+      "design": [
+        "d_ctl001"
+      ],
+      "category": [
+        "user-interface",
+        "regulatory"
+      ],
+      "text": "For each security control the editor shall show whether at least one verification test verifies it."
+    },
+    {
+      "id": "r_ctl7",
+      "code": "CTL-7",
+      "design": [
+        "d_ctl001"
+      ],
+      "category": [
+        "user-interface",
+        "regulatory"
+      ],
+      "text": "The editor shall list, above the categories, every requirement the threat model names as a control that declares no FDA security control category."
     },
     {
       "id": "r_ctl4",
@@ -4308,7 +4345,7 @@
       "category": [
         "regulatory"
       ],
-      "text": "A requirement named as a control by a threat shall be advised on when it declares no FDA security control category."
+      "text": "Governance shall raise an advisory against a requirement that a threat names as a control but which declares no FDA security control category, and that advisory shall not fail the project unless the project enforces the rule."
     },
     {
       "id": "r_tr10",
@@ -4508,6 +4545,18 @@
         "user-interface"
       ],
       "text": "Site styles shall reference only design tokens the theme defines, so a component cannot fall through to a fallback colour that contradicts the theme."
+    },
+    {
+      "id": "r_ctl8",
+      "code": "CTL-8",
+      "design": [
+        "d_tbl001"
+      ],
+      "category": [
+        "user-interface",
+        "security"
+      ],
+      "text": "The editor shall let a requirement that a threat names as a control declare which FDA security control categories it implements, and shall not ask it of a requirement no threat relies on."
     }
   ]
 }

@@ -111,6 +111,13 @@ export interface SrsItem {
    * from a specification, which is the one thing a draft must never be.
    */
   draft?: boolean;
+  /**
+   * What this rests on, so it can be checked rather than believed: a clause of a standard, a
+   * source construct, a test that pins it. Free text and deliberately so — the sources a
+   * project cites are not SpecPad's to enumerate — but present, because the review pass that
+   * verifies a citation needs something to look up.
+   */
+  cites?: string[];
   hazards?: string[];
 }
 
@@ -623,6 +630,7 @@ export const srsSchema = {
           design: { ...stringArray, description: 'Ids of the SDD sections that implement this requirement — the downward trace (IEC 62304 5.4; FDA SDS). Ids, never codes, so a section can be retitled or rewritten without breaking the link. Empty/absent unless an SDD is in use.' },
           securityControl: { type: 'array', items: { enum: ['authentication', 'authorization', 'cryptography', 'integrity', 'confidentiality', 'event-detection', 'resiliency', 'updatability'] }, description: 'Which FDA security control categories this requirement implements (Cybersecurity in Medical Devices, February 2026, V.B.1 and Appendix 1). A list, because one requirement often serves several. Distinct from category: 5.2.2 e) says a requirement is a security requirement, this says which control it is.' },
           draft: { type: 'boolean', description: 'Drafted by a tool and not yet ratified by a person. The baseline generator sets it on everything it writes; a reviewer clears it. Without it a scaffold is indistinguishable from a specification.' },
+          cites: { ...stringArray, description: 'What this requirement rests on, so it can be checked rather than believed: a clause of a standard, a source construct, a test that pins it. Free text, because the sources a project cites are not SpecPad\'s to enumerate — but present, because a review pass verifying a citation needs something to look up.' },
           category: { type: 'array', items: { enum: ['functional', 'inputs-outputs', 'interfaces', 'alarms', 'security', 'user-interface', 'data-definition', 'installation', 'operation-maintenance', 'it-network', 'user-maintenance', 'regulatory'] }, description: 'Which of IEC 62304 5.2.2 a)-l) this requirement is. A list, because A1:2015 NOTE 10 states that the requirements in a) through l) can overlap. Its worth is coverage: a category with no requirement is a question to answer once, not an omission to discover at review.' },
           hazards: { ...stringArray, description: 'Reserved hazard labels (legacy v1 field; the editor no longer surfaces it).' },
         },

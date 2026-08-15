@@ -773,6 +773,19 @@
       "description": "The site now says what SpecPad became. It leads with IEC 62304 and FDA compliance rather than general requirements management, lists the capabilities on the front page, and gives the features with real depth — traceability and standards, the self-hosted server, cybersecurity, risk and third-party software, and deployment — a page each.",
       "technical_notes": "The positioning had drifted from the product: the site described a general requirements tool that suited regulated work, while the product had grown seven pillars, clause-by-clause conformity against four standards, and a security architecture. Medical-device first throughout, with general use still true and still mentioned, because the core skill genuinely is domain-neutral and the medical layer is an add-on. Derived content is generated from src/shared at build time, following generate-reference.ts: rule tables, document types, control categories and clause tables cannot drift from the product, and prose stays hand-written. This is the same reasoning that removed the references register and the CLAUDE.md loop summary — a second copy is the one that goes stale.",
       "status": "open"
+    },
+    {
+      "id": "j_2c7f04",
+      "code": "JOB-59",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "Review passes: a fresh look at what was just written",
+      "description": "Documents the skill produces are now reviewed by a separate pass that has not seen the reasoning behind them — one that checks the citations against their sources, one that argues the approach was wrong, and one that asks what the code handles that the document does not mention.",
+      "technical_notes": "Opened from the observation that self-review is the weakest check available. Across this session the things actually caught were caught mechanically — referential-integrity found four dangling verifies, tsc found the level name collision, the parity test found a rule documented after removal, the link test found a missing template. Re-reading my own work caught comparatively little, and the citation errors (FDA June 2025 for February 2026, nine categories for twelve, the pre-amendment wording for f) were found only by opening the source document. A review in the same context as the generation agrees with itself. The fix is a sub-process with a fresh context that receives the artefact and the sources but NOT the reasoning that produced it.",
+      "status": "open"
     }
   ]
 }

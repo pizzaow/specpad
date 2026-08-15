@@ -7,7 +7,7 @@
  * read-only, struck-through entries at their baseline position.
  */
 import React, { useEffect, useMemo, useState } from 'react';
-import type { SrsDoc, SrsItem, VtpDoc, VtpItem, PrdDoc, SddDoc } from '../shared';
+import type { SrsDoc, SrsItem, ThreatDoc, VtpDoc, VtpItem, PrdDoc, SddDoc } from '../shared';
 import { createSrsItem, generateId, ID_PREFIX } from '../shared';
 import type { AttributionView, RedlineEntry } from '../changeTracking';
 import { buildRedlineRows } from '../changeTracking';
@@ -17,7 +17,7 @@ import RowMenu from './RowMenu';
 import RefPicker from './RefPicker';
 import type { RefOption } from './RefPicker';
 import ItemInfo from './ItemInfo';
-import { REQUIREMENT_CATEGORIES } from '../shared';
+import { REQUIREMENT_CATEGORIES, SECURITY_CONTROLS } from '../shared';
 
 /**
  * The §5.2.2 categories as picker options: the value is the id, the short label is the
@@ -31,9 +31,23 @@ const CATEGORY_OPTIONS = REQUIREMENT_CATEGORIES.map((c) => ({
   text: `${c.letter}) ${c.text}`,
 }));
 
+/**
+ * FDA's eight security control categories (§V.B.1) as picker options. Shown only on a
+ * requirement a threat already names as a control: asking it of every requirement would be
+ * noise on a register that is mostly not about security, and the coverage argument is built
+ * from the ones the threat model leans on.
+ */
+const SECURITY_CONTROL_OPTIONS = SECURITY_CONTROLS.map((c) => ({
+  id: c.value,
+  code: c.label,
+  text: c.text,
+}));
+
 interface SRSTableProps {
   doc: SrsDoc;
   vtpDoc: VtpDoc | null;
+  /** So a requirement a threat names as a control can be asked which control it is. */
+  threatDoc?: ThreatDoc | null;
   /** Candidates for the upward trace (`satisfies`), when the project has a PRD. */
   prdDoc?: PrdDoc | null;
   /** Candidates for the downward trace (`design`), when the project has an SDD. */
@@ -57,6 +71,7 @@ const INDENT_PX = 22;
 const SRSTable: React.FC<SRSTableProps> = ({
   doc,
   vtpDoc,
+  threatDoc,
   prdDoc,
   sddDoc,
   onChange,
@@ -94,6 +109,13 @@ const SRSTable: React.FC<SRSTableProps> = ({
   }, [vtpDoc]);
 
   const ids = () => data.items.map((i) => i.id);
+  /** Requirements the threat model leans on — the only ones asked which control they are. */
+  const controlIds = useMemo(
+    () => new Set((threatDoc?.items ?? []).flatMap((t) => t.controls ?? [])),
+    [threatDoc],
+  );
+  const isControl = (id: string) => controlIds.has(id);
+
   const update = (items: SrsItem[]) => onChange({ ...doc, items });
 
   /** Set one field on one row, for the controls that are not free-text cells. */
@@ -283,16 +305,32 @@ const SRSTable: React.FC<SRSTableProps> = ({
                   </td>
                   <td>
                     {item.heading ? '' : (
-                      <RefPicker
-                        label={`Categories for ${item.code ?? item.id} (IEC 62304 §5.2.2)`}
-                        value={item.category ?? []}
-                        options={CATEGORY_OPTIONS}
-                        empty="—"
-                        readOnly={readOnly}
-                        onChange={(values) =>
-                          setField(index, { category: values.length ? (values as SrsItem['category']) : undefined })
-                        }
-                      />
+                      <>
+                        <RefPicker
+                          label={`Categories for ${item.code ?? item.id} (IEC 62304 §5.2.2)`}
+                          value={item.category ?? []}
+                          options={CATEGORY_OPTIONS}
+                          empty="—"
+                          readOnly={readOnly}
+                          onChange={(values) =>
+                            setField(index, { category: values.length ? (values as SrsItem['category']) : undefined })
+                          }
+                        />
+                        {isControl(item.id) && (
+                          <div style={{ marginTop: 4 }}>
+                            <RefPicker
+                              label={`FDA security control categories for ${item.code ?? item.id}`}
+                              value={item.securityControl ?? []}
+                              options={SECURITY_CONTROL_OPTIONS}
+                              empty="security control?"
+                              readOnly={readOnly}
+                              onChange={(values) =>
+                                setField(index, { securityControl: values.length ? (values as SrsItem['securityControl']) : undefined })
+                              }
+                            />
+                          </div>
+                        )}
+                      </>
                     )}
                   </td>
                   <td>

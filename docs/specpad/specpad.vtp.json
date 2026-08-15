@@ -5749,6 +5749,91 @@
           "selector": "stylesheet theme binding"
         }
       ]
+    },
+    {
+      "id": "t_ctl5",
+      "verifies": [
+        "r_ctl5"
+      ],
+      "verificationLevel": "unit",
+      "kind": "boundary",
+      "text": "Render the controls view for a project covering some categories and not others.",
+      "expected": "All eight categories render; one holding no control says so and asks the question rather than being omitted.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/SecurityControlsView.test.tsx",
+          "selector": "SecurityControlsView"
+        }
+      ]
+    },
+    {
+      "id": "t_ctl6",
+      "verifies": [
+        "r_ctl6"
+      ],
+      "verificationLevel": "unit",
+      "kind": "nominal",
+      "text": "Read a control that a test verifies and one that none does.",
+      "expected": "The verified control reads verified; the unverified one reads no test.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/SecurityControlsView.test.tsx",
+          "selector": "SecurityControlsView"
+        }
+      ]
+    },
+    {
+      "id": "t_ctl7",
+      "verifies": [
+        "r_ctl7"
+      ],
+      "verificationLevel": "unit",
+      "kind": "negative",
+      "text": "Render the view where a threat names a control that declares no category.",
+      "expected": "That requirement is named above the groups rather than dropping out of the coverage argument.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/SecurityControlsView.test.tsx",
+          "selector": "SecurityControlsView"
+        }
+      ]
+    },
+    {
+      "id": "t_ctl8a",
+      "verifies": [
+        "r_ctl8"
+      ],
+      "verificationLevel": "unit",
+      "kind": "nominal",
+      "text": "Open the requirements table for a project whose threat model names a requirement as a control.",
+      "expected": "That requirement offers a picker for the FDA control categories, and setting one records it.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/SRSTable.test.tsx",
+          "selector": "security control authoring"
+        }
+      ]
+    },
+    {
+      "id": "t_ctl8b",
+      "verifies": [
+        "r_ctl8"
+      ],
+      "verificationLevel": "unit",
+      "kind": "negative",
+      "text": "Open the table for a requirement no threat relies on, and for a project with no threat model.",
+      "expected": "Neither offers the picker, so a register mostly not about security is not asked about it.",
+      "automation": [
+        {
+          "runner": "vitest",
+          "file": "src/components/__tests__/SRSTable.test.tsx",
+          "selector": "security control authoring"
+        }
+      ]
     }
   ]
 }
