@@ -1,0 +1,20 @@
+[
+  {
+    "hash": "d2f1cd6045c183c81e30e0414b47cd8fbc9daa08",
+    "subject": "Three skill fixes: wrong-kind traces, field drift, and the second copy",
+    "author": "Geoff Pollard",
+    "date": "2026-08-14"
+  },
+  {
+    "hash": "5b5e4afc4b0b8103adc6048edadadd73f12f9f28",
+    "subject": "JOB-57: record the multi-pass acceptance evidence",
+    "author": "Geoff Pollard",
+    "date": "2026-08-14"
+  },
+  {
+    "hash": "decc147d86c595011696fdd254cd7603b9b3ccb8",
+    "subject": "Design pass, and the four skill defects the cold run exposed",
+    "author": "Geoff Pollard",
+    "date": "2026-08-14"
+  }
+]
