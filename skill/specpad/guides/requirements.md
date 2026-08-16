@@ -75,6 +75,35 @@ lit up overnight; that is a concession to existing projects, not permission for 
 - Reference other items by their **stable id** (`verifies`, `satisfies`), never the human `code`.
 - Give it a `code` that reads well in a trace matrix (e.g. `EDS-4`, `JOBS-7`); group with a heading.
 
+## Cite what it rests on
+
+Record in `cites` what the requirement is based on, so a later reader can **open it instead of
+believing you**. This is the field the audit works from: an auditor with citations checks a claim,
+an auditor without them re-reads the register and agrees with it.
+
+Cite whichever of these apply — usually one or two, not a bibliography:
+
+| Cite | As | Why |
+|---|---|---|
+| The construct that implements it | `src/shared/governance.ts:checkAdvice` | An audit can open it and see whether it still does this |
+| The clause that demands it | `IEC 62304 §5.2.2 c)` | Free text; the audit reads it, a checker cannot |
+| The decision it came from | `docs/design/specpad-v1-design.md` | Where the *why* is, which code cannot tell you |
+
+**Anchor on the construct's name, never a line number.** `governance.ts:checkAdvice` survives every
+edit except the rename that genuinely invalidates it — which is precisely the event worth being told
+about. `governance.ts:240` is falsified by an edit three functions above it, so it decays into noise
+and stops being read. A cited path that no longer exists, or a symbol that has been renamed away, is
+a hard failure: the requirement claims evidence that is not there.
+
+Cite the **narrowest true thing**. `src/` is not a citation. Nor is the file a requirement merely
+sits near — cite what the requirement is *about*. The commonest failure is citing the module a
+reviewer would guess at rather than the function that actually decides the behaviour, which produces
+a register that looks checkable and is not.
+
+A requirement with no citation is not wrong, and `srs-cites` is advisory for that reason. But
+prefer to write one: it is far cheaper now, while you know why, than for the person auditing it in
+eighteen months.
+
 ## ✅ Good examples
 
 - "The editor **shall** flag a test whose `verifies` reference does not resolve to a requirement."

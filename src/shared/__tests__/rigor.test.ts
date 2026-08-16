@@ -146,6 +146,42 @@ describe('verification depth — one requirement is not one test', () => {
     expect(checkAdvice({ srs: srsOne, vtp: unclassified }).some((a) => a.rule === 'vtp-negative-path')).toBe(false);
   });
 
+  it('reports citation coverage as one finding, not one per uncited requirement (CITE-5)', () => {
+    // The per-item form is the flag day this tier exists to prevent: citing the first
+    // requirement would raise an advisory against every requirement that is not cited yet.
+    const srs: SrsDoc = {
+      schemaVersion: '1.0', type: 'srs', name: 'A', title: 'SRS',
+      items: [
+        { id: 'r_1', code: 'A-1', text: 'Cited.', cites: ['src/shared/citations.ts:parseCitation'] },
+        { id: 'r_2', code: 'A-2', text: 'Not cited.' },
+        { id: 'r_3', code: 'A-3', text: 'Also not cited.' },
+      ],
+    };
+    const found = checkAdvice({ srs }).filter((a) => a.rule === 'srs-cites');
+    expect(found).toHaveLength(1);
+    expect(found[0].itemId).toBeNull();
+    expect(found[0].message).toContain('2 of 3');
+    expect(found[0].message).toContain('33%');
+  });
+
+  it('says nothing about citations to a register that has not adopted them', () => {
+    // Adoption, as every other advisory rule treats it. A register citing nothing hears about
+    // its coverage from the audit, not from a panel that redraws as it types.
+    const srs: SrsDoc = {
+      schemaVersion: '1.0', type: 'srs', name: 'A', title: 'SRS',
+      items: [{ id: 'r_1', code: 'A-1', text: 'Not cited.' }],
+    };
+    expect(checkAdvice({ srs }).some((a) => a.rule === 'srs-cites')).toBe(false);
+  });
+
+  it('says nothing about citations once every requirement carries one', () => {
+    const srs: SrsDoc = {
+      schemaVersion: '1.0', type: 'srs', name: 'A', title: 'SRS',
+      items: [{ id: 'r_1', code: 'A-1', text: 'Cited.', cites: ['IEC 62304 §5.2.2 c)'] }],
+    };
+    expect(checkAdvice({ srs }).some((a) => a.rule === 'srs-cites')).toBe(false);
+  });
+
   it('gates adoption per requirement, not per register', () => {
     // The regression this pins: the first gate asked whether ANY test in the register
     // declared a kind, so classifying one test switched the rule on for every requirement

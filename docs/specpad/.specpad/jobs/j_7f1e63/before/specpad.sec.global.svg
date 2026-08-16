@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="780" viewBox="0 0 800 780" font-family="Arial, Helvetica, sans-serif">
+<defs><marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#64748B"/></marker><marker id="arwS" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#64748B"/></marker></defs>
+<rect width="800" height="780" fill="#FEFEFE"/>
+<text x="400" y="26" text-anchor="middle" font-size="16" font-weight="bold" fill="#0F172A">Security view 1 — Global system view (overview)</text>
+<rect x="300" y="64" width="200" height="52" rx="3" fill="#FAFAFA" stroke="#64748B" stroke-width="1.5"/>
+<text x="400" y="88" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">SpecPad CDN</text>
+<text x="400" y="104" text-anchor="middle" font-size="11" fill="#64748B">specpad.com/v01/</text>
+<rect x="32" y="150" width="330" height="316" rx="3" fill="#FFF1F2" stroke="#E11D48" stroke-width="1.5" stroke-dasharray="6 3"/>
+<text x="42" y="167" font-size="12" font-weight="bold" fill="#E11D48">Self-hosted deployment — company network</text>
+<rect x="56" y="186" width="180" height="52" rx="3" fill="#FAFAFA" stroke="#64748B" stroke-width="1.5"/>
+<text x="146" y="210" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">Author's browser</text>
+<text x="146" y="226" text-anchor="middle" font-size="11" fill="#64748B">Editor (SPA)</text>
+<rect x="56" y="290" width="180" height="52" rx="3" fill="#E5E7EB" stroke="#64748B" stroke-width="1.5"/>
+<text x="146" y="314" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">Identity proxy</text>
+<text x="146" y="330" text-anchor="middle" font-size="11" fill="#64748B">Company SSO</text>
+<rect x="56" y="394" width="180" height="52" rx="3" fill="#FAFAFA" stroke="#64748B" stroke-width="1.5"/>
+<text x="146" y="418" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">SpecPad server</text>
+<text x="146" y="434" text-anchor="middle" font-size="11" fill="#64748B">Node 22 · HTTP API</text>
+<rect x="438" y="150" width="330" height="316" rx="3" fill="#FFF1F2" stroke="#E11D48" stroke-width="1.5" stroke-dasharray="6 3"/>
+<text x="448" y="167" font-size="12" font-weight="bold" fill="#E11D48">Hosted deployment — author's workstation</text>
+<rect x="452" y="186" width="140" height="52" rx="3" fill="#FAFAFA" stroke="#64748B" stroke-width="1.5"/>
+<text x="522" y="210" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">Author's browser</text>
+<text x="522" y="226" text-anchor="middle" font-size="11" fill="#64748B">Editor (SPA)</text>
+<rect x="612" y="186" width="140" height="52" rx="3" fill="#FAFAFA" stroke="#64748B" stroke-width="1.5"/>
+<text x="682" y="210" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">Claude Code</text>
+<text x="682" y="226" text-anchor="middle" font-size="11" fill="#64748B">SpecPad skill</text>
+<path d="M512 402 a 90 8 0 0 1 180 0 v 36 a 90 8 0 0 1 -180 0 z" fill="#FAFAFA" stroke="#64748B" stroke-width="1.5"/>
+<path d="M512 402 a 90 8 0 0 0 180 0" fill="none" stroke="#64748B" stroke-width="1.5"/>
+<text x="602" y="428" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">Local git repo</text>
+<rect x="300" y="530" width="200" height="52" rx="3" fill="#E5E7EB" stroke="#64748B" stroke-width="1.5"/>
+<text x="400" y="554" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">Git remote</text>
+<text x="400" y="570" text-anchor="middle" font-size="11" fill="#64748B">Company SCM</text>
+<rect x="32" y="612" width="736" height="106" rx="2" fill="none" stroke="#64748B" stroke-width="0.5"/>
+<text x="42" y="629" font-size="12" font-weight="bold" fill="#1E293B">Legend</text>
+<rect x="42" y="640" width="22" height="13" rx="3" fill="#FAFAFA" stroke="#64748B" stroke-width="1.5"/>
+<text x="72" y="651" font-size="11" fill="#1E293B">SpecPad-controlled element</text>
+<rect x="42" y="660" width="22" height="13" rx="3" fill="#E5E7EB" stroke="#64748B" stroke-width="1.5"/>
+<text x="72" y="671" font-size="11" fill="#1E293B">Operator- or third-party-controlled</text>
+<rect x="42" y="680" width="22" height="13" rx="3" fill="#F5F3FF" stroke="#8B5CF6" stroke-width="1.5"/>
+<text x="72" y="691" font-size="11" fill="#1E293B">Third-party component (SOUP/SBOM)</text>
+<rect x="42" y="700" width="22" height="13" rx="3" fill="#FFF1F2" stroke="#E11D48" stroke-width="1.5" stroke-dasharray="6 3"/>
+<text x="72" y="711" font-size="11" fill="#1E293B">Trust boundary</text>
+<path d="M410 646 L440 646" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<text x="450" y="650" font-size="11" fill="#1E293B">Data flow</text>
+<path d="M410 666 L440 666" stroke="#64748B" stroke-width="1.5" stroke-dasharray="4 2" marker-end="url(#arw)"/>
+<text x="450" y="670" font-size="11" fill="#1E293B">Control / command flow</text>
+<path d="M410 686 L440 686" stroke="#64748B" stroke-width="1.5" stroke-dasharray="2 2" marker-end="url(#arw)"/>
+<text x="450" y="690" font-size="11" fill="#1E293B">Optional or advisory flow</text>
+<path d="M350 116 L350 140 L146 140 L146 186" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="189.7" y="117.0" width="116.7" height="30" fill="#FEFEFE" opacity="0.92"/>
+<text x="248.0" y="128.0" text-anchor="middle" font-size="11" fill="#475569">editor build (code)</text>
+<text x="248.0" y="141.0" text-anchor="middle" font-size="11" fill="#475569">HTTPS 443</text>
+<path d="M450 116 L450 140 L522 140 L522 186" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="427.7" y="117.0" width="116.7" height="30" fill="#FEFEFE" opacity="0.92"/>
+<text x="486.0" y="128.0" text-anchor="middle" font-size="11" fill="#475569">editor build (code)</text>
+<text x="486.0" y="141.0" text-anchor="middle" font-size="11" fill="#475569">HTTPS 443</text>
+<path d="M146 238 L146 290" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="96.2" y="249.0" width="99.5" height="30" fill="#FEFEFE" opacity="0.92"/>
+<text x="146.0" y="260.0" text-anchor="middle" font-size="11" fill="#475569">documents (data)</text>
+<text x="146.0" y="273.0" text-anchor="middle" font-size="11" fill="#475569">HTTPS 443</text>
+<path d="M146 342 L146 394" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="96.2" y="353.0" width="99.5" height="30" fill="#FEFEFE" opacity="0.92"/>
+<text x="146.0" y="364.0" text-anchor="middle" font-size="11" fill="#475569">identity headers</text>
+<text x="146.0" y="377.0" text-anchor="middle" font-size="11" fill="#475569">HTTP 8080</text>
+<path d="M146 446 L146 556 L300 556" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="56.2" y="486.0" width="179.6" height="30" fill="#FEFEFE" opacity="0.92"/>
+<text x="146.0" y="497.0" text-anchor="middle" font-size="11" fill="#475569">commits, refs (data)</text>
+<text x="146.0" y="510.0" text-anchor="middle" font-size="11" fill="#475569">HTTPS 443 · machine credential</text>
+<path d="M522 238 L522 340 L566 340 L566 394" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="466.5" y="274.0" width="111.0" height="30" fill="#FEFEFE" opacity="0.92"/>
+<text x="522.0" y="285.0" text-anchor="middle" font-size="11" fill="#475569">File System Access</text>
+<text x="522.0" y="298.0" text-anchor="middle" font-size="11" fill="#475569">local file I/O</text>
+<path d="M682 238 L682 340 L656 340 L656 394" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="626.5" y="274.0" width="111.0" height="30" fill="#FEFEFE" opacity="0.92"/>
+<text x="682.0" y="285.0" text-anchor="middle" font-size="11" fill="#475569">local file I/O</text>
+<text x="682.0" y="298.0" text-anchor="middle" font-size="11" fill="#475569">SRS, VTP, SDD JSON</text>
+<path d="M602 446 L602 556 L500 556" fill="none" stroke="#64748B" stroke-width="1.5" marker-end="url(#arw)"/>
+<rect x="515.1" y="486.0" width="173.9" height="30" fill="#FEFEFE" opacity="0.92"/>
+<text x="602.0" y="497.0" text-anchor="middle" font-size="11" fill="#475569">commits, refs (data)</text>
+<text x="602.0" y="510.0" text-anchor="middle" font-size="11" fill="#475569">HTTPS 443 · author credential</text>
+<text x="24" y="768" font-size="12" fill="#64748B">Two deployments with different exposure. Views 2 and 3 detail each in turn.</text>
+</svg>

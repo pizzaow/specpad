@@ -86,6 +86,7 @@ them here; read the one you need when you reach that step:
 - SOUP / off-the-shelf software → `guides/soup.md`
 - Threat model and security architecture → `guides/security.md`
 - Reviewing what you just wrote → `guides/review-passes.md`
+- Auditing the whole register (before a release) → `guides/audit.md`
 
 ## Files and naming
 
@@ -325,25 +326,53 @@ the code handle that the document does not mention?).
 - **Scale to the moment**: all four at baseline and before a submission; Author + Examiner on an
   ordinary job, where a human is already reviewing and the cost repeats forever.
 
-## Requirement audit (reconcile the spec with the code)
+## The audit (`specpad audit`) — is the register still true?
 
-Periodically — or on request ("audit requirements", "check for drift") — reconcile the existing SRS/VTP
-against the **whole codebase**. This is the whole-repo form of the commit-time audit (which does the
-same over a single staged diff); both **propose, never auto-apply**.
+Run on request ("audit the register", "check for drift"), and **before cutting a release**. Distinct
+from the review passes above: those look at what a job just wrote, while the audit looks at the
+**whole register at once** and catches a requirement falsified by a change made somewhere else. That
+is the drift nothing else sees — every stale requirement found in SpecPad's own register still
+resolved, still had a test, and still passed governance.
 
-1. **Job first.** Open an audit job.
-2. **Read** the current SRS/VTP and survey the code (as for the baseline generator).
-3. **Compare both directions and categorize findings:**
-   - **Missing** — code behavior with no requirement → propose a `draft` requirement (and a verifying
-     test) derived from the code, for the user to ratify.
-   - **Stale** — a requirement whose described behavior is gone or changed → flag for update or
-     removal; **never silently delete** a requirement.
-   - **Coverage** — a requirement with no covering test, or a VTP `notes` reference to a test that no
-     longer resolves → flag the gap.
-4. **Report, don't mutate:** present the findings as categorized proposals; apply nothing destructive
-   automatically. Ratified new requirements land as `draft` for review.
-5. **Report coverage/confidence** — which areas you audited and how confident you are — rather
-   than silently truncating the answer.
+**Read `guides/audit.md` before running it.** In outline:
+
+1. **Job first**, as ever. The audit fixes what it finds, in the same job.
+2. **Stage 1 — mechanical, and always first**: governance clean; every `cites` entry naming a
+   repository path resolved (`checkCitations`) — a cited file that is gone or a symbol renamed away is
+   a hard failure; advisories read and either acted on or explicitly declined; every VTP `notes`
+   naming an automated test resolving.
+3. **Stage 2 — reading**, as sub-processes with fresh context, given the requirements and their cited
+   sources and **not the reasoning behind them**, under one contract:
+
+   > **A finding must quote the current source that contradicts the claim. No quote, no finding.**
+
+   Asked "is this right?", a pass produces plausible findings indefinitely — a real run over 316
+   requirements returned 237 findings of which ~150 were two observations restated. Asked "can you
+   produce the contradiction?", it either can or it cannot. Verdicts are `holds`, `contradicted`
+   (quote required) or `unverifiable` (a citation gap, not an error in the requirement). Splitting,
+   rewording and test-coverage advice are **out of scope** — that is authoring, and it drowns the
+   findings that say something is actually wrong.
+4. **One batch reads the register against itself**, for requirements that contradict each other. No
+   code needed, cheap, and invisible to governance.
+5. **Report, then fix in the same job** — except where the finding is a decision only the user can
+   make (a requirement describing functionality the code refuses to perform is either a wrong
+   requirement or a missing feature). Put those in front of them.
+6. **Say what was opened.** A clean audit means nothing without it.
+
+Do **not** run it on every job: the cost repeats forever and a human is already in that loop.
+
+**Reconcile in both directions**, and categorise what comes back — this is the whole-repo form of the
+commit-time requirement audit (below), which does the same over a single staged diff:
+
+- **Missing** — code behaviour with no requirement → propose a `draft` requirement and a verifying
+  test, derived from the code, for the user to ratify.
+- **Stale** — a requirement whose described behaviour is gone or changed → flag for update or removal.
+- **Coverage** — a requirement with no covering test, or a VTP `notes` reference to a test that no
+  longer resolves.
+
+**Report coverage/confidence** — which areas were audited, and how confident — rather than
+silently truncating the answer. And **never auto-apply anything destructive**: a requirement is never silently deleted,
+and findings that propose new requirements land as `draft` for ratification.
 
 ## Scaffolding a new project
 
@@ -879,6 +908,12 @@ without being called wrong.
   own tests — a requirement whose tests declare no `kind` at all is left alone, so classifying one test
   cannot raise an advisory against every requirement not yet classified. A near 1:1 register of
   requirements to tests is the shape that produces this. Advisory.
+- `srs-cites`: A non-heading requirement should record what it rests on (`cites`) — the construct
+  that implements it, the clause that demands it, the decision it came from. Reported as **one
+  project-level finding** giving citation coverage, never one per requirement — the per-item form
+  would raise hundreds of advisories the moment a project cited its first requirement. Advisory. An
+  audit can only check a claim it can look up; without citations, reviewing a register is a re-read
+  rather than a verification.
 - `vtp-verification-level`: Every non-heading VTP test should declare whether it is `unit`,
   `integration` or `system` verification — 62304 5.5, 5.6 and 5.7 are three activities with distinct
   records (`verificationLevel`). Advisory.

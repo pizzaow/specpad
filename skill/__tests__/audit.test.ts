@@ -26,6 +26,32 @@ describe('skill documents the requirement audit', () => {
     expect(skill).toMatch(/never silently delete/i);
   });
 
+  it('runs over the whole register, separately from a job, and gates a release (ADT-1)', () => {
+    expect(skill).toMatch(/whole register at once/i);
+    expect(skill).toMatch(/before cutting a release|before \*\*cutting a release\*\*/i);
+  });
+
+  it('puts the mechanical checks before any reading pass (ADT-2)', () => {
+    expect(skill).toMatch(/mechanical, and always first/i);
+    expect(skill).toMatch(/checkCitations/);
+    // The order is the point: reading is the expensive part and must not be spent on what a
+    // deterministic check can decide.
+    expect(skill.indexOf('mechanical, and always first')).toBeLessThan(skill.indexOf('Stage 2'));
+  });
+
+  it('binds the reading passes with the quote-or-no-finding contract (ADT-3)', () => {
+    expect(skill).toMatch(/must quote the current source that contradicts the claim/i);
+    expect(skill).toMatch(/No quote, no finding/i);
+    expect(skill).toMatch(/holds`?, `?contradicted|`holds`/);
+    // Authoring advice is excluded, because it is unbounded and drowns the real findings.
+    expect(skill).toMatch(/out of scope/i);
+  });
+
+  it('reads the register against itself for contradictions (ADT-4)', () => {
+    expect(skill).toMatch(/register against itself/i);
+    expect(skill).toMatch(/contradict/i);
+  });
+
   it('reports coverage/confidence rather than truncating silently', () => {
     expect(skill).toMatch(/coverage\/confidence|report coverage/i);
     expect(skill).toMatch(/silently truncating/i);

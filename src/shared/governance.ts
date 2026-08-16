@@ -188,6 +188,13 @@ const RULES: GovernanceRule[] = [
       'A requirement named as a control by a threat should declare which FDA security control categories it implements (Cybersecurity in Medical Devices, February 2026, V.B.1). Advisory: it is asked only of requirements the threat model already relies on, and an adequate-coverage argument is built from these categories rather than from the word "security".',
   },
   {
+    id: 'srs-cites',
+    tier: 'advisory',
+    title: 'Requirements say what they rest on',
+    description:
+      'A non-heading requirement should record what it rests on (cites) — the construct that implements it, the clause that demands it, the decision it came from. Advisory: a requirement is not wrong for lacking one. But an audit can only check a claim it can look up, and without citations a review of the register is a re-read rather than a verification — which is the weakest check available.',
+  },
+  {
     id: 'vtp-verification-level',
     tier: 'advisory',
     title: 'Tests declare their verification level',
@@ -298,6 +305,25 @@ function advisoryFindings(bundle: ProjectBundle): GovernanceFinding[] {
       if (req.heading || !controlled.has(req.id)) continue;
       if ((req.securityControl ?? []).length) continue;
       advise('srs-security-control', req.id, `Requirement ${req.code ?? req.id} is named as a security control but does not say which FDA control category it implements.`);
+    }
+  }
+  // ONE project-level finding, never one per requirement.
+  //
+  // The obvious gate — "advise the uncited ones once the register has begun citing" — is the
+  // flag day this tier exists to prevent, and it is the bug `vtp-negative-path` shipped with:
+  // citing ten requirements would raise 306 advisories. Nor can adoption be judged per
+  // requirement, because an uncited requirement is exactly the thing with nothing to judge.
+  // Citation coverage is a property of the register, so it is reported as one number.
+  {
+    const reqs = (bundle.srs?.items ?? []).filter((r) => !r.heading);
+    const cited = reqs.filter((r) => (r.cites ?? []).length).length;
+    // Only while coverage is PARTIAL. A register that cites nothing has not adopted citations,
+    // and telling it so on every keystroke is the same nag every other advisory rule declines to
+    // make; a register that cites everything is done. The audit reports coverage unconditionally
+    // — that is where a 0% register is supposed to hear about it, once, at the moment it matters.
+    if (cited > 0 && cited < reqs.length) {
+      const pct = Math.round((cited / reqs.length) * 100);
+      advise('srs-cites', null, `${reqs.length - cited} of ${reqs.length} requirements record no citation; an audit can check ${pct}% of the register and must re-read the rest.`);
     }
   }
   for (const risk of bundle.risk?.items ?? []) {

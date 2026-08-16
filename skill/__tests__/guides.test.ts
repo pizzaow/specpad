@@ -12,14 +12,14 @@ const referenced = Array.from(skill.matchAll(/guides\/([\w-]+\.md)/g)).map((m) =
 /**
  * Two kinds of guide. A DOCUMENT guide teaches what to put in one register and is held to a
  * fixed shape (what to capture, good and bad examples). A PROCESS guide teaches an activity
- * that spans registers — reviewing what was just written — and has no "what to capture"
- * because it captures nothing.
+ * that spans registers — reviewing what was just written, auditing the whole register before a
+ * release — and has no "what to capture" because it captures nothing.
  */
 const DOCUMENT_GUIDES = [
   'requirements.md', 'tests.md', 'product-requirements.md', 'architecture.md',
   'detailed-design.md', 'risk.md', 'soup.md', 'security.md',
 ];
-const PROCESS_GUIDES = ['review-passes.md'];
+const PROCESS_GUIDES = ['review-passes.md', 'audit.md'];
 
 describe('on-demand authoring guides', () => {
   it('ships a guide for each document type, and for each cross-cutting process', () => {

@@ -68,6 +68,7 @@ export type GovernanceRuleId =
   | 'threat-controlled'
   // Advisory by default (JOB-56): reported without failing until a project enforces them.
   | 'srs-category'
+  | 'srs-cites'
   | 'srs-security-control'
   | 'vtp-verification-level'
   | 'vtp-negative-path'

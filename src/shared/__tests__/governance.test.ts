@@ -140,7 +140,7 @@ describe('checkGovernance', () => {
       'referential-integrity', 'risk-cause', 'risk-controlled',
       'risk-referential-integrity', 'risk-sequence', 'sdd-acceptance', 'sdd-coverage',
       'sdd-referential-integrity', 'sdd-segregation', 'sdd-unit-trace', 'soup-identity',
-      'soup-referential-integrity', 'soup-requirements', 'srs-category',
+      'soup-referential-integrity', 'soup-requirements', 'srs-category', 'srs-cites',
       'srs-security-control',
       'threat-assessed', 'threat-controlled', 'threat-referential-integrity',
       'traceability', 'vtp-negative-path', 'vtp-verification-level',

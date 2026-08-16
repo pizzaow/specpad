@@ -594,16 +594,6 @@
       ],
       "body": "The marketing site is a second Vite build deployed to the apex; the editor is deployed under its\nversion path.\n\nThe schema reference is generated from the live contract at build time, so it cannot describe a version\nof the schema that does not exist.\n\nFeature pages are generated the same way the reference is: a template per page in `site/src/features/`, with named blocks substituted from the live contract at build time — the governance rules and their tiers, the document types, the §5.2.2 categories, the FDA control categories and the testing taxonomies. An unknown block raises rather than rendering empty, so the build stops instead of shipping a visible placeholder.\n\nThe rendering function is exported and the generated pages are gitignored, so the tests render in memory rather than reading built output — a test that read the output would pass only on a machine that had already built.\n\nProse stays hand-written. Only what the product already defines is injected, because a marketing page that restates a rule set is a second copy of it, and the second copy is the one that goes stale.",
       "acceptance": "Every page renders with the shared chrome and a canonical URL; every governance rule, document type and category appears from the module rather than the page source; an unknown block fails the build; every page is reachable from the landing page and links to the others."
-    },
-    {
-      "id": "d_cit001",
-      "code": "SDD-74",
-      "title": "Citations",
-      "source": [
-        "src/shared/citations.ts"
-      ],
-      "body": "`cites` is free text, because the sources a project cites — clauses, tickets, papers — are not\nSpecPad's to enumerate. But a citation nobody can open is decoration, so the subset that names a\nfile in this repository is given a shape and made resolvable: `path`, `path:symbol`, `path:line`.\n\nAnchoring on a construct name rather than a line is the load-bearing decision. A line number is\nfalsified by an edit three functions above it, so it decays into noise and stops being read; a symbol\nsurvives everything except the rename that genuinely invalidates the citation, which is the event\nworth reporting. Anchor matching is a substring test rather than a parse: it costs nothing and works\nin a language the contract has never heard of.\n\nResolution lives here rather than in `checkGovernance` because it needs a filesystem, and the editor\nruns in a browser with none. The editor validates structure; the skill, the server and the audit\nresolve. Classification is deliberately conservative — a URL, an absolute path or anything without a\nsource extension is left as external, because reporting a standards clause as a broken file reference\nwould make this the first check a project turns off.",
-      "acceptance": "A citation naming a missing file or a renamed symbol is reported; a standards clause is not; each cited file is read once however many requirements cite it."
     }
   ]
 }
