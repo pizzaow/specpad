@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import ViewTabs from '../ViewTabs';
+import ViewTabs, { TABS, PHASE_ORDER } from '../ViewTabs';
 
 const enabled = { overview: true, prd: true, srs: true, vtp: true, testing: true, jobs: true, arch: true, sdd: false, risk: false, soup: false, threat: false, controls: false, sec: false, releases: true, planning: true, trace: true };
 
@@ -30,23 +30,40 @@ describe('ViewTabs', () => {
   });
 
   it('orders the tabs chronologically through the design-control phases', () => {
+    // Asserted as a property of the registry, not against a copy of it. Overview first,
+    // Planning second, phases in canonical order, and no phase interleaved with another.
+    expect(TABS[0].key).toBe('overview');
+    expect(TABS[0].phase).toBeUndefined();
+    expect(TABS[1].key).toBe('planning');
+
+    const runs = TABS.filter((t) => t.phase).reduce<string[]>(
+      (acc, t) => (acc[acc.length - 1] === t.phase ? acc : [...acc, t.phase!]), [],
+    );
+    expect(runs).toEqual([...PHASE_ORDER]);            // canonical order, each appearing once
+    expect(new Set(runs).size).toBe(runs.length);      // therefore no phase split in two
+
     const { container } = render(<ViewTabs current="overview" enabled={enabled} onSelect={vi.fn()} />);
     const labels = [...container.querySelectorAll('.view-tab')].map((a) => a.textContent);
-    expect(labels).toEqual(['Overview', 'Planning', 'PRD', 'SRS', 'SAD', 'SDD', 'SOUP', 'Security', 'Risk', 'Threats', 'Controls', 'VTP', 'Results', 'Traceability', 'Releases', 'Jobs']);
+    expect(labels).toEqual(TABS.map((t) => t.label));  // the strip renders the registry, in order
   });
 
   it('labels each design-control phase with a band (Design Inputs spans the requirements tabs)', () => {
     const { container } = render(<ViewTabs current="overview" enabled={enabled} onSelect={vi.fn()} />);
     const bands = [...container.querySelectorAll('.phase-band')].map((b) => b.textContent);
-    expect(bands).toEqual(['Planning', 'Design Inputs', 'Design Outputs', 'Risk Management', 'Design Verification', 'Traceability', 'Design History', 'Design Changes']);
+    expect(bands).toEqual([...PHASE_ORDER]);
     // Planning comes first after the Overview — what the project follows and how it works,
     // before the documents that follow from it. "Design Inputs" spans PRD + SRS (columns 3–4).
+    const spanOf = (phase: string) => {
+      const start = TABS.findIndex((t) => t.phase === phase) + 1;
+      return `${start} / span ${TABS.filter((t) => t.phase === phase).length}`;
+    };
     const inputs = [...container.querySelectorAll('.phase-band')].find((b) => b.textContent === 'Design Inputs') as HTMLElement;
-    expect(inputs.style.gridColumn).toBe('3 / span 2');
+    expect(inputs.style.gridColumn).toBe(spanOf('Design Inputs'));
+    expect(inputs.style.gridColumn).toBe('3 / span 2');   // PRD + SRS, as a sanity anchor
     // "Design Verification" spans VTP + Results — columns 12–13: Design Outputs covers
     // SAD, SDD, SOUP and Security, and Risk Management covers Risk, Threats and Controls.
     const verification = [...container.querySelectorAll('.phase-band')].find((b) => b.textContent === 'Design Verification') as HTMLElement;
-    expect(verification.style.gridColumn).toBe('12 / span 2');
+    expect(verification.style.gridColumn).toBe(spanOf('Design Verification'));
   });
 
   it('selects a tab on click', () => {

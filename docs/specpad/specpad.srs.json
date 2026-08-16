@@ -1255,7 +1255,7 @@
     {
       "id": "r_jv004",
       "code": "JV-4",
-      "text": "The Jobs tab shall sit in the oversight tab group (with Releases and the Auditor view), to the right of the Overview and the authoring views — superseding its former leftmost placement.",
+      "text": "The Jobs tab shall sit in the oversight tab group (with Releases and Traceability), to the right of the Overview and the authoring views — superseding its former leftmost placement.",
       "design": [
         "d_jbv001"
       ],
@@ -1852,12 +1852,12 @@
     {
       "id": "h_ad000",
       "heading": true,
-      "text": "Auditor view (design-control evidence)"
+      "text": "Planning view (design-control evidence, and what the project follows)"
     },
     {
       "id": "r_ad001",
       "code": "AUD-1",
-      "text": "The editor shall provide an Auditor view that orients a reviewer to the project's design-control evidence — a scope statement, a design-control map, and the roadmap — with links into the relevant tabs; it is computed live and points to (rather than contains) the traceability matrix.",
+      "text": "The editor shall provide a Planning view that orients a reviewer to the project's design-control evidence — a scope statement, a design-control map, and the roadmap — with links into the relevant tabs; it is computed live and points to (rather than contains) the traceability matrix.",
       "satisfies": [
         "p_pr004"
       ],
@@ -1889,7 +1889,7 @@
     {
       "id": "r_ad003",
       "code": "AUD-3",
-      "text": "The Traceability view (its own tab) shall present a per-requirement matrix linking each non-heading requirement to the product requirements it satisfies and the tests that verify it (with each test's recorded result), and shall visibly flag a requirement that has no verifying test; the Auditor view links to it.",
+      "text": "The Traceability view (its own tab) shall present a per-requirement matrix linking each non-heading requirement to the product requirements it satisfies and the tests that verify it (with each test's recorded result), and shall visibly flag a requirement that has no verifying test; the Planning view links to it.",
       "satisfies": [
         "p_tr01"
       ],
@@ -1905,7 +1905,7 @@
     {
       "id": "r_ad004",
       "code": "AUD-4",
-      "text": "The Traceability view shall present a gap list derived from the shared governance check (unverified requirements, unresolved references, tests without an expected result, implemented PRD items lacking coverage); with no gaps it shall state the evidence is governance-clean. The Auditor view shall list the roadmap (proposed PRD items) so unbuilt intent is explicit.",
+      "text": "The Traceability view shall present a gap list derived from the shared governance check (unverified requirements, unresolved references, tests without an expected result, implemented PRD items lacking coverage); with no gaps it shall state the evidence is governance-clean. The Planning view shall list the roadmap (proposed PRD items) so unbuilt intent is explicit.",
       "satisfies": [
         "p_pr004"
       ],
@@ -1921,7 +1921,7 @@
     {
       "id": "r_ad005",
       "code": "AUD-5",
-      "text": "The Auditor view shall state that SpecPad produces evidence that supports design controls and is not itself a quality-management system or a compliance determination (a scope disclaimer).",
+      "text": "The Planning view shall state that SpecPad produces evidence that supports design controls and is not itself a quality-management system or a compliance determination (a scope disclaimer).",
       "satisfies": [
         "p_pr004"
       ],
@@ -1958,7 +1958,7 @@
     {
       "id": "r_dc001",
       "code": "DC-1",
-      "text": "The Auditor view shall present a design-control map: each formal element — Design Inputs, Design Outputs, Design Verification, Design Validation, Traceability, Design Changes, Design History File, Design Reviews, Risk Management, and Configuration Management — shown with its standard citation (IEC 62304 and 21 CFR 820.30), a plain-language statement, a status, and a link to the section/tab that holds the evidence, so an engineer can answer 'where are your design inputs?' (and the equivalent for each phase) directly from this view.",
+      "text": "The Planning view shall present a design-control map: each formal element — Design Inputs, Design Outputs, Design Verification, Design Validation, Traceability, Design Changes, Design History File, Design Reviews, Risk Management, and Configuration Management — shown with its standard citation (IEC 62304 and the ISO 13485 clause the FDA Quality Management System Regulation incorporates by reference), a plain-language statement, a status, and a link to the section/tab that holds the evidence, so an engineer can answer 'where are your design inputs?' (and the equivalent for each phase) directly from this view.",
       "satisfies": [
         "p_pr004"
       ],
@@ -1973,7 +1973,7 @@
     {
       "id": "r_dc002",
       "code": "DC-2",
-      "text": "Each design-control element's status shall be derived from the loaded project where determinable — Design Inputs present when requirements exist, Design Outputs reflecting the presence of both the architecture and the detailed design, Design Verification reflecting test coverage, Design Changes present when jobs exist, Design History present when releases exist — and elements not yet built (Design Validation, Risk Management) shall be marked as gaps.",
+      "text": "Each design-control element's status shall be derived from the loaded project where determinable — Design Inputs present when requirements exist, Design Outputs reflecting the presence of both the architecture and the detailed design, Design Verification reflecting test coverage, Risk Management from the risk register, Design Changes present when jobs exist, Design History present when releases exist — and an element SpecPad does not hold (Design Validation) shall be reported as held elsewhere, naming the system that holds it, never as a gap.",
       "satisfies": [
         "p_pr004"
       ],
@@ -2007,7 +2007,7 @@
     {
       "id": "r_vs002",
       "code": "VIS-2",
-      "text": "The editor shall offer selectable visual themes (developer-tool, editorial, and blueprint) chosen from a menubar control; the choice shall persist across sessions (localStorage) and be applied before first paint so there is no flash of the wrong theme.",
+      "text": "The editor shall offer selectable visual themes (developer, editorial, and blueprint) chosen from a menubar control; the choice shall persist across sessions (localStorage) and be applied before first paint so there is no flash of the wrong theme.",
       "satisfies": [
         "p_pr003"
       ],
@@ -2021,7 +2021,7 @@
     {
       "id": "r_vs003",
       "code": "TAB-1",
-      "text": "The document tabs shall be ordered chronologically through the design-control phases: Overview, then Design Inputs (PRD, SRS), Design Outputs (SAD, SDD), Design Verification (VTP, Results), Design Controls (Auditor), Traceability, Design History (Releases), and Design Changes (Jobs).",
+      "text": "The document tabs shall come from one ordered registry that runs chronologically through the design-control phases — Overview first, then Planning, Design Inputs, Design Outputs, Risk Management, Design Verification, Traceability, Design History and Design Changes — with each tab declaring the phase it contributes evidence to, and every tab sharing a phase adjacent to the others, so the phase sequence reads straight down the strip. The requirement states the ordering property rather than enumerating the tabs: an enumeration is a second copy of the registry and goes stale the next time a document type is added.",
       "satisfies": [
         "p_pr003"
       ],
@@ -2063,7 +2063,7 @@
     {
       "id": "r_vs006",
       "code": "TAB-2",
-      "text": "Below the document tabs the editor shall render a thin band labelling each design-control phase, spanning the tabs that contribute to it — Design Inputs across the Product Requirements and Requirements tabs, Design Verification across Verification Tests and Results, Design Outputs (Architecture), Design Controls (Auditor), Traceability, Design History (Releases), and Design Changes (Jobs).",
+      "text": "Below the document tabs the editor shall render a thin band labelling each design-control phase, spanning exactly the contiguous run of tabs that declare that phase and derived from the same registry as the tabs themselves, so the band cannot disagree with the strip above it; a tab that declares no phase (the Overview) leaves the band empty beneath it.",
       "satisfies": [
         "p_pr004"
       ],
@@ -2249,7 +2249,7 @@
     {
       "id": "r_avc2",
       "code": "AVC-2",
-      "text": "The Product Requirements table shall treat product requirements as implemented by default — hiding the status and tags columns — and shall flag a still-proposed item with a bold red “PROPOSED” note under its code and italicised text, so the table reads as the ratified product baseline.",
+      "text": "The Product Requirements table shall treat product requirements as implemented by default — hiding the status column — and shall flag a still-proposed item with a bold red “PROPOSED” note under its code and italicised text, so the table reads as the ratified product baseline.",
       "satisfies": [
         "p_pr003"
       ],
@@ -2406,7 +2406,7 @@
     {
       "id": "r_ver8",
       "code": "VER-8",
-      "text": "Test-result roll-ups (the Overview headline and the Auditor/Traceability coverage) shall derive each automated test's outcome from the captured run, and each manual test's from its recorded result — never from a stored result on an automated test.",
+      "text": "Test-result roll-ups (the Overview headline and the Planning/Traceability coverage) shall derive each automated test's outcome from the captured run, and each manual test's from its recorded result — never from a stored result on an automated test.",
       "satisfies": [
         "p_ds01"
       ],
@@ -3537,7 +3537,7 @@
         "d_dsc001",
         "d_ddv001"
       ],
-      "text": "The Auditor view shall count the detailed design as Design Outputs evidence alongside the architecture, reporting the element as complete only when both are present, and shall report how many requirements do not yet reach a design section.",
+      "text": "The Planning view shall count the detailed design as Design Outputs evidence alongside the architecture, reporting the element as complete only when both are present, and shall report how many requirements do not yet reach a design section.",
       "category": [
         "regulatory",
         "functional"
@@ -3806,7 +3806,7 @@
       "design": [
         "d_dsc001"
       ],
-      "text": "The Auditor view shall derive the status of the Risk Management design-control element from the risk register — complete only when every risk is controlled or justified and every residual risk assessed.",
+      "text": "The Planning view shall derive the status of the Risk Management design-control element from the risk register — complete only when every risk is controlled or justified and every residual risk assessed.",
       "category": [
         "regulatory",
         "functional"
@@ -4202,7 +4202,7 @@
         "regulatory",
         "user-interface"
       ],
-      "text": "The Auditor view shall present conformity one standard at a time, with a cover stating where the project stands against each and what is deliberately not held here."
+      "text": "The Planning view shall present conformity one standard at a time, with a cover stating where the project stands against each and what is deliberately not held here."
     },
     {
       "id": "r_aud11",
@@ -4215,7 +4215,7 @@
         "regulatory",
         "user-interface"
       ],
-      "text": "For each standard the Auditor view shall report, clause by clause, what the project holds and where it is, deriving the status from the loaded documents wherever it can be derived."
+      "text": "For each standard the Planning view shall report, clause by clause, what the project holds and where it is, deriving the status from the loaded documents wherever it can be derived."
     },
     {
       "id": "r_aud12",
@@ -4239,7 +4239,7 @@
       "category": [
         "regulatory"
       ],
-      "text": "The Auditor view shall name the standards that govern the project around SpecPad without being implemented by it, and state which side of each boundary a record sits on."
+      "text": "The Planning view shall name the standards that govern the project around SpecPad without being implemented by it, and state which side of each boundary a record sits on."
     },
     {
       "id": "r_aud14",
@@ -4261,7 +4261,7 @@
       "category": [
         "user-interface"
       ],
-      "text": "The Auditor tab shall sit immediately to the right of the Overview, so a reviewer opens the orientation before the documents it indexes."
+      "text": "The Planning tab shall sit immediately to the right of the Overview, so a reviewer opens the orientation before the documents it indexes."
     },
     {
       "id": "r_ctl1",
@@ -4444,7 +4444,7 @@
       "category": [
         "regulatory"
       ],
-      "text": "A requirement whose tests are all nominal shall be advised on, once the project has begun classifying its tests."
+      "text": "A requirement whose tests all declare a nominal kind, and none a negative, boundary or load kind, shall be advised on. Adoption is judged per requirement, from that requirement's own tests: a requirement whose tests declare no kind at all shall not be advised, so classifying one test cannot raise an advisory against every requirement that has not been classified yet."
     },
     {
       "id": "r_vtd3",

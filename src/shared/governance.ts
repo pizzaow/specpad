@@ -248,11 +248,14 @@ function advisoryFindings(bundle: ProjectBundle): GovernanceFinding[] {
     if (test.heading || test.verificationLevel) continue;
     advise('vtp-verification-level', test.id, `Test ${test.code ?? test.id} does not say whether it is unit, integration or system verification.`);
   }
-  // A requirement proven only on the happy path. Asked once the register has begun
-  // classifying its tests: a project that has not adopted `kind` at all is not nagged about
-  // a distinction it is not yet drawing.
-  const classified = (bundle.vtp?.items ?? []).some((t) => t.kind);
-  if (classified) {
+  // A requirement proven only on the happy path.
+  //
+  // Adoption is per REQUIREMENT, not per project. The first version gated on "any test
+  // anywhere declares a kind", which meant classifying fifteen tests switched the rule on
+  // for all 305 that were not — 305 advisories on a register of 316. That is precisely the
+  // flag day the advisory tier exists to prevent, so the gate now asks only whether *this*
+  // requirement's own tests draw the distinction.
+  {
     const testsFor = new Map<string, NonNullable<typeof bundle.vtp>['items']>();
     for (const t of bundle.vtp?.items ?? []) {
       if (t.heading) continue;
@@ -261,7 +264,8 @@ function advisoryFindings(bundle: ProjectBundle): GovernanceFinding[] {
     for (const req of bundle.srs?.items ?? []) {
       if (req.heading) continue;
       const ts = testsFor.get(req.id) ?? [];
-      if (!ts.length || ts.some((t) => t.kind && t.kind !== 'nominal')) continue;
+      if (!ts.some((t) => t.kind)) continue;                      // not yet classified here
+      if (ts.some((t) => t.kind && t.kind !== 'nominal')) continue; // already attacked
       advise('vtp-negative-path', req.id, `Requirement ${req.code ?? req.id} is verified only by nominal tests — nothing exercises a boundary, a refusal, or load.`);
     }
   }

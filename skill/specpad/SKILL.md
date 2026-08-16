@@ -875,8 +875,10 @@ without being called wrong.
   control categories it implements (`securityControl`). Asked only of requirements the threat model
   already leans on. Advisory.
 - `vtp-negative-path`: A requirement whose tests are all `nominal` should also be tested on a
-  boundary, a refusal, or under load. Asked once the register has begun classifying tests by `kind` at
-  all. A near 1:1 register of requirements to tests is the shape that produces this. Advisory.
+  boundary, a refusal, or under load. Adoption is judged **per requirement**, from that requirement's
+  own tests — a requirement whose tests declare no `kind` at all is left alone, so classifying one test
+  cannot raise an advisory against every requirement not yet classified. A near 1:1 register of
+  requirements to tests is the shape that produces this. Advisory.
 - `vtp-verification-level`: Every non-heading VTP test should declare whether it is `unit`,
   `integration` or `system` verification — 62304 5.5, 5.6 and 5.7 are three activities with distinct
   records (`verificationLevel`). Advisory.

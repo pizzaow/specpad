@@ -146,6 +146,22 @@ describe('verification depth — one requirement is not one test', () => {
     expect(checkAdvice({ srs: srsOne, vtp: unclassified }).some((a) => a.rule === 'vtp-negative-path')).toBe(false);
   });
 
+  it('gates adoption per requirement, not per register', () => {
+    // The regression this pins: the first gate asked whether ANY test in the register
+    // declared a kind, so classifying one test switched the rule on for every requirement
+    // that was still unclassified — 305 advisories on a register of 316, which is exactly
+    // the flag day the advisory tier exists to avoid.
+    const mixed: VtpDoc = {
+      schemaVersion: '1.0', type: 'vtp', name: 'A', title: 'VTP',
+      items: [
+        { id: 't_1', text: 'Enter 20.', verifies: ['r_1'], expected: 'Accepted.', kind: 'nominal' },
+        { id: 't_2', text: 'Append.', verifies: ['r_2'], expected: 'Appended.' }, // no kind yet
+      ],
+    };
+    const advice = checkAdvice({ srs: srsOne, vtp: mixed }).filter((a) => a.rule === 'vtp-negative-path');
+    expect(advice.map((a) => a.itemId)).toEqual(['r_1']);   // r_2 has not adopted; it is left alone
+  });
+
   it('records which FDA security testing type a test is, so the set can be produced on request', () => {
     const doc: VtpDoc = {
       schemaVersion: '1.0', type: 'vtp', name: 'A', title: 'VTP',

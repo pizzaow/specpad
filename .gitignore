@@ -31,3 +31,6 @@ npm-debug.log*
 
 # Brainstorming visual-companion artifacts
 .superpowers/
+
+# Transient agent worktrees — a checkout of this repo, never part of it
+.claude/worktrees/

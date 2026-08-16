@@ -15,8 +15,17 @@ export type ViewKey = 'overview' | 'prd' | 'srs' | 'vtp' | 'testing' | 'arch' | 
 // Verification → Controls → Traceability → History → Changes.
 // Documents are labelled by the acronym a regulated team already uses; the full name
 // rides along as a tooltip so nothing is lost on a reader who does not know them yet.
-// Views that are not a document (Overview, Auditor, …) keep their word.
-const TABS: { key: ViewKey; label: string; title?: string; phase?: string }[] = [
+// Views that are not a document (Overview, Planning, …) keep their word.
+// The canonical phase order. Exported with TABS so the tests can assert the ordering
+// *property* rather than hold a second copy of the strip: the hand-written list they used
+// to compare against had to be edited by hand on every new document type, which meant it
+// could only ever confirm the order was what someone last typed, never that it was right.
+export const PHASE_ORDER = [
+  'Planning', 'Design Inputs', 'Design Outputs', 'Risk Management',
+  'Design Verification', 'Traceability', 'Design History', 'Design Changes',
+] as const;
+
+export const TABS: { key: ViewKey; label: string; title?: string; phase?: string }[] = [
   { key: 'overview', label: 'Overview' },
   { key: 'planning', label: 'Planning', title: 'What this project follows, how it works, and where the rest is kept', phase: 'Planning' },
   { key: 'prd', label: 'PRD', title: 'Product Requirements', phase: 'Design Inputs' },

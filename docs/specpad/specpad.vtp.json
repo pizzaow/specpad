@@ -1481,7 +1481,7 @@
       "verifies": [
         "r_jv004"
       ],
-      "expected": "Jobs renders in the oversight group (with Releases and Auditor), to the right of Overview and the authoring views — not leftmost.",
+      "expected": "Jobs renders in the oversight group (with Releases and Traceability), to the right of Overview and the authoring views — not leftmost.",
       "automation": [
         {
           "runner": "vitest",
@@ -2063,11 +2063,11 @@
     {
       "id": "t_ad001",
       "code": "TEST-122",
-      "text": "Render the Auditor view as an orientation index.",
+      "text": "Render the Planning view as an orientation index.",
       "verifies": [
         "r_ad001"
       ],
-      "expected": "The Auditor tab renders the scope statement, the design-control map, and the roadmap, with links into the relevant tabs; it does not itself render the trace matrix.",
+      "expected": "The Planning tab renders the scope statement, the design-control map, and the roadmap, with links into the relevant tabs; it does not itself render the trace matrix.",
       "automation": [
         {
           "runner": "vitest",
@@ -2119,11 +2119,11 @@
     {
       "id": "t_ad004",
       "code": "TEST-125",
-      "text": "Confirm the gap list (Traceability) and the roadmap (Auditor).",
+      "text": "Confirm the gap list (Traceability) and the roadmap (Planning).",
       "verifies": [
         "r_ad004"
       ],
-      "expected": "The Traceability view lists checkGovernance violations (and shows governance-clean when none); the Auditor view lists the proposed PRD items as roadmap.",
+      "expected": "The Traceability view lists checkGovernance violations (and shows governance-clean when none); the Planning view lists the proposed PRD items as roadmap.",
       "automation": [
         {
           "runner": "vitest",
@@ -2139,7 +2139,7 @@
     {
       "id": "t_ad005",
       "code": "TEST-126",
-      "text": "Confirm the Auditor view shows the scope disclaimer.",
+      "text": "Confirm the Planning view shows the scope disclaimer.",
       "verifies": [
         "r_ad005"
       ],
@@ -2159,7 +2159,7 @@
       "verifies": [
         "r_ad006"
       ],
-      "expected": "classifyDocFilename recognizes <name>.prd.json as a prd document; loadPrd reads it; the Auditor tab is available when an SRS is open.",
+      "expected": "classifyDocFilename recognizes <name>.prd.json as a prd document; loadPrd reads it; the Planning tab is available when an SRS is open.",
       "automation": [
         {
           "runner": "vitest",
@@ -2179,7 +2179,7 @@
       "verifies": [
         "r_dc001"
       ],
-      "expected": "The Auditor view lists the formal elements (Design Inputs, Outputs, Verification, Validation, Traceability, Design Changes, Design History File, Design Reviews, Risk Management, Configuration Management), each with an IEC 62304 / 21 CFR 820.30 citation, a statement, a status badge, and a navigation link where applicable.",
+      "expected": "The Planning view lists the formal elements (Design Inputs, Outputs, Verification, Validation, Traceability, Design Changes, Design History File, Design Reviews, Risk Management, Configuration Management), each with an IEC 62304 / ISO 13485 citation, a statement, a status badge, and a navigation link where applicable.",
       "automation": [
         {
           "runner": "vitest",
@@ -2243,18 +2243,19 @@
     {
       "id": "t_vs003",
       "code": "TEST-130",
-      "text": "Confirm the grouped tab order leads with Overview.",
+      "text": "Read the tab registry and assert the ordering property, rather than comparing against a hand-written list of tab labels.",
       "verifies": [
         "r_vs003"
       ],
-      "expected": "The tabs read Overview, PRD, SRS, SAD, SDD, VTP, Results, Auditor, Traceability, Releases, Jobs, in that order, and each phase band spans exactly the tabs of its phase.",
+      "expected": "Overview is first and Planning second; every tab declares the design-control phase it contributes to; the phases appear in the order Planning, Design Inputs, Design Outputs, Risk Management, Design Verification, Traceability, Design History, Design Changes; all tabs sharing a phase are adjacent; and each phase band spans exactly that contiguous run.",
       "automation": [
         {
           "runner": "vitest",
           "file": "src/components/__tests__/ViewTabs.test.tsx"
         }
       ],
-      "verificationLevel": "unit"
+      "verificationLevel": "unit",
+      "notes": "src/components/__tests__/ViewTabs.test.tsx — \"orders the tabs chronologically through the design-control phases\""
     },
     {
       "id": "t_vs004",
@@ -2463,7 +2464,7 @@
       "verifies": [
         "r_pd005"
       ],
-      "expected": "PrdTable renders the PRD items with an inline status dropdown; changing status/text/tags calls onChange with the updated doc; added/modified rows since the baseline are highlighted (redline); add/delete controls add and remove items; the tab is enabled only when a PRD register is present.",
+      "expected": "PrdTable renders the PRD items with an inline status dropdown; changing status/text calls onChange with the updated doc; added/modified rows since the baseline are highlighted (redline); add/delete controls add and remove items; the tab is enabled only when a PRD register is present.",
       "automation": [
         {
           "runner": "vitest",
@@ -2655,18 +2656,19 @@
     {
       "id": "t_vs003b",
       "code": "TEST-156",
-      "text": "Confirm the document tabs are ordered chronologically by design-control phase.",
+      "text": "Render ViewTabs and compare the rendered tab sequence against the registry itself.",
       "verifies": [
         "r_vs003"
       ],
-      "expected": "ViewTabs renders tabs in the order Overview, Product Requirements, Software Requirements, Architecture, Verification Tests, Results, Auditor, Traceability, Releases, Jobs.",
+      "expected": "ViewTabs renders one element per registry entry, in registry order, so the strip cannot disagree with the registry the phase band is derived from.",
       "automation": [
         {
           "runner": "vitest",
           "file": "src/components/__tests__/ViewTabs.test.tsx"
         }
       ],
-      "verificationLevel": "unit"
+      "verificationLevel": "unit",
+      "notes": "src/components/__tests__/ViewTabs.test.tsx — \"orders the tabs chronologically through the design-control phases\""
     },
     {
       "id": "t_ac002b",
@@ -3403,7 +3405,7 @@
     {
       "id": "t_mg2",
       "code": "TEST-195",
-      "text": "Merge one side's change to an item's tags against the other side's change to the same item's text; then merge two different values of the same field of the same item.",
+      "text": "Merge one side's change to an item's category list against the other side's change to the same item's text; then merge two different values of the same field of the same item.",
       "verifies": [
         "r_mg2"
       ],
@@ -4189,7 +4191,7 @@
         "r_tab3"
       ],
       "text": "Inspect the document tab strip and hover each document tab.",
-      "expected": "Document tabs read PRD, SRS, SAD, SDD and VTP; each carries its full document name as hover text. Tabs that are not documents (Overview, Auditor, Traceability, Releases, Jobs) keep their word and carry no hover text.",
+      "expected": "Document tabs read PRD, SRS, SAD, SDD and VTP; each carries its full document name as hover text. Tabs that are not documents (Overview, Planning, Traceability, Releases, Jobs) keep their word and carry no hover text.",
       "automation": [
         {
           "runner": "vitest",
@@ -4205,7 +4207,7 @@
       "verifies": [
         "r_dd14"
       ],
-      "text": "View the Auditor with neither design document, with each alone, and with both — including a project whose requirements do not all reach a design section.",
+      "text": "View the Planning view with neither design document, with each alone, and with both — including a project whose requirements do not all reach a design section.",
       "expected": "Design Outputs is a gap with neither, partial with either alone (linking to the one present), and complete only with both. With both, the detail counts the design sections and names how many requirements are not yet traced to one. An empty detailed design does not count as a design output.",
       "automation": [
         {
@@ -4617,7 +4619,7 @@
       "verifies": [
         "r_rsk12"
       ],
-      "text": "View the Auditor with no risk register, with one holding an uncontrolled risk, and with one fully controlled and assessed.",
+      "text": "View the Planning view with no risk register, with one holding an uncontrolled risk, and with one fully controlled and assessed.",
       "expected": "Risk Management reads gap, partial and present respectively, with the counts behind each, and links to the register when there is one.",
       "automation": [
         {
@@ -5149,7 +5151,7 @@
         "r_aud10"
       ],
       "verificationLevel": "unit",
-      "text": "Open the Auditor view and read the cover, then open each standard tab in turn.",
+      "text": "Open the Planning view and read the cover, then open each standard tab in turn.",
       "expected": "A tab is offered for each standard and for the connected standards; the cover states each standard with a count of clauses met, partial and held elsewhere, the design-control map, and what is deliberately not held here.",
       "automation": [
         {
@@ -5230,7 +5232,7 @@
       ],
       "verificationLevel": "unit",
       "text": "Read the tab order and the phase bands.",
-      "expected": "The Auditor is the second tab, immediately after the Overview, and its Design Controls band precedes Design Inputs.",
+      "expected": "Planning is the second tab, immediately after the Overview, and its Planning band precedes Design Inputs.",
       "automation": [
         {
           "runner": "vitest",
@@ -5437,7 +5439,8 @@
           "file": "src/shared/__tests__/rigor.test.ts",
           "selector": "verification depth"
         }
-      ]
+      ],
+      "notes": "src/shared/__tests__/rigor.test.ts — \"advises on a requirement proven only on the happy path\""
     },
     {
       "id": "t_vtd2b",
@@ -5454,7 +5457,20 @@
           "file": "src/shared/__tests__/rigor.test.ts",
           "selector": "verification depth"
         }
-      ]
+      ],
+      "notes": "src/shared/__tests__/rigor.test.ts — \"says nothing to a register that has not begun classifying its tests\""
+    },
+    {
+      "id": "t_vtd2c",
+      "text": "Read the advisory result for a register where one requirement’s tests are classified nominal and another requirement’s tests declare no kind at all.",
+      "verifies": [
+        "r_vtd2"
+      ],
+      "expected": "Only the classified-and-nominal requirement is advised on. The unclassified requirement is left alone, so classifying one test does not raise an advisory against every requirement that has not been classified yet.",
+      "kind": "boundary",
+      "result": "passed",
+      "notes": "src/shared/__tests__/rigor.test.ts — \"gates adoption per requirement, not per register\"",
+      "verificationLevel": "unit"
     },
     {
       "id": "t_vtd3a",
