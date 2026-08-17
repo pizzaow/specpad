@@ -26,41 +26,45 @@ describe('skill documents the architecture spec', () => {
 });
 
 const tpl = (f: string) => readFileSync(new URL(`../specpad/templates/${f}`, import.meta.url), 'utf8');
-const medTpl = (f: string) => readFileSync(new URL(`../specpad-medical/templates/${f}`, import.meta.url), 'utf8');
-const medSkill = readFileSync(new URL('../specpad-medical/SKILL.md', import.meta.url), 'utf8');
 
-describe('architecture profiles & templates', () => {
-  it('core ships the generic SAD template; the medical one lives in the add-on', () => {
-    const generic = tpl('sad.generic.md');
-    const medical = medTpl('sad.md');
-    expect(generic).toMatch(/arc42/i);
-    expect(medical).toMatch(/Safety classification & segregation/);
-    expect(medical).toMatch(/Architecture Verification/);
-    // generic (core) has no per-unit classification sections
-    expect(generic).not.toMatch(/Safety classification & segregation/);
-    expect(generic).not.toMatch(/Architecture Verification/);
+describe('architecture profile & templates', () => {
+  it('ships ONE SAD template, and it carries the regulated sections (JOB-61)', () => {
+    // SpecPad is a medical-device offering: there is no generic/medical branch to choose
+    // between. The split cost two templates that drifted while core already carried safety
+    // classification, risk, SOUP and the threat model.
+    const sad = tpl('sad.md');
+    expect(sad).toMatch(/arc42/i);
+    expect(sad).toMatch(/Safety classification & segregation/);
+    expect(sad).toMatch(/Architecture Verification/);
+    expect(() => tpl('sad.guide.md')).not.toThrow();
+    // The profile-suffixed templates are gone, not merely unreferenced.
+    for (const gone of ['sad.generic.md', 'sad.guide.generic.md', 'sec.generic.md']) {
+      expect(() => tpl(gone), `${gone} still ships`).toThrow();
+    }
   });
 
-  it('ships a multi-view C4 workspace template and per-profile authoring guides', () => {
+  it('ships a multi-view C4 workspace template, which init does not scaffold', () => {
     const w = tpl('workspace.dsl');
     expect(w).toMatch(/systemContext/);
     expect(w).toMatch(/container /);
-    expect(() => tpl('sad.guide.generic.md')).not.toThrow();   // core
-    expect(() => medTpl('sad.guide.md')).not.toThrow();        // add-on
+    expect(skill).toMatch(/opt-in\*{0,2} and is not scaffolded|is \*\*opt-in\*\* and is not scaffolded/i);
   });
 
-  it('documents the init medical/generic quiz and reading the guide', () => {
-    expect(skill).toMatch(/medical.*device project|medical.*or.*generic/i);
-    expect(skill).toMatch(/sad\.generic\.md/);
-    expect(skill).toMatch(/specpad-medical/);                  // medical path points to the add-on
+  it('asks for the safety class rather than asking what kind of project this is', () => {
+    expect(skill).toMatch(/What software safety class, and why\?/);
+    expect(skill).toMatch(/safetyClassRationale/);
     expect(skill).toMatch(/reads\s+it\s+before\s+editing\s+the\s+SAD/i);
+    // No profile branch survives anywhere in the skill.
+    expect(skill).not.toMatch(/specpad-medical/);
+    expect(skill).not.toMatch(/sad\.generic\.md/);
   });
 
-  it('the medical add-on extends core (62304/FDA) without forking the contract/editor', () => {
-    expect(medSkill).toMatch(/specpad-medical/);
-    expect(medSkill).toMatch(/62304/);
-    expect(medSkill).toMatch(/extends/i);
-    expect(medSkill).toMatch(/one shared|never a code fork|do not.*fork/i);
+  it('states the medical aim, and keeps classification a convention not a schema field', () => {
+    expect(skill).toMatch(/aimed at medical devices/i);
+    expect(skill).toMatch(/one skill and\s*\n?one profile|one profile/i);
+    expect(skill).toMatch(/Classification is a convention, not a hard-coded field/i);
+    expect(skill).toMatch(/per software unit/i);
+    expect(skill).toMatch(/Basic\/Enhanced/);
   });
 
   it('documents draw.io SVG diagrams, coarse change tracking, and the Edit/Display view', () => {

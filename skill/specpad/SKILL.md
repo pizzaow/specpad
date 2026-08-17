@@ -1,13 +1,21 @@
 ---
 name: specpad
-description: Use when formalizing or maintaining software requirements and their verification tests as governed JSON (an SRS, a VTP, and a project index) in the repo's docs/specpad/ folder — the structured, editor-backed replacement for markdown specs. Triggers on "write a spec", "formalize requirements", "create requirements", "add a requirement", "write tests for", "set up specpad", "check traceability".
+description: Use when producing or maintaining software design-controls evidence for a MEDICAL DEVICE (IEC 62304, FDA premarket software and cybersecurity guidance, ISO 13485 §7.3) as governed JSON in the repo's docs/specpad/ folder — requirements, verification tests, detailed design, software risk, SOUP, threat model — kept traceable and audit-ready. Useful for non-regulated projects too, but the shape is the regulated one. Triggers on "write a spec", "formalize requirements", "add a requirement", "write tests for", "set up specpad", "check traceability", "62304", "design controls", "medical device", "safety classification", "FDA premarket", "SOUP", "threat model".
 ---
 
 # SpecPad
 
-Create and maintain SpecPad documents: a project index, an SRS (requirements), and a
-VTP (verification tests), stored as JSON under `docs/specpad/` and edited either by you
-or by humans in the hosted editor. One shared contract governs both.
+Create and maintain SpecPad documents — a project index, an SRS (requirements), a VTP
+(verification tests), and the design-control pillars around them — stored as JSON under
+`docs/specpad/` and edited either by you or by humans in the hosted editor. One shared
+contract governs both.
+
+**SpecPad is aimed at medical devices.** Its shape is the regulated one: safety
+classification, software risk to IEC 62304 clause 7, SOUP, a threat model to the FDA
+cybersecurity guidance, and a design-control map citing IEC 62304 and ISO 13485 §7.3. A
+non-regulated project can use it and will get real value from the traceability — but it is
+being handed the regulated shape, not a general-purpose spec tool. There is **one skill and
+one profile**; nothing here is opt-in by installing something else.
 
 ## Position in workflow
 
@@ -121,11 +129,25 @@ SVG exports (`![caption](<name>.context.svg)` etc.), plus an editable soft **aut
 draw.io for teams that want model-as-code C4. This keeps the requirements contract simple; architecture
 is a separate, optional spec.
 
-**Profiles:** the **generic** profile ships in core (`templates/sad.generic.md` + `sad.guide.generic.md`)
-— a clean, fuller arc42, **no safety classification**, the default for any project. For **medical /
-regulated** projects (IEC 62304 / FDA), install the separate **`specpad-medical`** add-on skill, which
-brings the medical profile (per-unit classification, segregation, architecture verification) and its
-regulatory governance. Core stays lean; the regulated layer is opt-in.
+**One profile** (`templates/sad.md` + `sad.guide.md`): arc42 with the sections a regulated
+submission is asked for — **Safety classification & segregation** and **Architecture Verification** —
+alongside the ordinary views. There is no generic/medical branch to choose between; a project that does
+not need classification leaves those sections thin, which is cheaper than maintaining two templates that
+drift apart.
+
+**Classification is a convention, not a hard-coded field.** Do not bake A/B/C into the contract:
+
+- **IEC 62304 safety class** (A/B/C) is **per software unit** — each architecture unit (a C4 element, or
+  a row in the building-block table) carries a `class`, with segregation justified wherever a
+  higher-class item contains lower-class units (§5.3.5).
+- **FDA Documentation Level** (Basic/Enhanced) is **per software function / system**, set once.
+- A project may carry both axes, and the coming 62304 revision trends toward basic/enhanced — a
+  convention absorbs that; a schema field would not.
+
+**Architecture governance is skill-side**, because it cannot run in the browser (the editor does not
+parse the SAD). Check it before declaring work done, keyed to **conventions, never wording**, so a
+project that rewords its headings does not fail: every software unit carries a class; the segregation
+and architecture-verification sections are present; architecture is job/release-coupled.
 
 The **authoring guide** is soft context (tone, terminology, what to emphasize) — the skill **reads it
 before editing the SAD**; the editor shows it as a panel. Guidance steers; governance enforces — keep
@@ -163,28 +185,25 @@ launcher — with no manual configuration. Re-running it must be a safe no-op.
    each document in the project index `documents[]`. **Never overwrite** existing documents. (The PRD is
    optional — a project may delete it; but it is scaffolded by default so user-need traceability is
    on from the start.)
-2. **Ask the project path (short quiz):** "Is this a **medical** device project (IEC 62304 / FDA), or a
-   **generic** project?"
-
-   For a **medical** project, ask three more — each records something a submission is asked for and
-   nothing else in the repo can supply:
+2. **Ask two questions.** Not "is this medical?" — SpecPad assumes it is. Each records something a
+   submission is asked for and nothing else in the repo can supply:
 
    - **"What software safety class, and why?"** → `safetyClass` and `safetyClassRationale` in the
      project index (§4.3). Take the rationale, not just the letter; a class with no reasoning is the
-     half of 4.3 that gets cited. Authoring stays at maximum rigor whatever the answer.
+     half of 4.3 that gets cited. Authoring stays at maximum rigor whatever the answer. A project that
+     genuinely is not a medical device may say so and leave the class unset — record that answer rather
+     than dropping the field, so the omission is a decision and not a gap.
    - **"Did this software exist before you started following 62304?"** → if yes, §4.4 wants a gap
-     analysis and a risk-based justification, which is a quality-system document; say so plainly
-     rather than leaving the clause unanswered.
+     analysis and a risk-based justification, which is a quality-system document; say so plainly rather
+     than leaving the clause unanswered.
 
    SpecPad does not keep a register of the quality-system documents it relies on — a quality system
    already indexes what it holds, and a second index in a git repository would be the one that goes
    stale. The editor's Planning view names the *kind* of system that holds each process instead.
 
-   For **generic** (the default), skip all three. Then scaffold `sad.generic.md` → `<name>.sad.md` and
-   `sad.guide.generic.md` → `<name>.sad.guide.md` (replace `PROJECT_NAME`). For **medical**, use the
-   **`specpad-medical`** add-on skill (its templates) — if it isn't installed, tell the user to add it.
-   The SAD references diagrams (draw.io SVGs) the user adds; the Structurizr `workspace.dsl` is opt-in
-   only. The user can switch later by re-scaffolding. (More profile options can be added.)
+   Then scaffold `sad.md` → `<name>.sad.md` and `sad.guide.md` → `<name>.sad.guide.md` (replace
+   `PROJECT_NAME`). There is one profile, so there is nothing to choose. The SAD references diagrams
+   (draw.io SVGs) the user adds; the Structurizr `workspace.dsl` is **opt-in** and is not scaffolded.
 3. **Generate the launcher** `docs/specpad/index.html` from the template. Replace `PROJECT_NAME`
    with the project name, and **every** occurrence of `EDITOR_BASE_URL` (there are two — the
    redirect and the no-JavaScript fallback link) with the project index's `editorBaseUrl`, or

@@ -1,13 +1,21 @@
 ---
 name: specpad
-description: Use when formalizing or maintaining software requirements and their verification tests as governed JSON (an SRS, a VTP, and a project index) in the repo's docs/specpad/ folder — the structured, editor-backed replacement for markdown specs. Triggers on "write a spec", "formalize requirements", "create requirements", "add a requirement", "write tests for", "set up specpad", "check traceability".
+description: Use when producing or maintaining software design-controls evidence for a MEDICAL DEVICE (IEC 62304, FDA premarket software and cybersecurity guidance, ISO 13485 §7.3) as governed JSON in the repo's docs/specpad/ folder — requirements, verification tests, detailed design, software risk, SOUP, threat model — kept traceable and audit-ready. Useful for non-regulated projects too, but the shape is the regulated one. Triggers on "write a spec", "formalize requirements", "add a requirement", "write tests for", "set up specpad", "check traceability", "62304", "design controls", "medical device", "safety classification", "FDA premarket", "SOUP", "threat model".
 ---
 
 # SpecPad
 
-Create and maintain SpecPad documents: a project index, an SRS (requirements), and a
-VTP (verification tests), stored as JSON under `docs/specpad/` and edited either by you
-or by humans in the hosted editor. One shared contract governs both.
+Create and maintain SpecPad documents — a project index, an SRS (requirements), a VTP
+(verification tests), and the design-control pillars around them — stored as JSON under
+`docs/specpad/` and edited either by you or by humans in the hosted editor. One shared
+contract governs both.
+
+**SpecPad is aimed at medical devices.** Its shape is the regulated one: safety
+classification, software risk to IEC 62304 clause 7, SOUP, a threat model to the FDA
+cybersecurity guidance, and a design-control map citing IEC 62304 and ISO 13485 §7.3. A
+non-regulated project can use it and will get real value from the traceability — but it is
+being handed the regulated shape, not a general-purpose spec tool. There is **one skill and
+one profile**; nothing here is opt-in by installing something else.
 
 ## Position in workflow
 
@@ -86,6 +94,7 @@ them here; read the one you need when you reach that step:
 - SOUP / off-the-shelf software → `guides/soup.md`
 - Threat model and security architecture → `guides/security.md`
 - Reviewing what you just wrote → `guides/review-passes.md`
+- Auditing the whole register (before a release) → `guides/audit.md`
 
 ## Files and naming
 
@@ -120,11 +129,25 @@ SVG exports (`![caption](<name>.context.svg)` etc.), plus an editable soft **aut
 draw.io for teams that want model-as-code C4. This keeps the requirements contract simple; architecture
 is a separate, optional spec.
 
-**Profiles:** the **generic** profile ships in core (`templates/sad.generic.md` + `sad.guide.generic.md`)
-— a clean, fuller arc42, **no safety classification**, the default for any project. For **medical /
-regulated** projects (IEC 62304 / FDA), install the separate **`specpad-medical`** add-on skill, which
-brings the medical profile (per-unit classification, segregation, architecture verification) and its
-regulatory governance. Core stays lean; the regulated layer is opt-in.
+**One profile** (`templates/sad.md` + `sad.guide.md`): arc42 with the sections a regulated
+submission is asked for — **Safety classification & segregation** and **Architecture Verification** —
+alongside the ordinary views. There is no generic/medical branch to choose between; a project that does
+not need classification leaves those sections thin, which is cheaper than maintaining two templates that
+drift apart.
+
+**Classification is a convention, not a hard-coded field.** Do not bake A/B/C into the contract:
+
+- **IEC 62304 safety class** (A/B/C) is **per software unit** — each architecture unit (a C4 element, or
+  a row in the building-block table) carries a `class`, with segregation justified wherever a
+  higher-class item contains lower-class units (§5.3.5).
+- **FDA Documentation Level** (Basic/Enhanced) is **per software function / system**, set once.
+- A project may carry both axes, and the coming 62304 revision trends toward basic/enhanced — a
+  convention absorbs that; a schema field would not.
+
+**Architecture governance is skill-side**, because it cannot run in the browser (the editor does not
+parse the SAD). Check it before declaring work done, keyed to **conventions, never wording**, so a
+project that rewords its headings does not fail: every software unit carries a class; the segregation
+and architecture-verification sections are present; architecture is job/release-coupled.
 
 The **authoring guide** is soft context (tone, terminology, what to emphasize) — the skill **reads it
 before editing the SAD**; the editor shows it as a panel. Guidance steers; governance enforces — keep
@@ -162,28 +185,25 @@ launcher — with no manual configuration. Re-running it must be a safe no-op.
    each document in the project index `documents[]`. **Never overwrite** existing documents. (The PRD is
    optional — a project may delete it; but it is scaffolded by default so user-need traceability is
    on from the start.)
-2. **Ask the project path (short quiz):** "Is this a **medical** device project (IEC 62304 / FDA), or a
-   **generic** project?"
-
-   For a **medical** project, ask three more — each records something a submission is asked for and
-   nothing else in the repo can supply:
+2. **Ask two questions.** Not "is this medical?" — SpecPad assumes it is. Each records something a
+   submission is asked for and nothing else in the repo can supply:
 
    - **"What software safety class, and why?"** → `safetyClass` and `safetyClassRationale` in the
      project index (§4.3). Take the rationale, not just the letter; a class with no reasoning is the
-     half of 4.3 that gets cited. Authoring stays at maximum rigor whatever the answer.
+     half of 4.3 that gets cited. Authoring stays at maximum rigor whatever the answer. A project that
+     genuinely is not a medical device may say so and leave the class unset — record that answer rather
+     than dropping the field, so the omission is a decision and not a gap.
    - **"Did this software exist before you started following 62304?"** → if yes, §4.4 wants a gap
-     analysis and a risk-based justification, which is a quality-system document; say so plainly
-     rather than leaving the clause unanswered.
+     analysis and a risk-based justification, which is a quality-system document; say so plainly rather
+     than leaving the clause unanswered.
 
    SpecPad does not keep a register of the quality-system documents it relies on — a quality system
    already indexes what it holds, and a second index in a git repository would be the one that goes
    stale. The editor's Planning view names the *kind* of system that holds each process instead.
 
-   For **generic** (the default), skip all three. Then scaffold `sad.generic.md` → `<name>.sad.md` and
-   `sad.guide.generic.md` → `<name>.sad.guide.md` (replace `PROJECT_NAME`). For **medical**, use the
-   **`specpad-medical`** add-on skill (its templates) — if it isn't installed, tell the user to add it.
-   The SAD references diagrams (draw.io SVGs) the user adds; the Structurizr `workspace.dsl` is opt-in
-   only. The user can switch later by re-scaffolding. (More profile options can be added.)
+   Then scaffold `sad.md` → `<name>.sad.md` and `sad.guide.md` → `<name>.sad.guide.md` (replace
+   `PROJECT_NAME`). There is one profile, so there is nothing to choose. The SAD references diagrams
+   (draw.io SVGs) the user adds; the Structurizr `workspace.dsl` is **opt-in** and is not scaffolded.
 3. **Generate the launcher** `docs/specpad/index.html` from the template. Replace `PROJECT_NAME`
    with the project name, and **every** occurrence of `EDITOR_BASE_URL` (there are two — the
    redirect and the no-JavaScript fallback link) with the project index's `editorBaseUrl`, or
@@ -325,25 +345,53 @@ the code handle that the document does not mention?).
 - **Scale to the moment**: all four at baseline and before a submission; Author + Examiner on an
   ordinary job, where a human is already reviewing and the cost repeats forever.
 
-## Requirement audit (reconcile the spec with the code)
+## The audit (`specpad audit`) — is the register still true?
 
-Periodically — or on request ("audit requirements", "check for drift") — reconcile the existing SRS/VTP
-against the **whole codebase**. This is the whole-repo form of the commit-time audit (which does the
-same over a single staged diff); both **propose, never auto-apply**.
+Run on request ("audit the register", "check for drift"), and **before cutting a release**. Distinct
+from the review passes above: those look at what a job just wrote, while the audit looks at the
+**whole register at once** and catches a requirement falsified by a change made somewhere else. That
+is the drift nothing else sees — every stale requirement found in SpecPad's own register still
+resolved, still had a test, and still passed governance.
 
-1. **Job first.** Open an audit job.
-2. **Read** the current SRS/VTP and survey the code (as for the baseline generator).
-3. **Compare both directions and categorize findings:**
-   - **Missing** — code behavior with no requirement → propose a `draft` requirement (and a verifying
-     test) derived from the code, for the user to ratify.
-   - **Stale** — a requirement whose described behavior is gone or changed → flag for update or
-     removal; **never silently delete** a requirement.
-   - **Coverage** — a requirement with no covering test, or a VTP `notes` reference to a test that no
-     longer resolves → flag the gap.
-4. **Report, don't mutate:** present the findings as categorized proposals; apply nothing destructive
-   automatically. Ratified new requirements land as `draft` for review.
-5. **Report coverage/confidence** — which areas you audited and how confident you are — rather
-   than silently truncating the answer.
+**Read `guides/audit.md` before running it.** In outline:
+
+1. **Job first**, as ever. The audit fixes what it finds, in the same job.
+2. **Stage 1 — mechanical, and always first**: governance clean; every `cites` entry naming a
+   repository path resolved (`checkCitations`) — a cited file that is gone or a symbol renamed away is
+   a hard failure; advisories read and either acted on or explicitly declined; every VTP `notes`
+   naming an automated test resolving.
+3. **Stage 2 — reading**, as sub-processes with fresh context, given the requirements and their cited
+   sources and **not the reasoning behind them**, under one contract:
+
+   > **A finding must quote the current source that contradicts the claim. No quote, no finding.**
+
+   Asked "is this right?", a pass produces plausible findings indefinitely — a real run over 316
+   requirements returned 237 findings of which ~150 were two observations restated. Asked "can you
+   produce the contradiction?", it either can or it cannot. Verdicts are `holds`, `contradicted`
+   (quote required) or `unverifiable` (a citation gap, not an error in the requirement). Splitting,
+   rewording and test-coverage advice are **out of scope** — that is authoring, and it drowns the
+   findings that say something is actually wrong.
+4. **One batch reads the register against itself**, for requirements that contradict each other. No
+   code needed, cheap, and invisible to governance.
+5. **Report, then fix in the same job** — except where the finding is a decision only the user can
+   make (a requirement describing functionality the code refuses to perform is either a wrong
+   requirement or a missing feature). Put those in front of them.
+6. **Say what was opened.** A clean audit means nothing without it.
+
+Do **not** run it on every job: the cost repeats forever and a human is already in that loop.
+
+**Reconcile in both directions**, and categorise what comes back — this is the whole-repo form of the
+commit-time requirement audit (below), which does the same over a single staged diff:
+
+- **Missing** — code behaviour with no requirement → propose a `draft` requirement and a verifying
+  test, derived from the code, for the user to ratify.
+- **Stale** — a requirement whose described behaviour is gone or changed → flag for update or removal.
+- **Coverage** — a requirement with no covering test, or a VTP `notes` reference to a test that no
+  longer resolves.
+
+**Report coverage/confidence** — which areas were audited, and how confident — rather than
+silently truncating the answer. And **never auto-apply anything destructive**: a requirement is never silently deleted,
+and findings that propose new requirements land as `draft` for ratification.
 
 ## Scaffolding a new project
 
@@ -875,8 +923,16 @@ without being called wrong.
   control categories it implements (`securityControl`). Asked only of requirements the threat model
   already leans on. Advisory.
 - `vtp-negative-path`: A requirement whose tests are all `nominal` should also be tested on a
-  boundary, a refusal, or under load. Asked once the register has begun classifying tests by `kind` at
-  all. A near 1:1 register of requirements to tests is the shape that produces this. Advisory.
+  boundary, a refusal, or under load. Adoption is judged **per requirement**, from that requirement's
+  own tests — a requirement whose tests declare no `kind` at all is left alone, so classifying one test
+  cannot raise an advisory against every requirement not yet classified. A near 1:1 register of
+  requirements to tests is the shape that produces this. Advisory.
+- `srs-cites`: A non-heading requirement should record what it rests on (`cites`) — the construct
+  that implements it, the clause that demands it, the decision it came from. Reported as **one
+  project-level finding** giving citation coverage, never one per requirement — the per-item form
+  would raise hundreds of advisories the moment a project cited its first requirement. Advisory. An
+  audit can only check a claim it can look up; without citations, reviewing a register is a re-read
+  rather than a verification.
 - `vtp-verification-level`: Every non-heading VTP test should declare whether it is `unit`,
   `integration` or `system` verification — 62304 5.5, 5.6 and 5.7 are three activities with distinct
   records (`verificationLevel`). Advisory.

@@ -1672,40 +1672,34 @@
     {
       "id": "t_sa005",
       "code": "TEST-99",
-      "text": "Inspect the skill's templates directory.",
+      "text": "Confirm both architecture profile templates ship.",
       "verifies": [
         "r_sa005"
       ],
-      "expected": "Exactly one SAD template ships (sad.md) with its authoring guide, and it carries the Safety classification & segregation and Architecture Verification sections. No profile-suffixed template remains — sad.generic.md, sad.guide.generic.md and sec.generic.md are gone, not merely unreferenced.",
+      "expected": "templates/sad.generic.md and templates/sad.medical.md both exist; the medical one has Safety classification & segregation and Architecture Verification sections, the generic one does not.",
       "automation": [
         {
           "runner": "vitest",
           "file": "skill/__tests__/architecture.test.ts"
         }
       ],
-      "verificationLevel": "system",
-      "kind": "boundary",
-      "notes": "skill/__tests__/architecture.test.ts — \"ships ONE SAD template, and it carries the regulated sections (JOB-61)\"",
-      "result": "passed"
+      "verificationLevel": "integration"
     },
     {
       "id": "t_sa006",
       "code": "TEST-100",
-      "text": "Read the documented init quiz.",
+      "text": "Confirm the init quiz is documented.",
       "verifies": [
         "r_sa006"
       ],
-      "expected": "It asks for the safety class and rationale and for the pre-62304 history, and never asks whether the project is medical or generic. It scaffolds the SAD and its guide, and does not scaffold the C4 workspace.",
+      "expected": "SKILL.md's init procedure asks medical vs generic and scaffolds the matching sad/workspace/guide; generic is the default.",
       "automation": [
         {
           "runner": "vitest",
           "file": "skill/__tests__/architecture.test.ts"
         }
       ],
-      "verificationLevel": "system",
-      "kind": "nominal",
-      "notes": "skill/__tests__/architecture.test.ts — \"asks for the safety class rather than asking what kind of project this is\", \"ships a multi-view C4 workspace template, which init does not scaffold\"",
-      "result": "passed"
+      "verificationLevel": "integration"
     },
     {
       "id": "t_sa007",
@@ -1911,59 +1905,50 @@
     {
       "id": "t_co001",
       "code": "TEST-112",
-      "text": "Read the skill for what it claims to be and what it requires installing.",
+      "text": "Confirm both skills ship — core specpad and the specpad-medical add-on.",
       "verifies": [
         "r_co001"
       ],
-      "expected": "One skill ships, stating it is aimed at medical devices and carrying the regulated content inline. No add-on skill exists in the tree and the skill names none.",
+      "expected": "skill/specpad/SKILL.md and skill/specpad-medical/SKILL.md both exist; the add-on declares it extends core and is opt-in.",
       "automation": [
         {
           "runner": "vitest",
           "file": "skill/__tests__/architecture.test.ts"
         }
       ],
-      "verificationLevel": "system",
-      "kind": "nominal",
-      "notes": "skill/__tests__/architecture.test.ts — \"states the medical aim, and keeps classification a convention not a schema field\", \"asks for the safety class rather than asking what kind of project this is\"",
-      "result": "passed"
+      "verificationLevel": "integration"
     },
     {
       "id": "t_co002",
       "code": "TEST-113",
-      "text": "Search the skill for regulatory content and for any instruction to install a separate layer.",
+      "text": "Confirm core carries no medical content and the add-on carries the medical profile.",
       "verifies": [
         "r_co002"
       ],
-      "expected": "Safety classification, IEC 62304 risk, SOUP and the FDA cybersecurity material are present in the one skill; no text defers any of it to an add-on.",
+      "expected": "Core's init points the medical path at specpad-medical (not a core medical template); the medical SAD template + guide live under skill/specpad-medical/templates; core's generic template has no classification sections.",
       "automation": [
         {
           "runner": "vitest",
           "file": "skill/__tests__/architecture.test.ts"
         }
       ],
-      "verificationLevel": "system",
-      "kind": "nominal",
-      "notes": "skill/__tests__/architecture.test.ts — \"states the medical aim, and keeps classification a convention not a schema field\"; skill/__tests__/parity.test.ts",
-      "result": "passed"
+      "verificationLevel": "integration"
     },
     {
       "id": "t_co003",
       "code": "TEST-114",
-      "text": "Check how the editor decides which document views are available, and how classification is represented.",
+      "text": "Confirm the add-on does not fork the contract or editor.",
       "verifies": [
         "r_co003"
       ],
-      "expected": "Each view is enabled by the presence of its document; no profile is consulted, because none exists. Classification is a convention carried in the architecture prose, not a schema field on the contract.",
+      "expected": "The specpad-medical skill is prose + templates (no src/); its SKILL.md states the contract and editor are one shared codebase, never a code fork.",
       "automation": [
         {
           "runner": "vitest",
           "file": "skill/__tests__/architecture.test.ts"
         }
       ],
-      "verificationLevel": "system",
-      "kind": "negative",
-      "notes": "skill/__tests__/architecture.test.ts — \"states the medical aim, and keeps classification a convention not a schema field\"; src/__tests__/LocalApp.test.tsx",
-      "result": "passed"
+      "verificationLevel": "integration"
     },
     {
       "id": "t_re001",

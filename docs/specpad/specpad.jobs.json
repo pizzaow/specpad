@@ -799,6 +799,19 @@
       "description": "Requirements record the construct they rest on, so a later reader can open it rather than take the requirement's word for it. A separate audit pass then checks the register against those sources and against itself, and a release cannot be cut while its findings are unreviewed.",
       "technical_notes": "Opened after three mechanical staleness checks were prototyped and all three failed: requirement-unchanged-while-source-changed caught 9 of 18 known-stale requirements while flagging 176; source-newer-than-prose flagged 278 of 316; absent-identifier found one false positive. They fail for one reason — the finest trace the register holds is a file, and the hot files change every job. Citations give the audit something exact to open, which is what makes the check affordable and what makes a finding checkable.",
       "status": "open"
+    },
+    {
+      "id": "j_3a8d15",
+      "code": "JOB-61",
+      "type": "feature",
+      "owner": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
+      "title": "One skill, aimed at medical devices",
+      "description": "SpecPad is a medical-device offering rather than a general tool with a regulated add-on. The optional specpad-medical skill folds into core, there is one architecture profile, and init no longer asks which kind of project this is.",
+      "technical_notes": "The split had already stopped paying for itself: core carried safety classification, IEC 62304 risk, SOUP, cybersecurity, the design-control map and the standards conformance view, while the add-on was 56 lines of SKILL.md and two templates — one of which is the generic template plus a segregation section and an architecture-verification section. The audit surfaced it as four separate contradictions (CORE-2, CORE-3, SAD-5, SAD-6) because the register still described the split as the design.",
+      "status": "open"
     }
   ]
 }

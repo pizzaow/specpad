@@ -1465,7 +1465,7 @@
     {
       "id": "r_sa005",
       "code": "SAD-5",
-      "text": "The skill shall ship exactly one architecture profile as templates: arc42 carrying the sections a regulated submission is asked for, including Safety classification & segregation and Architecture Verification. A project that does not need those sections leaves them thin, which costs less than two templates that drift apart.",
+      "text": "The core skill shall ship one architecture profile as templates: a generic profile (clean arc42, no safety classification), the default for any project. The medical profile — per-unit classification, segregation, and architecture verification — ships in the specpad-medical add-on.",
       "design": [
         "d_arv001",
         "d_arc001"
@@ -1478,7 +1478,7 @@
     {
       "id": "r_sa006",
       "code": "SAD-6",
-      "text": "The init quiz shall not ask what kind of project this is. It shall ask for the software safety class and its rationale, and whether the software predates the project following IEC 62304 (§4.4), then scaffold the SAD template and its authoring guide. The Structurizr C4 workspace shall not be scaffolded — it is opt-in.",
+      "text": "The init quiz shall let the user choose the project path (generic or medical), generic being the default, and scaffold the matching SAD template and authoring guide. The Structurizr C4 workspace shall not be scaffolded — it is opt-in — and the medical templates shall come from the specpad-medical add-on, which init shall tell the user to install when it is absent.",
       "design": [
         "d_arv001"
       ],
@@ -1649,7 +1649,7 @@
     {
       "id": "r_co001",
       "code": "CORE-1",
-      "text": "SpecPad shall ship as one skill aimed at medical devices, carrying the regulated shape directly: safety classification, software risk to IEC 62304 clause 7, SOUP, a threat model to the FDA cybersecurity guidance, and a design-control map citing IEC 62304 and ISO 13485 §7.3. There shall be no separate add-on to install and no lean/regulated split. A non-regulated project may use it and gets the traceability, but is being handed the regulated shape rather than a general-purpose spec tool.",
+      "text": "SpecPad shall ship as a lean core skill (contract, requirements/tests, jobs, working loop, generic architecture profile, generic evidence export) plus an optional specpad-medical add-on skill; the regulated layer's cost is paid only when opted in.",
       "satisfies": [
         "p_gn01"
       ],
@@ -1667,7 +1667,7 @@
     {
       "id": "r_co002",
       "code": "CORE-2",
-      "text": "The skill shall carry its regulatory content inline rather than deferring it to an optional layer. A split that must be installed separately is one the skill cannot rely on being present, which forces every regulated instruction to be written twice — once assuming the layer and once without.",
+      "text": "The core skill shall not carry medical/regulatory content; the specpad-medical add-on shall provide the medical architecture profile (its template and authoring guide) and the regulatory governance.",
       "design": [
         "d_skl001"
       ],
@@ -1679,7 +1679,7 @@
     {
       "id": "r_co003",
       "code": "CORE-3",
-      "text": "The contract and the editor shall remain one codebase — the regulatory material is prose, templates and governance, never a code fork — and the editor shall enable each document's view from the presence of that document rather than from any project profile. There is no profile to gate on.",
+      "text": "The shared contract and the editor shall remain unified across both skills — the medical add-on adds prose, templates, and governance, never a code fork; the editor activates medical features only when a medical profile is present.",
       "design": [
         "d_skl001"
       ],
