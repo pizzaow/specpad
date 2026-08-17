@@ -945,11 +945,11 @@
     {
       "id": "t_ed0b11",
       "code": "TEST-55",
-      "text": "Open the editor in demo mode, edit a document, use the save control, and reload the page.",
+      "text": "Open the editor in demo mode and, for a register (SRS) AND a non-register document (the architecture markdown), edit it and use the save control; then reload.",
       "verifies": [
         "r_ed0b11"
       ],
-      "expected": "Every document is editable; the indicator states that nothing is saved; the save control offers the document as a file download and never writes it back; reloading discards the edits.",
+      "expected": "Each document is editable and each is handed back as a file download; nothing is written and no error is reported for any document type. The sandbox indicator is visible throughout, and edits are gone after reload.",
       "automation": [
         {
           "runner": "vitest",
@@ -957,7 +957,9 @@
           "selector": "LocalApp demo mode"
         }
       ],
-      "verificationLevel": "system"
+      "verificationLevel": "system",
+      "notes": "src/__tests__/LocalApp.demo.test.tsx — \"hands an edited document back as a download instead of saving it\", \"hands the ARCHITECTURE document back as a download too, not just the registers (EDS-11)\"",
+      "kind": "negative"
     },
     {
       "id": "t_ms001",
@@ -5861,7 +5863,7 @@
       "kind": "nominal",
       "verificationLevel": "unit",
       "result": "passed",
-      "notes": "src/shared/__tests__/schema.test.ts / citations.test.ts — parseCitation accepts both forms"
+      "notes": "src/shared/__tests__/citations.test.ts — \"recognises a bare repository path\", \"leaves a standards clause alone as external\""
     },
     {
       "id": "t_cit2a",
@@ -5933,7 +5935,7 @@
       "kind": "boundary",
       "verificationLevel": "unit",
       "result": "passed",
-      "notes": "src/shared/__tests__/rigor.test.ts — \"reports citation coverage as one finding\", \"says nothing … has not adopted them\", \"says nothing … once every requirement carries one\""
+      "notes": "src/shared/__tests__/rigor.test.ts — \"reports citation coverage as one finding, not one per uncited requirement (CITE-5)\", \"says nothing about citations to a register that has not adopted them\", \"says nothing about citations once every requirement carries one\""
     },
     {
       "id": "t_adt1a",

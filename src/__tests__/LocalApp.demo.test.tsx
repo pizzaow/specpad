@@ -15,6 +15,14 @@ const demoProj: ProjectDoc = {
   documents: [],
 };
 
+// CodeMirror needs real DOM measurement; stub it to a textarea for jsdom.
+vi.mock('@uiw/react-codemirror', () => ({
+  default: ({ value, onChange }: any) => (
+    <textarea data-testid="cm" value={value} onChange={(e: any) => onChange?.(e.target.value)} />
+  ),
+}));
+vi.mock('@codemirror/lang-markdown', () => ({ markdown: () => [] }));
+
 vi.mock('../launchParams', () => ({
   parseLaunchParams: () => ({ demo: true }),
 }));
@@ -56,7 +64,7 @@ vi.mock('../fileApi', () => ({
   saveJobs: vi.fn(async () => undefined),
   loadJobSnapshot: vi.fn(async () => null),
   loadJobCommits: vi.fn(async () => []),
-  loadProjectText: vi.fn(async () => null),
+  loadProjectText: vi.fn(async (f: string) => (f.endsWith('.sad.md') ? '# Architecture\n\nDemo SAD body.\n' : null)),
   saveProjectText: vi.fn(async () => undefined),
   loadSnapshot: vi.fn(async () => null),
   getDirHandle: vi.fn(() => null),
@@ -119,6 +127,25 @@ describe('LocalApp demo mode', () => {
 
     expect(saveFileFallback).toHaveBeenCalled();
     expect(saveDocument).not.toHaveBeenCalled();
+  });
+
+  it('hands the ARCHITECTURE document back as a download too, not just the registers (EDS-11)', async () => {
+    // The defect this pins: `persist` had the demo exit, but the SAD, the C4 DSL, the security
+    // markdown and the jobs register called the write helpers directly, so in the sandbox they
+    // hit the transport's read-only refusal and Save reported a failure — for documents the
+    // demo explicitly promises are editable.
+    const { saveProjectText, saveFileFallback } = await import('../fileApi');
+    render(<LocalApp />);
+    fireEvent.click(await screen.findByText('SAD'));
+
+    const editTab = await screen.findByText('Edit');
+    fireEvent.click(editTab);
+    const area = await screen.findByTestId('cm');
+    fireEvent.change(area, { target: { value: '# Architecture\n\nEdited in the sandbox.\n' } });
+
+    fireEvent.keyDown(window, { key: 's', ctrlKey: true });
+    await vi.waitFor(() => expect(saveFileFallback).toHaveBeenCalled());
+    expect(saveProjectText).not.toHaveBeenCalled();
   });
 
   it('shows a friendly error when the demo fails to load', async () => {

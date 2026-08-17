@@ -89,7 +89,7 @@ const RULES: GovernanceRule[] = [
     id: 'risk-referential-integrity',
     title: 'Risk references resolve',
     description:
-      'When a risk register is present, every `causes` entry must resolve to an SDD section of kind "unit", and every `controls` entry to an existing SRS requirement.',
+      'When a risk register is present, every `causes` entry must resolve to an SDD section of kind "unit" or to a component in the SOUP register, and every `controls` entry to an existing SRS requirement. A design view is rejected as a cause: it describes structure across units rather than something that can fail on its own.',
   },
   {
     id: 'risk-cause',

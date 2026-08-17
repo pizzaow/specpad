@@ -27,7 +27,7 @@
     {
       "id": "r_a102",
       "code": "DOC-2",
-      "text": "Every document file shall carry a schemaVersion of \"1.0\" and a type of \"project\", \"srs\", or \"vtp\".",
+      "text": "Every document file shall carry a schemaVersion of \"1.0\" and a type drawn from the document-type registry. The requirement names the registry rather than listing the types, because a second copy of that list is what goes stale the next time a pillar is added — as it did when the set grew from three to eight.",
       "design": [
         "d_inf001",
         "d_sch001"
@@ -366,7 +366,7 @@
     {
       "id": "r_a603",
       "code": "SKILL-3",
-      "text": "The skill shall generate a launcher (index.html) that redirects to the version-pinned hosted editor at specpad.com/v01/.",
+      "text": "The skill shall generate a launcher (index.html) that redirects to the version-pinned editor at the project index's editorBaseUrl — the public specpad.com when the index names none, and a team's own server when it does — with the schemaVersion fixing the version path.",
       "satisfies": [
         "p_ed01"
       ],
@@ -427,7 +427,7 @@
     {
       "id": "r_ce102",
       "code": "CT-2",
-      "text": "Differences shall be computed by stable id, so renaming a code label or reordering items is not reported as a change.",
+      "text": "Differences shall be computed by stable id, so reordering items is not reported as a change and renaming a code label is reported as a modification of that item rather than as a removal and an addition. Every field except the id is compared, the code among them: a renamed label is a real change to the document, and only the item's identity is exempt from comparison.",
       "design": [
         "d_dif001"
       ],
@@ -1231,7 +1231,7 @@
     {
       "id": "r_jv002",
       "code": "JV-2",
-      "text": "The Jobs view shall present jobs as release notes — grouped by major version (unversioned jobs under \"Unreleased\"), then by type into Features and Bugfixes — with each job's description shown beneath its title.",
+      "text": "The Jobs view shall present closed jobs as release notes — grouped by major version (unversioned jobs under \"Unreleased\"), then by type into Features and Bugfixes — with each job's description shown beneath its title. Open jobs shall be listed separately as work in progress, ungrouped: they have no release to be grouped under.",
       "design": [
         "d_jbv001"
       ],
@@ -1465,7 +1465,7 @@
     {
       "id": "r_sa005",
       "code": "SAD-5",
-      "text": "The skill shall ship two architecture profiles as templates: a generic profile (clean arc42 + C4, no safety classification) and a medical profile (IEC 62304 / FDA: per-unit classification, segregation, and architecture verification).",
+      "text": "The core skill shall ship one architecture profile as templates: a generic profile (clean arc42, no safety classification), the default for any project. The medical profile — per-unit classification, segregation, and architecture verification — ships in the specpad-medical add-on.",
       "design": [
         "d_arv001",
         "d_arc001"
@@ -1478,7 +1478,7 @@
     {
       "id": "r_sa006",
       "code": "SAD-6",
-      "text": "The init quiz shall let the user choose the project path (generic or medical) and scaffold the matching SAD template, C4 workspace, and authoring guide; generic is the default.",
+      "text": "The init quiz shall let the user choose the project path (generic or medical), generic being the default, and scaffold the matching SAD template and authoring guide. The Structurizr C4 workspace shall not be scaffolded — it is opt-in — and the medical templates shall come from the specpad-medical add-on, which init shall tell the user to install when it is absent.",
       "design": [
         "d_arv001"
       ],
@@ -1873,7 +1873,7 @@
     {
       "id": "r_ad002",
       "code": "AUD-2",
-      "text": "The Traceability view shall present a coverage summary: requirements verified versus total, verification-test results (passed / failed / not tested), and product-requirement coverage (implemented PRD items satisfied, with the proposed/roadmap count shown separately).",
+      "text": "The Traceability view shall present a coverage summary: requirements verified versus total, verification-test results (passed / failed / not tested), and product-requirement coverage as implemented PRD items satisfied. The proposed/roadmap count belongs to the Planning view, which is where unbuilt intent is reported.",
       "satisfies": [
         "p_pr004"
       ],
@@ -2277,7 +2277,7 @@
     {
       "id": "r_avc4",
       "code": "AVC-4",
-      "text": "The software-requirements view shall be labelled “Software Requirements” (in the tab, the table heading, and the generated schema reference) to distinguish it from the Product Requirements view.",
+      "text": "The software-requirements view shall be distinguishable from the Product Requirements view: the tab shall carry the acronym SRS with \"Software Requirements\" as its hover text, and the table heading and the generated schema reference shall use the full name.",
       "satisfies": [
         "p_pr003"
       ],
@@ -3694,7 +3694,7 @@
       "design": [
         "d_gov001"
       ],
-      "text": "When a risk register is present, every cause shall resolve to a design section describing a software unit, and every control to an existing requirement; a design view shall not be accepted as a cause.",
+      "text": "When a risk register is present, every cause shall resolve either to a design section describing a software unit or to a component in the SOUP register, and every control to an existing requirement; a design view shall not be accepted as a cause, because it describes structure across units rather than something that can fail on its own.",
       "category": [
         "regulatory",
         "functional"

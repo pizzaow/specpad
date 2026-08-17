@@ -835,6 +835,22 @@ const LocalApp: React.FC = () => {
     else saveFileFallback(serializeDocument(doc), `${doc.name}.${doc.type}.json`);
   };
 
+  /**
+   * The same demo exit for the documents that are not id-keyed registers — the SAD, the C4
+   * DSL, the security markdown — and for the jobs register.
+   *
+   * These used to call the write helpers directly, so in the demo they hit the transport's
+   * read-only refusal and the save control reported a failure for exactly the documents the
+   * sandbox promises are editable. `persist` had the exit; only the registers went through it.
+   */
+  const persistText = async (filename: string, content: string) => {
+    if (launch.demo) {
+      saveFileFallback(content, filename);
+      return;
+    }
+    await saveProjectText(filename, content);
+  };
+
   const dirty = dirtySrs || dirtyVtp || dirtyPrd || dirtySdd || dirtyRisk || dirtySoup || dirtyThreat || dirtySec || dirtyJobs || dirtySad || dirtyDsl;
 
   // ---- Presence, resolved for display (CE-3) ----
@@ -877,10 +893,14 @@ const LocalApp: React.FC = () => {
       if (dirtyRisk && riskDoc) { await persist(riskDoc); setDirtyRisk(false); }
       if (dirtySoup && soupDoc) { await persist(soupDoc); setDirtySoup(false); }
       if (dirtyThreat && threatDoc) { await persist(threatDoc); setDirtyThreat(false); }
-      if (dirtySec && sec !== null) { await saveProjectText(`${selectedDocName || projectName}.sec.md`, sec); setDirtySec(false); }
-      if (dirtyJobs && jobsDoc) { await saveJobs(name, jobsDoc); setDirtyJobs(false); }
-      if (dirtySad && sad !== null) { await saveProjectText(`${name}.sad.md`, sad); setDirtySad(false); }
-      if (dirtyDsl && dsl !== null) { await saveProjectText(`${name}.workspace.dsl`, dsl); setDirtyDsl(false); }
+      if (dirtySec && sec !== null) { await persistText(`${selectedDocName || projectName}.sec.md`, sec); setDirtySec(false); }
+      if (dirtyJobs && jobsDoc) {
+        if (launch.demo) saveFileFallback(serializeDocument(jobsDoc), `${name}.jobs.json`);
+        else await saveJobs(name, jobsDoc);
+        setDirtyJobs(false);
+      }
+      if (dirtySad && sad !== null) { await persistText(`${name}.sad.md`, sad); setDirtySad(false); }
+      if (dirtyDsl && dsl !== null) { await persistText(`${name}.workspace.dsl`, dsl); setDirtyDsl(false); }
       setError(null);
       // In server mode a save lands in this user's working copy, uncommitted (CMT-2),
       // so the pending-change badge has to catch up.
