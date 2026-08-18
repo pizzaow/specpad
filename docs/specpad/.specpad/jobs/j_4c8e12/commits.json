@@ -1,11 +1,5 @@
 [
   {
-    "hash": "ccb0ca019aa92ff280ddfcc86428db9a83e3e232",
-    "subject": "release: close the v1.6 cut job",
-    "author": "Geoff Pollard",
-    "date": "2026-08-11"
-  },
-  {
     "hash": "2799c89b1dcbc11803eb668cda413dcbe8c4ab23",
     "subject": "release: cut v1.6 — the detailed-design pillar",
     "author": "Geoff Pollard",

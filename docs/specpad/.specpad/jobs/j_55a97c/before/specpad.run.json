@@ -3,7 +3,7 @@
   "type": "run",
   "name": "specpad",
   "runner": "vitest",
-  "ref": "3bd107f933d9f9398e2d843d10a04dd8fdb8b21c",
+  "ref": "34871909726326d78c5ba639d34daf63f0bfcc82",
   "ranAt": "2026-06-26",
   "summary": {
     "total": 362,
@@ -16,49 +16,49 @@
       "file": "src/__tests__/LocalApp.demo.test.tsx",
       "selector": "LocalApp demo mode auto-loads the demo project read-only",
       "status": "passed",
-      "durationMs": 161
+      "durationMs": 136
     },
     {
       "file": "src/__tests__/LocalApp.demo.test.tsx",
       "selector": "LocalApp demo mode shows a friendly error when the demo fails to load",
       "status": "passed",
-      "durationMs": 56
+      "durationMs": 50
     },
     {
       "file": "src/__tests__/LocalApp.nav.test.tsx",
       "selector": "LocalApp in-view navigation Overview jump buttons switch the active view",
       "status": "passed",
-      "durationMs": 193
+      "durationMs": 177
     },
     {
       "file": "src/__tests__/LocalApp.nav.test.tsx",
       "selector": "LocalApp in-view navigation Auditor \"View →\" links switch the active view",
       "status": "passed",
-      "durationMs": 131
+      "durationMs": 119
     },
     {
       "file": "src/__tests__/LocalApp.nav.test.tsx",
       "selector": "LocalApp in-view navigation Auditor → Traceability pointer switches to the matrix",
       "status": "passed",
-      "durationMs": 246
+      "durationMs": 187
     },
     {
       "file": "src/__tests__/LocalApp.recent.test.tsx",
       "selector": "LocalApp recent-project auto-open silently reopens the launcher folder when its grant persisted",
       "status": "passed",
-      "durationMs": 125
+      "durationMs": 118
     },
     {
       "file": "src/__tests__/LocalApp.test.tsx",
       "selector": "LocalApp document switching re-seeds the table when the selected document changes",
       "status": "passed",
-      "durationMs": 316
+      "durationMs": 380
     },
     {
       "file": "src/__tests__/LocalApp.test.tsx",
       "selector": "LocalApp document switching opens on the Overview by default",
       "status": "passed",
-      "durationMs": 27
+      "durationMs": 35
     },
     {
       "file": "src/__tests__/archDiff.test.ts",
@@ -88,13 +88,13 @@
       "file": "src/__tests__/auditReport.test.ts",
       "selector": "buildAuditReport computes requirement, test, and PRD coverage",
       "status": "passed",
-      "durationMs": 6
+      "durationMs": 5
     },
     {
       "file": "src/__tests__/auditReport.test.ts",
       "selector": "buildAuditReport builds one trace row per non-heading requirement, resolving PRDs and tests",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "file": "src/__tests__/auditReport.test.ts",
@@ -118,19 +118,19 @@
       "file": "src/__tests__/auditReport.test.ts",
       "selector": "buildAuditReport works with no PRD register (requirement→test only)",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/__tests__/auditReport.test.ts",
       "selector": "buildAuditReport derives an automated test result from the run, not a stored field (VER-8)",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 1
     },
     {
       "file": "src/__tests__/changeTracking.test.ts",
       "selector": "buildRedline returns an empty redline when there is no baseline",
       "status": "passed",
-      "durationMs": 4
+      "durationMs": 2
     },
     {
       "file": "src/__tests__/changeTracking.test.ts",
@@ -142,7 +142,7 @@
       "file": "src/__tests__/changeTracking.test.ts",
       "selector": "buildRedline flags an array-field membership change in changedFields",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/__tests__/changeTracking.test.ts",
@@ -172,7 +172,7 @@
       "file": "src/__tests__/changeTracking.test.ts",
       "selector": "computeAttribution re-attributes an item that was removed then re-added",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/__tests__/changeTracking.test.ts",
@@ -184,19 +184,19 @@
       "file": "src/__tests__/changeTracking.test.ts",
       "selector": "buildRedlineRows marks all rows unchanged when there is no baseline",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/__tests__/changeTracking.test.ts",
       "selector": "buildRedlineRows tags added and modified rows in working order",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/__tests__/changeTracking.test.ts",
       "selector": "buildRedlineRows interleaves a removed row at its baseline position",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/__tests__/changeTracking.test.ts",
@@ -208,19 +208,19 @@
       "file": "src/__tests__/changeTrackingView.test.ts",
       "selector": "rowStatusClass marks headings info regardless of redline",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "file": "src/__tests__/changeTrackingView.test.ts",
       "selector": "rowStatusClass maps added → success, modified → warning, none → empty",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/__tests__/changeTrackingView.test.ts",
       "selector": "isCellChanged is true only for a modified entry whose changedFields includes the field",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/__tests__/changeTrackingView.test.ts",
@@ -250,13 +250,13 @@
       "file": "src/__tests__/changeTrackingView.test.ts",
       "selector": "cachedReleases keeps only cached releases, mapping the baseline version to the baseline location",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/__tests__/designControls.test.ts",
       "selector": "buildDesignControls lists the formal elements, each with a citation and statement",
       "status": "passed",
-      "durationMs": 7
+      "durationMs": 5
     },
     {
       "file": "src/__tests__/designControls.test.ts",
@@ -268,13 +268,13 @@
       "file": "src/__tests__/designControls.test.ts",
       "selector": "buildDesignControls marks gaps when the project is empty",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/__tests__/designControls.test.ts",
       "selector": "buildDesignControls links elements to the tab holding their evidence",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/__tests__/handleStore.test.ts",
@@ -286,13 +286,13 @@
       "file": "src/__tests__/handleStore.test.ts",
       "selector": "handleStore remembers a project and lists it",
       "status": "passed",
-      "durationMs": 13
+      "durationMs": 8
     },
     {
       "file": "src/__tests__/handleStore.test.ts",
       "selector": "handleStore dedupes by folder identity, not by name",
       "status": "passed",
-      "durationMs": 5
+      "durationMs": 3
     },
     {
       "file": "src/__tests__/handleStore.test.ts",
@@ -340,7 +340,7 @@
       "file": "src/__tests__/launchParams.test.ts",
       "selector": "parseLaunchParams returns empty params when there is nothing",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/__tests__/launchParams.test.ts",
@@ -442,13 +442,13 @@
       "file": "src/__tests__/localFileApi.test.ts",
       "selector": "localFileApi serialization round-trips an srs doc preserving ids",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "file": "src/__tests__/localFileApi.test.ts",
       "selector": "localFileApi serialization parseDocument rejects malformed JSON",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "file": "src/__tests__/localFileApi.test.ts",
@@ -466,7 +466,7 @@
       "file": "src/__tests__/localFileApi.test.ts",
       "selector": "snapshotDirSegments points \"baseline\" at .specpad/baseline",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/__tests__/localFileApi.test.ts",
@@ -514,7 +514,7 @@
       "file": "src/__tests__/theme.assets.test.ts",
       "selector": "visual system is token-based defines design tokens on :root and a block per theme",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "file": "src/__tests__/theme.assets.test.ts",
@@ -532,7 +532,7 @@
       "file": "src/__tests__/theme.test.ts",
       "selector": "theme model offers the three themes",
       "status": "passed",
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "file": "src/__tests__/theme.test.ts",
@@ -544,19 +544,583 @@
       "file": "src/__tests__/theme.test.ts",
       "selector": "theme model returns the default when nothing is stored",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/__tests__/theme.test.ts",
       "selector": "theme model applyTheme reflects on the document root and persists",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "file": "src/__tests__/theme.test.ts",
       "selector": "theme model ignores an invalid stored value",
       "status": "passed",
       "durationMs": 1
+    },
+    {
+      "file": "src/components/__tests__/ArchitectureView.test.tsx",
+      "selector": "ArchitectureView renders the arc42 markdown as HTML headings and the C4 source",
+      "status": "passed",
+      "durationMs": 79
+    },
+    {
+      "file": "src/components/__tests__/ArchitectureView.test.tsx",
+      "selector": "ArchitectureView renders a markdown-placed diagram SVG inline",
+      "status": "passed",
+      "durationMs": 20
+    },
+    {
+      "file": "src/components/__tests__/ArchitectureView.test.tsx",
+      "selector": "ArchitectureView shows the C4 DSL section only when a DSL is present (optional)",
+      "status": "passed",
+      "durationMs": 24
+    },
+    {
+      "file": "src/components/__tests__/ArchitectureView.test.tsx",
+      "selector": "ArchitectureView shows Edit/Display sub-tabs only when editing is enabled, and emits edits",
+      "status": "passed",
+      "durationMs": 37
+    },
+    {
+      "file": "src/components/__tests__/ArchitectureView.test.tsx",
+      "selector": "ArchitectureView has no sub-tabs when read-only (no edit callbacks)",
+      "status": "passed",
+      "durationMs": 11
+    },
+    {
+      "file": "src/components/__tests__/ArchitectureView.test.tsx",
+      "selector": "ArchitectureView surfaces the authoring guide in a panel when provided",
+      "status": "passed",
+      "durationMs": 16
+    },
+    {
+      "file": "src/components/__tests__/ArchitectureView.test.tsx",
+      "selector": "ArchitectureView shows an empty state when there is no architecture document",
+      "status": "passed",
+      "durationMs": 3
+    },
+    {
+      "file": "src/components/__tests__/AuditView.test.tsx",
+      "selector": "AuditView shows the scope disclaimer and the design-control map with citations",
+      "status": "passed",
+      "durationMs": 104
+    },
+    {
+      "file": "src/components/__tests__/AuditView.test.tsx",
+      "selector": "AuditView shows a status badge per element (including honest gaps)",
+      "status": "passed",
+      "durationMs": 27
+    },
+    {
+      "file": "src/components/__tests__/AuditView.test.tsx",
+      "selector": "AuditView links an element to the tab that holds its evidence",
+      "status": "passed",
+      "durationMs": 131
+    },
+    {
+      "file": "src/components/__tests__/AuditView.test.tsx",
+      "selector": "AuditView lists the roadmap (proposed PRD items) but not the trace matrix",
+      "status": "passed",
+      "durationMs": 35
+    },
+    {
+      "file": "src/components/__tests__/ItemInfo.test.tsx",
+      "selector": "ItemInfo shows the item metadata",
+      "status": "passed",
+      "durationMs": 69
+    },
+    {
+      "file": "src/components/__tests__/ItemInfo.test.tsx",
+      "selector": "ItemInfo omits the Tests row for a heading",
+      "status": "passed",
+      "durationMs": 10
+    },
+    {
+      "file": "src/components/__tests__/ItemInfo.test.tsx",
+      "selector": "ItemInfo calls onClose from the close button and the backdrop",
+      "status": "passed",
+      "durationMs": 19
+    },
+    {
+      "file": "src/components/__tests__/JobControl.test.tsx",
+      "selector": "JobControl shows the current job when set",
+      "status": "passed",
+      "durationMs": 46
+    },
+    {
+      "file": "src/components/__tests__/JobControl.test.tsx",
+      "selector": "JobControl calls onSet with the entered job id (as a single-element array) and title",
+      "status": "passed",
+      "durationMs": 34
+    },
+    {
+      "file": "src/components/__tests__/JobControl.test.tsx",
+      "selector": "JobControl register mode: checks multiple open records and sets them active by id",
+      "status": "passed",
+      "durationMs": 17
+    },
+    {
+      "file": "src/components/__tests__/JobsView.test.tsx",
+      "selector": "JobsView — in progress vs released separates open jobs (In progress) from closed jobs (Released)",
+      "status": "passed",
+      "durationMs": 85
+    },
+    {
+      "file": "src/components/__tests__/JobsView.test.tsx",
+      "selector": "JobsView — in progress vs released renders a closed job's cached SRS/VTP changes in its detail",
+      "status": "passed",
+      "durationMs": 61
+    },
+    {
+      "file": "src/components/__tests__/JobsView.test.tsx",
+      "selector": "JobsView — in progress vs released shows a closed job's architecture changes (coarse files + section-level SAD diff)",
+      "status": "passed",
+      "durationMs": 39
+    },
+    {
+      "file": "src/components/__tests__/JobsView.test.tsx",
+      "selector": "JobsView — in progress vs released lists a closed job's commits in its detail",
+      "status": "passed",
+      "durationMs": 34
+    },
+    {
+      "file": "src/components/__tests__/JobsView.test.tsx",
+      "selector": "JobsView — in progress vs released shows a closed job's run-derived verification of its changed tests (VER-7)",
+      "status": "passed",
+      "durationMs": 30
+    },
+    {
+      "file": "src/components/__tests__/JobsView.test.tsx",
+      "selector": "JobsView — in progress vs released shows owner and derived (read-only) version in the detail",
+      "status": "passed",
+      "durationMs": 22
+    },
+    {
+      "file": "src/components/__tests__/JobsView.test.tsx",
+      "selector": "JobsView — in progress vs released tells the user when an active open job has no starting snapshot cached",
+      "status": "passed",
+      "durationMs": 22
+    },
+    {
+      "file": "src/components/__tests__/JobsView.test.tsx",
+      "selector": "JobsView — in progress vs released renders the active open job's in-progress changes (before vs working copy)",
+      "status": "passed",
+      "durationMs": 24
+    },
+    {
+      "file": "src/components/__tests__/JobsView.test.tsx",
+      "selector": "JobsView — in progress vs released renders the active open job's in-progress architecture changes",
+      "status": "passed",
+      "durationMs": 28
+    },
+    {
+      "file": "src/components/__tests__/JobsView.test.tsx",
+      "selector": "JobsView — in progress vs released adds a new feature job and opens its detail",
+      "status": "passed",
+      "durationMs": 11
+    },
+    {
+      "file": "src/components/__tests__/JobsView.test.tsx",
+      "selector": "JobsView — in progress vs released hides editing controls when read-only",
+      "status": "passed",
+      "durationMs": 7
+    },
+    {
+      "file": "src/components/__tests__/MenuBar.test.tsx",
+      "selector": "MenuBar shows the brand and project name",
+      "status": "passed",
+      "durationMs": 51
+    },
+    {
+      "file": "src/components/__tests__/MenuBar.test.tsx",
+      "selector": "MenuBar Save is disabled when clean and enabled with a dot when dirty",
+      "status": "passed",
+      "durationMs": 102
+    },
+    {
+      "file": "src/components/__tests__/MenuBar.test.tsx",
+      "selector": "MenuBar calls onSave when Save is clicked while dirty",
+      "status": "passed",
+      "durationMs": 29
+    },
+    {
+      "file": "src/components/__tests__/MenuBar.test.tsx",
+      "selector": "MenuBar opens the File menu and fires New document",
+      "status": "passed",
+      "durationMs": 20
+    },
+    {
+      "file": "src/components/__tests__/MenuBar.test.tsx",
+      "selector": "MenuBar switches project from the brand dropdown when there are several",
+      "status": "passed",
+      "durationMs": 17
+    },
+    {
+      "file": "src/components/__tests__/MenuBar.test.tsx",
+      "selector": "MenuBar opens the job popover and sets a job",
+      "status": "passed",
+      "durationMs": 19
+    },
+    {
+      "file": "src/components/__tests__/MenuBar.test.tsx",
+      "selector": "MenuBar shows the version chip and opens version history",
+      "status": "passed",
+      "durationMs": 7
+    },
+    {
+      "file": "src/components/__tests__/MenuBar.test.tsx",
+      "selector": "MenuBar in the no-directory state, File offers Open project directory",
+      "status": "passed",
+      "durationMs": 13
+    },
+    {
+      "file": "src/components/__tests__/OverviewView.test.tsx",
+      "selector": "OverviewView shows the coverage headline, in-progress jobs, and latest release",
+      "status": "passed",
+      "durationMs": 86
+    },
+    {
+      "file": "src/components/__tests__/OverviewView.test.tsx",
+      "selector": "OverviewView reports open governance findings (the unverified requirement)",
+      "status": "passed",
+      "durationMs": 18
+    },
+    {
+      "file": "src/components/__tests__/OverviewView.test.tsx",
+      "selector": "OverviewView navigates into a view from the quick-jump buttons",
+      "status": "passed",
+      "durationMs": 33
+    },
+    {
+      "file": "src/components/__tests__/OverviewView.test.tsx",
+      "selector": "OverviewView derives the tests-passing headline from the run for automated tests (VER-8)",
+      "status": "passed",
+      "durationMs": 21
+    },
+    {
+      "file": "src/components/__tests__/OverviewView.test.tsx",
+      "selector": "OverviewView handles an empty project (no releases, no open jobs)",
+      "status": "passed",
+      "durationMs": 13
+    },
+    {
+      "file": "src/components/__tests__/PrdTable.test.tsx",
+      "selector": "PrdTable renders PRD items but hides the Status and Tags columns",
+      "status": "passed",
+      "durationMs": 101
+    },
+    {
+      "file": "src/components/__tests__/PrdTable.test.tsx",
+      "selector": "PrdTable flags a proposed item with a bold PROPOSED note (implemented items have none)",
+      "status": "passed",
+      "durationMs": 30
+    },
+    {
+      "file": "src/components/__tests__/PrdTable.test.tsx",
+      "selector": "PrdTable offers row actions (add/move/delete/view info) via the hamburger",
+      "status": "passed",
+      "durationMs": 48
+    },
+    {
+      "file": "src/components/__tests__/PrdTable.test.tsx",
+      "selector": "PrdTable shows the since-baseline redline (added rows highlighted)",
+      "status": "passed",
+      "durationMs": 22
+    },
+    {
+      "file": "src/components/__tests__/PrdTable.test.tsx",
+      "selector": "PrdTable shows each item's downward trace as an expandable Satisfied-by toggle",
+      "status": "passed",
+      "durationMs": 31
+    },
+    {
+      "file": "src/components/__tests__/PrdTable.test.tsx",
+      "selector": "PrdTable flags an implemented PRD item with no satisfying requirement as a gap",
+      "status": "passed",
+      "durationMs": 16
+    },
+    {
+      "file": "src/components/__tests__/PrdTable.test.tsx",
+      "selector": "PrdTable is read-only in demo mode (no row actions)",
+      "status": "passed",
+      "durationMs": 11
+    },
+    {
+      "file": "src/components/__tests__/ReleasesView.test.tsx",
+      "selector": "ReleasesView shows each release newest-first with its jobs as release notes",
+      "status": "passed",
+      "durationMs": 87
+    },
+    {
+      "file": "src/components/__tests__/ReleasesView.test.tsx",
+      "selector": "ReleasesView lists a closed job with no version under Unreleased; open jobs are excluded",
+      "status": "passed",
+      "durationMs": 18
+    },
+    {
+      "file": "src/components/__tests__/ReleasesView.test.tsx",
+      "selector": "ReleasesView shows an empty state with no releases",
+      "status": "passed",
+      "durationMs": 4
+    },
+    {
+      "file": "src/components/__tests__/RowMenu.test.tsx",
+      "selector": "RowMenu hides the menu until the trigger is clicked",
+      "status": "passed",
+      "durationMs": 73
+    },
+    {
+      "file": "src/components/__tests__/RowMenu.test.tsx",
+      "selector": "RowMenu fires the matching callback and closes on selection",
+      "status": "passed",
+      "durationMs": 15
+    },
+    {
+      "file": "src/components/__tests__/RowMenu.test.tsx",
+      "selector": "RowMenu does not fire Outdent when canOutdent is false",
+      "status": "passed",
+      "durationMs": 11
+    },
+    {
+      "file": "src/components/__tests__/RowMenu.test.tsx",
+      "selector": "RowMenu closes via the backdrop without firing a callback",
+      "status": "passed",
+      "durationMs": 11
+    },
+    {
+      "file": "src/components/__tests__/SRSTable.test.tsx",
+      "selector": "SRSTable structure renders requirement text and code, no Hazards column",
+      "status": "passed",
+      "durationMs": 86
+    },
+    {
+      "file": "src/components/__tests__/SRSTable.test.tsx",
+      "selector": "SRSTable structure shows a derived dotted code for headings (not the word \"heading\")",
+      "status": "passed",
+      "durationMs": 13
+    },
+    {
+      "file": "src/components/__tests__/SRSTable.test.tsx",
+      "selector": "SRSTable structure uses a per-row hamburger menu instead of action buttons",
+      "status": "passed",
+      "durationMs": 15
+    },
+    {
+      "file": "src/components/__tests__/SRSTable.test.tsx",
+      "selector": "SRSTable structure test count column shows the verifying-test count",
+      "status": "passed",
+      "durationMs": 13
+    },
+    {
+      "file": "src/components/__tests__/SRSTable.test.tsx",
+      "selector": "SRSTable hierarchy + menu actions adds a child below at level+1 via the menu",
+      "status": "passed",
+      "durationMs": 40
+    },
+    {
+      "file": "src/components/__tests__/SRSTable.test.tsx",
+      "selector": "SRSTable hierarchy + menu actions deletes a requirement after confirmation",
+      "status": "passed",
+      "durationMs": 23
+    },
+    {
+      "file": "src/components/__tests__/SRSTable.test.tsx",
+      "selector": "SRSTable hierarchy + menu actions outdent is disabled for a level-0 row",
+      "status": "passed",
+      "durationMs": 21
+    },
+    {
+      "file": "src/components/__tests__/SRSTable.test.tsx",
+      "selector": "SRSTable show-tests + info expands the verifying tests inline for a requirement",
+      "status": "passed",
+      "durationMs": 20
+    },
+    {
+      "file": "src/components/__tests__/SRSTable.test.tsx",
+      "selector": "SRSTable show-tests + info opens the info modal from the menu",
+      "status": "passed",
+      "durationMs": 67
+    },
+    {
+      "file": "src/components/__tests__/SRSTable.test.tsx",
+      "selector": "SRSTable redline (Word-style) marks modified inline and shows removed rows struck through (no panel)",
+      "status": "passed",
+      "durationMs": 16
+    },
+    {
+      "file": "src/components/__tests__/SRSTable.test.tsx",
+      "selector": "SRSTable redline (Word-style) treats everything as unchanged when there is no baseline",
+      "status": "passed",
+      "durationMs": 15
+    },
+    {
+      "file": "src/components/__tests__/StatusBar.test.tsx",
+      "selector": "StatusBar shows the path and a clean status when there are no problems",
+      "status": "passed",
+      "durationMs": 41
+    },
+    {
+      "file": "src/components/__tests__/StatusBar.test.tsx",
+      "selector": "StatusBar summarizes problems and expands details on click",
+      "status": "passed",
+      "durationMs": 17
+    },
+    {
+      "file": "src/components/__tests__/TestingView.test.tsx",
+      "selector": "TestingView lists only non-heading tests",
+      "status": "passed",
+      "durationMs": 93
+    },
+    {
+      "file": "src/components/__tests__/TestingView.test.tsx",
+      "selector": "TestingView reports a manual result change to onChange",
+      "status": "passed",
+      "durationMs": 94
+    },
+    {
+      "file": "src/components/__tests__/TestingView.test.tsx",
+      "selector": "TestingView — verification chain (VER-4) groups Manual above Automated and omits the verifies trace",
+      "status": "passed",
+      "durationMs": 21
+    },
+    {
+      "file": "src/components/__tests__/TestingView.test.tsx",
+      "selector": "TestingView — verification chain (VER-4) derives an automated test status from the run and shows run provenance",
+      "status": "passed",
+      "durationMs": 18
+    },
+    {
+      "file": "src/components/__tests__/TestingView.test.tsx",
+      "selector": "TestingView — verification chain (VER-4) shows the automation link read-only by default and the match count",
+      "status": "passed",
+      "durationMs": 15
+    },
+    {
+      "file": "src/components/__tests__/TestingView.test.tsx",
+      "selector": "TestingView — verification chain (VER-4) shows \"not run\" for an automated test when no run is loaded",
+      "status": "passed",
+      "durationMs": 13
+    },
+    {
+      "file": "src/components/__tests__/TestingView.test.tsx",
+      "selector": "TestingView — verification chain (VER-4) reveals inputs on click and reports an edited link to onChange",
+      "status": "passed",
+      "durationMs": 27
+    },
+    {
+      "file": "src/components/__tests__/TestingView.test.tsx",
+      "selector": "TestingView — run-detail dialog (VER-6) opens a run-detail dialog listing per-test outcomes",
+      "status": "passed",
+      "durationMs": 40
+    },
+    {
+      "file": "src/components/__tests__/TraceabilityView.test.tsx",
+      "selector": "TraceabilityView renders coverage and the matrix linking PRD → requirement → test",
+      "status": "passed",
+      "durationMs": 73
+    },
+    {
+      "file": "src/components/__tests__/TraceabilityView.test.tsx",
+      "selector": "TraceabilityView flags an unverified requirement and lists the governance finding",
+      "status": "passed",
+      "durationMs": 21
+    },
+    {
+      "file": "src/components/__tests__/TraceabilityView.test.tsx",
+      "selector": "TraceabilityView reports governance-clean when there are no violations",
+      "status": "passed",
+      "durationMs": 15
+    },
+    {
+      "file": "src/components/__tests__/TraceabilityView.test.tsx",
+      "selector": "TraceabilityView works without a PRD register",
+      "status": "passed",
+      "durationMs": 17
+    },
+    {
+      "file": "src/components/__tests__/VTPTable.test.tsx",
+      "selector": "VTPTable shows verifies as an expandable toggle that reveals the verified requirement label",
+      "status": "passed",
+      "durationMs": 92
+    },
+    {
+      "file": "src/components/__tests__/VTPTable.test.tsx",
+      "selector": "VTPTable marks a row whose verifies ref does not resolve",
+      "status": "passed",
+      "durationMs": 13
+    },
+    {
+      "file": "src/components/__tests__/VTPTable.test.tsx",
+      "selector": "VTPTable does not show a Result column (this is the plan, not the results)",
+      "status": "passed",
+      "durationMs": 13
+    },
+    {
+      "file": "src/components/__tests__/VTPTable.test.tsx",
+      "selector": "VTPTable offers SRS-style row actions via the hamburger",
+      "status": "passed",
+      "durationMs": 12
+    },
+    {
+      "file": "src/components/__tests__/VTPTable.test.tsx",
+      "selector": "VTPTable change tracking marks a modified row, lists removed tests, and surfaces attribution in the info dialog",
+      "status": "passed",
+      "durationMs": 48
+    },
+    {
+      "file": "src/components/__tests__/VersionHistoryDialog.test.tsx",
+      "selector": "VersionHistoryDialog lists releases and closes",
+      "status": "passed",
+      "durationMs": 72
+    },
+    {
+      "file": "src/components/__tests__/VersionHistoryDialog.test.tsx",
+      "selector": "VersionHistoryDialog shows an empty state with no manifest",
+      "status": "passed",
+      "durationMs": 14
+    },
+    {
+      "file": "src/components/__tests__/VersionTimeline.test.tsx",
+      "selector": "VersionTimeline renders nothing when there are no releases",
+      "status": "passed",
+      "durationMs": 17
+    },
+    {
+      "file": "src/components/__tests__/VersionTimeline.test.tsx",
+      "selector": "VersionTimeline lists each release with its date and author, flagging the baseline",
+      "status": "passed",
+      "durationMs": 33
+    },
+    {
+      "file": "src/components/__tests__/ViewTabs.test.tsx",
+      "selector": "ViewTabs renders the tabs and marks the active one",
+      "status": "passed",
+      "durationMs": 65
+    },
+    {
+      "file": "src/components/__tests__/ViewTabs.test.tsx",
+      "selector": "ViewTabs orders the tabs chronologically through the design-control phases",
+      "status": "passed",
+      "durationMs": 9
+    },
+    {
+      "file": "src/components/__tests__/ViewTabs.test.tsx",
+      "selector": "ViewTabs labels each design-control phase with a band (Design Inputs spans the requirements tabs)",
+      "status": "passed",
+      "durationMs": 12
+    },
+    {
+      "file": "src/components/__tests__/ViewTabs.test.tsx",
+      "selector": "ViewTabs selects a tab on click",
+      "status": "passed",
+      "durationMs": 19
+    },
+    {
+      "file": "src/components/__tests__/ViewTabs.test.tsx",
+      "selector": "ViewTabs disables a tab whose document is absent and does not select it",
+      "status": "passed",
+      "durationMs": 12
     },
     {
       "file": "src/shared/__tests__/diff.test.ts",
@@ -610,7 +1174,7 @@
       "file": "src/shared/__tests__/diff.test.ts",
       "selector": "diffItems treats an empty baseline as everything added",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/shared/__tests__/diff.test.ts",
@@ -634,7 +1198,7 @@
       "file": "src/shared/__tests__/docTypes.test.ts",
       "selector": "document-type registry describes each content document type with kind / schema / flags (REG-1)",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "file": "src/shared/__tests__/docTypes.test.ts",
@@ -658,7 +1222,7 @@
       "file": "src/shared/__tests__/docTypes.test.ts",
       "selector": "document-type registry any id-keyed register diffs via the shared diffItems — type-generic per-job/redline diff (REG-4)",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "file": "src/shared/__tests__/docTypes.test.ts",
@@ -670,13 +1234,13 @@
       "file": "src/shared/__tests__/dogfood.test.ts",
       "selector": "SpecPad self-documentation (dogfood) passes structural validation for every document",
       "status": "passed",
-      "durationMs": 8
+      "durationMs": 6
     },
     {
       "file": "src/shared/__tests__/dogfood.test.ts",
       "selector": "SpecPad self-documentation (dogfood) passes governance with no violations",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 1
     },
     {
       "file": "src/shared/__tests__/dogfood.test.ts",
@@ -688,19 +1252,19 @@
       "file": "src/shared/__tests__/factories.test.ts",
       "selector": "factories creates a schema-valid empty srs doc",
       "status": "passed",
-      "durationMs": 4
+      "durationMs": 5
     },
     {
       "file": "src/shared/__tests__/factories.test.ts",
       "selector": "factories creates a schema-valid empty vtp doc",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "file": "src/shared/__tests__/factories.test.ts",
       "selector": "factories creates a schema-valid project doc with document refs",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "file": "src/shared/__tests__/factories.test.ts",
@@ -730,7 +1294,7 @@
       "file": "src/shared/__tests__/fixtures.test.ts",
       "selector": "golden fixtures valid fixtures pass structural validation",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "file": "src/shared/__tests__/fixtures.test.ts",
@@ -748,7 +1312,7 @@
       "file": "src/shared/__tests__/governance.test.ts",
       "selector": "checkGovernance passes a fully-traceable, well-formed bundle",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "file": "src/shared/__tests__/governance.test.ts",
@@ -796,37 +1360,37 @@
       "file": "src/shared/__tests__/governance.test.ts",
       "selector": "checkGovernance flags a dangling/mistyped active id when a register exists (active-job-known)",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/shared/__tests__/governance.test.ts",
       "selector": "checkGovernance does not flag when there is no active job or no register (external tracker)",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/shared/__tests__/governance.test.ts",
       "selector": "checkGovernance keeps ids stable and references intact when a code label is renamed (r_a204)",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/shared/__tests__/governance.test.ts",
       "selector": "checkGovernance exposes a stable list of rule ids",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/shared/__tests__/governance.test.ts",
       "selector": "activeJobIds prefers the jobs array, falls back to legacy job, else empty",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/shared/__tests__/ids.test.ts",
       "selector": "generateId produces a prefixed 6-hex-digit slug",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "file": "src/shared/__tests__/ids.test.ts",
@@ -868,7 +1432,7 @@
       "file": "src/shared/__tests__/level.test.ts",
       "selector": "level field rejects a non-integer level",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/shared/__tests__/level.test.ts",
@@ -892,7 +1456,7 @@
       "file": "src/shared/__tests__/prd.test.ts",
       "selector": "PRD register — structure accepts a well-formed PRD document",
       "status": "passed",
-      "durationMs": 5
+      "durationMs": 4
     },
     {
       "file": "src/shared/__tests__/prd.test.ts",
@@ -940,7 +1504,7 @@
       "file": "src/shared/__tests__/prd.test.ts",
       "selector": "PRD register — governance flags an implemented PRD item that no requirement satisfies",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/shared/__tests__/prd.test.ts",
@@ -958,7 +1522,7 @@
       "file": "src/shared/__tests__/schema-descriptions.test.ts",
       "selector": "schema field descriptions project schema describes every field",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "file": "src/shared/__tests__/schema-descriptions.test.ts",
@@ -1024,7 +1588,7 @@
       "file": "src/shared/__tests__/sidecars.test.ts",
       "selector": "sidecar schemas accepts a well-formed releases doc (with per-release author)",
       "status": "passed",
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "file": "src/shared/__tests__/sidecars.test.ts",
@@ -1078,7 +1642,7 @@
       "file": "src/shared/__tests__/sidecars.test.ts",
       "selector": "sidecar schemas accepts a job record with type/version/owner and rejects a bad type",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/shared/__tests__/sidecars.test.ts",
@@ -1090,7 +1654,7 @@
       "file": "src/shared/__tests__/sidecars.test.ts",
       "selector": "sidecar schemas rejects a job record whose status is outside the enum",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/shared/__tests__/sidecars.test.ts",
@@ -1162,7 +1726,7 @@
       "file": "src/shared/__tests__/verification.test.ts",
       "selector": "verification — link matching matches a selector-pinned link to the one test",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "src/shared/__tests__/verification.test.ts",
@@ -1192,7 +1756,7 @@
       "file": "src/shared/__tests__/verification.test.ts",
       "selector": "verification — test outcome a manual test falls back to its stored result",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "src/shared/__tests__/verification.test.ts",
@@ -1213,574 +1777,10 @@
       "durationMs": 1
     },
     {
-      "file": "src/components/__tests__/ArchitectureView.test.tsx",
-      "selector": "ArchitectureView renders the arc42 markdown as HTML headings and the C4 source",
-      "status": "passed",
-      "durationMs": 92
-    },
-    {
-      "file": "src/components/__tests__/ArchitectureView.test.tsx",
-      "selector": "ArchitectureView renders a markdown-placed diagram SVG inline",
-      "status": "passed",
-      "durationMs": 37
-    },
-    {
-      "file": "src/components/__tests__/ArchitectureView.test.tsx",
-      "selector": "ArchitectureView shows the C4 DSL section only when a DSL is present (optional)",
-      "status": "passed",
-      "durationMs": 31
-    },
-    {
-      "file": "src/components/__tests__/ArchitectureView.test.tsx",
-      "selector": "ArchitectureView shows Edit/Display sub-tabs only when editing is enabled, and emits edits",
-      "status": "passed",
-      "durationMs": 43
-    },
-    {
-      "file": "src/components/__tests__/ArchitectureView.test.tsx",
-      "selector": "ArchitectureView has no sub-tabs when read-only (no edit callbacks)",
-      "status": "passed",
-      "durationMs": 12
-    },
-    {
-      "file": "src/components/__tests__/ArchitectureView.test.tsx",
-      "selector": "ArchitectureView surfaces the authoring guide in a panel when provided",
-      "status": "passed",
-      "durationMs": 23
-    },
-    {
-      "file": "src/components/__tests__/ArchitectureView.test.tsx",
-      "selector": "ArchitectureView shows an empty state when there is no architecture document",
-      "status": "passed",
-      "durationMs": 3
-    },
-    {
-      "file": "src/components/__tests__/AuditView.test.tsx",
-      "selector": "AuditView shows the scope disclaimer and the design-control map with citations",
-      "status": "passed",
-      "durationMs": 131
-    },
-    {
-      "file": "src/components/__tests__/AuditView.test.tsx",
-      "selector": "AuditView shows a status badge per element (including honest gaps)",
-      "status": "passed",
-      "durationMs": 31
-    },
-    {
-      "file": "src/components/__tests__/AuditView.test.tsx",
-      "selector": "AuditView links an element to the tab that holds its evidence",
-      "status": "passed",
-      "durationMs": 165
-    },
-    {
-      "file": "src/components/__tests__/AuditView.test.tsx",
-      "selector": "AuditView lists the roadmap (proposed PRD items) but not the trace matrix",
-      "status": "passed",
-      "durationMs": 33
-    },
-    {
-      "file": "src/components/__tests__/ItemInfo.test.tsx",
-      "selector": "ItemInfo shows the item metadata",
-      "status": "passed",
-      "durationMs": 66
-    },
-    {
-      "file": "src/components/__tests__/ItemInfo.test.tsx",
-      "selector": "ItemInfo omits the Tests row for a heading",
-      "status": "passed",
-      "durationMs": 9
-    },
-    {
-      "file": "src/components/__tests__/ItemInfo.test.tsx",
-      "selector": "ItemInfo calls onClose from the close button and the backdrop",
-      "status": "passed",
-      "durationMs": 18
-    },
-    {
-      "file": "src/components/__tests__/JobControl.test.tsx",
-      "selector": "JobControl shows the current job when set",
-      "status": "passed",
-      "durationMs": 58
-    },
-    {
-      "file": "src/components/__tests__/JobControl.test.tsx",
-      "selector": "JobControl calls onSet with the entered job id (as a single-element array) and title",
-      "status": "passed",
-      "durationMs": 42
-    },
-    {
-      "file": "src/components/__tests__/JobControl.test.tsx",
-      "selector": "JobControl register mode: checks multiple open records and sets them active by id",
-      "status": "passed",
-      "durationMs": 19
-    },
-    {
-      "file": "src/components/__tests__/JobsView.test.tsx",
-      "selector": "JobsView — in progress vs released separates open jobs (In progress) from closed jobs (Released)",
-      "status": "passed",
-      "durationMs": 108
-    },
-    {
-      "file": "src/components/__tests__/JobsView.test.tsx",
-      "selector": "JobsView — in progress vs released renders a closed job's cached SRS/VTP changes in its detail",
-      "status": "passed",
-      "durationMs": 68
-    },
-    {
-      "file": "src/components/__tests__/JobsView.test.tsx",
-      "selector": "JobsView — in progress vs released shows a closed job's architecture changes (coarse files + section-level SAD diff)",
-      "status": "passed",
-      "durationMs": 52
-    },
-    {
-      "file": "src/components/__tests__/JobsView.test.tsx",
-      "selector": "JobsView — in progress vs released lists a closed job's commits in its detail",
-      "status": "passed",
-      "durationMs": 39
-    },
-    {
-      "file": "src/components/__tests__/JobsView.test.tsx",
-      "selector": "JobsView — in progress vs released shows a closed job's run-derived verification of its changed tests (VER-7)",
-      "status": "passed",
-      "durationMs": 45
-    },
-    {
-      "file": "src/components/__tests__/JobsView.test.tsx",
-      "selector": "JobsView — in progress vs released shows owner and derived (read-only) version in the detail",
-      "status": "passed",
-      "durationMs": 30
-    },
-    {
-      "file": "src/components/__tests__/JobsView.test.tsx",
-      "selector": "JobsView — in progress vs released tells the user when an active open job has no starting snapshot cached",
-      "status": "passed",
-      "durationMs": 22
-    },
-    {
-      "file": "src/components/__tests__/JobsView.test.tsx",
-      "selector": "JobsView — in progress vs released renders the active open job's in-progress changes (before vs working copy)",
-      "status": "passed",
-      "durationMs": 26
-    },
-    {
-      "file": "src/components/__tests__/JobsView.test.tsx",
-      "selector": "JobsView — in progress vs released renders the active open job's in-progress architecture changes",
-      "status": "passed",
-      "durationMs": 34
-    },
-    {
-      "file": "src/components/__tests__/JobsView.test.tsx",
-      "selector": "JobsView — in progress vs released adds a new feature job and opens its detail",
-      "status": "passed",
-      "durationMs": 12
-    },
-    {
-      "file": "src/components/__tests__/JobsView.test.tsx",
-      "selector": "JobsView — in progress vs released hides editing controls when read-only",
-      "status": "passed",
-      "durationMs": 8
-    },
-    {
-      "file": "src/components/__tests__/MenuBar.test.tsx",
-      "selector": "MenuBar shows the brand and project name",
-      "status": "passed",
-      "durationMs": 64
-    },
-    {
-      "file": "src/components/__tests__/MenuBar.test.tsx",
-      "selector": "MenuBar Save is disabled when clean and enabled with a dot when dirty",
-      "status": "passed",
-      "durationMs": 133
-    },
-    {
-      "file": "src/components/__tests__/MenuBar.test.tsx",
-      "selector": "MenuBar calls onSave when Save is clicked while dirty",
-      "status": "passed",
-      "durationMs": 23
-    },
-    {
-      "file": "src/components/__tests__/MenuBar.test.tsx",
-      "selector": "MenuBar opens the File menu and fires New document",
-      "status": "passed",
-      "durationMs": 18
-    },
-    {
-      "file": "src/components/__tests__/MenuBar.test.tsx",
-      "selector": "MenuBar switches project from the brand dropdown when there are several",
-      "status": "passed",
-      "durationMs": 19
-    },
-    {
-      "file": "src/components/__tests__/MenuBar.test.tsx",
-      "selector": "MenuBar opens the job popover and sets a job",
-      "status": "passed",
-      "durationMs": 36
-    },
-    {
-      "file": "src/components/__tests__/MenuBar.test.tsx",
-      "selector": "MenuBar shows the version chip and opens version history",
-      "status": "passed",
-      "durationMs": 9
-    },
-    {
-      "file": "src/components/__tests__/MenuBar.test.tsx",
-      "selector": "MenuBar in the no-directory state, File offers Open project directory",
-      "status": "passed",
-      "durationMs": 16
-    },
-    {
-      "file": "src/components/__tests__/OverviewView.test.tsx",
-      "selector": "OverviewView shows the coverage headline, in-progress jobs, and latest release",
-      "status": "passed",
-      "durationMs": 88
-    },
-    {
-      "file": "src/components/__tests__/OverviewView.test.tsx",
-      "selector": "OverviewView reports open governance findings (the unverified requirement)",
-      "status": "passed",
-      "durationMs": 13
-    },
-    {
-      "file": "src/components/__tests__/OverviewView.test.tsx",
-      "selector": "OverviewView navigates into a view from the quick-jump buttons",
-      "status": "passed",
-      "durationMs": 25
-    },
-    {
-      "file": "src/components/__tests__/OverviewView.test.tsx",
-      "selector": "OverviewView derives the tests-passing headline from the run for automated tests (VER-8)",
-      "status": "passed",
-      "durationMs": 17
-    },
-    {
-      "file": "src/components/__tests__/OverviewView.test.tsx",
-      "selector": "OverviewView handles an empty project (no releases, no open jobs)",
-      "status": "passed",
-      "durationMs": 14
-    },
-    {
-      "file": "src/components/__tests__/PrdTable.test.tsx",
-      "selector": "PrdTable renders PRD items but hides the Status and Tags columns",
-      "status": "passed",
-      "durationMs": 102
-    },
-    {
-      "file": "src/components/__tests__/PrdTable.test.tsx",
-      "selector": "PrdTable flags a proposed item with a bold PROPOSED note (implemented items have none)",
-      "status": "passed",
-      "durationMs": 28
-    },
-    {
-      "file": "src/components/__tests__/PrdTable.test.tsx",
-      "selector": "PrdTable offers row actions (add/move/delete/view info) via the hamburger",
-      "status": "passed",
-      "durationMs": 50
-    },
-    {
-      "file": "src/components/__tests__/PrdTable.test.tsx",
-      "selector": "PrdTable shows the since-baseline redline (added rows highlighted)",
-      "status": "passed",
-      "durationMs": 23
-    },
-    {
-      "file": "src/components/__tests__/PrdTable.test.tsx",
-      "selector": "PrdTable shows each item's downward trace as an expandable Satisfied-by toggle",
-      "status": "passed",
-      "durationMs": 38
-    },
-    {
-      "file": "src/components/__tests__/PrdTable.test.tsx",
-      "selector": "PrdTable flags an implemented PRD item with no satisfying requirement as a gap",
-      "status": "passed",
-      "durationMs": 15
-    },
-    {
-      "file": "src/components/__tests__/PrdTable.test.tsx",
-      "selector": "PrdTable is read-only in demo mode (no row actions)",
-      "status": "passed",
-      "durationMs": 14
-    },
-    {
-      "file": "src/components/__tests__/ReleasesView.test.tsx",
-      "selector": "ReleasesView shows each release newest-first with its jobs as release notes",
-      "status": "passed",
-      "durationMs": 103
-    },
-    {
-      "file": "src/components/__tests__/ReleasesView.test.tsx",
-      "selector": "ReleasesView lists a closed job with no version under Unreleased; open jobs are excluded",
-      "status": "passed",
-      "durationMs": 16
-    },
-    {
-      "file": "src/components/__tests__/ReleasesView.test.tsx",
-      "selector": "ReleasesView shows an empty state with no releases",
-      "status": "passed",
-      "durationMs": 3
-    },
-    {
-      "file": "src/components/__tests__/RowMenu.test.tsx",
-      "selector": "RowMenu hides the menu until the trigger is clicked",
-      "status": "passed",
-      "durationMs": 95
-    },
-    {
-      "file": "src/components/__tests__/RowMenu.test.tsx",
-      "selector": "RowMenu fires the matching callback and closes on selection",
-      "status": "passed",
-      "durationMs": 24
-    },
-    {
-      "file": "src/components/__tests__/RowMenu.test.tsx",
-      "selector": "RowMenu does not fire Outdent when canOutdent is false",
-      "status": "passed",
-      "durationMs": 14
-    },
-    {
-      "file": "src/components/__tests__/RowMenu.test.tsx",
-      "selector": "RowMenu closes via the backdrop without firing a callback",
-      "status": "passed",
-      "durationMs": 11
-    },
-    {
-      "file": "src/components/__tests__/SRSTable.test.tsx",
-      "selector": "SRSTable structure renders requirement text and code, no Hazards column",
-      "status": "passed",
-      "durationMs": 99
-    },
-    {
-      "file": "src/components/__tests__/SRSTable.test.tsx",
-      "selector": "SRSTable structure shows a derived dotted code for headings (not the word \"heading\")",
-      "status": "passed",
-      "durationMs": 16
-    },
-    {
-      "file": "src/components/__tests__/SRSTable.test.tsx",
-      "selector": "SRSTable structure uses a per-row hamburger menu instead of action buttons",
-      "status": "passed",
-      "durationMs": 14
-    },
-    {
-      "file": "src/components/__tests__/SRSTable.test.tsx",
-      "selector": "SRSTable structure test count column shows the verifying-test count",
-      "status": "passed",
-      "durationMs": 13
-    },
-    {
-      "file": "src/components/__tests__/SRSTable.test.tsx",
-      "selector": "SRSTable hierarchy + menu actions adds a child below at level+1 via the menu",
-      "status": "passed",
-      "durationMs": 37
-    },
-    {
-      "file": "src/components/__tests__/SRSTable.test.tsx",
-      "selector": "SRSTable hierarchy + menu actions deletes a requirement after confirmation",
-      "status": "passed",
-      "durationMs": 25
-    },
-    {
-      "file": "src/components/__tests__/SRSTable.test.tsx",
-      "selector": "SRSTable hierarchy + menu actions outdent is disabled for a level-0 row",
-      "status": "passed",
-      "durationMs": 22
-    },
-    {
-      "file": "src/components/__tests__/SRSTable.test.tsx",
-      "selector": "SRSTable show-tests + info expands the verifying tests inline for a requirement",
-      "status": "passed",
-      "durationMs": 22
-    },
-    {
-      "file": "src/components/__tests__/SRSTable.test.tsx",
-      "selector": "SRSTable show-tests + info opens the info modal from the menu",
-      "status": "passed",
-      "durationMs": 84
-    },
-    {
-      "file": "src/components/__tests__/SRSTable.test.tsx",
-      "selector": "SRSTable redline (Word-style) marks modified inline and shows removed rows struck through (no panel)",
-      "status": "passed",
-      "durationMs": 22
-    },
-    {
-      "file": "src/components/__tests__/SRSTable.test.tsx",
-      "selector": "SRSTable redline (Word-style) treats everything as unchanged when there is no baseline",
-      "status": "passed",
-      "durationMs": 9
-    },
-    {
-      "file": "src/components/__tests__/StatusBar.test.tsx",
-      "selector": "StatusBar shows the path and a clean status when there are no problems",
-      "status": "passed",
-      "durationMs": 51
-    },
-    {
-      "file": "src/components/__tests__/StatusBar.test.tsx",
-      "selector": "StatusBar summarizes problems and expands details on click",
-      "status": "passed",
-      "durationMs": 24
-    },
-    {
-      "file": "src/components/__tests__/TestingView.test.tsx",
-      "selector": "TestingView lists only non-heading tests",
-      "status": "passed",
-      "durationMs": 96
-    },
-    {
-      "file": "src/components/__tests__/TestingView.test.tsx",
-      "selector": "TestingView reports a manual result change to onChange",
-      "status": "passed",
-      "durationMs": 109
-    },
-    {
-      "file": "src/components/__tests__/TestingView.test.tsx",
-      "selector": "TestingView — verification chain (VER-4) groups Manual above Automated and omits the verifies trace",
-      "status": "passed",
-      "durationMs": 22
-    },
-    {
-      "file": "src/components/__tests__/TestingView.test.tsx",
-      "selector": "TestingView — verification chain (VER-4) derives an automated test status from the run and shows run provenance",
-      "status": "passed",
-      "durationMs": 32
-    },
-    {
-      "file": "src/components/__tests__/TestingView.test.tsx",
-      "selector": "TestingView — verification chain (VER-4) shows the automation link read-only by default and the match count",
-      "status": "passed",
-      "durationMs": 25
-    },
-    {
-      "file": "src/components/__tests__/TestingView.test.tsx",
-      "selector": "TestingView — verification chain (VER-4) shows \"not run\" for an automated test when no run is loaded",
-      "status": "passed",
-      "durationMs": 17
-    },
-    {
-      "file": "src/components/__tests__/TestingView.test.tsx",
-      "selector": "TestingView — verification chain (VER-4) reveals inputs on click and reports an edited link to onChange",
-      "status": "passed",
-      "durationMs": 39
-    },
-    {
-      "file": "src/components/__tests__/TestingView.test.tsx",
-      "selector": "TestingView — run-detail dialog (VER-6) opens a run-detail dialog listing per-test outcomes",
-      "status": "passed",
-      "durationMs": 41
-    },
-    {
-      "file": "src/components/__tests__/TraceabilityView.test.tsx",
-      "selector": "TraceabilityView renders coverage and the matrix linking PRD → requirement → test",
-      "status": "passed",
-      "durationMs": 104
-    },
-    {
-      "file": "src/components/__tests__/TraceabilityView.test.tsx",
-      "selector": "TraceabilityView flags an unverified requirement and lists the governance finding",
-      "status": "passed",
-      "durationMs": 33
-    },
-    {
-      "file": "src/components/__tests__/TraceabilityView.test.tsx",
-      "selector": "TraceabilityView reports governance-clean when there are no violations",
-      "status": "passed",
-      "durationMs": 18
-    },
-    {
-      "file": "src/components/__tests__/TraceabilityView.test.tsx",
-      "selector": "TraceabilityView works without a PRD register",
-      "status": "passed",
-      "durationMs": 22
-    },
-    {
-      "file": "src/components/__tests__/VTPTable.test.tsx",
-      "selector": "VTPTable shows verifies as an expandable toggle that reveals the verified requirement label",
-      "status": "passed",
-      "durationMs": 120
-    },
-    {
-      "file": "src/components/__tests__/VTPTable.test.tsx",
-      "selector": "VTPTable marks a row whose verifies ref does not resolve",
-      "status": "passed",
-      "durationMs": 19
-    },
-    {
-      "file": "src/components/__tests__/VTPTable.test.tsx",
-      "selector": "VTPTable does not show a Result column (this is the plan, not the results)",
-      "status": "passed",
-      "durationMs": 20
-    },
-    {
-      "file": "src/components/__tests__/VTPTable.test.tsx",
-      "selector": "VTPTable offers SRS-style row actions via the hamburger",
-      "status": "passed",
-      "durationMs": 16
-    },
-    {
-      "file": "src/components/__tests__/VTPTable.test.tsx",
-      "selector": "VTPTable change tracking marks a modified row, lists removed tests, and surfaces attribution in the info dialog",
-      "status": "passed",
-      "durationMs": 56
-    },
-    {
-      "file": "src/components/__tests__/VersionHistoryDialog.test.tsx",
-      "selector": "VersionHistoryDialog lists releases and closes",
-      "status": "passed",
-      "durationMs": 78
-    },
-    {
-      "file": "src/components/__tests__/VersionHistoryDialog.test.tsx",
-      "selector": "VersionHistoryDialog shows an empty state with no manifest",
-      "status": "passed",
-      "durationMs": 8
-    },
-    {
-      "file": "src/components/__tests__/VersionTimeline.test.tsx",
-      "selector": "VersionTimeline renders nothing when there are no releases",
-      "status": "passed",
-      "durationMs": 20
-    },
-    {
-      "file": "src/components/__tests__/VersionTimeline.test.tsx",
-      "selector": "VersionTimeline lists each release with its date and author, flagging the baseline",
-      "status": "passed",
-      "durationMs": 38
-    },
-    {
-      "file": "src/components/__tests__/ViewTabs.test.tsx",
-      "selector": "ViewTabs renders the tabs and marks the active one",
-      "status": "passed",
-      "durationMs": 59
-    },
-    {
-      "file": "src/components/__tests__/ViewTabs.test.tsx",
-      "selector": "ViewTabs orders the tabs chronologically through the design-control phases",
-      "status": "passed",
-      "durationMs": 9
-    },
-    {
-      "file": "src/components/__tests__/ViewTabs.test.tsx",
-      "selector": "ViewTabs labels each design-control phase with a band (Design Inputs spans the requirements tabs)",
-      "status": "passed",
-      "durationMs": 11
-    },
-    {
-      "file": "src/components/__tests__/ViewTabs.test.tsx",
-      "selector": "ViewTabs selects a tab on click",
-      "status": "passed",
-      "durationMs": 19
-    },
-    {
-      "file": "src/components/__tests__/ViewTabs.test.tsx",
-      "selector": "ViewTabs disables a tab whose document is absent and does not select it",
-      "status": "passed",
-      "durationMs": 18
-    },
-    {
       "file": "skill/__tests__/architecture.test.ts",
       "selector": "skill documents the architecture spec documents the arc42 + C4 tracked files as a separate optional spec",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "file": "skill/__tests__/architecture.test.ts",
@@ -1798,13 +1798,13 @@
       "file": "skill/__tests__/architecture.test.ts",
       "selector": "architecture profiles & templates core ships the generic SAD template; the medical one lives in the add-on",
       "status": "passed",
-      "durationMs": 23
+      "durationMs": 18
     },
     {
       "file": "skill/__tests__/architecture.test.ts",
       "selector": "architecture profiles & templates ships a multi-view C4 workspace template and per-profile authoring guides",
       "status": "passed",
-      "durationMs": 25
+      "durationMs": 28
     },
     {
       "file": "skill/__tests__/architecture.test.ts",
@@ -1834,13 +1834,13 @@
       "file": "skill/__tests__/architecture.test.ts",
       "selector": "SpecPad dogfoods its own architecture spec places multiple diagrams via markdown image refs, and the SVGs exist and render",
       "status": "passed",
-      "durationMs": 33
+      "durationMs": 30
     },
     {
       "file": "skill/__tests__/architecture.test.ts",
       "selector": "SpecPad dogfoods its own architecture spec no longer ships the optional C4 DSL in the dogfood (it is opt-in via the template)",
       "status": "passed",
-      "durationMs": 15
+      "durationMs": 13
     },
     {
       "file": "skill/__tests__/audit.test.ts",
@@ -1852,19 +1852,19 @@
       "file": "skill/__tests__/audit.test.ts",
       "selector": "skill documents the requirement audit categorizes findings as missing, stale, and coverage",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "file": "skill/__tests__/audit.test.ts",
       "selector": "skill documents the requirement audit proposes (never auto-applies) and never silently deletes a requirement",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "skill/__tests__/audit.test.ts",
       "selector": "skill documents the requirement audit reports coverage/confidence rather than truncating silently",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "skill/__tests__/baseline.test.ts",
@@ -1882,7 +1882,7 @@
       "file": "skill/__tests__/baseline.test.ts",
       "selector": "skill documents the baseline generator keeps requirements at the \"shall\" altitude and governance-clean",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "skill/__tests__/baseline.test.ts",
@@ -1918,7 +1918,7 @@
       "file": "skill/__tests__/change-tracking.test.ts",
       "selector": "skill documents the change-tracking plumbing states the skill never computes diffs (the editor does)",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "skill/__tests__/change-tracking.test.ts",
@@ -1930,25 +1930,25 @@
       "file": "skill/__tests__/change-tracking.test.ts",
       "selector": "skill documents the change-tracking plumbing snapshots/caches every document in the project index, not a fixed list (REG-3)",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "skill/__tests__/change-tracking.test.ts",
       "selector": "skill documents the change-tracking plumbing documents the source-traceability export (job → commits → code) and the commits cache",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "skill/__tests__/change-tracking.test.ts",
       "selector": "dogfood job caches caches a before snapshot for every job, and before+after+commits for closed jobs",
       "status": "passed",
-      "durationMs": 1898
+      "durationMs": 1800
     },
     {
       "file": "skill/__tests__/change-tracking.test.ts",
       "selector": "dogfood job caches snapshots a job's before at creation, so the active open job has one",
       "status": "passed",
-      "durationMs": 23
+      "durationMs": 24
     },
     {
       "file": "skill/__tests__/change-tracking.test.ts",
@@ -1960,7 +1960,7 @@
       "file": "skill/__tests__/change-tracking.test.ts",
       "selector": "dogfood job caches captures the architecture file change for the job that created the SAD",
       "status": "passed",
-      "durationMs": 25
+      "durationMs": 29
     },
     {
       "file": "skill/__tests__/change-tracking.test.ts",
@@ -1978,13 +1978,13 @@
       "file": "skill/__tests__/guides.test.ts",
       "selector": "on-demand authoring guides ships a guide for each document type",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "file": "skill/__tests__/guides.test.ts",
       "selector": "on-demand authoring guides SKILL.md routes to each guide by path (and the routing stays in sync)",
       "status": "passed",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "file": "skill/__tests__/guides.test.ts",
@@ -1996,25 +1996,25 @@
       "file": "skill/__tests__/guides.test.ts",
       "selector": "on-demand authoring guides each guide covers what-to-capture and good/bad examples",
       "status": "passed",
-      "durationMs": 39
+      "durationMs": 33
     },
     {
       "file": "skill/__tests__/init.test.ts",
       "selector": "specpad init documents the one-step init procedure and its artifacts",
       "status": "passed",
-      "durationMs": 18
+      "durationMs": 16
     },
     {
       "file": "skill/__tests__/init.test.ts",
       "selector": "specpad init ships a CLAUDE directive carrying the idempotency sentinel and the loop",
       "status": "passed",
-      "durationMs": 13
+      "durationMs": 10
     },
     {
       "file": "skill/__tests__/init.test.ts",
       "selector": "specpad init scaffolds the full default document set, including the PRD register (INIT-4)",
       "status": "passed",
-      "durationMs": 21
+      "durationMs": 18
     },
     {
       "file": "skill/__tests__/init.test.ts",
@@ -2026,7 +2026,7 @@
       "file": "skill/__tests__/parity.test.ts",
       "selector": "skill ↔ module governance parity documents every governance rule id from the shared module",
       "status": "passed",
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "file": "skill/__tests__/parity.test.ts",
@@ -2038,37 +2038,37 @@
       "file": "skill/__tests__/pre-push.test.ts",
       "selector": "pre-push hook blocks a code commit with no Job: trailer",
       "status": "passed",
-      "durationMs": 192
+      "durationMs": 160
     },
     {
       "file": "skill/__tests__/pre-push.test.ts",
       "selector": "pre-push hook allows a commit that carries a Job trailer and a spec change",
       "status": "passed",
-      "durationMs": 188
+      "durationMs": 165
     },
     {
       "file": "skill/__tests__/pre-push.test.ts",
       "selector": "pre-push hook warns (but does not block) when code changes without an SRS/VTP touch",
       "status": "passed",
-      "durationMs": 188
+      "durationMs": 159
     },
     {
       "file": "skill/__tests__/pre-push.test.ts",
       "selector": "pre-push hook suppresses the warning with a Spec: none trailer (e.g. a refactor)",
       "status": "passed",
-      "durationMs": 182
+      "durationMs": 164
     },
     {
       "file": "skill/__tests__/pre-push.test.ts",
       "selector": "pre-push hook skips tag pushes (they point at already-pushed commits)",
       "status": "passed",
-      "durationMs": 222
+      "durationMs": 216
     },
     {
       "file": "skill/__tests__/pre-push.test.ts",
       "selector": "pre-push hook is fully bypassed with SPECPAD_SKIP=1",
       "status": "passed",
-      "durationMs": 218
+      "durationMs": 194
     },
     {
       "file": "skill/__tests__/release.test.ts",
@@ -2092,7 +2092,7 @@
       "file": "skill/__tests__/verification.test.ts",
       "selector": "skill documents verification runs (VTP -> test -> run) has a Verification runs section describing the chain",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "file": "skill/__tests__/verification.test.ts",
@@ -2134,43 +2134,43 @@
       "file": "skill/__tests__/working-loop.test.ts",
       "selector": "skill documents the SpecPad working loop (primary capture) states capture is autonomous but surfaced for correction",
       "status": "passed",
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "file": "skill/__tests__/working-loop.test.ts",
       "selector": "skill documents the SpecPad working loop (primary capture) directs the job to evaluate impact across every registered document type, naming PRD + architecture (REG-5)",
       "status": "passed",
-      "durationMs": 10
+      "durationMs": 7
     },
     {
       "file": "site/src/__tests__/generate-reference.test.ts",
       "selector": "reference generator renders a field table for every document type",
       "status": "passed",
-      "durationMs": 4
+      "durationMs": 2
     },
     {
       "file": "site/src/__tests__/generate-reference.test.ts",
       "selector": "reference generator includes every field with its description",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "file": "site/src/__tests__/generate-reference.test.ts",
       "selector": "reference generator includes every governance rule",
       "status": "passed",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "file": "site/src/__tests__/generate-reference.test.ts",
       "selector": "reference generator throws when a field lacks a description",
       "status": "passed",
-      "durationMs": 14
+      "durationMs": 10
     },
     {
       "file": "site/src/__tests__/site-links.test.ts",
       "selector": "landing page link integrity references only existing targets",
       "status": "passed",
-      "durationMs": 64
+      "durationMs": 55
     },
     {
       "file": "site/src/__tests__/site-links.test.ts",

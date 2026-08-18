@@ -1,11 +1,5 @@
 [
   {
-    "hash": "1a5018ee3cfb413c18aa71c6a6eae32cd75bafa3",
-    "subject": "Close JOB-1 and JOB-44..49",
-    "author": "Geoff Pollard",
-    "date": "2026-08-11"
-  },
-  {
     "hash": "58c340043b0b21bf14348f574df2ab654d36e8d8",
     "subject": "feat(skill): the SpecPad working loop — primary in-loop requirement capture",
     "author": "Geoff Pollard",

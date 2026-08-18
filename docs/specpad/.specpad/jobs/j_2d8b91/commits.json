@@ -1,11 +1,5 @@
 [
   {
-    "hash": "cb01bc6ce9aefc5b3bee8cb877eea7cf8c487c55",
-    "subject": "release: close the v1.5 cut job",
-    "author": "Geoff Pollard",
-    "date": "2026-08-10"
-  },
-  {
     "hash": "3772858f8705bca76fde8706bf7b13400ce8b620",
     "subject": "release: cut v1.5 — close JOB-35..42, refresh caches, new baseline",
     "author": "Geoff Pollard",

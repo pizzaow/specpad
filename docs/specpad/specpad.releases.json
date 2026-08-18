@@ -93,6 +93,16 @@
         "name": "Geoff Pollard",
         "email": "geoffpollard@gmail.com"
       },
+      "snapshot": ".specpad/snapshots/v1.7"
+    },
+    {
+      "version": "v2.0",
+      "ref": "b4d2aa2e14fabec7d2616428b13040e020b2af56",
+      "date": "2026-08-18",
+      "author": {
+        "name": "Geoff Pollard",
+        "email": "geoffpollard@gmail.com"
+      },
       "snapshot": ".specpad/baseline"
     }
   ]

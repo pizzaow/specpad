@@ -4970,7 +4970,7 @@
     {
       "id": "t_sec8b",
       "verifies": [
-        "r_sec10"
+        "r_sec8"
       ],
       "text": "Inspect the project's own security architecture document and each figure it references.",
       "expected": "All four view types are present with more than one global system view; every view references a diagram and every referenced diagram exists; each figure fits the canvas, uses only the palette, sets Arial with no text below 11px, carries a legend, and labels its connectors; the communication-path table names what each path carries and what protects it; and the guidance cited is the one in force.",
@@ -5572,74 +5572,6 @@
           "runner": "vitest",
           "file": "skill/__tests__/init.test.ts",
           "selector": "init"
-        }
-      ]
-    },
-    {
-      "id": "t_tr13",
-      "verifies": [
-        "r_tr13"
-      ],
-      "verificationLevel": "unit",
-      "kind": "nominal",
-      "text": "Build the report for a project holding a design, a risk register and a threat model, and read each depth count.",
-      "expected": "Design coverage, categorisation, control participation and the per-level test counts are each reported.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/auditReport.test.ts",
-          "selector": "the whole chain"
-        }
-      ]
-    },
-    {
-      "id": "t_tr13b",
-      "verifies": [
-        "r_tr13"
-      ],
-      "verificationLevel": "unit",
-      "kind": "boundary",
-      "text": "Build the report for a project with no design, no risk register and no threat model.",
-      "expected": "The counts that cannot apply are omitted rather than reported as zero coverage.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/__tests__/auditReport.test.ts",
-          "selector": "the whole chain"
-        }
-      ]
-    },
-    {
-      "id": "t_gov24",
-      "verifies": [
-        "r_gov24"
-      ],
-      "verificationLevel": "unit",
-      "kind": "nominal",
-      "text": "Read the advisory result for tests with and without a verification level.",
-      "expected": "A test declaring no level is advised on and named; one declaring a level is not; neither fails the project.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/shared/__tests__/advisory.test.ts",
-          "selector": "advisories are findings that do not fail"
-        }
-      ]
-    },
-    {
-      "id": "t_sec11",
-      "verifies": [
-        "r_sec11"
-      ],
-      "verificationLevel": "integration",
-      "kind": "nominal",
-      "text": "Open the Security tab for a project with a security architecture document and for one without.",
-      "expected": "The document renders with its diagrams inline and offers an editor; a project without one says so and offers none.",
-      "automation": [
-        {
-          "runner": "vitest",
-          "file": "src/components/__tests__/SecurityView.test.tsx",
-          "selector": "SecurityView"
         }
       ]
     }

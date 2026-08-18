@@ -4026,35 +4026,11 @@
       "design": [
         "d_arv001"
       ],
-      "text": "The system shall support an optional security architecture document holding the global system, multi-patient harm, updateability and patchability, and security use case view types, with as many views as the attack surface requires.",
+      "text": "The system shall support an optional security architecture document holding the global system, multi-patient harm, updateability and patchability, and security use case view types, with as many views as the attack surface requires, each carrying a diagram whose connections are labelled with what they carry and a legend, rendered with its diagrams and editable in the browser.",
       "category": [
         "security",
         "regulatory"
       ]
-    },
-    {
-      "id": "r_sec10",
-      "code": "SEC-10",
-      "design": [
-        "d_arv001"
-      ],
-      "category": [
-        "security",
-        "regulatory"
-      ],
-      "text": "Each security architecture view shall carry a diagram whose connections are labelled with what they carry, and a legend."
-    },
-    {
-      "id": "r_sec11",
-      "code": "SEC-11",
-      "design": [
-        "d_arv001"
-      ],
-      "category": [
-        "security",
-        "user-interface"
-      ],
-      "text": "The editor shall render the security architecture document with its diagrams inline and allow it to be edited."
     },
     {
       "id": "r_sec9",
@@ -4102,20 +4078,7 @@
         "regulatory",
         "functional"
       ],
-      "text": "Every requirement shall be able to declare which of the IEC 62304 5.2.2 content categories it is, and shall be advised on rather than failed when it does not."
-    },
-    {
-      "id": "r_gov24",
-      "code": "GOV-24",
-      "design": [
-        "d_gov001",
-        "d_sch001"
-      ],
-      "category": [
-        "regulatory",
-        "functional"
-      ],
-      "text": "Every test shall be able to declare whether it verifies at unit, integration or system level, and shall be advised on rather than failed when it does not."
+      "text": "Every requirement shall be able to declare which of the IEC 62304 5.2.2 content categories it is, and every test which of unit, integration or system verification it belongs to; both shall be advised on rather than enforced until a project adopts them."
     },
     {
       "id": "r_cls1",
@@ -4346,20 +4309,7 @@
         "regulatory",
         "user-interface"
       ],
-      "text": "Traceability shall report the depth of the record separately from its breadth, so a register that is fully verified is not mistaken for a complete one."
-    },
-    {
-      "id": "r_tr13",
-      "code": "TR-13",
-      "design": [
-        "d_avw001",
-        "d_aud001"
-      ],
-      "category": [
-        "regulatory",
-        "user-interface"
-      ],
-      "text": "The reported depth shall count how many requirements reach a design section, how many declare a content category, how many control a risk or threat, and how many tests were performed at each verification level."
+      "text": "Traceability shall report the depth of the record as well as its breadth: how many requirements reach a design, how many declare a content category, how many control a risk or threat, and how many tests were performed at each verification level."
     },
     {
       "id": "r_pln1",
