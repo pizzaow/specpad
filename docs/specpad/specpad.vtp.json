@@ -5991,6 +5991,18 @@
       "verificationLevel": "system",
       "result": "passed",
       "notes": "skill/__tests__/audit.test.ts"
+    },
+    {
+      "id": "t_adt5a",
+      "verifies": [
+        "r_adt5"
+      ],
+      "text": "Run the audit script against a register with a broken citation and a VTP note naming a test that does not exist, and again against a clean register.",
+      "expected": "The first run reports each hard failure with the path and exits non-zero. The second reports coverage and the advisory counts and exits zero. A note naming several test files attributes each quoted test name to the file preceding it, so a multi-file note is not reported as broken.",
+      "kind": "negative",
+      "verificationLevel": "integration",
+      "result": "passed",
+      "notes": "scripts/__tests__/specpad-audit.test.ts"
     }
   ]
 }

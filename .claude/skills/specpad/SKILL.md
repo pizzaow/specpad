@@ -358,8 +358,11 @@ resolved, still had a test, and still passed governance.
 1. **Job first**, as ever. The audit fixes what it finds, in the same job.
 2. **Stage 1 — mechanical, and always first**: governance clean; every `cites` entry naming a
    repository path resolved (`checkCitations`) — a cited file that is gone or a symbol renamed away is
-   a hard failure; advisories read and either acted on or explicitly declined; every VTP `notes`
-   naming an automated test resolving.
+   a hard failure; citation coverage reported unconditionally, including nil; advisories read and
+   either acted on or explicitly declined; every VTP `notes` naming an automated test resolving.
+   **Ship this stage as a runnable check and run it** — this repository's is
+   `scripts/specpad-audit.mjs` (`npm run audit`), which exits non-zero on a hard failure. A check
+   re-derived from prose each time is not a check.
 3. **Stage 2 — reading**, as sub-processes with fresh context, given the requirements and their cited
    sources and **not the reasoning behind them**, under one contract:
 

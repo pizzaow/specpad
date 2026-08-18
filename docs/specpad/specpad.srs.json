@@ -4599,9 +4599,10 @@
       "category": [
         "interfaces"
       ],
-      "text": "Citation resolution shall be a separate check from checkGovernance, taking a file reader as a parameter, so the editor — which runs in a browser and has no filesystem — validates citation structure while the skill, the server and the audit resolve them.",
+      "text": "Citation resolution shall be a separate check from checkGovernance, taking a file reader as a parameter, so the editor — which runs in a browser and has no filesystem — validates citation structure while the skill and the audit, which have one, resolve them.",
       "cites": [
-        "src/shared/citations.ts:ReadFile"
+        "src/shared/citations.ts:ReadFile",
+        "scripts/specpad-audit.mjs"
       ]
     },
     {
@@ -4673,6 +4674,21 @@
       "cites": [
         "skill/specpad/guides/audit.md"
       ]
+    },
+    {
+      "id": "r_adt5",
+      "code": "ADT-5",
+      "design": [
+        "d_skl001"
+      ],
+      "category": [
+        "regulatory",
+        "functional"
+      ],
+      "cites": [
+        "scripts/specpad-audit.mjs"
+      ],
+      "text": "The audit's mechanical stage shall ship as a runnable check rather than as instructions to be re-derived: it shall report governance, citation resolution, citation coverage and test references, and shall exit non-zero on a hard failure. Citation coverage shall be reported unconditionally, including nil, because the srs-cites advisory stays quiet for a register that has not adopted citations."
     }
   ]
 }

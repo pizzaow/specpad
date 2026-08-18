@@ -47,6 +47,11 @@ a single sub-process:
 
 Report these findings as findings. They need no judgement and no sub-process.
 
+**Run it, do not re-derive it.** This stage ships as a script (`scripts/specpad-audit.mjs`,
+`npm run audit` in this repository) precisely because a check rewritten from memory each time is not
+a check. It exits non-zero on a hard failure, so it belongs in the release gate rather than in a
+reviewer's habits.
+
 ## Stage 2 — the reading part, under a contract
 
 Run as **sub-processes with fresh context**, one batch of requirements each, given the requirements,
