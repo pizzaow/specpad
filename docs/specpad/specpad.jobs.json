@@ -785,7 +785,7 @@
       "title": "Review passes: a fresh look at what was just written",
       "description": "Documents the skill produces are now reviewed by a separate pass that has not seen the reasoning behind them — one that checks the citations against their sources, one that argues the approach was wrong, and one that asks what the code handles that the document does not mention.",
       "technical_notes": "Opened from the observation that self-review is the weakest check available. Across this session the things actually caught were caught mechanically — referential-integrity found four dangling verifies, tsc found the level name collision, the parity test found a rule documented after removal, the link test found a missing template. Re-reading my own work caught comparatively little, and the citation errors (FDA June 2025 for February 2026, nine categories for twelve, the pre-amendment wording for f) were found only by opening the source document. A review in the same context as the generation agrees with itself. The fix is a sub-process with a fresh context that receives the artefact and the sources but NOT the reasoning that produced it.",
-      "status": "open"
+      "status": "closed"
     },
     {
       "id": "j_7f1e63",
@@ -798,7 +798,7 @@
       "title": "Citations, and an auditor that can check them",
       "description": "Requirements record the construct they rest on, so a later reader can open it rather than take the requirement's word for it. A separate audit pass then checks the register against those sources and against itself, and a release cannot be cut while its findings are unreviewed.",
       "technical_notes": "Opened after three mechanical staleness checks were prototyped and all three failed: requirement-unchanged-while-source-changed caught 9 of 18 known-stale requirements while flagging 176; source-newer-than-prose flagged 278 of 316; absent-identifier found one false positive. They fail for one reason — the finest trace the register holds is a file, and the hot files change every job. Citations give the audit something exact to open, which is what makes the check affordable and what makes a finding checkable.",
-      "status": "open"
+      "status": "closed"
     },
     {
       "id": "j_3a8d15",
@@ -811,7 +811,7 @@
       "title": "One skill, aimed at medical devices",
       "description": "SpecPad is a medical-device offering rather than a general tool with a regulated add-on. The optional specpad-medical skill folds into core, there is one architecture profile, and init no longer asks which kind of project this is.",
       "technical_notes": "The split had already stopped paying for itself: core carried safety classification, IEC 62304 risk, SOUP, cybersecurity, the design-control map and the standards conformance view, while the add-on was 56 lines of SKILL.md and two templates — one of which is the generic template plus a segregation section and an architecture-verification section. The audit surfaced it as four separate contradictions (CORE-2, CORE-3, SAD-5, SAD-6) because the register still described the split as the design.",
-      "status": "open"
+      "status": "closed"
     }
   ]
 }

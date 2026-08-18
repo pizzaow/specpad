@@ -1,0 +1,14 @@
+[
+  {
+    "hash": "3fa4e0287f75bba7b6a27b23a053e2caee8cb99c",
+    "subject": "Fix the advisory gate, and the requirements the last few jobs left behind",
+    "author": "Geoff Pollard",
+    "date": "2026-08-15"
+  },
+  {
+    "hash": "1fbc2cd31ed1311deb2fb7827bf4230d8d4f0c9e",
+    "subject": "Review passes: a reader who has not seen the reasoning",
+    "author": "Geoff Pollard",
+    "date": "2026-08-15"
+  }
+]

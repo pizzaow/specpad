@@ -1,0 +1,20 @@
+[
+  {
+    "hash": "19ad171149bd54e6ca8b8a7fea576e6b3a0c01ff",
+    "subject": "Ship the audit's mechanical stage as a runnable check",
+    "author": "Geoff Pollard",
+    "date": "2026-08-18"
+  },
+  {
+    "hash": "08727cb4549ecbb10aa89b4bdb3227e0e7a13aa4",
+    "subject": "Fix what the audit found: nine stale requirements and the demo-mode save",
+    "author": "Geoff Pollard",
+    "date": "2026-08-17"
+  },
+  {
+    "hash": "d9e5b53088b9c3ec4d92f1d9025c0e1c6cc7c53f",
+    "subject": "Citations, and an audit that can check them",
+    "author": "Geoff Pollard",
+    "date": "2026-08-16"
+  }
+]
