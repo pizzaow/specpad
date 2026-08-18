@@ -833,7 +833,8 @@
       "title": "Cut release v2.0",
       "description": "SpecPad 2.0: a medical-device design-controls tool rather than a general spec editor. Nine jobs — the cybersecurity architecture and threat model, SOUP, the advisory governance tier, citations and a runnable audit, the review passes, the marketing site, and the collapse of the medical add-on into one skill.",
       "technical_notes": "Scope: JOB-51, 54, 55, 56, 57, 58, 59, 60, 61. Tag points at the last feature commit (the audit script); the cut bookkeeping follows it, as in v1.4 through v1.7.",
-      "status": "open"
+      "status": "closed",
+      "version": "v2.0"
     }
   ]
 }
