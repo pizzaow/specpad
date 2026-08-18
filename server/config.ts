@@ -22,7 +22,11 @@ import { editorVersionPath } from '../src/shared';
  */
 export const SCHEMA_VERSION_PATH = editorVersionPath().replace(/\/$/, '');
 
-export type AuthProviderName = 'proxy' | 'oidc' | 'dev';
+// `oidc` was listed here while the provider was a stub that threw at first sign-in: a
+// deployment could pass config validation with a complete OIDC block and only discover the
+// gap when someone tried to log in. Corporate SSO is reached through `proxy` behind the
+// company's existing gateway, which covers OIDC, SAML and mTLS alike.
+export type AuthProviderName = 'proxy' | 'dev';
 export type Role = 'reader' | 'editor' | 'committer';
 export type GovernancePolicy = 'block' | 'warn' | 'off';
 
@@ -73,8 +77,6 @@ export interface AuthConfig {
   roles: Record<Role, string[]>;
   /** Identity used by the dev provider. */
   devUser?: { id: string; displayName: string; email: string; groups: string[] };
-  /** OIDC settings (issuer, client id/secret, redirect) — provider `oidc` only. */
-  oidc?: { issuer: string; clientId: string; clientSecret: string; redirectUri: string };
 }
 
 export interface CommitConfig {
@@ -246,8 +248,8 @@ export function validateConfig(raw: unknown): { config: ServerConfig | null; err
   // ---- auth ----
   const authRaw = (root.auth ?? {}) as Record<string, any>;
   const provider = authRaw.provider as AuthProviderName;
-  if (provider !== 'proxy' && provider !== 'oidc' && provider !== 'dev') {
-    errors.push('auth.provider must be one of "proxy", "oidc", "dev"');
+  if (provider !== 'proxy' && provider !== 'dev') {
+    errors.push('auth.provider must be one of "proxy", "dev"');
   }
 
   const trustedPeers = asStringArray(authRaw.trustedPeers) ?? [];
@@ -266,14 +268,6 @@ export function validateConfig(raw: unknown): { config: ServerConfig | null; err
     errors.push(`auth.provider "dev" may only be used with a loopback bind (got "${bind}")`);
   }
 
-  if (provider === 'oidc') {
-    const oidc = (authRaw.oidc ?? {}) as Record<string, any>;
-    for (const key of ['issuer', 'clientId', 'clientSecret', 'redirectUri']) {
-      if (typeof oidc[key] !== 'string' || oidc[key].trim() === '') {
-        errors.push(`auth.oidc.${key} is required when auth.provider is "oidc"`);
-      }
-    }
-  }
 
   const roles =
     parseRoles(authRaw.roles, 'auth.roles', errors) ??
@@ -407,7 +401,6 @@ export function validateConfig(raw: unknown): { config: ServerConfig | null; err
           email: 'dev@localhost',
           groups: [],
         },
-        oidc: authRaw.oidc,
       },
       commit,
       workDir: root.workDir,

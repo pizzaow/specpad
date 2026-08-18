@@ -58,7 +58,7 @@ describe('validateConfig — refusing a bad configuration', () => {
       expect.arrayContaining([
         'repo.url is required',
         'repo.branch is required',
-        'auth.provider must be one of "proxy", "oidc", "dev"',
+        'auth.provider must be one of "proxy", "dev"',
         'workDir is required',
       ]),
     );
@@ -114,11 +114,14 @@ describe('validateConfig — refusing a bad configuration', () => {
     );
   });
 
-  it('requires OIDC settings when the OIDC provider is selected', () => {
-    const { errors } = validateConfig({ ...valid, auth: { ...valid.auth, provider: 'oidc' } });
+  it('refuses "oidc" as a provider rather than accepting it and failing at sign-in', () => {
+    // It used to validate a complete OIDC block and hand back a provider that threw the
+    // first time somebody logged in. Corporate SSO goes through `proxy` behind the
+    // company's gateway, so the config is refused at startup where it is cheap to fix.
+    const { config, errors } = validateConfig({ ...valid, auth: { ...valid.auth, provider: 'oidc' } });
 
-    expect(errors).toContain('auth.oidc.issuer is required when auth.provider is "oidc"');
-    expect(errors).toContain('auth.oidc.clientId is required when auth.provider is "oidc"');
+    expect(config).toBeNull();
+    expect(errors).toContain('auth.provider must be one of "proxy", "dev"');
   });
 
   it('refuses a configuration where no group is granted any role', () => {

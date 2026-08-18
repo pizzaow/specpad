@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import {
   ProxyAuthProvider,
   DevAuthProvider,
-  OidcAuthProvider,
   createAuthProvider,
   resolveSession,
   roleFor,
@@ -132,12 +131,6 @@ describe('DevAuthProvider (AUTH-4)', () => {
       email: 'dev@localhost',
       groups: [],
     });
-  });
-});
-
-describe('OidcAuthProvider (AUTH-3)', () => {
-  it('fails loudly rather than silently denying, since it is not implemented yet', async () => {
-    await expect(new OidcAuthProvider().authenticate()).rejects.toThrow(/not implemented/i);
   });
 });
 

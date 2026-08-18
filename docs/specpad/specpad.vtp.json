@@ -2959,7 +2959,7 @@
       "verifies": [
         "r_sv4"
       ],
-      "expected": "Session, document listing, document read with a version tag, item-operation write, working-copy status, commit, discard, and history passthrough each respond with the documented shape; the listing is derived from the directory rather than a static manifest.",
+      "expected": "Every listed operation is reachable and behaves as described; writes are whole-document and carry the version tag read with the document. No item-level write endpoint is offered.",
       "automation": [
         {
           "runner": "vitest",
@@ -2971,7 +2971,8 @@
           "selector": "the API over HTTP (SRV-4)"
         }
       ],
-      "verificationLevel": "system"
+      "verificationLevel": "system",
+      "notes": "server/__tests__/api.test.ts"
     },
     {
       "id": "t_sv5",
@@ -3081,16 +3082,6 @@
         }
       ],
       "verificationLevel": "unit"
-    },
-    {
-      "id": "t_ax3",
-      "code": "TEST-179",
-      "text": "Configure the OIDC provider against a test identity provider and complete a sign-in.",
-      "verifies": [
-        "r_ax3"
-      ],
-      "expected": "The authorization-code flow completes without a front proxy and the resulting principal carries the identity provider's name, email, and group claims.",
-      "verificationLevel": "integration"
     },
     {
       "id": "t_ax4",
@@ -3504,7 +3495,7 @@
       "verifies": [
         "r_mg6"
       ],
-      "expected": "The server returns a per-field conflict report rather than committing; the editor presents both values for that field and commits the user's choice.",
+      "expected": "The server returns the conflicting fields with both values; the editor lists each one showing Yours and Theirs, and tells the user to reload and reapply. It does not offer to pick a side.",
       "automation": [
         {
           "runner": "vitest",
@@ -3517,7 +3508,8 @@
           "selector": "commit (CMT-3)"
         }
       ],
-      "verificationLevel": "integration"
+      "verificationLevel": "integration",
+      "notes": "src/components/__tests__/CommitDialog.test.tsx"
     },
     {
       "id": "t_rx1",

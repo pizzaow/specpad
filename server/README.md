@@ -54,7 +54,7 @@ per-user worktrees, so keep it on a volume that outlives the container.
 | File | Role |
 |---|---|
 | `config.ts` | The declarative config, and exhaustive startup validation (SRV-6) |
-| `auth.ts` | `AuthProvider` → one `Principal`; proxy / oidc / dev; role mapping (AUTH-1..6) |
+| `auth.ts` | `AuthProvider` → one `Principal`; proxy / dev; role mapping (AUTH-1, AUTH-2, AUTH-4..6) |
 | `paths.ts` | Path confinement — every function here is a security control (SRV-2) |
 | `git.ts` | Git plumbing behind an injectable runner; never force-pushes |
 | `repository.ts` | One project's bare clone and per-user sparse worktrees (SRV-3, CMT-1, MPT-4) |

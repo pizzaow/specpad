@@ -2487,7 +2487,7 @@
     {
       "id": "r_sv4",
       "code": "SRV-4",
-      "text": "The server shall expose API operations mirroring the editor's file transport: session, document listing, document read with a version tag, item-operation write, working-copy status, commit, discard, and read-only history passthrough.",
+      "text": "The server shall expose API operations mirroring the editor's file transport: session, document listing, document read with a version tag, whole-document write carrying that version tag, working-copy status, commit, discard, presence, and read-only history passthrough.",
       "satisfies": [
         "p_sv01"
       ],
@@ -2600,24 +2600,6 @@
       "id": "r_ax2",
       "code": "AUTH-2",
       "text": "The server shall provide a proxy authentication provider that derives the principal from trusted upstream headers, and shall reject identity headers presented by any peer other than the configured trusted upstream.",
-      "satisfies": [
-        "p_sv01"
-      ],
-      "design": [
-        "d_ath001"
-      ],
-      "category": [
-        "security",
-        "functional"
-      ],
-      "securityControl": [
-        "authentication"
-      ]
-    },
-    {
-      "id": "r_ax3",
-      "code": "AUTH-3",
-      "text": "The server shall provide an OIDC authentication provider so a company can use corporate single sign-on directly, without an authenticating proxy in front of the server.",
       "satisfies": [
         "p_sv01"
       ],
@@ -2970,7 +2952,7 @@
     {
       "id": "r_mg6",
       "code": "MRG-6",
-      "text": "Where the merge cannot resolve a conflict automatically, the server shall return a per-field conflict report and the editor shall offer the user a choice between the conflicting values.",
+      "text": "Where the merge cannot resolve a conflict automatically, the server shall return a per-field conflict report and the editor shall show each conflicting field with both values, so the user can see exactly what was contested before reloading and reapplying the edit.",
       "satisfies": [
         "p_sv01"
       ],

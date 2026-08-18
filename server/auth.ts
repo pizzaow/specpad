@@ -171,30 +171,12 @@ export class DevAuthProvider implements AuthProvider {
   }
 }
 
-/**
- * Corporate SSO with no proxy in front (AUTH-3). Not yet implemented: deployments today
- * use `proxy` behind the company's existing authenticating gateway, which covers OIDC,
- * SAML, and mTLS alike. Left as an explicit failure rather than a silent denial so a
- * misconfigured deployment is obvious at startup rather than at first sign-in.
- */
-export class OidcAuthProvider implements AuthProvider {
-  readonly name = 'oidc';
-  async authenticate(): Promise<Principal | null> {
-    throw new Error(
-      'The OIDC provider is not implemented yet. Use auth.provider "proxy" behind an ' +
-        'authenticating upstream (oauth2-proxy, Entra App Proxy, Cloudflare Access).',
-    );
-  }
-}
-
 export function createAuthProvider(config: AuthConfig): AuthProvider {
   switch (config.provider) {
     case 'proxy':
       return new ProxyAuthProvider(config);
     case 'dev':
       return new DevAuthProvider(config);
-    case 'oidc':
-      return new OidcAuthProvider();
   }
 }
 
